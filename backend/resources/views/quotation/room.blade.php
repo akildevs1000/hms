@@ -278,7 +278,8 @@
             </td>
 
             <td class="text-right border-none col-4">
-                <p class="text-right" style="color: #408dfb"><span style="font-size: 13px">Quotation</span>: {{ $quotation->ref_no ?? '' }}</p>
+                <p class="text-right" style="color: #408dfb"><span style="font-size: 13px">Quotation</span>:
+                    {{ $quotation->ref_no ?? '' }}</p>
             </td>
         </tr>
     </table>
@@ -294,12 +295,12 @@
                     <p>{{ $quotation->customer->contact_no ?? '' }}</p>
                 </td>
                 <td class="text-left border-none col-3">
-                    <h4>First Check In</h4>
+                    <h4> Check In</h4>
                     <p>{{ $quotation->arrival_date }} 12:00 AM</p>
                     <p></p>
                 </td>
                 <td class="text-left border-none col-3">
-                    <h4>Last Check Out</h4>
+                    <h4>Check Out</h4>
                     <p>{{ $quotation->departure_date }} 11:00 AM</p>
                     <p></p>
                 </td>
@@ -352,7 +353,8 @@
                     <td class="text-right">{{ number_format($item['price'], 2) }}</td>
                     <td class="text-center">{{ $item['no_of_rooms'] }}</td>
                     <td class="text-center">{{ $item['no_of_nights'] - 1 }}</td>
-                    <td class="text-right">{{ number_format($item['price'] * $item['no_of_rooms'] * $item['no_of_nights'], 2) }}</td>
+                    <td class="text-right">
+                        {{ number_format($item['price'] * $item['no_of_rooms'] * $item['no_of_nights'], 2) }}</td>
                 </tr>
             @endforeach
 

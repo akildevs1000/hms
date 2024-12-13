@@ -3,3 +3,8 @@ booked check in status = 2
 booked check out status = 3
 booked maintanance status = 4
 booked available status = 0
+
+
+
+laravel commands
+php artisan email:send-test

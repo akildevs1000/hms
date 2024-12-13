@@ -48,7 +48,7 @@
             </tbody>
           </table>
           <div class="mt-2">
-            <HallDialogForQuotation @tableData="handleTableData" />
+            <HallDialogForQuotation :item="item" @tableData="handleTableData" />
             &nbsp;
             <QuotationHallItem
               @selectedItem="

@@ -194,7 +194,7 @@ const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(tomorrow.getDate() + 1);
 export default {
-  props: ["label"],
+  props: ["label", "item"],
   data() {
     return {
       Model: "Reservation",
@@ -210,7 +210,7 @@ export default {
       room_type_object: null,
       loading: false,
       selectRoomLoading: false,
-      RoomDrawer: null,
+      RoomDrawer: false,
       isSelectRoom: true,
       preloader: false,
       loading: false,
@@ -262,6 +262,13 @@ export default {
     await this.get_food_plans();
 
     await this.get_additional_charges();
+
+    this.temp.check_in = this.item.check_in;
+    this.temp.check_out = this.item.check_out;
+    this.room_type_object = this.item.room_type;
+
+    this.get_available_rooms(this.room_type_object);
+    this.selectRoom(this.room_type_object);
   },
   computed: {
     formattedCheckinDate() {
@@ -396,6 +403,7 @@ export default {
       this.temp.sgst = gst;
     },
     selectRoom(item) {
+      console.log("🚀 ~ selectRoom ~ item:", item);
       this.selectRoomLoading = true;
 
       let filterObject = {
@@ -544,13 +552,14 @@ export default {
       return json[day] ?? "unknown";
     },
     get_available_rooms(item) {
+      console.log("🚀 ~ get_available_rooms ~ item:", item);
+
       if (this.temp.check_in == undefined || this.temp.check_out == undefined) {
         alert("Please select date");
         this.RoomDrawer = false;
         return;
       }
 
-      this.RoomDrawer = true;
       this.$axios
         .get(`get_available_rooms_by_date_and_room_type`, {
           params: {

@@ -10,7 +10,9 @@
       </template>
       <v-card v-if="item && item.id">
         <v-alert class="rounded-md" color="grey lighten-3" dense flat>
-          <span class="text-color">Convert to Quotation For {{ item.inquiry_type }}</span>
+          <span class="text-color"
+            >Convert to Quotation For {{ item.inquiry_type }}</span
+          >
         </v-alert>
         <v-card-text>
           <QuotationCustomerInfo
@@ -63,7 +65,7 @@
           </table>
 
           <div class="mt-2">
-            <RoomDialogForQuotation @tableData="handleTableData" />
+            <RoomDialogForQuotation :item="item" @tableData="handleTableData" />
             &nbsp;
 
             <QuotationRoomItem

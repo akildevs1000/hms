@@ -10,21 +10,11 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
-class TestMail extends Mailable implements ShouldQueue
+class TestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public $model;
-    
-    public function __construct($model)
-    {
-        $this->model = $model;
-    }
+    public function __construct(public $subject, public $body) {}
 
     /**
      * Build the message.
@@ -33,14 +23,17 @@ class TestMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        $this->subject($this->model->subject);
+        $subject = $this->subject;
+        $body = $this->body;
 
-        $company_id = $this->model->company_id;
+        $this->subject($subject);
 
-        foreach ($this->model->reports as $file){
-            $this->attach(storage_path("app/$company_id/$file"));
-        }
+        info("subject = $subject, body = $body");
 
-        return $this->view('emails.report')->with(["body" => $this->model->body]);
+        // foreach ($this->model->reports as $file){
+        //     $this->attach(storage_path("app/$company_id/$file"));
+        // }
+
+        return $this->view('emails.report')->with(["body" => "body"]);
     }
 }

@@ -49,6 +49,15 @@ class SourceController extends Controller
         return $model->get();
     }
 
+    public function getSource(Request $request)
+    {
+        $model = Source::query();
+        $model->where('company_id', $request->company_id);
+        $model->where('type', $request->type);
+        $model->orderBy('name', 'asc');
+        return $model->get();
+    }
+
     public function getOnline(Request $request)
     {
         $model = Source::query();

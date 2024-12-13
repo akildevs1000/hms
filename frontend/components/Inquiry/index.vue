@@ -30,6 +30,31 @@
             </v-col>
             <v-col md="10" cols="12">
               <v-row>
+                <v-col md="4" dense>
+                  <v-autocomplete
+                    label="Business Source"
+                    v-model="inquiry.business_source_id"
+                    :items="businessSourceList"
+                    dense
+                    item-text="name"
+                    item-value="id"
+                    outlined
+                    :hide-details="errors && !errors.business_source_id"
+                    :error-messages="
+                      errors && errors.business_source_id
+                        ? errors.business_source_id[0]
+                        : ''
+                    "
+                  ></v-autocomplete>
+                </v-col>
+                <v-col md="8">
+                  <InquirySourceType
+                    :isOverride="false"
+                    @sourceObject="handleSource"
+                  />
+                </v-col>
+              </v-row>
+              <v-row>
                 <v-col md="3" cols="12" sm="12">
                   <v-autocomplete
                     v-model="inquiry.title"
@@ -39,7 +64,6 @@
                     item-text="name"
                     item-value="name"
                     :hide-details="errors && !errors.title"
-                    :error="errors && errors.title"
                     :error-messages="
                       errors && errors.title ? errors.title[0] : ''
                     "
@@ -54,7 +78,6 @@
                     type="text"
                     v-model="inquiry.first_name"
                     :hide-details="errors && !errors.first_name"
-                    :error="errors && errors.first_name"
                     :error-messages="
                       errors && errors.first_name ? errors.first_name[0] : ''
                     "
@@ -95,7 +118,6 @@
                     type="number"
                     v-model="inquiry.contact_no"
                     :hide-details="errors && !errors.contact_no"
-                    :error="errors && errors.contact_no"
                     :error-messages="
                       errors && errors.contact_no ? errors.contact_no[0] : ''
                     "
@@ -110,7 +132,6 @@
                     type="number"
                     v-model="inquiry.whatsapp"
                     :hide-details="errors && !errors.whatsapp"
-                    :error="errors && errors.whatsapp"
                     :error-messages="
                       errors && errors.whatsapp ? errors.whatsapp[0] : ''
                     "
@@ -124,7 +145,6 @@
                     type="email"
                     v-model="inquiry.email"
                     :hide-details="errors && !errors.email"
-                    :error="errors && errors.email"
                     :error-messages="
                       errors && errors.email ? errors.email[0] : ''
                     "
@@ -132,15 +152,16 @@
                 </v-col>
                 <v-col md="6" cols="12" sm="12">
                   <v-autocomplete
-                    v-model="inquiry.rooms_type"
+                    v-model="inquiry.room_type_id"
                     :items="roomTypes"
                     label="Room Type"
                     item-text="name"
-                    item-value="name"
-                    :hide-details="errors && !errors.rooms_type"
-                    :error="errors && errors.rooms_type"
+                    item-value="id"
+                    :hide-details="errors && !errors.room_type_id"
                     :error-messages="
-                      errors && errors.rooms_type ? errors.rooms_type[0] : ''
+                      errors && errors.room_type_id
+                        ? errors.room_type_id[0]
+                        : ''
                     "
                     dense
                     outlined
@@ -206,7 +227,12 @@
                     <v-date-picker
                       no-title
                       v-model="inquiry.check_out"
-                      @input="check_out_menu = false"
+                      @input="
+                        () => {
+                          getTotalDays(inquiry.check_in, inquiry.check_out);
+                          check_out_menu = false;
+                        }
+                      "
                     ></v-date-picker>
                   </v-menu>
                 </v-col>
@@ -221,14 +247,14 @@
                   ></v-autocomplete>
                 </v-col>
                 <v-col md="3" cols="12" sm="12">
-                  <v-autocomplete
+                  <v-text-field
+                    readonly
                     v-model="inquiry.days"
-                    :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
                     label="Number of Days"
                     :hide-details="true"
                     dense
                     outlined
-                  ></v-autocomplete>
+                  ></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12" sm="12">
                   <v-textarea
@@ -294,14 +320,7 @@
                 <template v-slot:top>
                   <v-toolbar flat dense class="mb-5">
                     {{ Model }}
-                    <v-icon
-                      color="primary white--text"
-                      right
-                      @click="getDataFromApi()"
-                      >mdi-reload</v-icon
-                    >
                     <v-spacer></v-spacer>
-
                     <v-btn
                       v-if="can(`inquiry_create`)"
                       @click="inquiryDialog = true"
@@ -312,6 +331,61 @@
                       {{ Model }}
                     </v-btn>
                   </v-toolbar>
+
+                  <div class="d-flex pb-2 px-4">
+                    <div class="mr-2" style="margin-top: 1px">
+                      <v-autocomplete
+                        label="Select Business Source"
+                        dense
+                        outlined
+                        v-model="filters.business_source_id"
+                        :items="[
+                          { id: 0, name: `Select All` },
+                          ...businessSourceList,
+                        ]"
+                        item-value="id"
+                        item-text="name"
+                        :hide-details="true"
+                      ></v-autocomplete>
+                    </div>
+
+                    <div class="mr-2" style="margin-top: 1px">
+                      <v-autocomplete
+                        label="Source"
+                        v-model="filters.source_id"
+                        :items="[{ id: 0, name: `Select All` }, ...sourceList]"
+                        dense
+                        item-text="name"
+                        item-value="id"
+                        outlined
+                        :hide-details="true"
+                      ></v-autocomplete>
+                    </div>
+
+                    <FilterDateRange
+                      :defaultDates="true"
+                      @filter-attr="filterAttr"
+                    />
+
+                    <div class="mx-2" style="margin-top: 1px">
+                      <v-btn
+                        small
+                        color="primary"
+                        @click="getDataFromApi"
+                        :loading="loading"
+                        >Submit</v-btn
+                      >
+                    </div>
+
+                    <!-- Buttons aligned to the right -->
+                    <div class="d-flex ml-auto" style="margin-top: 1px">
+                      <!-- @click="handleLink(`admin-expense-print`)" -->
+                      <AssetsIcon icon="printer-outline" />
+                      &nbsp;
+                      <!-- @click="handleLink(`admin-expense-download`)" -->
+                      <AssetsIcon icon="download-outline" />
+                    </div>
+                  </div>
                 </template>
 
                 <template v-slot:item.first_name="{ item }">
@@ -320,6 +394,18 @@
                   {{ item.email }}
                   <br />
                   {{ item.contact_no }}
+                </template>
+
+                <template v-slot:item.business_source="{ item }">
+                  {{ item?.business_source?.name || "---" }}
+                </template>
+
+                <template v-slot:item.room_type="{ item }">
+                  {{ item?.room_type?.name || "---" }}
+                </template>
+
+                <template v-slot:item.source="{ item }">
+                  {{ item?.source?.name || "---" }}
                 </template>
 
                 <template v-slot:item.quotation="{ item }">
@@ -384,8 +470,43 @@
   <NoAccess v-else />
 </template>
 <script>
+let defaultPayload = {
+  title: "Mr",
+  first_name: "Test",
+  last_name: "User",
+  inquiry_type: "Room",
+  contact_no: "123456789",
+  whatsapp: "123456789",
+  email: "test@gmail.com",
+  room_type_id: 0,
+  purpose: "Tour",
+  check_in: null,
+  check_out: null,
+  number_of_rooms: 1,
+  days: 1,
+  remark: "remarks",
+  customer_request: "customer request",
+
+  business_source_id: 0,
+  source_id: 0,
+
+  source_type: "Walking",
+  source_name: null,
+};
+// In your component
+
 export default {
   data: () => ({
+    sources: [],
+    filters: {
+      from: new Date().toJSON().slice(0, 10),
+      to: new Date().toJSON().slice(0, 10),
+      business_source_id: 0,
+      source_id: 0,
+      room_type_id: 0,
+      quotation_ref: null,
+    },
+
     stats: [
       {
         color: "green",
@@ -438,7 +559,8 @@ export default {
     total: 0,
 
     editedIndex: -1,
-
+    businessSourceList: [],
+    sourceList: [],
     titleItems: [
       { id: 1, name: "Mr" },
       { id: 2, name: "Mrs" },
@@ -446,8 +568,8 @@ export default {
       { id: 4, name: "Ms" },
       { id: 5, name: "Dr" },
     ],
-    inquiry: { contact_no: "", whatsapp: "" },
-
+    inquiry: {},
+    defaultInquiry: defaultPayload,
     check_in_menu: false,
     check_out_menu: false,
     // dob: null,
@@ -455,48 +577,7 @@ export default {
     upload: {
       name: "",
     },
-    headers: [
-      {
-        text: "#",
-        value: "id",
-      },
-      {
-        value: "first_name",
-        text: "First Name",
-      },
-      {
-        value: "check_in",
-        text: "C/In",
-      },
-      {
-        value: "check_out",
-        text: "C/Out",
-      },
-      {
-        value: "days",
-        text: "Days",
-      },
-      {
-        value: "rooms_type",
-        text: "Room Type",
-      },
-      {
-        value: "number_of_rooms",
-        text: "N/Rooms",
-      },
-      {
-        value: "quotation",
-        text: "Quotation",
-      },
-      {
-        value: "inquiry_type",
-        text: "Type",
-      },
-      {
-        value: "options",
-        text: "Action",
-      },
-    ],
+    headers: [],
     previewImage: null,
     purposes: [
       "Tour",
@@ -541,12 +622,67 @@ export default {
     this.loading = true;
     this.getDataFromApi();
     this.get_room_types();
+
+    this.get_business_sources();
+    this.get_sources();
+  },
+
+  async mounted() {
+    if (process.env.LOCAL_IP == "localhost") {
+      this.inquiry = this.defaultInquiry;
+      this.inquiry.check_in = this.$utils.get_current_date();
+      this.inquiry.check_out = this.$utils.get_current_date();
+    }
+
+    this.getTotalDays(
+      this.$utils.get_current_date(),
+      this.$utils.get_current_date()
+    );
   },
 
   methods: {
+    async get_business_sources() {
+      let { data } = await this.$axios.get("business-source-list");
+      this.businessSourceList = data;
+    },
+    async get_sources() {
+      let { data } = await this.$axios.get("source-list");
+      this.sourceList = data;
+    },
+    async filterAttr(data) {
+      this.filters = {
+        ...this.filters,
+        from: data.from,
+        to: data.to,
+      };
+    },
+    getTotalDays(check_in, check_out) {
+      let ci = new Date(check_in);
+      let co = new Date(check_out);
+      let Difference_In_Time = co.getTime() - ci.getTime();
+      let days = Difference_In_Time / (1000 * 3600 * 24);
+      this.inquiry.days = days;
+    },
+    handleSource(e) {
+      this.inquiry.source_type = e.source_type;
+      this.inquiry.source_name = e.source;
+      this.inquiry.source_id = e.source_id;
+    },
+    async getList(endpoint) {
+      try {
+        const { data } = await this.$axios.get(endpoint);
+        return data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        throw error;
+      }
+    },
     openExternalWinodw({ inquiry_type, quotation: { id } }) {
       let type = inquiry_type.toLowerCase();
       let url = `https://backend.myhotel2cloud.com/api/quotation-${type}/${id}`;
+      if (process.env.LOCAL_IP == "localhost") {
+        url = `https://backend.test/api/quotation-${type}/${id}`;
+      }
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
@@ -607,6 +743,7 @@ export default {
       };
       this.$axios.get(`room_type`, payload).then(({ data }) => {
         this.roomTypes = data;
+        this.inquiry.room_type_id = this.roomTypes[0]?.id || 0;
       });
     },
 
@@ -618,16 +755,17 @@ export default {
       // }, 10000);
     },
 
-    async getDataFromApi(url = this.endpoint) {
+    async getDataFromApi() {
       this.loading = true;
-      let { data } = await this.$axios.get(url, {
+      let { data } = await this.$axios.get(this.endpoint, {
         params: {
           company_id: this.$auth.user.company.id,
-          search: this.search,
+          ...this.filters,
         },
       });
       this.loading = false;
-      this.data = data.data;
+      this.headers = data.headers;
+      this.data = data.paginatedData.data;
     },
 
     searchIt(e) {
@@ -659,6 +797,11 @@ export default {
 
     close() {
       this.inquiry = {};
+      if (process.env.LOCAL_IP == "localhost") {
+        this.inquiry = this.defaultInquiry;
+        this.inquiry.check_in = this.$utils.get_current_date();
+        this.inquiry.check_out = this.$utils.get_current_date();
+      }
       this.editedIndex = -1;
       this.inquiryDialog = false;
       setTimeout(() => {

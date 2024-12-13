@@ -214,17 +214,19 @@ class Controller extends BaseController
                 ],
                 $found->body
             );
-            Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject, $id));
-            info("mail sent");
-            return "mail sent";
+            if ($fields['email']) {
+                Mail::to($fields['email'])->send(new ActionMarkdownMail($body, $subject, $id));
+                info("mail sent");
+                return "mail sent";
+            }
+
+            info("email not provided");
+            return "email not provided";
         }
     }
 
     public function sendWhatsappIfRequired($action, $fields)
     {
-        info("whatsapp sent");
-        return "whatsapp sent";
-
         // $response = Http::withoutVerifying()->get('https://ezwhat.com/api/send.php', [
         //     'number' => "971554501483",
         //     'type' => 'text',
@@ -239,8 +241,7 @@ class Controller extends BaseController
         // } else {
         //     return $response->body();
         // }
-        // return "sent";
-
+        // return "sent";      
 
 
         $found = Template::where([
@@ -264,10 +265,19 @@ class Controller extends BaseController
                 $found->body
             );
 
+            // Format the WhatsApp message
+            $whatsappMessage = "Hello {$fields['title']} {$fields['full_name']}, 👋"
+                . PHP_EOL . PHP_EOL
+                . "Your booking is confirmed: ✅"
+                . PHP_EOL . "From: 🗓️ " . date('d-M-y', strtotime($fields['check_in']))
+                . PHP_EOL . "To: 🗓️ " . date('d-M-y', strtotime($fields['check_out']))
+                . PHP_EOL . "Room Type: 🛏️ {$fields['rooms_type']}"
+                . PHP_EOL . PHP_EOL
+                . "Thank you for choosing us! 🙏";
 
-            // Mail::to($record->email)->send(new ActionMarkdownMail($body, $subject));
-            info("whatsapp sent");
-            return "whatsapp sent";
+            info("WhatsApp Message below " . PHP_EOL . $whatsappMessage);
+
+            return true;
         }
     }
 

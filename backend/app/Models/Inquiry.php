@@ -10,30 +10,7 @@ class Inquiry extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'contact_no',
-        'email',
-        'address',
-        'company_id',
-        'customer_type',
-        'title',
-        'whatsapp',
-        'nationality',
-        'check_in',
-        'check_out',
-        'days',
-        'rooms_type',
-        'number_of_rooms',
-        'rooms',
-        'purpose',
-        'customer_request',
-        'remark',
-        'city',
-        'image',
-        'inquiry_type',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'check_in' => 'datetime:Y-m-d',
@@ -65,6 +42,20 @@ class Inquiry extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    public function room_type()
+    {
+        return $this->belongsTo(RoomType::class);
+    }
+    public function business_source()
+    {
+        return $this->belongsTo(BusinessSource::class);
+    }
+
+    public function source()
+    {
+        return $this->belongsTo(Source::class);
+    }
+
     public function booking()
     {
         return $this->hasOne(Booking::class);
@@ -140,5 +131,64 @@ class Inquiry extends Model
                 ->orWhere('email', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('city', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
         ));
+    }
+
+
+    public static function headers()
+    {
+        return [
+            [
+                'text' => '#',
+                'value' => 'id',
+            ],
+            [
+                'text' => 'Business Source',
+                'value' => 'business_source',
+            ],
+            [
+                'text' => 'Room Type',
+                'value' => 'room_type',
+            ],
+            [
+                'text' => 'Source Type',
+                'value' => 'source_type',
+            ],
+            [
+                'text' => 'Source',
+                'value' => 'source',
+            ],
+            [
+                'value' => 'first_name',
+                'text' => 'First Name',
+            ],
+            [
+                'value' => 'check_in',
+                'text' => 'C/In',
+            ],
+            [
+                'value' => 'check_out',
+                'text' => 'C/Out',
+            ],
+            [
+                'value' => 'days',
+                'text' => 'Days',
+            ],
+            [
+                'value' => 'number_of_rooms',
+                'text' => 'N/Rooms',
+            ],
+            [
+                'value' => 'quotation',
+                'text' => 'Quotation',
+            ],
+            [
+                'value' => 'inquiry_type',
+                'text' => 'Type',
+            ],
+            [
+                'value' => 'options',
+                'text' => 'Action',
+            ],
+        ];
     }
 }
