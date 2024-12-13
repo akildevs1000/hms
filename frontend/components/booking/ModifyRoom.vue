@@ -687,8 +687,19 @@
                           -{{ $utils.currency_format(json?.discount || 0) }}
                         </td>
                       </tr>
-
                       <tr>
+                        <td style="width: 50%" class="border-top">
+                          <b>New Total</b>
+                        </td>
+                        <td style="width: 50%" class="border-top text-right">
+                          <b>
+                            {{
+                              $utils.currency_format(json?.new_total || 0)
+                            }}</b
+                          >
+                        </td>
+                      </tr>
+                      <!-- <tr>
                         <td style="width: 50%" class="border-top">
                           <b>Booking Balance</b>
                         </td>
@@ -697,7 +708,7 @@
                             {{ $utils.currency_format(json?.balance || 0) }}</b
                           >
                         </td>
-                      </tr>
+                      </tr> -->
                       <tr>
                         <td style="width: 50%" class="red--text">
                           <b>Old Total</b>
@@ -708,26 +719,22 @@
                           }}</b>
                         </td>
                       </tr>
-                      <tr>
-                        <td style="width: 50%"><b>New Total</b></td>
-                        <td style="width: 50%" class="text-right">
-                          <b>
-                            {{
-                              $utils.currency_format(json?.new_total || 0)
-                            }}</b
-                          >
-                        </td>
-                      </tr>
 
                       <tr>
                         <td style="width: 50%" class="border-top">
-                          <b>Booking Total Price</b>
+                          <b>Difference Amount</b>
                         </td>
                         <td style="width: 50%" class="border-top text-right">
-                          <b>
+                          <b v-if="json.old_total - json.new_total >= 0">
                             {{
                               $utils.currency_format(
-                                json?.booking_total_price || 0
+                                json.old_total - json.new_total
+                              )
+                            }}</b
+                          ><b v-else class="red--text">
+                            {{
+                              $utils.currency_format(
+                                json.old_total - json.new_total
                               )
                             }}</b
                           >

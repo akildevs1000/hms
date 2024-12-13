@@ -96,7 +96,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['bed_amount'] = $eachRoomBedAmount;
                     $orderRooms['early_check_in'] = $eachRoomEarlyCheckIn;
                     $orderRooms['late_check_out'] = $eachRoomLateCheckOut;
-
+                    $orderRooms['extra_bed_qty'] = $room['extra_bed_qty'];
 
                     $orderRooms['price'] = $list['room_price']; //without tax
                     $orderRooms['total_with_tax'] = $list['price']; //with tax

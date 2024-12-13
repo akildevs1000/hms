@@ -1639,6 +1639,9 @@ class BookingController extends Controller
                 if ($cancel) {
                     OrderRoom::whereBookedRoomId($id)->delete();
 
+                    OrderRoom::where("booking_id", $model->booking_id)->delete();
+
+
                     $transactionData = [
                         'booking_id' => $bookedRoom->booking_id,
                         'customer_id' => $bookedRoom->customer_id ?? '',
@@ -1802,7 +1805,14 @@ class BookingController extends Controller
         $booking_total_price = 0;
 
         // Booking::where("id",$booking_id)->delete();
-        OrderRoom::where('booking_id', $request->old["booking_id"])->where("booked_room_id", $request->json["id"])->delete();
+        OrderRoom::where('booking_id', $request->old["booking_id"])->where("booked_room_id", $request->json["booked_room_id"])->delete();
+
+
+        Logger::channel("custom")->error("booking_id: " . $request->old["booking_id"]);
+        Logger::channel("custom")->error("booked_room_id: " . $request->json["id"]);
+
+        //return [$request->old["booking_id"], $request->json["booked_room_id"]];
+
         // BookedRoom::where('booking_id', $booking_id)->delete();
 
         $bookingDiscount =  $request->old["booking"]["discount"];
@@ -1810,9 +1820,13 @@ class BookingController extends Controller
 
         $singleDayDiscount = ($bookingDiscount / count($room_orders));
         $singleDayExtraAmount = ($bookingExtra / count($room_orders));
-        $singleDayAdditionalAmount = (($bed_amount + $food_plan_price + $early_check_in + $late_check_out) / count($room_orders));
+        // $singleDayAdditionalAmount = (($bed_amount + $food_plan_price + $early_check_in + $late_check_out) / count($room_orders));
 
+        $food_price_per_room = $food_plan_price; //($food_plan_price * ($no_of_adult + ($no_of_child / 2)));
+        $singleDayAdditionalAmount = $food_price_per_room + (($bed_amount  + $early_check_in + $late_check_out) / count($room_orders));
 
+        Logger::channel("custom")->error("food_price_per_room: " . $food_price_per_room);
+        Logger::channel("custom")->error("singleDayAdditionalAmount: " . $singleDayAdditionalAmount);
 
         $arr = [];
 
@@ -1821,12 +1835,19 @@ class BookingController extends Controller
 
             $orderRooms = [];
 
+
+
+
+
+
+
             $orderRooms['room_discount'] = $singleDayDiscount;
             $orderRooms['price'] = $room_order['room_price']; //without tax
             $orderRooms['total_with_tax'] = $room_order['price']; //with tax
 
-            $total =  $room_order['price'] + $singleDayAdditionalAmount + $singleDayExtraAmount;
+            $total =  $room_order['price'] + $singleDayAdditionalAmount + $singleDayExtraAmount - $singleDayDiscount;
             // $total = ($list['total_price'] - $singleDayDiscount) + $singleDayExtraAmount;
+            Logger::channel("custom")->error("total with Tax : " . $total);
 
             $orderRooms['total'] = $total;
             $orderRooms['grand_total'] = $total;
@@ -1834,6 +1855,9 @@ class BookingController extends Controller
             $room_tax =   $BookingObj->getTaxSlab(($total), $company_id);
             $roomBasePrice = ($total * 100) / (100 + $room_tax);
             $roomGSTAmount = $total - $roomBasePrice;
+
+            Logger::channel("custom")->error("roomBasePrice : " . $roomBasePrice);
+            Logger::channel("custom")->error("roomGSTAmount : " . $roomGSTAmount);
 
             $orderRooms['price'] = round($roomBasePrice, 2);
             $orderRooms['cgst'] = round($roomGSTAmount / 2, 2);
@@ -1852,8 +1876,24 @@ class BookingController extends Controller
                 $orderRooms['room_tax'] = round($roomGSTAmount, 2);
             }
 
-            $orderRooms['booked_room_id'] = $request->json["id"];
+
+
+
+
+
+
+            // $orderRooms['base_price'] = $orderRooms['price'];
+            // -$orderRooms['bed_amount']
+            //     - $orderRooms['food_plan_price']
+            //     - $orderRooms['early_check_in']
+            //     - $orderRooms['late_check_out']
+            //     - $orderRooms['late_check_out'];
+
+            $orderRooms['booked_room_id'] = $request->json["booked_room_id"];
             $orderRooms['company_id'] = $company_id;
+            $orderRooms['customer_id'] =  $request->old["customer"]["id"];
+            $orderRooms['no_of_baby'] =  $request->old["no_of_baby"];
+
             $orderRooms['booking_id'] = $request->old["booking_id"];
             $orderRooms['date'] =  $room_order['date'];
             $orderRooms['room_id'] = $room_id;
@@ -1869,26 +1909,28 @@ class BookingController extends Controller
             $orderRooms['no_of_adult'] = $no_of_adult;
             $orderRooms['no_of_child'] = $no_of_child;
             $orderRooms['extra_bed_qty'] = $extra_bed_qty;
-
+            $orderRooms['meal'] = $request->json["meal_name"];
             $orderRooms['food_plan_price'] = $food_plan_price;
             $orderRooms['bed_amount'] = $bed_amount;
-            $orderRooms['early_check_in'] = $early_check_in;
-            $orderRooms['late_check_out'] = $late_check_out;
+            $orderRooms['early_check_in'] = round($early_check_in / count($room_orders), 2);
+            $orderRooms['late_check_out'] = round($late_check_out / count($room_orders), 2);
 
             $orderRooms['tariff'] = $room_order["day_type"];
 
             $orderRooms['day'] = $room_order['day']  ?? null;
 
+            $orderRooms['created_at'] = date("Y-m-d H:i:s");
+            $orderRooms['updated_at'] = date("Y-m-d H:i:s");
+            // return [$roomBasePrice - $orderRooms['bed_amount'], $roomBasePrice, $orderRooms['bed_amount']];
 
+            $orderRooms['base_price'] = $roomBasePrice
+                - $orderRooms['bed_amount']
+                - $orderRooms['food_plan_price']
+                - $orderRooms['early_check_in']
+                - $orderRooms['late_check_out']
 
-            
-            $orderRooms['base_price'] = $room_order['price'];
-            // - $orderRooms['bed_amount']
-            // - $orderRooms['food_plan_price']
-            // - $orderRooms['early_check_in']
-            // - $orderRooms['late_check_out']
-            // - $singleDayExtraAmount
-            // + $singleDayDiscount;
+                - $singleDayExtraAmount
+                + $singleDayDiscount;
 
             $arr[] = $orderRooms;
         }
@@ -1897,7 +1939,7 @@ class BookingController extends Controller
 
 
         // return $arr;
-
+        Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
         OrderRoom::insert($arr);
 
         unset($arr[0]["tariff"]);
@@ -1906,8 +1948,8 @@ class BookingController extends Controller
         unset($arr[0]["booked_room_id"]);
         unset($arr[0]["date"]);
         unset($arr[0]["price_adjusted_after_dsicount"]);
-
-        BookedRoom::where('id', $request->json["id"])->update($arr[0]);
+        Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
+        BookedRoom::where('id', $request->json["booked_room_id"])->update($arr[0]);
         $credit = Transaction::where("booking_id", $request->old["booking_id"])->sum("credit");
 
         $debit = $booking_total_price - $request->old['booking_total_price'];

@@ -1,53 +1,90 @@
 export default ({ app }, inject) => {
-
   inject("utils", {
     add_zeros(number) {
-      return number && number.toString().padStart(4, '0');
-
+      return number && number.toString().padStart(4, "0");
     },
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2) + ".00".replace(".00.00", ".00");
       } else {
         return n + ".00".replace(".00.00", ".00");
-
       }
     },
     getSum(values) {
       return values.reduce((acc, curr) => acc + curr, 0);
     },
     currency_format(n, type = "₹") {
+      if (!n) {
+        n = 0;
+      }
       if (type == "₹") {
-        return parseFloat(n).toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+        return parseFloat(n).toLocaleString("en-IN", {
+          style: "currency",
+          currency: "INR",
+        });
       }
 
-      return parseFloat(n).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+      return parseFloat(n).toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      });
     },
     numberToWords(num) {
       const belowTwenty = [
-        'Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-        'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'
+        "Zero",
+        "One",
+        "Two",
+        "Three",
+        "Four",
+        "Five",
+        "Six",
+        "Seven",
+        "Eight",
+        "Nine",
+        "Ten",
+        "Eleven",
+        "Twelve",
+        "Thirteen",
+        "Fourteen",
+        "Fifteen",
+        "Sixteen",
+        "Seventeen",
+        "Eighteen",
+        "Nineteen",
       ];
       const tens = [
-        '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+        "",
+        "",
+        "Twenty",
+        "Thirty",
+        "Forty",
+        "Fifty",
+        "Sixty",
+        "Seventy",
+        "Eighty",
+        "Ninety",
       ];
-      const thousands = ['', 'Thousand', 'Million', 'Billion'];
+      const thousands = ["", "Thousand", "Million", "Billion"];
 
-      if (num === 0) return 'Zero';
+      if (num === 0) return "Zero";
 
-      let words = '';
+      let words = "";
 
       function helper(n) {
-        if (n === 0) return '';
-        else if (n < 20) return belowTwenty[n] + ' ';
-        else if (n < 100) return tens[Math.floor(n / 10)] + ' ' + helper(n % 10);
-        else return belowTwenty[Math.floor(n / 100)] + ' Hundred ' + helper(n % 100);
+        if (n === 0) return "";
+        else if (n < 20) return belowTwenty[n] + " ";
+        else if (n < 100)
+          return tens[Math.floor(n / 10)] + " " + helper(n % 10);
+        else
+          return (
+            belowTwenty[Math.floor(n / 100)] + " Hundred " + helper(n % 100)
+          );
       }
 
       let i = 0;
       while (num > 0) {
         if (num % 1000 !== 0) {
-          words = helper(num % 1000) + thousands[i] + ' ' + words;
+          words = helper(num % 1000) + thousands[i] + " " + words;
         }
         num = Math.floor(num / 1000);
         i++;
@@ -59,8 +96,11 @@ export default ({ app }, inject) => {
       return `${title} ${first_name} ${last_name}`;
     },
     full_address({ city, state, country }) {
-      const formatValue = (value) => value && value !== "null" ? value : "---";
-      return `${formatValue(city)} ${formatValue(state)} ${formatValue(country)}`;
+      const formatValue = (value) =>
+        value && value !== "null" ? value : "---";
+      return `${formatValue(city)} ${formatValue(state)} ${formatValue(
+        country
+      )}`;
     },
     getRelatedClass(status_id) {
       let status = {
@@ -95,22 +135,35 @@ export default ({ app }, inject) => {
   inject("dateFormat", {
     hm(date) {
       const modifiedDate = new Date(date); // Current date and time
-      const hours = String(modifiedDate.getHours()).padStart(2, '0');
-      const minutes = String(modifiedDate.getMinutes()).padStart(2, '0');
+      const hours = String(modifiedDate.getHours()).padStart(2, "0");
+      const minutes = String(modifiedDate.getMinutes()).padStart(2, "0");
       return `${hours}:${minutes}`;
     },
 
     dmyhm() {
       const date = new Date(); // Current date and time
-      const day = String(date.getDate()).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, "0");
 
       // Get month abbreviation
-      const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      const monthNames = [
+        "JAN",
+        "FEB",
+        "MAR",
+        "APR",
+        "MAY",
+        "JUN",
+        "JUL",
+        "AUG",
+        "SEP",
+        "OCT",
+        "NOV",
+        "DEC",
+      ];
       const month = monthNames[date.getMonth()];
 
       const year = date.getFullYear();
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
       return `${day} ${month} ${year} ${hours}:${minutes}`;
     },
 
@@ -128,7 +181,6 @@ export default ({ app }, inject) => {
       ];
       return daysOfWeek[day];
     },
-
 
     dmy(date) {
       let dateObj = new Date(date);
@@ -434,10 +486,9 @@ export default ({ app }, inject) => {
   };
 
   // Inject the functions into the context as $localStorage
-  inject('localStorage', {
+  inject("localStorage", {
     set: setLocalStorageItem,
     get: getLocalStorageItem,
     remove: removeLocalStorageItem,
   });
-
 };

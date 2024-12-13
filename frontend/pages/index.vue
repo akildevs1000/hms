@@ -365,9 +365,10 @@
           </v-col>
           <v-col cols="12" class="pt-0">
             <v-card :loading="gridLoading" style="min-height: 410px">
-              
               <v-tabs hide-slider right v-model="tab" color="#0d652d">
-                <div class="ma-2"><v-icon @click="refreshRoomList">mdi-reload</v-icon></div>
+                <div class="ma-2">
+                  <v-icon @click="refreshRoomList">mdi-reload</v-icon>
+                </div>
                 <v-spacer></v-spacer>
                 <v-tab style="font-weight: bold">All</v-tab>
                 <v-tab style="font-weight: bold">Occupied</v-tab>
@@ -922,6 +923,10 @@ export default {
       this.room_list();
       this.alert("Success!", message, "success");
       this.checkInDialog = false;
+      this.refreshRoomList();
+      setTimeout(() => {
+        this.refreshRoomList();
+      }, 1000 * 2);
       this.keyTabAll++;
     },
 
