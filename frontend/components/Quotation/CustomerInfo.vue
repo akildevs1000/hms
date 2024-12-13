@@ -245,12 +245,11 @@ export default {
         company_id: this.$auth.user.company.id,
         dob_menu: false,
         dob: null,
-        country: null,
-        state: null,
-        city: null,
+        country: "India",
+        state: "Tamil Nadu",
+        city: "Tanjore",
         zip_code: null,
       },
-      business_sources: [],
       canOverride: false,
     };
   },
@@ -260,24 +259,14 @@ export default {
     if (this.defaultCustomer && this.defaultCustomer.id) {
       this.canOverride = true;
       this.customer = this.defaultCustomer;
-      this.getStates(this.customer.country);
-      this.getCities(this.customer.state);
-
-      if (this.customer.latest_booking) {
-        let latest_booking = this.customer.latest_booking;
-
-        this.booking = {
-          type: latest_booking.type,
-          source: latest_booking.source,
-          purpose: latest_booking.purpose,
-          request: latest_booking.request,
-          reference_no: latest_booking.reference_no,
-          paid_by: latest_booking.paid_by,
-        };
-      }
       this.sourceCompKey += 1;
     }
-    await this.get_business_sources();
+    this.customer.country = "India";
+    this.customer.state = "Tamil Nadu";
+    this.customer.city = "Tanjore";
+
+    this.getStates(this.customer.country);
+    this.getCities(this.customer.state);
   },
   methods: {
     getStates(country) {
@@ -316,15 +305,7 @@ export default {
     handleSource(e) {
       this.booking = e;
     },
-    async get_business_sources() {
-      let config = {
-        params: {
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      let { data } = await this.$axios.get("business-source-list", config);
-      this.business_sources = data;
-    },
+
     nextTab() {
       if (!this.customer.customer_type) {
         this.$swal("Warning", "Select Business Source", "error");

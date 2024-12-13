@@ -47,6 +47,17 @@ class UpdateRequest extends FormRequest
             'remark' => 'nullable',
             'city' => 'nullable',
             'image' => 'nullable',
+
+            'business_source_id' => 'required',
+            'source_id' => 'nullable',
+            'source_type' => 'nullable',
+            'source_name' => 'nullable',
+
+            "room_type_id" => "required",
+
+            "country" => "nullable",
+            "state" => "nullable",
+            "zip_code" => "nullable",
         ];
 
         return $arr;

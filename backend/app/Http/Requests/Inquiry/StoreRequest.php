@@ -35,7 +35,7 @@ class StoreRequest extends FormRequest
             'company_id'      => 'required',
             'customer_type'   => 'nullable',
             'title'      => 'required',
-            'whatsapp'   => 'required',
+            'whatsapp'   => 'nullable',
             'check_in'  => 'nullable',
             'check_out'  => 'nullable',
             'days' => 'nullable',
@@ -49,6 +49,17 @@ class StoreRequest extends FormRequest
             'image' => 'nullable',
 
             'inquiry_type' => 'required',
+
+            'business_source_id' => 'required',
+            'source_id' => 'nullable',
+            'source_type' => 'nullable',
+            'source_name' => 'nullable',
+
+            "room_type_id" => "required",
+
+            "country" => "nullable",
+            "state" => "nullable",
+            "zip_code" => "nullable",
 
         ];
 

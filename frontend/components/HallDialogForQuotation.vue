@@ -8,7 +8,7 @@
       </v-btn>
     </template>
     <v-card>
-      <v-alert flat class="grey lighten-3" dense> Hall Booking</v-alert>
+      <v-alert flat class="grey lighten-3" dense> Hall Booking </v-alert>
       <v-container>
         <v-row>
           <v-col cols="6">
@@ -100,11 +100,10 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                :max="addOneDay(temp.check_in)"
+                @input="addOneDay(temp.check_in)"
                 :min="temp.check_in"
                 v-model="temp.check_out"
                 no-title
-                @input="checkout_date_menu = false"
               ></v-date-picker>
             </v-menu>
           </v-col>
@@ -279,7 +278,7 @@ function formatTime(date) {
 checkoutTime.setHours(today.getHours() + 4);
 
 export default {
-  props: ["label"],
+  props: ["label", "item"],
   data() {
     return {
       additional_charges: {},
@@ -724,7 +723,7 @@ export default {
 
       date.setDate(date.getDate() + 1);
 
-      return date.toISOString().split("T")[0];
+      this.checkin_menu = false;
     },
 
     runAllFunctions() {
@@ -744,6 +743,10 @@ export default {
     },
 
     get_reservation() {
+      if (this.item) {
+        this.reservation.check_in = this.item.check_in;
+        this.reservation.check_out = this.item.check_out;
+      }
       this.temp.room_id = this.reservation.room_id;
       this.temp.room_no = this.reservation.room_no;
       this.temp.room_type = this.reservation.room_type;
