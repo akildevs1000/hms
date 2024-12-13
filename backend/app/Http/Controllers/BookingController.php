@@ -1991,15 +1991,31 @@ class BookingController extends Controller
 
         Transaction::create($arr);
 
+        //collect other room balance amount (Except this modify room) 
+
+        $otherRoomPrice = $request->old["booking"]["total_price"] - $request->old["booking"]["order_rooms_sum_grand_total"];
+
 
         // $sub_total = ($request->old["booking"]["sub_total"] - $request->json["old_total"]) + $request->json["new_total"] + $request->json["discount"] - $request->json["total_extra"];
-        $difference_amount =  ($request->old["booking"]["total_price"]  - $request->json["new_total"]);;
-        $sub_total = abs($request->old["booking"]["sub_total"] - $difference_amount);
-        $total_price = abs($request->old["booking"]["total_price"] - $difference_amount);
-        $balance =  abs($request->old["booking"]["balance"] -  $difference_amount);
-        $remaining_price = abs($request->old["booking"]["remaining_price"] -   $difference_amount);
+        ///////$difference_amount =  ($request->old["booking"]["total_price"]  - $request->json["new_total"]);;
+
+
+
+
+        Logger::channel("custom")->error("new_total : " . $request->json["new_total"]);
+        Logger::channel("custom")->error("order_rooms_sum_grand_total : " .  $request->old["booking"]["order_rooms_sum_grand_total"]);
+
+        $difference_amount =  $request->json["new_total"] - $request->json["booking_total_price"];
+
+        // [2024-12-13 20:46:41] local.ERROR: new_total : 38250  
+        // [2024-12-13 20:46:41] local.ERROR: order_rooms_sum_grand_total : 44396.50  
+
+        $sub_total = abs($request->old["booking"]["sub_total"] + $difference_amount);
+        $total_price = abs($request->old["booking"]["total_price"] + $difference_amount);
+        $balance =  abs($request->old["booking"]["balance"] +  $difference_amount);
+        $remaining_price = abs($request->old["booking"]["remaining_price"] +   $difference_amount);
         $grand_remaining_price = abs($request->old["booking"]["grand_remaining_price"] -  $difference_amount);
-        $after_discount = abs($request->old["booking"]["after_discount"] -  $difference_amount);
+        $after_discount = abs($request->old["booking"]["after_discount"] +  $difference_amount);
 
 
         // $sub_total = ($request->old["booking"]["sub_total"] - $request->json["old_total"]) + $request->json["new_total"]; //+ $request->json["discount"] - $request->json["total_extra"];
