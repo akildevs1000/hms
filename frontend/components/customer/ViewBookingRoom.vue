@@ -145,21 +145,42 @@
                   <tr>
                     <td class="text-left">Add</td>
                     <td class="text-right">
-                      {{
-                        $utils.currency_format(
-                          booking.total_extra / parseInt(totalRooms)
-                        )
-                      }}
+                      <span v-if="totalRooms">
+                        {{
+                          $utils.currency_format(
+                            parseFloat(booking.total_extra || 0) /
+                              parseFloat(totalRooms || 0)
+                          )
+                        }}
+                      </span>
+                      <span v-else>
+                        {{
+                          $utils.currency_format(
+                            parseFloat(booking.total_extra || 0)
+                          )
+                        }}
+                      </span>
                     </td>
                   </tr>
                   <tr>
                     <td class="text-left">Discount</td>
                     <td class="text-right red--text">
-                      -{{
-                        $utils.currency_format(
-                          parseFloat(booking.discount) / parseInt(totalRooms)
-                        )
-                      }}
+                      -
+                      <span v-if="totalRooms">
+                        {{
+                          $utils.currency_format(
+                            parseFloat(booking.discount || 0) /
+                              parseFloat(totalRooms || 0)
+                          )
+                        }}
+                      </span>
+                      <span v-else>
+                        {{
+                          $utils.currency_format(
+                            parseFloat(booking.discount || 0)
+                          )
+                        }}
+                      </span>
                     </td>
                   </tr>
                   <tr>
@@ -242,9 +263,15 @@ export default {
       // return this.$utils.currency_format(total) || "---";
     },
     total() {
-      let add = this.booking.total_extra / parseInt(this.totalRooms);
-      let discount = this.booking.discount / parseInt(this.totalRooms);
-      return this.subTotal + add - discount;
+      let ext = this.booking.total_extra || 0;
+      let dis = this.booking.discount || 0;
+
+      if (this.totalRooms) {
+        ext = ext / (this.totalRooms || 0);
+        dis = dis / (this.totalRooms || 0);
+      }
+
+      return this.subTotal + ext - discount;
     },
   },
   methods: {

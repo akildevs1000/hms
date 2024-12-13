@@ -66,7 +66,8 @@ class OrderRoom extends Model
         "dinner",
 
 
-        "tarrif",
+        "tariff",
+        
         "day",
 
         "base_price",
@@ -117,6 +118,7 @@ class OrderRoom extends Model
             "extra_amount_reason",
 
             "base_price",
+            "tariff"
         ];
     }
 

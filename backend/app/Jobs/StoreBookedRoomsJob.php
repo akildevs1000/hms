@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Log\Logger;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
@@ -52,7 +53,7 @@ class StoreBookedRoomsJob implements ShouldQueue
 
                 $bookedRoomId = BookedRoom::create($room);
 
-                $eachRoomFoodPlanPrice = $bookedRoomId->food_plan_price;
+                // $eachRoomFoodPlanPrice = $bookedRoomId->food_plan_price;
                 $eachRoomBedAmount = $bookedRoomId->bed_amount;
                 $eachRoomEarlyCheckIn = $bookedRoomId->early_check_in;
                 $eachRoomLateCheckOut = $bookedRoomId->late_check_out;
@@ -62,6 +63,8 @@ class StoreBookedRoomsJob implements ShouldQueue
 
                 $singleDayDiscount = ($this->data['room_discount'] / count($priceList) / count($rooms));
                 $singleDayExtraAmount = ($this->data['room_extra_amount'] / count($priceList) / count($rooms));
+                $eachRoomFoodPlanPrice = ($bookedRoomId->food_plan_price / count($priceList) / count($rooms));
+
 
                 foreach ($priceList as $list) {
 

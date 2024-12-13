@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Customer;
+use App\Models\Invoice;
 use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Posting;
@@ -46,6 +47,7 @@ class CleanRecords extends Command
             "payments" => Payment::truncate(),
             "postings" => Posting::truncate(),
             "source" => Source::truncate(),
+             "invoices" => Invoice::truncate(),
         ];
 
         $this->info(json_encode(implode(",", array_keys($arr)), JSON_PRETTY_PRINT));

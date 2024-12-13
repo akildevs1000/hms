@@ -134,11 +134,21 @@
                 <tr>
                   <td class="border-top border-bottom py-1 text-left">Add</td>
                   <td class="border-top border-bottom py-1 text-right">
-                    {{
-                      $utils.currency_format(
-                        parseFloat(booking.room_extra_amount) / totalRooms
-                      )
-                    }}
+                    <span v-if="totalRooms">
+                      {{
+                        $utils.currency_format(
+                          parseFloat(booking.room_extra_amount) /
+                            parseFloat(totalRooms || 0)
+                        )
+                      }}
+                    </span>
+                    <span v-else>
+                      {{
+                        $utils.currency_format(
+                          parseFloat(booking.room_extra_amount || 0)
+                        )
+                      }}
+                    </span>
                   </td>
                 </tr>
                 <tr>
@@ -148,11 +158,22 @@
                   <td
                     class="border-top border-bottom py-1 text-right red--text"
                   >
-                    -{{
-                      $utils.currency_format(
-                        parseFloat(booking.room_discount) / totalRooms
-                      )
-                    }}
+                    -
+                    <span v-if="totalRooms">
+                      {{
+                        $utils.currency_format(
+                          parseFloat(booking.room_discount || 0) /
+                            parseFloat(totalRooms || 0)
+                        )
+                      }}
+                    </span>
+                    <span v-else>
+                      {{
+                        $utils.currency_format(
+                          parseFloat(booking.room_discount || 0)
+                        )
+                      }}
+                    </span>
                   </td>
                 </tr>
               </tbody>
@@ -201,8 +222,13 @@ export default {
       return this.booking.check_in + " 11:00";
     },
     totalPrice() {
-      let ext = this.booking.room_extra_amount / this.totalRooms;
-      let dis = this.booking.room_discount / this.totalRooms;
+      let ext = this.booking.room_extra_amount || 0;
+      let dis = this.booking.room_discount || 0;
+
+      if (this.totalRooms) {
+        ext = ext / (this.totalRooms || 0);
+        dis = dis / (this.totalRooms || 0);
+      }
 
       let price = this.item.price;
       let food_plan_price = this.item.food_plan_price;
