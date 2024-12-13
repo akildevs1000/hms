@@ -767,27 +767,27 @@
 
                       <tr>
                         <td style="width: 50%" class="border-top">
-                          <b>Difference Amount</b>
+                          <b>Due Amount</b>
                         </td>
                         <td style="width: 50%" class="border-top text-right">
                           <b
                             v-if="
-                              parseFloat(json?.booking?.paid_amounts) -
-                                json.new_total >=
+                              json.new_total -
+                                parseFloat(json?.booking?.paid_amounts) >=
                               0
                             "
                           >
                             {{
                               $utils.currency_format(
-                                parseFloat(json?.booking?.paid_amounts) -
-                                  parseFloat(json.new_total)
+                                parseFloat(json.new_total) -
+                                  parseFloat(json?.booking?.paid_amounts)
                               )
                             }}</b
                           ><b v-else class="red--text">
                             {{
                               $utils.currency_format(
-                                parseFloat(json?.booking?.paid_amounts) -
-                                  parseFloat(json.new_total)
+                                parseFloat(json.new_total) -
+                                  parseFloat(json?.booking?.paid_amounts)
                               )
                             }}
 
@@ -798,6 +798,19 @@
                               )
                             }} -->
                           </b>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td style="width: 70%" class="border-top">
+                          <b>Difference from Previous Order</b>
+                        </td>
+                        <td style="width: 30%" class="border-top text-right">
+                          <b>{{
+                            $utils.currency_format(
+                              parseFloat(json.new_total) - balance
+                            )
+                          }}</b>
                         </td>
                       </tr>
                     </table>

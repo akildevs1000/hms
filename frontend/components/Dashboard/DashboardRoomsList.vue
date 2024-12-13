@@ -913,25 +913,46 @@ export default {
     };
   },
   watch: {
+    NewBooking() {
+      this.$emit("call_popup_status", this.NewBooking);
+
+      //this.$emit("call_room_list");
+    },
+    postingDialog() {
+      this.$emit("call_popup_status", this.postingDialog);
+      //this.$emit("call_room_list");
+    },
+    GRCDialog() {
+      this.$emit("call_popup_status", this.GRCDialog);
+      //this.$emit("call_room_list");
+    },
     checkInDialog() {
       this.formTitle = "Check In";
       this.get_data();
       ++this.checkInKey;
       this.checkInDialog ? (this.isIndex = false) : (this.isIndex = true);
+      this.$emit("call_popup_status", this.checkInDialog);
+      // this.$emit("call_room_list");
     },
 
     NewBooking() {
       this.NewBooking ? (this.isIndex = false) : (this.isIndex = true);
+      //this.$emit("call_room_list");
+      this.$emit("call_popup_status", this.NewBooking);
     },
 
     postingDialog() {
       this.formTitle = "Posting";
       this.get_data();
+      //this.$emit("call_room_list");
+      this.$emit("call_popup_status", this.postingDialog);
     },
 
     checkOutDialog() {
       this.formTitle = "Check Out";
       this.get_data();
+      this.$emit("call_popup_status", this.checkOutDialog);
+      //this.$emit("call_room_list");
     },
   },
   created() {
@@ -1544,14 +1565,17 @@ export default {
       this.new_advance = 0;
       this.checkOutDialog = false;
       this.document = null;
+      this.$emit("call_room_list");
     },
 
     closeCheckOut() {
       this.checkOutDialog = false;
+      this.$emit("call_room_list");
     },
 
     closeDialogs(res) {
       this.succuss(res);
+      this.$emit("call_room_list");
     },
 
     closeCheckInAndOpenGRC() {

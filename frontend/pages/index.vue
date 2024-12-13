@@ -391,6 +391,7 @@
                         :filterDate="filterDate"
                         :calenderColorCodes="calenderColorCodes"
                         @call_room_list="refreshRoomList"
+                        @call_popup_status="updatePopupStatus"
                         :todayDate="todayDate"
                       ></DashboardRoomsList
                     ></v-card-text>
@@ -803,6 +804,7 @@ export default {
 
       roomCleaningEventCount: 0,
       todayDate: "",
+      componentPopupOpen: false,
     };
   },
   watch: {
@@ -929,7 +931,7 @@ export default {
       }, 1000);
       setTimeout(() => {
         this.refreshRoomList();
-      }, 1000);
+      }, 1000 * 3);
       this.keyTabAll++;
     },
 
@@ -941,6 +943,11 @@ export default {
     refreshRoomList() {
       this.room_list();
       this.keyTabAll++;
+    },
+    updatePopupStatus(status) {
+      console.log("status", status);
+
+      this.componentPopupOpen = status;
     },
 
     get_next_day() {
