@@ -277,9 +277,7 @@
                                     style="font-size: 11px"
                                   >
                                     {{
-                                      $utils.currency_format(
-                                        booking.sub_total
-                                      )
+                                      $utils.currency_format(booking.sub_total)
                                     }}
                                   </td>
                                 </tr>
@@ -295,7 +293,9 @@
                                     style="font-size: 11px"
                                   >
                                     {{
-                                      $utils.currency_format(booking.total_extra)
+                                      $utils.currency_format(
+                                        booking.total_extra
+                                      )
                                     }}
                                   </td>
                                 </tr>
@@ -1068,11 +1068,15 @@ export default {
   computed: {
     after_discount() {
       return (
-        (parseFloat(this.booking.sub_total) - parseFloat(this.booking.discount)) + parseFloat(this.booking.total_extra)
+        parseFloat(this.booking.sub_total) -
+        parseFloat(this.booking.discount) +
+        parseFloat(this.booking.total_extra)
       );
     },
     total() {
-      return this.after_discount + parseFloat(this.transactionSummary.tot_posting);
+      return (
+        this.after_discount + parseFloat(this.transactionSummary.tot_posting)
+      );
     },
     balance() {
       return this.total - parseFloat(this.booking.paid_amounts);

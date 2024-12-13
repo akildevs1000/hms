@@ -139,7 +139,7 @@
 
                   <v-col cols="12">
                     <v-text-field
-                      readonly
+                      disabled
                       v-model="formattedFoodPlan"
                       label="Food Plan"
                       dense
@@ -393,43 +393,6 @@
                       ></v-date-picker>
                     </v-menu>
                   </v-col>
-
-                  <v-col cols="4">
-                    <v-autocomplete
-                      label="Adult"
-                      :items="[1, 2, 3]"
-                      dense
-                      outlined
-                      v-model="json.no_of_adult"
-                      hide-details
-                      required
-                      @change="getPricesByRoomId(json.room_id)"
-                    ></v-autocomplete>
-                  </v-col>
-                  <v-col cols="4">
-                    <v-autocomplete
-                      label="Child"
-                      :items="[0, 1, 2, 3]"
-                      dense
-                      outlined
-                      v-model="json.no_of_child"
-                      hide-details
-                      required
-                      @change="getPricesByRoomId(json.room_id)"
-                    ></v-autocomplete>
-                  </v-col>
-                  <v-col cols="4">
-                    <v-autocomplete
-                      label="Extra Bed"
-                      :items="[0, 1, 2, 3]"
-                      dense
-                      outlined
-                      v-model="json.extra_bed_qty"
-                      hide-details
-                      required
-                      @change="getPricesByRoomId(json.room_id)"
-                    ></v-autocomplete>
-                  </v-col>
                   <v-col cols="6">
                     <v-autocomplete
                       v-model="json.room_type_id"
@@ -456,9 +419,49 @@
                       :hide-details="true"
                     ></v-autocomplete>
                   </v-col>
-
-                  <v-col cols="12">
+                  <v-col cols="4">
                     <v-autocomplete
+                      disabled
+                      label="Adult"
+                      :items="[1, 2, 3]"
+                      dense
+                      outlined
+                      v-model="json.no_of_adult"
+                      hide-details
+                      required
+                      @change="getPricesByRoomId(json.room_id)"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-autocomplete
+                      disabled
+                      label="Child"
+                      :items="[0, 1, 2, 3]"
+                      dense
+                      outlined
+                      v-model="json.no_of_child"
+                      hide-details
+                      required
+                      @change="getPricesByRoomId(json.room_id)"
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="4">
+                    <v-autocomplete
+                      disabled
+                      label="Extra Bed"
+                      :items="[0, 1, 2, 3]"
+                      dense
+                      outlined
+                      v-model="json.extra_bed_qty"
+                      hide-details
+                      required
+                      @change="getPricesByRoomId(json.room_id)"
+                    ></v-autocomplete>
+                  </v-col>
+
+                  <v-col cols="4">
+                    <v-autocomplete
+                      disabled
                       label="Food Plan"
                       outlined
                       dense
@@ -470,10 +473,11 @@
                       @change="getPricesByRoomId(json.room_id)"
                     ></v-autocomplete>
                   </v-col>
-                  <v-col cols="12">
+                  <v-col cols="8">
                     <v-row justify="center">
                       <v-col cols="6" class="d-flex justify-center">
                         <v-checkbox
+                          disabled
                           label="Early Check In"
                           hide-details
                           dense
@@ -483,6 +487,7 @@
                       </v-col>
                       <v-col cols="6" class="d-flex justify-center">
                         <v-checkbox
+                          disabled
                           label="Late Check Out"
                           hide-details
                           dense
@@ -525,6 +530,11 @@
                         <td style="width: 50%" class="text-right">
                           {{
                             $utils.currency_format(
+                              old?.order_rooms_sum_total_with_tax
+                            )
+                          }}
+                          <!-- {{
+                            $utils.currency_format(
                               parseFloat(
                                 old?.booking?.order_rooms_sum_grand_total
                               ) -
@@ -543,7 +553,7 @@
                                 parseFloat(old?.booking?.total_extra) +
                                 parseFloat(old?.booking?.discount)
                             )
-                          }}
+                          }} -->
                         </td>
                       </tr>
                       <tr>
@@ -551,7 +561,7 @@
                         <td style="width: 50%" class="text-right">
                           {{
                             $utils.currency_format(
-                              old?.booking?.order_rooms_sum_food_plan_price || 0
+                              old?.order_rooms_sum_food_plan_price || 0
                             )
                           }}
                         </td>
@@ -561,7 +571,7 @@
                         <td style="width: 50%" class="text-right">
                           {{
                             $utils.currency_format(
-                              old?.booking?.order_rooms_sum_bed_amount || 0
+                              old?.order_rooms_sum_bed_amount || 0
                             )
                           }}
                         </td>
@@ -571,7 +581,7 @@
                         <td style="width: 50%" class="text-right">
                           {{
                             $utils.currency_format(
-                              old?.booking?.order_rooms_sum_early_check_in || 0
+                              old?.order_rooms_sum_early_check_in || 0
                             )
                           }}
                         </td>
@@ -581,7 +591,7 @@
                         <td style="width: 50%" class="text-right">
                           {{
                             $utils.currency_format(
-                              old?.booking?.order_rooms_sum_late_check_out || 0
+                              old?.order_rooms_sum_late_check_out || 0
                             )
                           }}
                         </td>
@@ -592,7 +602,8 @@
                         <td style="width: 50%" class="text-right">
                           {{
                             $utils.currency_format(
-                              old?.booking?.total_extra || 0
+                              parseFloat(old.booking.total_extra) /
+                                old.booking.booked_rooms.length
                             )
                           }}
                         </td>
@@ -603,16 +614,20 @@
                         </td>
                         <td style="width: 50%" class="red--text text-right">
                           -{{
-                            $utils.currency_format(old?.booking?.discount || 0)
+                            $utils.currency_format(
+                              parseFloat(old.booking.discount) /
+                                old.booking.booked_rooms.length
+                            )
                           }}
                         </td>
                       </tr>
+
                       <tr>
-                        <td style="width: 50%">Old Total</td>
-                        <td style="width: 50%" class="text-right">
+                        <td style="width: 50%" class="border-top">Old Total</td>
+                        <td style="width: 50%" class="border-top text-right">
                           {{
                             $utils.currency_format(
-                              old?.booking?.order_rooms_sum_grand_total || 0
+                              parseFloat(old.order_rooms_sum_grand_total)
                             )
                           }}
                         </td>
@@ -677,6 +692,13 @@
                         <td style="width: 50%">New Add</td>
                         <td style="width: 50%" class="text-right">
                           {{ $utils.currency_format(json?.total_extra || 0) }}
+
+                          <!-- {{
+                            $utils.currency_format(
+                              parseFloat(old.booking.total_extra) /
+                                old.booking.booked_rooms.length
+                            )
+                          }} -->
                         </td>
                       </tr>
                       <tr>
@@ -685,6 +707,13 @@
                         </td>
                         <td style="width: 50%" class="red--text text-right">
                           -{{ $utils.currency_format(json?.discount || 0) }}
+
+                          <!-- -{{
+                            $utils.currency_format(
+                              parseFloat(old.booking.discount) /
+                                old.booking.booked_rooms.length
+                            )
+                          }} -->
                         </td>
                       </tr>
                       <tr>
@@ -709,13 +738,29 @@
                           >
                         </td>
                       </tr> -->
-                      <tr>
+                      <!-- <tr>
                         <td style="width: 50%" class="red--text">
-                          <b>Old Total</b>
+                          <b>Old Room Total</b>
                         </td>
                         <td style="width: 50%" class="text-right red--text">
                           -<b>{{
-                            $utils.currency_format(json?.old_total || 0)
+                            $utils.currency_format(
+                              parseFloat(old.order_rooms_sum_grand_total) +
+                                parseFloat(old.booking.total_extra) /
+                                  old.booking.booked_rooms.length -
+                                parseFloat(old.booking.discount) /
+                                  old.booking.booked_rooms.length
+                            )
+                          }}</b>
+                        </td>
+                      </tr> -->
+                      <tr>
+                        <td style="width: 50%" class="red--text">
+                          <b>Paid Total</b>
+                        </td>
+                        <td style="width: 50%" class="text-right red--text">
+                          -<b>{{
+                            $utils.currency_format(json?.booking?.paid_amounts)
                           }}</b>
                         </td>
                       </tr>
@@ -725,19 +770,34 @@
                           <b>Difference Amount</b>
                         </td>
                         <td style="width: 50%" class="border-top text-right">
-                          <b v-if="json.old_total - json.new_total >= 0">
+                          <b
+                            v-if="
+                              parseFloat(json?.booking?.paid_amounts) -
+                                json.new_total >=
+                              0
+                            "
+                          >
                             {{
                               $utils.currency_format(
-                                json.old_total - json.new_total
+                                parseFloat(json?.booking?.paid_amounts) -
+                                  parseFloat(json.new_total)
                               )
                             }}</b
                           ><b v-else class="red--text">
                             {{
                               $utils.currency_format(
-                                json.old_total - json.new_total
+                                parseFloat(json?.booking?.paid_amounts) -
+                                  parseFloat(json.new_total)
                               )
-                            }}</b
-                          >
+                            }}
+
+                            <!-- {{
+                              $utils.currency_format(
+                                parseFloat(json.old_room_grand_total) -
+                                  parseFloat(json.new_total)
+                              )
+                            }} -->
+                          </b>
                         </td>
                       </tr>
                     </table>
@@ -849,6 +909,7 @@ export default {
 
   computed: {
     after_discount() {
+      //return parseFloat(this.old?.booking?.sub_total || 0);
       return (
         parseFloat(this.old?.booking?.sub_total || 0) -
         parseFloat(this.old?.booking?.discount || 0) +
@@ -858,7 +919,7 @@ export default {
     total() {
       return (
         this.after_discount +
-        parseFloat(this.old?.booking?.total_posting_amount || 0)
+        +parseFloat(this.old?.booking?.total_posting_amount || 0)
       );
     },
     balance() {
@@ -1000,14 +1061,23 @@ export default {
               ? this.additional_charges.late_check_out || 0
               : 0) * total_days;
 
+          // let total_extra =
+          //   this.json.booking.total_extra /
+          //   total_days /
+          //   this.json.booked_room_count;
+
           let total_extra =
-            this.json.booking.total_extra /
-            total_days /
-            this.json.booked_room_count;
+            parseFloat(this.old.booking.total_extra) /
+            this.old.booking.booked_rooms.length;
+
           let discount =
-            this.json.booking.discount /
-            total_days /
-            this.json.booked_room_count;
+            parseFloat(this.old.booking.discount) /
+            this.old.booking.booked_rooms.length;
+
+          // let discount =
+          //   this.json.booking.discount /
+          //   total_days /
+          //   this.json.booked_room_count;
 
           let total_price = data.total_price;
 
@@ -1021,6 +1091,13 @@ export default {
             parseFloat(discount);
 
           let old_total = this.old?.booking?.order_rooms_sum_grand_total;
+          let old_room_grand_total =
+            parseFloat(this.old.order_rooms_sum_grand_total) +
+            parseFloat(this.old.booking.total_extra) /
+              this.old.booking.booked_rooms.length -
+            parseFloat(this.old.booking.discount) /
+              this.old.booking.booked_rooms.length;
+
           let new_total = total;
 
           let balance = this.balance;
@@ -1051,6 +1128,9 @@ export default {
             balance,
             old_total,
             new_total,
+            old_room_grand_total,
+            discount,
+            total_extra,
           };
 
           // this.payload = {
@@ -1161,6 +1241,7 @@ export default {
           check_in: data.checkin_date_only,
           check_out: data.checkout_date_only,
 
+          booked_room_count: data.booked_room_count,
           booked_room_count: data.booked_room_count,
         };
         console.log(

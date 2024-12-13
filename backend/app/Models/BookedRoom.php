@@ -100,7 +100,10 @@ class BookedRoom extends Model
 
         return $attributes;
     }
-
+    public function orderRooms()
+    {
+        return $this->hasMany(OrderRoom::class, "booked_room_id", "id");
+    }
     public function booking()
     {
         return $this->belongsTo(Booking::class)

@@ -1,9 +1,6 @@
 <template>
   <v-dialog v-model="ViewBookingDialog" :max-width="1000">
-    <AssetsIconClose
-      :left="990"
-      @click="ViewBookingDialog = false"
-    />
+    <AssetsIconClose :left="990" @click="ViewBookingDialog = false" />
     <template v-if="!noLabel" v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> View Billing </span>
     </template>
@@ -17,9 +14,7 @@
     <div class="grey lighten-3 pa-2" style="overflow: hidden">
       <v-row>
         <v-col>
-          <v-card
-            :style="`border: 3px solid white; min-height:390px`"
-          >
+          <v-card :style="`border: 3px solid white; min-height:390px`">
             <v-card-text>
               <v-row no-gutter v-if="booking && booking.id">
                 <v-col cols="12" class="pa-0 ma-0">
@@ -104,7 +99,9 @@
                                   <td class="blue--text border-bottom">
                                     <span> Reservation </span>
                                   </td>
-                                  <td class="blue--text border-bottom text-right">
+                                  <td
+                                    class="blue--text border-bottom text-right"
+                                  >
                                     <span>
                                       {{ booking.reservation_no }}
                                     </span>
@@ -988,7 +985,7 @@ export default {
 
     getData() {
       let id = this.BookingId;
-      if(!id) return;
+      if (!id) return;
       this.$axios.get(`booking_customer/${id}`).then(({ data }) => {
         //assign booking
         this.totalPostingAmount = data.totalPostingAmount;

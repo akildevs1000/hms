@@ -926,7 +926,10 @@ export default {
       this.refreshRoomList();
       setTimeout(() => {
         this.refreshRoomList();
-      }, 1000 * 2);
+      }, 1000);
+      setTimeout(() => {
+        this.refreshRoomList();
+      }, 1000);
       this.keyTabAll++;
     },
 

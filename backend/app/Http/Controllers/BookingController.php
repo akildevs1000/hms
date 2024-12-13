@@ -1546,10 +1546,26 @@ class BookingController extends Controller
 
     public function get_booking_for_modify(Request $request)
     {
-        $payload = BookedRoom::with(['booking', 'customer', "room"])
-            ->where("booking_id", $request->booking_id)
-            ->where('company_id', $request->company_id)
+        $payload = BookedRoom::with([
+            'booking.bookedRooms',
+            'customer',
+            'room',
+        ])->withSum('orderRooms', 'total_with_tax')
+            ->withSum('orderRooms', 'base_price')
+            ->withSum('orderRooms', 'grand_total')
+            ->withSum('orderRooms', 'food_plan_price')
+            ->withSum('orderRooms', 'bed_amount')
+            ->withSum('orderRooms', 'early_check_in')
+            ->withSum('orderRooms', 'late_check_out')
+            ->withSum('orderRooms', 'late_check_out')
+            ->withSum('orderRooms', 'late_check_out')
+            ->where('id', $request->id)
             ->first();
+
+
+
+
+
 
         $payload->booked_room_count = BookedRoom::where("booking_id", $request->booking_id)->count() ?? 0;
 
@@ -1911,7 +1927,7 @@ class BookingController extends Controller
             $orderRooms['extra_bed_qty'] = $extra_bed_qty;
             $orderRooms['meal'] = $request->json["meal_name"];
             $orderRooms['food_plan_price'] = $food_plan_price;
-            $orderRooms['bed_amount'] = $bed_amount;
+            $orderRooms['bed_amount'] = round($bed_amount / count($room_orders), 2);
             $orderRooms['early_check_in'] = round($early_check_in / count($room_orders), 2);
             $orderRooms['late_check_out'] = round($late_check_out / count($room_orders), 2);
 
@@ -1976,12 +1992,22 @@ class BookingController extends Controller
         Transaction::create($arr);
 
 
-        $sub_total = ($request->old["booking"]["sub_total"] - $request->json["old_total"]) + $request->json["new_total"];
-        $total_price = ($request->old["booking"]["total_price"] - $request->json["old_total"]) + $request->json["new_total"];
-        $balance = ($request->old["booking"]["balance"] - $request->json["old_total"]) + $request->json["new_total"];
-        $remaining_price = ($request->old["booking"]["remaining_price"] - $request->json["old_total"]) + $request->json["new_total"];
-        $grand_remaining_price = ($request->old["booking"]["grand_remaining_price"] - $request->json["old_total"]) + $request->json["new_total"];
-        $after_discount = ($request->old["booking"]["after_discount"] - $request->json["old_total"]) + $request->json["new_total"];
+        // $sub_total = ($request->old["booking"]["sub_total"] - $request->json["old_total"]) + $request->json["new_total"] + $request->json["discount"] - $request->json["total_extra"];
+        $difference_amount = abs($request->json["old_total"]  + $request->json["new_total"]);;
+        $sub_total = abs($request->old["booking"]["sub_total"] - $difference_amount);
+        $total_price = abs($request->old["booking"]["total_price"] - $difference_amount);
+        $balance =  abs($request->old["booking"]["balance"] -  $difference_amount);
+        $remaining_price = abs($request->old["booking"]["remaining_price"] -   $difference_amount);
+        $grand_remaining_price = abs($request->old["booking"]["grand_remaining_price"] -  $difference_amount);
+        $after_discount = abs($request->old["booking"]["after_discount"] -  $difference_amount);
+
+
+        // $sub_total = ($request->old["booking"]["sub_total"] - $request->json["old_total"]) + $request->json["new_total"]; //+ $request->json["discount"] - $request->json["total_extra"];
+        // $total_price = ($request->old["booking"]["total_price"] - $request->json["old_total"]) + $request->json["new_total"];
+        // $balance = ($request->old["booking"]["balance"] - $request->json["old_total"]) + $request->json["new_total"];
+        // $remaining_price = ($request->old["booking"]["remaining_price"] - $request->json["old_total"]) + $request->json["new_total"];
+        // $grand_remaining_price = ($request->old["booking"]["grand_remaining_price"] - $request->json["old_total"]) + $request->json["new_total"];
+        // $after_discount = ($request->old["booking"]["after_discount"] - $request->json["old_total"]) + $request->json["new_total"];
 
         $bookingPayload = [
             'total_days' => $request->json["total_days"],
@@ -1989,6 +2015,9 @@ class BookingController extends Controller
             'sub_total' => $sub_total,
             'total_price' => $total_price,
             'balance' => $balance,
+
+
+
             'remaining_price' => $remaining_price,
             'grand_remaining_price' => $grand_remaining_price,
             'after_discount' => $after_discount,
