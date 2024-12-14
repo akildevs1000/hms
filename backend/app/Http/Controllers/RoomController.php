@@ -347,8 +347,8 @@ class RoomController extends Controller
                 $query->where('company_id', $company_id);
                 $query->whereDate('check_out', '!=', $todayDate);
                 $query->where('booking_status', 2);
-                $query->whereDate('check_out', ">=", $todayDate);
-                $query->whereDate('check_in', "<=", $todayDate);
+                $query->whereDate('check_out', "> ", $todayDate);
+                $query->whereDate('check_in', "< ", $todayDate);
                 // $query->whereDate('check_in', '<=', $todayDate);
                 // $query->WhereDate('check_out', '>=', $todayDate);
             })
