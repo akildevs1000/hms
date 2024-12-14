@@ -1335,6 +1335,7 @@ export default {
         // this.Occupied = data.checkIn;
 
         this.Occupied = [...data.checkIn, ...data.continueRooms];
+        this.Occupied = [...new Set(this.Occupied)];
 
         this.checkOut = data.checkOut;
         this.confirmedBookingList = data.confirmedBookingList;
