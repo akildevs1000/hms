@@ -800,17 +800,44 @@
                           </b>
                         </td>
                       </tr>
-
                       <tr>
                         <td style="width: 70%" class="border-top">
-                          <b>Difference from Previous Order</b>
+                          <b>Extra Difference This Room</b>
+                        </td>
+                        <td style="width: 30%" class="border-top text-right">
+                          <b v-if="difference >= 0">{{
+                            $utils.currency_format(difference)
+                          }}</b>
+                          <b v-else class="red--text">{{
+                            $utils.currency_format(difference)
+                          }}</b>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="width: 70%" class="border-top">
+                          <b>New Booking Total </b>
                         </td>
                         <td style="width: 30%" class="border-top text-right">
                           <b>{{
                             $utils.currency_format(
-                              parseFloat(json.new_total) - balance
+                              parseFloat(
+                                old.booking.order_rooms_sum_grand_total
+                              ) + difference
                             )
                           }}</b>
+                          <!-- <div>
+                            Same room old Price :
+                            {{ old.order_rooms_sum_grand_total }}
+                          </div>
+                          <div>
+                            Same room New Price :
+                            {{ json.new_total }}
+                          </div>
+
+                          <div>
+                            Old Booking Total :
+                            {{ old.booking.order_rooms_sum_grand_total }}
+                          </div> -->
                         </td>
                       </tr>
                     </table>
@@ -937,6 +964,13 @@ export default {
     },
     balance() {
       return this.total - parseFloat(this.old?.booking?.paid_amounts || 0);
+    },
+    difference() {
+      return (
+        parseFloat(this.json.new_total) -
+        parseFloat(this.old.order_rooms_sum_grand_total)
+      );
+      // return this.total - parseFloat(this.old?.booking?.paid_amounts || 0);
     },
     formattedFoodPlan() {
       return (

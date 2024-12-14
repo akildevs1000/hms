@@ -1562,6 +1562,34 @@ class BookingController extends Controller
             ->where('id', $request->id)
             ->first();
 
+        // $payload = BookedRoom::with([
+        //     'booking.bookedRooms',
+        //     'customer',
+        //     'room',
+        // ])
+        //     ->withSum(['orderRooms as total_with_tax_sum' => function ($query) use ($request) {
+        //         $query->where('booked_room_id', $request->id);
+        //     }], 'total_with_tax')
+        //     ->withSum(['orderRooms as base_price_sum' => function ($query) use ($request) {
+        //         $query->where('booked_room_id', $request->id);
+        //     }], 'base_price')
+        //     ->withSum(['orderRooms as grand_total_sum' => function ($query) use ($request) {
+        //         $query->where('booked_room_id', $request->id);
+        //     }], 'grand_total')
+        //     ->withSum(['orderRooms as food_plan_price_sum' => function ($query) use ($request) {
+        //         $query->where('booked_room_id', $request->id);
+        //     }], 'food_plan_price')
+        //     ->withSum(['orderRooms as bed_amount_sum' => function ($query) use ($request) {
+        //         $query->where('booked_room_id', $request->id);
+        //     }], 'bed_amount')
+        //     ->withSum(['orderRooms as early_check_in_sum' => function ($query) use ($request) {
+        //         $query->where('booked_room_id', $request->id);
+        //     }], 'early_check_in')
+        //     ->withSum(['orderRooms as late_check_out_sum' => function ($query) use ($request) {
+        //         $query->where('booked_room_id', $request->id);
+        //     }], 'late_check_out')
+        //     ->where('id', $request->id)
+        //     ->first();
 
 
 
@@ -1955,7 +1983,7 @@ class BookingController extends Controller
 
         $booking_total_price = $request->json["new_total"];
         // return $arr;
-        Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
+        // Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
         OrderRoom::insert($arr);
 
         unset($arr[0]["tariff"]);
@@ -1964,7 +1992,7 @@ class BookingController extends Controller
         unset($arr[0]["booked_room_id"]);
         unset($arr[0]["date"]);
         unset($arr[0]["price_adjusted_after_dsicount"]);
-        Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
+        // Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
         BookedRoom::where('id', $request->json["booked_room_id"])->update($arr[0]);
         $credit = Transaction::where("booking_id", $request->old["booking_id"])->sum("credit");
 
@@ -1996,25 +2024,21 @@ class BookingController extends Controller
         $otherRoomPrice = $request->old["booking"]["total_price"] - $request->old["booking"]["order_rooms_sum_grand_total"];
 
 
-        // $sub_total = ($request->old["booking"]["sub_total"] - $request->json["old_total"]) + $request->json["new_total"] + $request->json["discount"] - $request->json["total_extra"];
-        ///////$difference_amount =  ($request->old["booking"]["total_price"]  - $request->json["new_total"]);;
 
-
+        Logger::channel("custom")->error("request : " . json_encode($request));
 
 
         Logger::channel("custom")->error("new_total : " . $request->json["new_total"]);
-        Logger::channel("custom")->error("order_rooms_sum_grand_total : " .  $request->old["booking"]["order_rooms_sum_grand_total"]);
+        Logger::channel("custom")->error("Old Grand Total : " .  $request->old["order_rooms_sum_grand_total"]);
 
-        $difference_amount =  $request->json["new_total"] - $request->json["booking_total_price"];
-
-        // [2024-12-13 20:46:41] local.ERROR: new_total : 38250  
-        // [2024-12-13 20:46:41] local.ERROR: order_rooms_sum_grand_total : 44396.50  
+        $difference_amount =  $request->json["new_total"] - $request->old["order_rooms_sum_grand_total"];
+        // Logger::channel("custom")->error("difference_amount : " .  $difference_amount);
 
         $sub_total = abs($request->old["booking"]["sub_total"] + $difference_amount);
         $total_price = abs($request->old["booking"]["total_price"] + $difference_amount);
         $balance =  abs($request->old["booking"]["balance"] +  $difference_amount);
         $remaining_price = abs($request->old["booking"]["remaining_price"] +   $difference_amount);
-        $grand_remaining_price = abs($request->old["booking"]["grand_remaining_price"] -  $difference_amount);
+        $grand_remaining_price = abs($request->old["booking"]["grand_remaining_price"] +  $difference_amount);
         $after_discount = abs($request->old["booking"]["after_discount"] +  $difference_amount);
 
 
