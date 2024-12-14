@@ -347,7 +347,8 @@ class RoomController extends Controller
                 $query->where('company_id', $company_id);
                 $query->whereDate('check_out', '!=', $todayDate);
                 $query->where('booking_status', 2);
-
+                $query->whereDate('check_out', ">=", $todayDate);
+                $query->whereDate('check_in', "<=", $todayDate);
                 // $query->whereDate('check_in', '<=', $todayDate);
                 // $query->WhereDate('check_out', '>=', $todayDate);
             })
@@ -356,7 +357,8 @@ class RoomController extends Controller
             ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
                 $q->with("customer");
                 $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $todayDate);
+                $q->whereDate('check_out', ">=", $todayDate);
+                $q->whereDate('check_in', "<=", $todayDate);
                 $q->where("booking_status", ">", 0);
             }])
             ->get();
