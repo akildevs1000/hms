@@ -157,52 +157,11 @@
                                             @endphp
                                             @foreach ($orderRooms as $room)
                                             @php
-                                            $subtotal_price += $room->inv_room_listing_price;
-                                            $subtotal_sgst += $room->inv_room_sgst;
-                                            $subtotal_cgst += $room->inv_room_cgst;
+                                            $subtotal_price += $room->price;
+                                            $subtotal_sgst += $room->sgst;
+                                            $subtotal_cgst += $room->cgst;
 
-                                            $subtotal_total += $room->inv_room_listing_price + $room->inv_room_sgst + $room->inv_room_cgst;
-
-                                            @endphp
-                                            <tr class="inv-tr-txt">
-                                                <td>
-                                                    {{ date('d M Y', strtotime($room->date)) }}
-
-
-                                                </td>
-                                                <td>
-                                                    {{ $room->room_no }} ({{ $room->room_type }})
-                                                </td>
-                                                <td>
-                                                    {{ $room->no_of_adult + $room->no_of_child }}(pax)
-                                                </td>
-
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_listing_price, 2) }}
-                                                </td>
-
-
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_sgst, 2) }}
-                                                </td>
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_cgst, 2) }}
-                                                </td>
-
-
-                                                <td class="  tm_text_right">
-                                                    {{ number_format(($room->inv_room_listing_price + $room->inv_room_sgst + $room->inv_room_cgst),2) }}
-                                                </td>
-                                            </tr>
-
-                                            @if ($room->miscellaneous_total>0)
-
-                                            @php
-                                            $subtotal_price += $room->miscellaneous_total_without_tax;
-                                            $subtotal_sgst += $room->miscellaneous_tax/2;
-                                            $subtotal_cgst += $room->miscellaneous_tax/2;
-
-                                            $subtotal_total += $room->miscellaneous_total_without_tax + $room->miscellaneous_tax;
+                                            $subtotal_total += $room->price + $room->room_tax;
 
                                             @endphp
                                             <tr class="inv-tr-txt">
@@ -215,27 +174,28 @@
                                                     {{ $room->room_no }} ({{ $room->room_type }})
                                                 </td>
                                                 <td>
-                                                    Misc...
+                                                    {{ $room->no_of_adult + $room->no_of_child }}
                                                 </td>
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_total_without_tax, 2) }}
-                                                </td>
-
-
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_tax/2, 2) }}
-                                                </td>
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_tax/2, 2) }}
+                                                    {{ number_format($room->price, 2) }}
                                                 </td>
 
 
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_total, 2) }}
+                                                    {{ number_format($room->sgst, 2) }}
+                                                </td>
+                                                <td class="  tm_text_right">
+                                                    {{ number_format($room->cgst, 2) }}
+                                                </td>
+
+                                                {{-- <td class="  tm_text_right">
+                                                    {{ number_format(($room->food_plan_price + $room->bed_amount + $room->early_check_in + $room->late_check_out),2) }}
+                                                </td> --}}
+                                                <td class="  tm_text_right">
+                                                    {{ number_format($room->price + $room->room_tax, 2) }}
                                                 </td>
                                             </tr>
-                                            @endif
                                             @endforeach
 
                                             @php

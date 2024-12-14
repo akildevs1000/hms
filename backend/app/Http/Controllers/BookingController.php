@@ -8,6 +8,7 @@ use App\Jobs\StoreBookedRoomsJob;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
+use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Food;
 use App\Models\HallBookings;
@@ -1849,6 +1850,9 @@ class BookingController extends Controller
 
         $booking_total_price = 0;
 
+        $company_food_tax = Company::whereId($company_id)->pluck('food_tax')->first();
+
+
         // Booking::where("id",$booking_id)->delete();
         OrderRoom::where('booking_id', $request->old["booking_id"])->where("booked_room_id", $request->json["booked_room_id"])->delete();
 
@@ -1896,7 +1900,10 @@ class BookingController extends Controller
 
             $orderRooms['total'] = $total;
             $orderRooms['grand_total'] = $total;
-            $BookingObj = new BookingController();
+
+
+
+            /* $BookingObj = new BookingController();
             $room_tax =   $BookingObj->getTaxSlab(($total), $company_id);
             $roomBasePrice = ($total * 100) / (100 + $room_tax);
             $roomGSTAmount = $total - $roomBasePrice;
@@ -1921,18 +1928,22 @@ class BookingController extends Controller
                 $orderRooms['room_tax'] = round($roomGSTAmount, 2);
             }
 
+            $orderRooms['base_price'] = $roomBasePrice
+                - $orderRooms['bed_amount']
+                - $orderRooms['food_plan_price']
+                - $orderRooms['early_check_in']
+                - $orderRooms['late_check_out']
+
+                - $singleDayExtraAmount
+                + $singleDayDiscount;
+
+*/
 
 
 
 
 
 
-            // $orderRooms['base_price'] = $orderRooms['price'];
-            // -$orderRooms['bed_amount']
-            //     - $orderRooms['food_plan_price']
-            //     - $orderRooms['early_check_in']
-            //     - $orderRooms['late_check_out']
-            //     - $orderRooms['late_check_out'];
 
             $orderRooms['booked_room_id'] = $request->json["booked_room_id"];
             $orderRooms['company_id'] = $company_id;
@@ -1968,14 +1979,65 @@ class BookingController extends Controller
             $orderRooms['updated_at'] = date("Y-m-d H:i:s");
             // return [$roomBasePrice - $orderRooms['bed_amount'], $roomBasePrice, $orderRooms['bed_amount']];
 
-            $orderRooms['base_price'] = $roomBasePrice
-                - $orderRooms['bed_amount']
-                - $orderRooms['food_plan_price']
-                - $orderRooms['early_check_in']
-                - $orderRooms['late_check_out']
 
-                - $singleDayExtraAmount
-                + $singleDayDiscount;
+
+
+
+            //calculate inv room price-------START----------------------------------------------- 
+            $orderRooms['single_day_extra_amount'] = $singleDayExtraAmount; //new
+            $orderRooms['single_day_discount'] = $singleDayDiscount; //new
+
+
+
+            //room price with regular calculation 
+            //divide room price with tax calculation
+            $total = ($total - $singleDayDiscount) + $singleDayExtraAmount;
+            $result = $this->divideTaxPrice($orderRooms['price'], $total, $company_id);
+            $room_price_without_tax = $result[0];
+            $room_tax = $result[1];
+            $orderRooms['price'] = $room_price_without_tax;
+            $orderRooms['cgst'] = $room_tax  / 2;
+            $orderRooms['sgst'] = $room_tax  / 2;
+            $orderRooms['room_tax'] = $room_tax;
+
+
+
+            //recalculate price and miscellaneous and tax------------------------------------------------
+            $miscellaneous_total_with_tax =   $orderRooms['bed_amount']
+                + $orderRooms['food_plan_price']
+                + $orderRooms['early_check_in']
+                + $orderRooms['late_check_out']
+                + $orderRooms['single_day_extra_amount']
+                - $orderRooms['single_day_discount'];
+
+            $orderRooms['base_price'] = $room_price_without_tax - $miscellaneous_total_with_tax;
+
+
+            //divide room price with tax calculation
+            $room_price_with_tax = $orderRooms['total'] - $miscellaneous_total_with_tax;
+            $result = $this->divideTaxPrice($room_price_with_tax, $room_price_with_tax, $company_id);
+            $room_price_without_tax = $result[0];
+            $room_tax = $result[1];
+            $orderRooms['inv_room_listing_price'] = $room_price_without_tax;
+            $orderRooms['inv_room_cgst'] = round($room_tax  / 2, 2);
+            $orderRooms['inv_room_sgst'] = round($room_tax  / 2, 2);
+            //$orderRooms['room_tax'] = $room_tax;
+
+
+            // $orderRooms['base_price'] = $room_price_without_tax;
+
+
+            //divide miscellaneous and tax 
+            $miscellaneous_total_without_tax = ($miscellaneous_total_with_tax * 100) / (100 + $company_food_tax);
+            $miscellaneous_tax = $miscellaneous_total_with_tax - $miscellaneous_total_without_tax;
+            $orderRooms['miscellaneous_total'] = $miscellaneous_total_with_tax; //new 
+            $orderRooms['miscellaneous_total_without_tax'] = $miscellaneous_total_without_tax; //new 
+            $orderRooms['miscellaneous_tax'] = $miscellaneous_tax; //new 
+
+
+            //-----------------------END 
+
+
 
             $arr[] = $orderRooms;
         }
@@ -1993,6 +2055,25 @@ class BookingController extends Controller
         unset($arr[0]["booked_room_id"]);
         unset($arr[0]["date"]);
         unset($arr[0]["price_adjusted_after_dsicount"]);
+
+
+
+        unset($arr[0]["inv_room_listing_price"]);
+        unset($arr[0]["inv_room_cgst"]);
+        unset($arr[0]["inv_room_sgst"]);
+        unset($arr[0]["miscellaneous_total"]);
+        unset($arr[0]["miscellaneous_total_without_tax"]);
+        unset($arr[0]["miscellaneous_tax"]);
+        unset($arr[0]["single_day_extra_amount"]);
+        unset($arr[0]["single_day_discount"]);
+
+
+
+
+
+
+
+
         // Logger::channel("custom")->error("arr : " . json_encode($arr[0]));
         BookedRoom::where('id', $request->json["booked_room_id"])->update($arr[0]);
         $credit = Transaction::where("booking_id", $request->old["booking_id"])->sum("credit");
@@ -2073,6 +2154,31 @@ class BookingController extends Controller
     }
 
 
+    public function  divideTaxPrice($slabtotal, $total, $company_id)
+    {
+        $BookingObj = new BookingController();
+        $room_tax =   $BookingObj->getTaxSlab(($slabtotal), $company_id);
+        $roomBasePrice = ($total * 100) / (100 + $room_tax);
+        $roomGSTAmount = $total - $roomBasePrice;
+        // $orderRooms['price'] = $roomBasePrice;
+        // $orderRooms['cgst'] = $roomGSTAmount / 2;
+        // $orderRooms['sgst'] = $roomGSTAmount / 2;
+        // $orderRooms['room_tax'] = $roomGSTAmount;
+
+        $room_tax_new =   $BookingObj->getTaxSlab(($roomBasePrice), $company_id);
+
+        if ($room_tax_new != $room_tax) {
+            $room_tax =   $BookingObj->getTaxSlab(($roomBasePrice), $company_id);
+            $roomBasePrice = ($total * 100) / (100 + $room_tax);
+            $roomGSTAmount = $total - $roomBasePrice;
+            // $orderRooms['price'] = $roomBasePrice;
+            // $orderRooms['cgst'] = $roomGSTAmount / 2;
+            // $orderRooms['sgst'] = $roomGSTAmount / 2;
+            // $orderRooms['room_tax'] = $roomGSTAmount;
+        }
+
+        return [$roomBasePrice, $roomGSTAmount];
+    }
 
     public function reservationList(Request $request)
     {

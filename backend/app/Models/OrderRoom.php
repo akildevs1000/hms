@@ -70,6 +70,17 @@ class OrderRoom extends Model
         "day",
         "base_price",
 
+        "miscellaneous_total",
+        "miscellaneous_total_without_tax",
+        "miscellaneous_tax",
+        "single_day_extra_amount",
+        "single_day_discount",
+        "inv_room_listing_price",
+        "inv_room_cgst",
+        "inv_room_sgst",
+
+
+
     ];
 
     /**

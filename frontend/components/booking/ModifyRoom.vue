@@ -840,9 +840,8 @@
                         <td style="width: 30%" class="border-top text-right">
                           <b>{{
                             $utils.currency_format(
-                              parseFloat(
-                                old.booking.order_rooms_sum_grand_total
-                              ) + difference
+                              parseFloat(old.booking.grand_remaining_price) +
+                                difference
                             )
                           }}</b>
 

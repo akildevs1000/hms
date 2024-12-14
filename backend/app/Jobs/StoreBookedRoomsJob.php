@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Http\Controllers\BookingController;
 use App\Models\BookedRoom;
+use App\Models\Company;
 use App\Models\OrderRoom;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -41,6 +42,9 @@ class StoreBookedRoomsJob implements ShouldQueue
     public function handle()
     {
         try {
+
+
+            $company_food_tax = Company::whereId($this->data['company_id'])->pluck('food_tax')->first();
             $rooms = $this->data['selectedRooms'];
 
             foreach ($rooms as $room) {
@@ -113,8 +117,62 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['total'] = $list['total_price'];
                     $orderRooms['grand_total'] = $list['total_price'];
 
+                    $orderRooms['single_day_extra_amount'] = $singleDayExtraAmount; //new
+                    $orderRooms['single_day_discount'] = $singleDayDiscount; //new
 
-                    // recalculate
+
+
+                    //room price with regular calculation 
+                    //divide room price with tax calculation
+                    $total = ($list['total_price'] - $singleDayDiscount) + $singleDayExtraAmount;
+                    $result = $this->divideTaxPrice($orderRooms['price'], $total, $bookedRoomId->company_id);
+                    $room_price_without_tax = $result[0];
+                    $room_tax = $result[1];
+                    $orderRooms['price'] = $room_price_without_tax;
+                    $orderRooms['cgst'] = $room_tax  / 2;
+                    $orderRooms['sgst'] = $room_tax  / 2;
+                    $orderRooms['room_tax'] = $room_tax;
+
+
+
+                    //recalculate price and miscellaneous and tax------------------------------------------------
+                    $miscellaneous_total_with_tax =   $orderRooms['bed_amount']
+                        + $orderRooms['food_plan_price']
+                        + $orderRooms['early_check_in']
+                        + $orderRooms['late_check_out']
+                        + $orderRooms['single_day_extra_amount']
+                        - $orderRooms['single_day_discount'];
+
+                    $orderRooms['base_price'] = $room_price_without_tax - $miscellaneous_total_with_tax;
+
+
+                    //divide room price with tax calculation
+                    $room_price_with_tax = $orderRooms['total'] - $miscellaneous_total_with_tax;
+                    $result = $this->divideTaxPrice($room_price_with_tax, $room_price_with_tax, $bookedRoomId->company_id);
+                    $room_price_without_tax = $result[0];
+                    $room_tax = $result[1];
+                    $orderRooms['inv_room_listing_price'] = $room_price_without_tax;
+                    $orderRooms['inv_room_cgst'] = round($room_tax  / 2, 2);
+                    $orderRooms['inv_room_sgst'] = round($room_tax  / 2, 2);
+                    //$orderRooms['room_tax'] = $room_tax;
+
+
+                    // $orderRooms['base_price'] = $room_price_without_tax;
+
+
+                    //divide miscellaneous and tax 
+                    $miscellaneous_total_without_tax = ($miscellaneous_total_with_tax * 100) / (100 + $company_food_tax);
+                    $miscellaneous_tax = $miscellaneous_total_with_tax - $miscellaneous_total_without_tax;
+                    $orderRooms['miscellaneous_total'] = $miscellaneous_total_with_tax; //new 
+                    $orderRooms['miscellaneous_total_without_tax'] = $miscellaneous_total_without_tax; //new 
+                    $orderRooms['miscellaneous_tax'] = $miscellaneous_tax; //new 
+
+
+
+
+
+                    // recalculate 1-OLD without miscellaneous
+                    /*
                     $total = ($list['total_price'] - $singleDayDiscount) + $singleDayExtraAmount;
                     $BookingObj = new BookingController();
                     $room_tax =   $BookingObj->getTaxSlab(($orderRooms['price']), $bookedRoomId->company_id);
@@ -137,17 +195,6 @@ class StoreBookedRoomsJob implements ShouldQueue
                         $orderRooms['room_tax'] = $roomGSTAmount;
                     }
 
-
-                    // parseFloat(item.price) -
-                    // parseFloat(item.bed_amount) -
-                    // parseFloat(item.food_plan_price) -
-                    // parseFloat(item.early_check_in) -
-                    // parseFloat(item.late_check_out) -
-                    // parseFloat(booking.total_extra) +
-                    // parseFloat(booking.discount)
-
-
-
                     $orderRooms['base_price'] =
                         $orderRooms['price']
                         - $orderRooms['bed_amount']
@@ -156,6 +203,8 @@ class StoreBookedRoomsJob implements ShouldQueue
                         - $orderRooms['late_check_out']
                         - $singleDayExtraAmount
                         + $singleDayDiscount;
+
+                        */
 
                     OrderRoom::create($orderRooms);
                 }
@@ -167,5 +216,30 @@ class StoreBookedRoomsJob implements ShouldQueue
             // use Illuminate\Support\Facades\Log as Logger;
 
         }
+    }
+    public function  divideTaxPrice($slabtotal, $total, $company_id)
+    {
+        $BookingObj = new BookingController();
+        $room_tax =   $BookingObj->getTaxSlab(($slabtotal), $company_id);
+        $roomBasePrice = ($total * 100) / (100 + $room_tax);
+        $roomGSTAmount = $total - $roomBasePrice;
+        // $orderRooms['price'] = $roomBasePrice;
+        // $orderRooms['cgst'] = $roomGSTAmount / 2;
+        // $orderRooms['sgst'] = $roomGSTAmount / 2;
+        // $orderRooms['room_tax'] = $roomGSTAmount;
+
+        $room_tax_new =   $BookingObj->getTaxSlab(($roomBasePrice), $company_id);
+
+        if ($room_tax_new != $room_tax) {
+            $room_tax =   $BookingObj->getTaxSlab(($roomBasePrice), $company_id);
+            $roomBasePrice = ($total * 100) / (100 + $room_tax);
+            $roomGSTAmount = $total - $roomBasePrice;
+            // $orderRooms['price'] = $roomBasePrice;
+            // $orderRooms['cgst'] = $roomGSTAmount / 2;
+            // $orderRooms['sgst'] = $roomGSTAmount / 2;
+            // $orderRooms['room_tax'] = $roomGSTAmount;
+        }
+
+        return [$roomBasePrice, $roomGSTAmount];
     }
 }

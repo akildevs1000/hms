@@ -251,6 +251,9 @@ class Controller extends BaseController
 
 
         if ($found) {
+
+
+            $room_type = $fields['room_type'] ?? '';
             $subject = $found->name;
 
             $body = str_replace(
@@ -260,7 +263,7 @@ class Controller extends BaseController
                     $fields['full_name'],
                     date('d-M-y', strtotime($fields['check_in'])),
                     date('d-M-y', strtotime($fields['check_out'])),
-                    $fields['rooms_type']
+                    $room_type
                 ],
                 $found->body
             );
@@ -271,7 +274,7 @@ class Controller extends BaseController
                 . "Your booking is confirmed: ✅"
                 . PHP_EOL . "From: 🗓️ " . date('d-M-y', strtotime($fields['check_in']))
                 . PHP_EOL . "To: 🗓️ " . date('d-M-y', strtotime($fields['check_out']))
-                . PHP_EOL . "Room Type: 🛏️ {$fields['rooms_type']}"
+                . PHP_EOL . "Room Type: 🛏️ {$room_type}"
                 . PHP_EOL . PHP_EOL
                 . "Thank you for choosing us! 🙏";
 

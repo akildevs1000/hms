@@ -92,9 +92,16 @@
               <table class="simple-table">
                 <tbody>
                   <tr>
-                    <td class="text-left">Room Price</td>
+                    <td class="text-left">Room Price(With Tax)</td>
                     <td class="text-right">
-                      {{ $utils.currency_format(parseFloat(item.base_price)) }}
+                      <!-- {{ $utils.currency_format(parseFloat(item.base_price)) }} -->
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.inv_room_listing_price) +
+                            parseFloat(item.inv_room_sgst) +
+                            parseFloat(item.inv_room_cgst)
+                        )
+                      }}
                     </td>
                   </tr>
 
@@ -177,16 +184,36 @@
                       </span>
                     </td>
                   </tr>
+                  <!-- <tr>
+                    <td class="text-left"><b>Room SGST</b></td>
+                    <td class="text-right">
+                      <b>{{
+                        $utils.currency_format(
+                          parseFloat(item.inv_room_sgst || 0)
+                        )
+                      }}</b>
+                    </td>
+                  </tr>
                   <tr>
+                    <td class="text-left"><b>Room CGST</b></td>
+                    <td class="text-right">
+                      <b>{{
+                        $utils.currency_format(
+                          parseFloat(item.inv_room_cgst || 0)
+                        )
+                      }}</b>
+                    </td>
+                  </tr> -->
+                  <!-- <tr>
                     <td class="text-left border-top"><b>Sub Total</b></td>
                     <td class="text-right border-top">
                       <b>{{
                         $utils.currency_format(parseFloat(item.price || 0))
                       }}</b>
                     </td>
-                  </tr>
+                  </tr> 
                   <tr>
-                    <td class="text-left"><b>SGST</b></td>
+                    <td class="text-left"><b>  SGST</b></td>
                     <td class="text-right">
                       <b>{{
                         $utils.currency_format(parseFloat(item.sgst || 0))
@@ -194,12 +221,30 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-left"><b>CGST</b></td>
+                    <td class="text-left"><b>  CGST</b></td>
                     <td class="text-right">
                       <b>{{
                         $utils.currency_format(parseFloat(item.cgst || 0))
                       }}</b>
                     </td>
+                  </tr>-->
+                  <tr>
+                    <td class="border-top">
+                      Note: Room Tax:
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.inv_room_sgst || 0) +
+                            parseFloat(item.inv_room_cgst || 0)
+                        )
+                      }}<br />
+                      Note: Misc Tax:
+                      {{
+                        $utils.currency_format(
+                          parseFloat(item.miscellaneous_tax || 0)
+                        )
+                      }}
+                    </td>
+                    <td class="border-top"></td>
                   </tr>
                 </tbody>
               </table>
@@ -276,7 +321,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<!-- <style scoped>
 .simple-table {
   width: 100%;
   border-collapse: collapse;
@@ -293,4 +338,4 @@ export default {
 .text-sm {
   font-size: 14px;
 }
-</style>
+</style> -->
