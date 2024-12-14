@@ -1819,6 +1819,7 @@ class BookingController extends Controller
         $old = $request->old;
         $roomObject = $request->roomObject;
 
+        Logger::channel("custom")->error("singleDayAdditionalAmount: json " . json_encode($request->json));
 
 
         $check_in = $request->json["check_in"]  . " 12:00";

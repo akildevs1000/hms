@@ -9,10 +9,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Log\Logger;
+
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log as Logger;
+
+
 
 class StoreBookedRoomsJob implements ShouldQueue
 {
@@ -63,7 +65,15 @@ class StoreBookedRoomsJob implements ShouldQueue
 
                 $singleDayDiscount = ($this->data['room_discount'] / count($priceList) / count($rooms));
                 $singleDayExtraAmount = ($this->data['room_extra_amount'] / count($priceList) / count($rooms));
-                $eachRoomFoodPlanPrice = ($bookedRoomId->food_plan_price / count($priceList) / count($rooms));
+                $eachRoomFoodPlanPrice = $bookedRoomId->food_plan_price; // ($bookedRoomId->food_plan_price / count($priceList) / count($rooms));
+
+
+                Logger::channel("custom")->error("food_plan_price: " . $bookedRoomId->food_plan_price);
+                Logger::channel("custom")->error("count priceList: " . count($priceList));
+                Logger::channel("custom")->error("count rooms: " . count($rooms));
+                Logger::channel("custom")->error("eachRoomFoodPlanPrice: " . $eachRoomFoodPlanPrice);
+
+
 
 
                 foreach ($priceList as $list) {
@@ -92,7 +102,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['room_tax'] = $room['room_tax'];
 
 
-                    $orderRooms['food_plan_price'] = $eachRoomFoodPlanPrice;
+                    $orderRooms['food_plan_price'] = $eachRoomFoodPlanPrice; // * ($room['no_of_adult'] + $room['no_of_child'] / 2);
                     $orderRooms['bed_amount'] = $eachRoomBedAmount;
                     $orderRooms['early_check_in'] = $eachRoomEarlyCheckIn;
                     $orderRooms['late_check_out'] = $eachRoomLateCheckOut;
@@ -151,7 +161,11 @@ class StoreBookedRoomsJob implements ShouldQueue
                 }
             }
         } catch (\Exception $e) {
-            Log::alert(json_encode($e->getMessage()));
+            // Log::alert(json_encode($e->getMessage()));
+            Logger::channel("custom")->error("New Booking Job: " . json_encode($e->getMessage()));
+
+            // use Illuminate\Support\Facades\Log as Logger;
+
         }
     }
 }

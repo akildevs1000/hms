@@ -717,16 +717,29 @@
                         </td>
                       </tr>
                       <tr>
-                        <td style="width: 50%" class="border-top">
+                        <td style="width: 50%" class="border-top border-bottom">
                           <b>New Total</b>
                         </td>
-                        <td style="width: 50%" class="border-top text-right">
+                        <td
+                          style="width: 50%"
+                          class="border-top border-bottom text-right"
+                        >
                           <b>
                             {{
                               $utils.currency_format(json?.new_total || 0)
                             }}</b
                           >
                         </td>
+                      </tr>
+                      <tr>
+                        <td
+                          style="width: 50%"
+                          class="border-top border-bottom"
+                        ></td>
+                        <td
+                          style="width: 50%"
+                          class="border-top border-bottom text-right"
+                        ></td>
                       </tr>
                       <!-- <tr>
                         <td style="width: 50%" class="border-top">
@@ -754,7 +767,7 @@
                           }}</b>
                         </td>
                       </tr> -->
-                      <tr>
+                      <!-- <tr>
                         <td style="width: 50%" class="red--text">
                           <b>Paid Total</b>
                         </td>
@@ -763,9 +776,21 @@
                             $utils.currency_format(json?.booking?.paid_amounts)
                           }}</b>
                         </td>
+                      </tr> -->
+                      <tr>
+                        <td style="width: 50%" class="red--text">
+                          <b>Previous Booking Balance</b>
+                        </td>
+                        <td style="width: 50%" class="text-right">
+                          <b>{{
+                            $utils.currency_format(
+                              old.booking.grand_remaining_price
+                            )
+                          }}</b>
+                        </td>
                       </tr>
 
-                      <tr>
+                      <!-- <tr>
                         <td style="width: 50%" class="border-top">
                           <b>Due Amount</b>
                         </td>
@@ -791,15 +816,10 @@
                               )
                             }}
 
-                            <!-- {{
-                              $utils.currency_format(
-                                parseFloat(json.old_room_grand_total) -
-                                  parseFloat(json.new_total)
-                              )
-                            }} -->
+                             
                           </b>
                         </td>
-                      </tr>
+                      </tr> -->
                       <tr>
                         <td style="width: 70%" class="border-top">
                           <b>Extra Difference This Room</b>
@@ -815,7 +835,7 @@
                       </tr>
                       <tr>
                         <td style="width: 70%" class="border-top">
-                          <b>New Booking Total </b>
+                          <b>Final Booking Total Due </b>
                         </td>
                         <td style="width: 30%" class="border-top text-right">
                           <b>{{
@@ -825,6 +845,7 @@
                               ) + difference
                             )
                           }}</b>
+
                           <!-- <div>
                             Same room old Price :
                             {{ old.order_rooms_sum_grand_total }}
@@ -1156,8 +1177,10 @@ export default {
             total_days,
             ...selected_food_plan,
             room_type_id: data.room.room_type_id,
+            room_type_id: data.room.room_type_id,
+
             room_id: data.room.id,
-            room_no: found.room_no,
+            room_type: found.room_type.name,
 
             total_price,
             food_plan_price_for_all_days,
