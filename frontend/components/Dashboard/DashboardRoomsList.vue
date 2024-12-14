@@ -1332,7 +1332,10 @@ export default {
         this.waitingBooking = data.waitingBooking;
         this.expectCheckIn = data.expectCheckIn;
         this.expectCheckOut = data.expectCheckOut;
-        this.Occupied = data.checkIn;
+        // this.Occupied = data.checkIn;
+
+        this.Occupied = [...data.checkIn, ...data.continueRooms];
+
         this.checkOut = data.checkOut;
         this.confirmedBookingList = data.confirmedBookingList;
         this.dirtyRoomsList = data.dirtyRoomsList;
@@ -1343,8 +1346,16 @@ export default {
         let data3 = data.checkIn.map((e) => e.room_no);
         let data4 = data.blockedRooms.map((e) => e.room_no);
         let data5 = data.dirtyRoomsList.map((e) => e.room_no);
+        let data6 = data.continueRooms.map((e) => e.room_no);
 
-        let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
+        let allRoomNumbers = [
+          ...data1,
+          ...data2,
+          ...data3,
+          ...data4,
+          ...data5,
+          ...data6,
+        ];
         let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
         this.availableRooms = data.availableRooms.filter(
           (e) => !uniqueRoomNumbers.includes(e.room_no)
@@ -1400,7 +1411,9 @@ export default {
           let data3 = data.checkIn.map((e) => e.room_no);
           let data4 = data.blockedRooms.map((e) => e.room_no);
           let data5 = data.dirtyRoomsList.map((e) => e.room_no);
-          let data6 = data.bookedRooms.map((e) => e.room_no);
+          //let data6 = data.bookedRooms.map((e) => e.room_no);
+
+          let data6 = data.continueRooms.map((e) => e.room_no);
 
           let allRoomNumbers = [
             ...data1,
@@ -1408,6 +1421,7 @@ export default {
             ...data3,
             ...data4,
             ...data5,
+            ...data6,
           ];
 
           //console.log("data6 allRoomNumbers", allRoomNumbers);
