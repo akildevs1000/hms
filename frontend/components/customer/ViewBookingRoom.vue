@@ -98,6 +98,7 @@
                       {{
                         $utils.currency_format(
                           parseFloat(item.inv_room_listing_price) +
+                            parseFloat(item.single_day_discount) +
                             parseFloat(item.inv_room_sgst) +
                             parseFloat(item.inv_room_cgst)
                         )

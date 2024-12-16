@@ -1256,69 +1256,73 @@ export default {
         },
       };
       this.$axios.get(`/get_booking_for_modify`, payload).then(({ data }) => {
-        this.bookingResponse = data;
+        try {
+          this.bookingResponse = data;
 
-        let { booking } = data;
+          let { booking } = data;
 
-        this.oldRoomsOrderRooms = booking?.order_rooms || 0;
+          this.oldRoomsOrderRooms = booking?.order_rooms || 0;
 
-        let total_days = data.days || 0;
+          let total_days = data.days || 0;
 
-        this.old = data;
-        this.old.room_price = data.price;
-        this.old.booking_total_price = booking.total_price;
-        this.old.room_type = data?.room?.room_type?.name;
-        this.old.days = total_days;
-        this.old.total_days = total_days;
+          this.old = data;
+          this.old.room_price = data.price;
+          this.old.booking_total_price = booking.total_price;
+          this.old.room_type = data?.room?.room_type?.name;
+          this.old.days = total_days;
+          this.old.total_days = total_days;
 
-        this.old.total_extra = booking.total_extra;
-        this.old.discount = booking.discount;
+          this.old.total_extra = booking.total_extra;
+          this.old.discount = booking.discount;
 
-        this.early_check_in = data.early_check_in;
-        this.late_check_out = data.late_check_out;
+          this.early_check_in = data.early_check_in;
+          this.late_check_out = data.late_check_out;
 
-        this.is_early_check_in = this.early_check_in > 0 ? true : false;
-        this.is_late_check_out = this.late_check_out > 0 ? true : false;
+          this.is_early_check_in = this.early_check_in > 0 ? true : false;
+          this.is_late_check_out = this.late_check_out > 0 ? true : false;
 
-        this.json = {
-          total_days: 0,
-          total_price: 0,
-          bed_amount: 0,
-          early_check_in: 0,
-          late_check_out: 0,
-          food_plan_price: 0,
-          total_extra: 0,
-          discount: 0,
-          booking: booking,
-          booking_remaining_price: 0,
-          booking_total_price: 0,
+          this.json = {
+            total_days: 0,
+            total_price: 0,
+            bed_amount: 0,
+            early_check_in: 0,
+            late_check_out: 0,
+            food_plan_price: 0,
+            total_extra: 0,
+            discount: 0,
+            booking: booking,
+            booking_remaining_price: 0,
+            booking_total_price: 0,
 
-          // addtional_cols
-          room_tax: 0,
-          room_price: 0,
+            // addtional_cols
+            room_tax: 0,
+            room_price: 0,
 
-          id: data.id,
-          booking_id: booking.id,
-          room_id: data.room_id,
-          room_no: data.room_no,
-          room_type_id: data.room.room_type_id,
-          room_type: data?.room?.room_type?.name,
-          food_plan_id: parseInt(data.food_plan_id),
-          extra_bed_qty: data.extra_bed_qty,
-          no_of_adult: data.no_of_adult,
-          no_of_child: data.no_of_child,
-          check_in: data.checkin_date_only,
-          check_out: data.checkout_date_only,
+            id: data.id,
+            booking_id: booking.id,
+            room_id: data.room_id,
+            room_no: data.room_no,
+            room_type_id: data.room.room_type_id,
+            room_type: data?.room?.room_type?.name,
+            food_plan_id: parseInt(data.food_plan_id),
+            extra_bed_qty: data.extra_bed_qty,
+            no_of_adult: data.no_of_adult,
+            no_of_child: data.no_of_child,
+            check_in: data.checkin_date_only,
+            check_out: data.checkout_date_only,
 
-          booked_room_count: data.booked_room_count,
-          booked_room_count: data.booked_room_count,
-        };
-        console.log(
-          "🚀 ~ this.$axios.get ~ data.booked_room_count:",
-          data.booked_room_count
-        );
+            booked_room_count: data.booked_room_count,
+            booked_room_count: data.booked_room_count,
+          };
+          console.log(
+            "🚀 ~ this.$axios.get ~ data.booked_room_count:",
+            data.booked_room_count
+          );
 
-        this.get_rooms(data.room_id);
+          this.get_rooms(data.room_id);
+        } catch (e) {
+          console.error("🚀 ~ this.$axios.get ~ get_booking_for_modify", e);
+        }
       });
     },
     addOneDay(originalDate) {

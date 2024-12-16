@@ -140,14 +140,22 @@ class StoreBookedRoomsJob implements ShouldQueue
                         + $orderRooms['food_plan_price']
                         + $orderRooms['early_check_in']
                         + $orderRooms['late_check_out']
-                        + $orderRooms['single_day_extra_amount']
-                        - $orderRooms['single_day_discount'];
+                        + $orderRooms['single_day_extra_amount'];
+                    //- $orderRooms['single_day_discount'];
 
-                    $orderRooms['base_price'] = $room_price_without_tax - $miscellaneous_total_with_tax;
+
+                    // $miscellaneous_without_extra_discount =   $orderRooms['bed_amount']
+                    //     + $orderRooms['food_plan_price']
+                    //     + $orderRooms['early_check_in']
+                    //     + $orderRooms['late_check_out'];
+
+                    $miscellaneous_without_extra_discount = $miscellaneous_total_with_tax - $orderRooms['single_day_discount'];
+
+                    $orderRooms['base_price'] = $room_price_without_tax - $miscellaneous_without_extra_discount;
 
 
                     //divide room price with tax calculation
-                    $room_price_with_tax = $orderRooms['total'] - $miscellaneous_total_with_tax;
+                    $room_price_with_tax = $orderRooms['total'] - $miscellaneous_without_extra_discount - $orderRooms['single_day_discount'];
                     $result = $this->divideTaxPrice($room_price_with_tax, $room_price_with_tax, $bookedRoomId->company_id);
                     $room_price_without_tax = $result[0];
                     $room_tax = $result[1];
