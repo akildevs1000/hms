@@ -49,11 +49,7 @@
             <div style="color: #fff; text-align: left" class=" ">
               <v-row>
                 <v-col md="12" class="text-center">
-                  <v-form
-                    style="max-width: 300px"
-                    ref="form"
-                    method="post"
-                    v-model="valid"
+                  <v-form style="max-width: 300px" ref="form" method="post"
                     ><div style="padding-bottom: 0px; text-align: left">
                       <label for="" style="font-size: 12px; color: black"
                         >OTP</label
@@ -155,6 +151,8 @@ export default {
   data: () => ({
     logo: "/logo1.png",
     otp: null,
+    msg: "",
+    loading: false,
   }),
   async created() {
     await this.generateOTP();
@@ -201,16 +199,27 @@ export default {
     },
 
     async validateOTP() {
-      let user_id = this.$auth.user.id;
-      let url = `/validate-telegram-otp/${user_id}`;
-      let config = {
-        params: { otp: this.otp },
-      };
-      try {
-        await this.$axios.get(url, config);
-        this.$router.push(`/login`);
-      } catch (error) {
-        alert(error?.response?.data?.message);
+      console.log("OTP", this.otp);
+
+      if (!this.otp) {
+        alert("OTP Is required");
+        return false;
+      }
+      if (this.otp && this.otp.length == 6) {
+        let user_id = this.$auth.user.id;
+        let url = `/validate-telegram-otp/${user_id}`;
+        let config = {
+          params: { otp: this.otp },
+        };
+        try {
+          await this.$axios.get(url, config);
+          this.$router.push(`/login`);
+        } catch (error) {
+          alert(error?.response?.data?.message);
+        }
+      } else {
+        alert("OTP Is Invalid");
+        return false;
       }
     },
 
