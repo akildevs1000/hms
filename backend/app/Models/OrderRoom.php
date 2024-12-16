@@ -78,6 +78,8 @@ class OrderRoom extends Model
         "inv_room_listing_price",
         "inv_room_cgst",
         "inv_room_sgst",
+        "inv_room_tax_per",
+        "inv_food_tax_per",
 
 
 

@@ -98,7 +98,6 @@
                       {{
                         $utils.currency_format(
                           parseFloat(item.inv_room_listing_price) +
-                            parseFloat(item.single_day_discount) +
                             parseFloat(item.inv_room_sgst) +
                             parseFloat(item.inv_room_cgst)
                         )
@@ -164,7 +163,7 @@
                       </span>
                     </td>
                   </tr>
-                  <tr>
+                  <!-- <tr>
                     <td class="text-left">Discount</td>
                     <td class="text-right red--text">
                       -
@@ -184,7 +183,7 @@
                         }}
                       </span>
                     </td>
-                  </tr>
+                  </tr> -->
                   <!-- <tr>
                     <td class="text-left"><b>Room SGST</b></td>
                     <td class="text-right">
@@ -238,12 +237,21 @@
                             parseFloat(item.inv_room_cgst || 0)
                         )
                       }}<br />
-                      Note: Misc Tax:
+                      Misc Tax:
                       {{
                         $utils.currency_format(
                           parseFloat(item.miscellaneous_tax || 0)
                         )
                       }}
+                      <br />
+                      <div class="red--text">
+                        Discount:
+                        {{
+                          $utils.currency_format(
+                            parseFloat(item.room_discount || 0)
+                          )
+                        }}
+                      </div>
                     </td>
                     <td class="border-top"></td>
                   </tr>

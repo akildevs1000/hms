@@ -46,6 +46,7 @@ class StoreBookedRoomsJob implements ShouldQueue
 
             $company_food_tax = Company::whereId($this->data['company_id'])->pluck('food_tax')->first();
             $rooms = $this->data['selectedRooms'];
+            Logger::channel("custom")->error("inv_room_tax_per: " . json_encode($this->data));
 
             foreach ($rooms as $room) {
                 $room['booking_id'] = $this->data['booking_id'];
@@ -72,10 +73,10 @@ class StoreBookedRoomsJob implements ShouldQueue
                 $eachRoomFoodPlanPrice = $bookedRoomId->food_plan_price; // ($bookedRoomId->food_plan_price / count($priceList) / count($rooms));
 
 
-                Logger::channel("custom")->error("food_plan_price: " . $bookedRoomId->food_plan_price);
-                Logger::channel("custom")->error("count priceList: " . count($priceList));
-                Logger::channel("custom")->error("count rooms: " . count($rooms));
-                Logger::channel("custom")->error("eachRoomFoodPlanPrice: " . $eachRoomFoodPlanPrice);
+                // Logger::channel("custom")->error("food_plan_price: " . $bookedRoomId->food_plan_price);
+                // Logger::channel("custom")->error("count priceList: " . count($priceList));
+                // Logger::channel("custom")->error("count rooms: " . count($rooms));
+                // Logger::channel("custom")->error("eachRoomFoodPlanPrice: " . $eachRoomFoodPlanPrice);
 
 
 
@@ -155,13 +156,23 @@ class StoreBookedRoomsJob implements ShouldQueue
 
 
                     //divide room price with tax calculation
-                    $room_price_with_tax = $orderRooms['total'] - $miscellaneous_without_extra_discount - $orderRooms['single_day_discount'];
+                    // $room_price_with_tax = $list['total_price'] - $miscellaneous_without_extra_discount - $orderRooms['single_day_discount'] - $orderRooms['single_day_discount'];
+
+                    //with tax $list['price']; 
+                    $room_price_with_tax = $list['price']  - $orderRooms['single_day_discount'];
                     $result = $this->divideTaxPrice($room_price_with_tax, $room_price_with_tax, $bookedRoomId->company_id);
                     $room_price_without_tax = $result[0];
                     $room_tax = $result[1];
+                    $room_tax_percentage = $result[2];
+
                     $orderRooms['inv_room_listing_price'] = $room_price_without_tax;
                     $orderRooms['inv_room_cgst'] = round($room_tax  / 2, 2);
                     $orderRooms['inv_room_sgst'] = round($room_tax  / 2, 2);
+
+                    $orderRooms['inv_room_tax_per'] = $room_tax_percentage;
+
+                    Logger::channel("custom")->error("inv_room_tax_per: " . $room_tax_percentage);
+
                     //$orderRooms['room_tax'] = $room_tax;
 
 
@@ -175,6 +186,7 @@ class StoreBookedRoomsJob implements ShouldQueue
                     $orderRooms['miscellaneous_total_without_tax'] = $miscellaneous_total_without_tax; //new 
                     $orderRooms['miscellaneous_tax'] = $miscellaneous_tax; //new 
 
+                    $orderRooms['inv_food_tax_per'] = $company_food_tax;
 
 
 
@@ -248,6 +260,6 @@ class StoreBookedRoomsJob implements ShouldQueue
             // $orderRooms['room_tax'] = $roomGSTAmount;
         }
 
-        return [$roomBasePrice, $roomGSTAmount];
+        return [$roomBasePrice, $roomGSTAmount, $room_tax];
     }
 }
