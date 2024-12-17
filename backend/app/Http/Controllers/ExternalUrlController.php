@@ -21,9 +21,37 @@ class ExternalUrlController extends Controller
         return $response->json();
     }
 
-
-
     public function sendMessage()
+    {
+        // API endpoint URL
+        $url = 'https://backend.mytime2cloud.com/api/send-whatsapp-wessage';
+
+        // Data to send in the request
+        $data = [
+            'company_id' => 13,
+            'mobile_number' =>  request("number"),
+            'message' => request("message"),
+
+        ];
+
+        // Sending POST request using Http facade
+        $response = Http::post($url, $data);
+
+        // Handling the response
+        if ($response->successful()) {
+            return response()->json([
+                'status' => 'success',
+                'data' => $response->json(),
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => $response->body(),
+            ], $response->status());
+        }
+    }
+
+    public function sendMessage2()
     {
         // API endpoint URL
         $url = 'https://demo.betablaster.in/api/send';
