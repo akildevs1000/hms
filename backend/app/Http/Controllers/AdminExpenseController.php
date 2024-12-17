@@ -184,15 +184,17 @@ class AdminExpenseController extends Controller
         try {
             // AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->whereIn("attachment", $existingAttachments)->delete();
 
-            // AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->delete();
+            AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->delete();
 
-            // AdminExpenseAttachment::insert($attachments);
+            AdminExpenseAttachment::insert($attachments);
 
             AdminExpenseItem::where("admin_expense_id", $AdminExpense->id)->delete();
 
             AdminExpenseItem::insert($request->items);
 
             $AdminExpense->update($request->validated());
+
+
 
             DB::commit();
 
