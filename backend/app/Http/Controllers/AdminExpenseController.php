@@ -62,9 +62,13 @@ class AdminExpenseController extends Controller
     function getData()
     {
         $fromDate = request()->input('from', null);
-        $toDate = request()->input('to', null);
+        $toDate =   request()->input('to', null);
         $vendor_category_id = request()->input('vendor_category_id', 0);
         $vendor_id = request()->input('vendor_id', 0);
+
+
+        if ($vendor_category_id == 0) $vendor_id = null;
+        if ($vendor_id == 0) $vendor_category_id = null;
 
         return AdminExpense::with(
             [
