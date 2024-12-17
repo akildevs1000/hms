@@ -136,7 +136,7 @@ class WhatsappController extends Controller
     // francis testing...
     public function sentNotificationTest(Request $request)
     {
-
+        return false;
         $url = "https://ezwhat.com/api/send.php?number={$request->number}&type=text&message={$request->message}&instance_id={$request->instance_id}&access_token={$request->access_token}";
 
         $response = Http::withoutVerifying()->get($url);
@@ -145,8 +145,9 @@ class WhatsappController extends Controller
     }
 
     public function sentNotificationTest2()
-    {
 
+    {
+        return false;
         $sid = "ACd6488bdbbbdeaae210b94f2a3dc21d24";
         $token = "5d437943999440ccd6697a55d4ca21ab";
         $twilio = new Client($sid, $token);
