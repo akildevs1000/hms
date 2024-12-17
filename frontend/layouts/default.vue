@@ -647,6 +647,7 @@ export default {
 
   mounted() {
     document.addEventListener("mousemove", this.updateMouseLocation);
+    console.log("company", this.$auth);
     console.log("company", this.$auth.user.company);
 
     let timezone = "Asia/Kolkata";

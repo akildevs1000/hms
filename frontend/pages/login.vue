@@ -212,7 +212,15 @@ export default {
 
     passwordRules: [(v) => !!v || "Password is required"],
   }),
-  created() {},
+  created() {
+    try {
+      const userType = this.$auth.user?.user_type;
+
+      if (userType) {
+        this.$router.push("/");
+      }
+    } catch (error) {}
+  },
   methods: {
     // mxVerify(res) {
     //   this.reCaptcha = res;

@@ -156,7 +156,9 @@ class AdminExpenseController extends Controller
 
                 if (array_key_exists("name", $attachment)) {
                     $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $attachment['attachment']));
-                    $publicDirectory = public_path("admin_expense_attachments/" . $AdminExpense->id);
+                    //$publicDirectory = public_path("admin_expense_attachments/" . $AdminExpense->id);
+                    $publicDirectory = public_path("expense-uploads/" . $AdminExpense->id);
+
 
                     if (!file_exists($publicDirectory)) {
                         mkdir($publicDirectory, 0777, true);
