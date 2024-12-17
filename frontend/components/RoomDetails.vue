@@ -131,7 +131,7 @@
                   </td>
                 </tr>
 
-                <tr>
+                <!-- <tr>
                   <td class="border-top border-bottom py-1 text-left">Add</td>
                   <td class="border-top border-bottom py-1 text-right">
                     <span v-if="totalRooms">
@@ -175,7 +175,7 @@
                       }}
                     </span>
                   </td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </v-col>
@@ -195,7 +195,13 @@
 
                 <div style="font-size: 14px">Total Rs</div>
                 <div class="blue--text" style="font-size: 18px">
-                  {{ $utils.currency_format(totalPrice) || "---" }}
+                  {{
+                    $utils.currency_format(
+                      totalPrice +
+                        parseFloat(booking.room_discount || 0) -
+                        parseFloat(booking.room_extra_amount || 0)
+                    ) || "---"
+                  }}
                 </div>
               </v-card-text>
             </v-card>

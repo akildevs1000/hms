@@ -1864,8 +1864,8 @@ class BookingController extends Controller
 
         // BookedRoom::where('booking_id', $booking_id)->delete();
 
-        $bookingDiscount =  $request->old["booking"]["discount"];
-        $bookingExtra =  $request->old["booking"]["total_extra"];
+        $bookingDiscount = $request->json["discount"]; //  $request->old["booking"]["discount"];
+        $bookingExtra =  $request->json["total_extra"]; //$request->old["booking"]["total_extra"];
 
         $singleDayDiscount = ($bookingDiscount / count($room_orders));
         $singleDayExtraAmount = ($bookingExtra / count($room_orders));

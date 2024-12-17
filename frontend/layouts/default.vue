@@ -651,7 +651,7 @@ export default {
 
     let timezone = "Asia/Kolkata";
 
-    if (this.$auth.user.company.timezone) {
+    if (this.$auth.user.company?.timezone) {
       timezone = this.$auth.user.company.timezone.utc_time_zone;
     }
 

@@ -99,7 +99,7 @@
                   class="text-left pt-5"
                   colspan="6"
                 ></td>
-                <td  class="text-right blue--text">
+                <td class="text-right blue--text">
                   Total Rs, {{ $utils.currency_format(getTotalAmount()) }}
                 </td>
               </tr>
@@ -128,7 +128,10 @@ export default {
   },
   methods: {
     getTotalAmount() {
-      return this.fitleredItems.reduce((total, num) => total + num.amount_with_tax, 0);
+      return this.fitleredItems.reduce(
+        (total, num) => total + num.amount_with_tax,
+        0
+      );
     },
   },
 };
