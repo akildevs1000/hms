@@ -12,7 +12,7 @@ class WhatsappController extends Controller
 {
     public function sentNotification($data) //working OTP
     {
-
+        return false;
 
         try {
             if ($data['instance_id'] && $data['access_token']) {

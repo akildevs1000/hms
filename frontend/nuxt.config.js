@@ -81,7 +81,6 @@ export default {
 
     "~/plugins/qrcode.js",
     "~/plugins/custom-methods.js",
-
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -114,18 +113,11 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: {
-            url: "login",
-            method: "post",
-            propertyName: "token",
-          },
-          user: {
-            url: "me",
-            method: "get",
-            propertyName: "user",
-          },
+          login: { url: "login", method: "post", propertyName: "token" },
           logout: false,
+          user: { url: "me", method: "get", propertyName: false },
         },
+        //////////maxAge: 86400, // 24 hours
 
         refreshToken: true,
 
@@ -133,16 +125,51 @@ export default {
           //property: "tokens.access.token",
           global: true,
           type: "Bearer",
-          maxAge: 60 * 60 * 24 * 365, // 8 Hours
+          maxAge: 60 * 60 * 24 * 365, //365 Hours
         },
+
         autoLogout: false,
       },
     },
 
-    redirect: {
-      logout: "/login",
-    },
+    // redirect: {
+    //   logout: "/login",
+    // },
   },
+
+  // auth: {
+  //   strategies: {
+  //     local: {
+  //       endpoints: {
+  //         login: {
+  //           url: "login",
+  //           method: "post",
+  //           propertyName: "token",
+  //         },
+  //         user: {
+  //           url: "me",
+  //           method: "get",
+  //           propertyName: "user",
+  //         },
+  //         logout: false,
+  //       },
+
+  //       refreshToken: true,
+
+  //       token: {
+  //         //property: "tokens.access.token",
+  //         global: true,
+  //         type: "Bearer",
+  //         maxAge: 60 * 60 * 24 * 365, // 8 Hours
+  //       },
+  //       autoLogout: false,
+  //     },
+  //   },
+
+  //   redirect: {
+  //     logout: "/login",
+  //   },
+  // },
 
   router: {
     middleware: ["auth"],
