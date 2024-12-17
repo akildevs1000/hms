@@ -80,6 +80,7 @@ class OrderRoom extends Model
         "inv_room_sgst",
         "inv_room_tax_per",
         "inv_food_tax_per",
+        "room_change_notes"
 
 
 

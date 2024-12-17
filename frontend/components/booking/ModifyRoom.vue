@@ -505,6 +505,7 @@
                       hide-details
                       outlined
                       rows="2"
+                      v-model="notes"
                     />
                   </v-col>
 
@@ -825,6 +826,9 @@
                           <b>Extra Difference This Room</b>
                         </td>
                         <td style="width: 30%" class="border-top text-right">
+                          <!-- {{ parseFloat(json.new_total) }}
+                          {{ parseFloat(old.order_rooms_sum_grand_total) }}
+                          {{ parseFloat(json.discount) }} -->
                           <b v-if="difference >= 0">{{
                             $utils.currency_format(difference)
                           }}</b>
@@ -889,6 +893,7 @@ export default {
   props: ["BookedRoomId", "BookingId"],
   data() {
     return {
+      notes: null,
       json: null,
       selectedNewRoom: null,
       oldRoomsOrderRooms: [],
@@ -989,6 +994,7 @@ export default {
       return (
         parseFloat(this.json.new_total) -
         parseFloat(this.old.order_rooms_sum_grand_total)
+        //+        parseFloat(this.json.discount)
       );
       // return this.total - parseFloat(this.old?.booking?.paid_amounts || 0);
     },
@@ -1361,6 +1367,7 @@ export default {
         room_orders: this.room_orders,
         json: json,
         old: this.old,
+        notes: this.notes,
       };
       console.log(payload);
       // return;
