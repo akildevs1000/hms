@@ -40,7 +40,7 @@ class TelegramController extends Controller
             $user->telegram_otp = null;
             $user->telegram_otp_expires_at = null;
             $user->save();
-            return response()->json(['message' => 'OTP is valid']);
+            return response()->json(['message' => 'OTP is valid', 'status' => 'success']);
         } else {
             // OTP is invalid or expired
             return response()->json(['message' => 'OTP is invalid or expired'], 400);

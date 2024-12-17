@@ -605,6 +605,17 @@ export default {
   },
 
   created() {
+    // console.log(
+    //   "this.$auth.user_verified_mobileotp",
+    //   this.$auth.user_verified_mobileotp
+    // );
+
+    // {
+    //   if (this.$auth.user_verified_mobileotp == true) {
+    //   } else {
+    //     this.$router.push(`/logout`);
+    //   }
+    // }
     this.title = "MyHotel2Cloud"; // this.$auth.user?.company?.company_code;
     setTimeout(() => {
       this.loadNotificationMenu();
@@ -638,7 +649,7 @@ export default {
     document.addEventListener("mousemove", this.updateMouseLocation);
     console.log("company", this.$auth.user.company);
 
-    let timezone = "Asia/Dubai";
+    let timezone = "Asia/Kolkata";
 
     if (this.$auth.user.company.timezone) {
       timezone = this.$auth.user.company.timezone.utc_time_zone;

@@ -853,6 +853,21 @@ export default {
   //   }, 1000 * 60);
   // },
   created() {
+    console.log(
+      "this.$auth.user_verified_mobileotp",
+      this.$auth.user_verified_mobileotp
+    );
+
+    {
+      if (this.$auth.user_verified_mobileotp == true) {
+      } else {
+        this.$auth.logout();
+        this.$router.push(`/login`);
+
+        return false;
+      }
+    }
+
     this.filterDate = new Date(
       Date.now() - new Date().getTimezoneOffset() * 60000
     )

@@ -155,6 +155,7 @@ export default {
     loading: false,
   }),
   async created() {
+    this.$auth.user_verified_mobileotp = false;
     await this.generateOTP();
   },
   methods: {
@@ -188,7 +189,7 @@ export default {
       let user_id = this.$auth.user.id;
       let url = `/generate-telegram-otp/${user_id}`;
       let config = {
-        params: { otp, expire_in_min: 1 },
+        params: { otp, expire_in_min: 5 },
       };
       try {
         const { data } = await this.$axios.get(url, config);
@@ -199,8 +200,6 @@ export default {
     },
 
     async validateOTP() {
-      console.log("OTP", this.otp);
-
       if (!this.otp) {
         alert("OTP Is required");
         return false;
@@ -212,8 +211,17 @@ export default {
           params: { otp: this.otp },
         };
         try {
-          await this.$axios.get(url, config);
-          this.$router.push(`/login`);
+          let response = await this.$axios.get(url, config);
+          console.log(response.status);
+
+          if (response.status) {
+            if (response.status == 200) {
+              this.$auth.user_verified_mobileotp = true;
+              this.$router.push(`/login`);
+            }
+          } else {
+            alert("Invalid OTP");
+          }
         } catch (error) {
           alert(error?.response?.data?.message);
         }
