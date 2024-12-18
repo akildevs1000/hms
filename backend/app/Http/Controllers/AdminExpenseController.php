@@ -30,7 +30,7 @@ class AdminExpenseController extends Controller
 
     public function index()
     {
-        return $this->getData()->paginate(request("per_page", 50));
+        return $this->getData()->paginate(request("perPage", 50));
     }
 
     public function print()

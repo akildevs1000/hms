@@ -4,10 +4,11 @@
       dense
       :headers="headers"
       :items="expenses"
+      :server-items-length="totalRowsCount"
       :loading="loading"
       :options.sync="options"
       :footer-props="{
-        itemsPerPageOptions: [100, 500, 1000],
+        itemsPerPageOptions: [10, 50, 100, 500, 1000],
       }"
       class="elevation-1 pa-3"
     >
@@ -179,6 +180,7 @@ let currentDate = y + "-" + m + "-" + d;
 export default {
   props: ["is_admin_expense"],
   data: () => ({
+    totalRowsCount: 0,
     ExpensePaymentKey: 1,
     Model: "Expense",
     endpoint: "admin-expense",
@@ -309,15 +311,30 @@ export default {
     },
     async getDataFromApi() {
       this.loading = true;
+      let { sortBy, sortDesc, page, itemsPerPage } = this.options;
+
+      let sortedBy = sortBy ? sortBy[0] : "";
+      let sortedDesc = sortDesc ? sortDesc[0] : "";
+      this.perPage = itemsPerPage;
+      this.currentPage = page;
+      if (!page > 0) return false;
       let config = {
         params: {
           is_admin_expense: this.is_admin_expense,
           ...this.filters,
+
+          page: page,
+          //sortBy: sortedBy,
+          sortDesc: sortedDesc,
+          perPage: itemsPerPage,
+          pagination: true,
         },
       };
       let { data } = await this.$axios.get(this.endpoint, config);
       this.loading = false;
       this.expenses = data.data;
+
+      this.totalRowsCount = data.total;
     },
   },
 };
