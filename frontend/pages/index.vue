@@ -853,6 +853,10 @@ export default {
   //   }, 1000 * 60);
   // },
   created() {
+    console.log("Index");
+
+    console.log("company loading.............");
+
     console.log(
       "this.$auth.user_verified_mobileotp",
       this.$auth.user_verified_mobileotp

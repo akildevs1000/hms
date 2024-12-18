@@ -6,20 +6,21 @@
           <div style="display: flex; justify-content: right">
             <v-autocomplete
               @change="getDataBySource"
-              :items="[{ id: null, name: `Select All` }, ...sources]"
+              :items="[{ id: null, name: `All` }, ...sources]"
               item-text="name"
               item-value="name"
               label="Source"
               dense
               outlined
               hide-details
+              v-model="filterSource"
               style="margin-top: 1px; max-width: 200px"
             ></v-autocomplete>
             &nbsp;
             <v-autocomplete
               @change="getDataByStatus"
               :items="[
-                { id: null, name: `Select All` },
+                { id: null, name: `All` },
                 { id: `Pending`, name: `Pending` },
                 {
                   id: `Received`,
@@ -28,12 +29,13 @@
               ]"
               item-text="name"
               item-value="name"
-              label="Status"
+              label="Payment Status"
               dense
               outlined
               flat
               hide-details
               style="margin-top: 1px; max-width: 200px"
+              v-model="filterPayment"
             ></v-autocomplete>
             <!-- <v-text-field
             label="Search..."
@@ -135,11 +137,13 @@
       </v-container>
     </v-card>
   </div>
-  <NoAccess v-else/>
+  <NoAccess v-else />
 </template>
 <script>
 export default {
   data: () => ({
+    filterPayment: "All",
+    filterSource: "All",
     endpoint: "ota-report",
     search: null,
     filter: null,
@@ -265,6 +269,7 @@ export default {
   watch: {
     options: {
       handler() {
+        console.log("🚀 ~ watch", this.filter);
         this.getDataFromApi();
       },
       deep: true,
@@ -279,11 +284,13 @@ export default {
   methods: {
     getDataBySource(e) {
       console.log("🚀 ~ getDataBySource ~ e:", e);
+      console.log("🚀 ~ this.filter:", this.filter);
 
       this.filter = {
         ...this.filter,
         source: e,
       };
+      console.log("🚀 ~ this.filter after:", this.filter);
       this.getDataFromApi();
     },
 
@@ -301,6 +308,8 @@ export default {
       this.filter = {
         from: data.from,
         to: data.to,
+        source: this.filterSource,
+        payment_status: this.filterPayment,
       };
       this.getDataFromApi();
     },
@@ -308,12 +317,14 @@ export default {
       if (this.search.length == 0) {
         this.filter = {
           ...this.filter,
-          search: this.search,
+          payment_status: this.search,
+          source: this.filterSource,
         };
       } else if (this.search.length > 2) {
         this.filter = {
           ...this.filter,
-          search: this.search,
+          payment_status: this.search,
+          source: this.filterSource,
         };
       }
     },
@@ -473,6 +484,13 @@ export default {
         let sortedDesc = sortDesc ? sortDesc[0] : "";
         if (customPage == 1) page = 1;
         this.currentPage = page;
+
+        Object.keys(this.filter).forEach((key) => {
+          if (this.filter[key] === "All") {
+            this.filter[key] = null;
+          }
+        });
+
         let options = {
           params: {
             page: page,
@@ -484,7 +502,7 @@ export default {
           },
         };
 
-        console.log(this.filter);
+        console.log("Final", this.filter);
 
         this.$axios.get(url, options).then(({ data }) => {
           this.data = data.data;

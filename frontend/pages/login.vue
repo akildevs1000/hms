@@ -213,6 +213,8 @@ export default {
     passwordRules: [(v) => !!v || "Password is required"],
   }),
   created() {
+    console.log("Login Created");
+
     try {
       const userType = this.$auth.user?.user_type;
 

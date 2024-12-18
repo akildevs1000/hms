@@ -605,6 +605,8 @@ export default {
   },
 
   created() {
+    console.log("Default Created");
+
     // console.log(
     //   "this.$auth.user_verified_mobileotp",
     //   this.$auth.user_verified_mobileotp
@@ -647,8 +649,8 @@ export default {
 
   mounted() {
     document.addEventListener("mousemove", this.updateMouseLocation);
-    console.log("company", this.$auth);
-    console.log("company", this.$auth.user.company);
+    console.log("company auth", this.$auth);
+    console.log("company", this.$auth.user);
 
     let timezone = "Asia/Kolkata";
 
