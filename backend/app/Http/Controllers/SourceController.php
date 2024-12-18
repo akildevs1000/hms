@@ -12,7 +12,7 @@ class SourceController extends Controller
 
     public function  sourceList()
     {
-        return Source::where("company_id", request("company_id"))->get();
+        return Source::where("company_id", request("company_id"))->orderBy("name", "ASC")->get();
     }
 
     public function index(Request $request)
