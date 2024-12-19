@@ -14,7 +14,6 @@
     >
       <template v-slot:top>
         <v-toolbar flat dense class="mb-2">
-          {{ Model }}
           <v-icon color="primary" right class="mt-1" @click="getDataFromApi()"
             >mdi-reload</v-icon
           >
