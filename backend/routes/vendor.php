@@ -8,4 +8,7 @@ Route::apiResource('vendor-category', VendorCategoryController::class);
 Route::get('vendor-category-list', [VendorCategoryController::class, "dropDown"]);
 Route::apiResource('vendor', VendorController::class);
 Route::get('vendor-search', [VendorController::class, "vendorSearch"]);
+
+
+
 Route::get('vendor-list', [VendorController::class, "dropDown"]);

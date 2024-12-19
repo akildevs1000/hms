@@ -10,7 +10,7 @@ class VendorController extends Controller
 {
     public function dropDown()
     {
-        return Vendor::where("company_id", request("company_id"))->get();
+        return Vendor::where("company_id", request("company_id"))->with("vendor_category")->orderby("first_name", "asc")->get();
     }
     /**
      * Display a listing of the resource.

@@ -158,10 +158,12 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" class="pa-0 ma-0">
-                    <AssetsHeadDialog>
+                    <AssetsHeadDialog class="searchVendaorDialogcontent">
                       <template #label> <span>Detail</span> </template>
-                      <template #search
-                        ><VendorSearch @foundVendor="handleFoundVendor"
+                      <template #search>
+                        <VendorSearch
+                          :key="searchDialogKey"
+                          @foundVendor="handleFoundVendor"
                       /></template>
                     </AssetsHeadDialog>
                   </v-col>
@@ -328,6 +330,7 @@ export default {
 
   data() {
     return {
+      searchDialogKey: 1,
       current_date: new Date(
         Date.now() - new Date().getTimezoneOffset() * 60000
       )
@@ -421,6 +424,9 @@ export default {
     this.ReceiptNumber = data;
   },
   methods: {
+    resetDialog() {
+      this.searchDialogKey++;
+    },
     closePopup() {
       this.dialog = false;
       this.$emit("close");
@@ -457,6 +463,7 @@ export default {
       this.payload.vendor_id = e.id;
 
       this.getLastThreeRecords(e.id);
+      this.searchDialogKey++;
     },
 
     calculateOverAll() {

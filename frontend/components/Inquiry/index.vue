@@ -7,6 +7,7 @@
     </div>
 
     <v-dialog
+      v-if="isDialogVisible"
       v-model="inquiryDialog"
       :key="DialogKey"
       :key1="DialogKey"
@@ -547,6 +548,7 @@ export default {
         value: "50",
       },
     ],
+    isDialogVisible: false,
     pagination: {
       current: 1,
       total: 0,
@@ -617,12 +619,12 @@ export default {
   },
 
   watch: {
-    inquiryDialog(val) {
-      val || this.close();
-      this.errors = [];
-      this.search = "";
-      this.DialogKey++;
-    },
+    // inquiryDialog(val) {
+    //   val || this.close();
+    //   this.errors = [];
+    //   this.search = "";
+    //   this.DialogKey++;
+    // },
   },
 
   created() {
@@ -651,9 +653,8 @@ export default {
     openDialog() {
       this.DialogKey++;
 
-      setTimeout(() => {
-        this.inquiryDialog = true;
-      }, 1000);
+      this.inquiryDialog = true;
+      this.isDialogVisible = true;
     },
     async get_business_sources() {
       let { data } = await this.$axios.get("business-source-list");
@@ -819,6 +820,7 @@ export default {
       }
       this.editedIndex = -1;
       this.inquiryDialog = false;
+      this.isDialogVisible = false;
       this.DialogKey++;
 
       setTimeout(() => {

@@ -1041,4 +1041,13 @@ input[type="number"] {
 .small-text {
   font-size: 10px;
 }
+.reports-events-autocomplete .v-input__slot {
+  min-height: 33px !important;
+}
+.reports-events-autocomplete .v-label {
+  line-height: 15px !important;
+}
+.reports-events-autocomplete .v-input__icon {
+  height: 20px !important;
+}
 </style>

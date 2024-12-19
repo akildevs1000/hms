@@ -25,7 +25,6 @@
             :endpoint="endpoint"
             @response="getDataFromApi"
             @close="refreshKey"
-            :key="dialogKey"
           />
         </v-toolbar>
 
