@@ -269,8 +269,8 @@ class AdminExpenseController extends Controller
                 }
 
                 // Set the appropriate payment mode if it exists
-                if ($item->company_id == $company_id && $item->expense->payment && in_array($item->expense->payment->payment_mode, $modes)) {
-                    $item[$item->expense->payment->payment_mode] = $item->expense->total;
+                if ($item->expense->company_id == $company_id && $item->expense->payment && in_array($item->expense->payment->payment_mode, $modes)) {
+                    $item[$item->expense->payment->payment_mode] = $item->expense->payment_sum_paid;
                 }
 
                 return $item;
