@@ -13,7 +13,7 @@
           <v-icon color="white" small> mdi-plus </v-icon> New
         </v-btn>
       </template>
-      <AssetsIconClose @click="dialog = false" />
+      <AssetsIconClose @click="closePopup()" />
 
       <div class="grey lighten-3 pa-2" style="overflow: hidden">
         <v-row>
@@ -334,6 +334,7 @@ export default {
         .toISOString()
         .substr(0, 10),
       menu2: false,
+
       payload: {
         vendor_id: 1,
         notes: "",
@@ -394,6 +395,7 @@ export default {
       files: [], // Holds the uploaded files
     };
   },
+  watch: {},
   computed: {
     detailContainerHeight() {
       const minHeight = {
@@ -419,6 +421,10 @@ export default {
     this.ReceiptNumber = data;
   },
   methods: {
+    closePopup() {
+      this.dialog = false;
+      this.$emit("close");
+    },
     async getLastThreeRecords(vendor_id) {
       let config = {
         params: {

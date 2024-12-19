@@ -6,11 +6,16 @@
       </v-snackbar>
     </div>
 
-    <v-dialog v-model="inquiryDialog" max-width="800">
+    <v-dialog
+      v-model="inquiryDialog"
+      :key="DialogKey"
+      :key1="DialogKey"
+      max-width="800"
+    >
       <AssetsIconClose left="790" @click="close" />
       <v-card>
         <AssetsHeadDialog>
-          <template #label>{{ formTitle }} Inquiry</template>
+          <template #label>{{ formTitle }} Inquiry </template>
           <template v-if="formTitle == 'New'" #search
             ><SearchInquiry @foundCustomer="handleFoundCustomer"
           /></template>
@@ -319,11 +324,11 @@
               >
                 <template v-slot:top>
                   <v-toolbar flat dense class="mb-5">
-                    {{ Model }}
+                    {{ Model }} {{ DialogKey }}
                     <v-spacer></v-spacer>
                     <v-btn
                       v-if="can(`inquiry_create`)"
-                      @click="inquiryDialog = true"
+                      @click="openDialog()"
                       small
                       class="primary"
                     >
@@ -497,6 +502,7 @@ let defaultPayload = {
 
 export default {
   data: () => ({
+    DialogKey: 1,
     sources: [],
     filters: {
       from: new Date().toJSON().slice(0, 10),
@@ -615,6 +621,7 @@ export default {
       val || this.close();
       this.errors = [];
       this.search = "";
+      this.DialogKey++;
     },
   },
 
@@ -641,6 +648,13 @@ export default {
   },
 
   methods: {
+    openDialog() {
+      this.DialogKey++;
+
+      setTimeout(() => {
+        this.inquiryDialog = true;
+      }, 1000);
+    },
     async get_business_sources() {
       let { data } = await this.$axios.get("business-source-list");
       this.businessSourceList = data;
@@ -777,6 +791,7 @@ export default {
     editItem(item) {
       this.editedIndex = this.data.indexOf(item);
       this.inquiry = Object.assign({}, item);
+      this.DialogKey++;
       this.inquiryDialog = true;
     },
 
@@ -804,6 +819,8 @@ export default {
       }
       this.editedIndex = -1;
       this.inquiryDialog = false;
+      this.DialogKey++;
+
       setTimeout(() => {
         this.inquiry = Object.assign({}, this.inquiry);
         this.editedIndex = -1;

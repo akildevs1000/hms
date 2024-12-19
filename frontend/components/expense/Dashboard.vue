@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mb-5 rounded-md mt-0" elevation="0">
+  <v-card class="mb-5 rounded-md mt-0" elevation="0" :loading="loading">
     <!-- <v-toolbar
                  class="rounded-md"
                  color="background"
@@ -44,6 +44,7 @@
     <v-container fluid>
       <v-row dense>
         <v-col>
+          {{ loading }}
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="incomeHeaders" />
 
@@ -123,7 +124,7 @@
 
 <script>
 export default {
-  props: ["is_admin_expense","filters"],
+  props: ["is_admin_expense", "filters"],
   data: () => ({
     Model: "Expense",
     vertical: false,
@@ -201,9 +202,7 @@ export default {
       let comId = this.$auth.user.company.id; //company id
       let from = this.from_date;
       let to = this.to_date;
-      let url =
-        "https://backend.myhotel2cloud.com/api/"
-        `${type}?company_id=${comId}&from=${from}&to=${to}`;
+      let url = "https://backend.myhotel2cloud.com/api/"`${type}?company_id=${comId}&from=${from}&to=${to}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

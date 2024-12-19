@@ -341,7 +341,8 @@
               @click="currentTabId = 2"
               >Expense</v-btn
             >
-            <v-btn v-if="can(`management_expense_access`)"
+            <v-btn
+              v-if="can(`management_expense_access`)"
               :color="currentTabId === 3 ? `primary` : ''"
               text
               @click="currentTabId = 3"

@@ -19,11 +19,14 @@
             >mdi-reload</v-icon
           >
           <v-spacer></v-spacer>
+
           <ExpenseCreate
             :is_admin_expense="is_admin_expense"
             :model="Model"
             :endpoint="endpoint"
             @response="getDataFromApi"
+            @close="refreshKey"
+            :key="dialogKey"
           />
         </v-toolbar>
 
@@ -249,6 +252,7 @@ export default {
 
     vendor_categories: [],
     vendors: [],
+    dialogKey: 1,
   }),
 
   async created() {
@@ -266,6 +270,9 @@ export default {
     },
   },
   methods: {
+    refreshKey() {
+      this.dialogKey++;
+    },
     handleLink(endpoint) {
       this.filters = {
         ...this.filters,
