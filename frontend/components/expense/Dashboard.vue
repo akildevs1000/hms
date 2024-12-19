@@ -44,7 +44,6 @@
     <v-container fluid>
       <v-row dense>
         <v-col>
-          {{ loading }}
           <table cellspacing="0" style="width: 100%">
             <AssetsTableHeader :cols="incomeHeaders" />
 
