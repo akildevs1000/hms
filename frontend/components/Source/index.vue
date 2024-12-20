@@ -182,12 +182,14 @@
       class="elevation-1 px-2"
     >
       <template v-slot:item.sno="{ item, index }">
-        <small class="text-color">{{
-          currentPage
-            ? (currentPage - 1) * perPage +
-              (cumulativeIndex + data.indexOf(item))
-            : ""
-        }}</small>
+        <small class="text-color">
+          {{
+            currentPage
+              ? (currentPage - 1) * perPage +
+                (cumulativeIndex + data.indexOf(item))
+              : "-"
+          }}</small
+        >
       </template>
       <template v-slot:item.name="{ item }">
         <small class="text-color">{{
@@ -317,7 +319,7 @@ export default {
       per_page: 10,
     },
     Model: "Sources",
-    options: {},
+    options: { page: 1 },
     endpoint: "source",
     search: "",
     snackbar: false,
@@ -401,7 +403,7 @@ export default {
     },
     getDataFromApi() {
       //let page = this.pagination.current;
-
+      this.currentPage = this.currentPage ?? 1;
       let { sortBy, sortDesc, page, itemsPerPage } = this.options;
       let sortedBy = sortBy ? sortBy[0] : "";
       let sortedDesc = sortDesc ? sortDesc[0] : "";
@@ -424,12 +426,12 @@ export default {
       };
 
       this.$axios.get(this.endpoint, options).then(({ data }) => {
+        this.currentPage = page;
         this.data = data.data;
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
         this.loading = false;
         this.totalRowsCount = data.total;
-        this.currentPage = page;
       });
     },
     editItem(item) {
