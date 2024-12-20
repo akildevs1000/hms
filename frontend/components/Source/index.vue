@@ -175,11 +175,20 @@
       :items="data"
       :loading="loading"
       :options.sync="options"
+      :server-items-length="totalRowsCount"
       :footer-props="{
-        itemsPerPageOptions: [100, 500, 1000],
+        itemsPerPageOptions: [10, 50, 100, 500, 1000],
       }"
       class="elevation-1 px-2"
     >
+      <template v-slot:item.sno="{ item, index }">
+        <small class="text-color">{{
+          currentPage
+            ? (currentPage - 1) * perPage +
+              (cumulativeIndex + data.indexOf(item))
+            : ""
+        }}</small>
+      </template>
       <template v-slot:item.name="{ item }">
         <small class="text-color">{{
           caps(item.contact_name)
@@ -210,7 +219,11 @@
         <small class="text-color">{{ caps(item.created_at) }}</small></template
       >
       <template v-slot:item.action="{ item }">
-        <v-menu bottom left v-if="can('customers_edit') || can('customers_delete')">
+        <v-menu
+          bottom
+          left
+          v-if="can('customers_edit') || can('customers_delete')"
+        >
           <template v-slot:activator="{ on, attrs }">
             <v-btn dark-2 icon v-bind="attrs" v-on="on">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -252,7 +265,10 @@
                   View Guest
                 </v-list-item-title>
               </v-list-item> -->
-            <v-list-item v-if="can('customers_delete')" @click="deleteItem(item)">
+            <v-list-item
+              v-if="can('customers_delete')"
+              @click="deleteItem(item)"
+            >
               <v-list-item-title style="cursor: pointer">
                 <v-icon color="error" x-small> mdi-delete </v-icon>
                 <AssetsTextLabel color="text-color" label="Delete" />
@@ -268,8 +284,20 @@
 export default {
   props: ["type"],
   data: () => ({
+    page: 1,
+    perPage: 0,
+    currentPage: 1,
+    cumulativeIndex: 1,
+
     action: null,
     headers: [
+      {
+        text: "#",
+        value: "sno",
+        align: "left",
+        sortable: false,
+        filterable: false,
+      },
       { text: "Name", value: "name" },
       { text: "Company", value: "company" },
       { text: "Type", value: "type" },
@@ -282,6 +310,7 @@ export default {
       { text: "created_at", value: "created_at" },
       { text: "Action", value: "action" },
     ],
+    totalRowsCount: 0,
     pagination: {
       current: 1,
       total: 0,
@@ -338,6 +367,12 @@ export default {
       this.errors = [];
       this.search = "";
     },
+    options: {
+      handler() {
+        this.getDataFromApi();
+      },
+      deep: true,
+    },
   },
 
   created() {
@@ -365,12 +400,23 @@ export default {
       this.getDataFromApi();
     },
     getDataFromApi() {
+      //let page = this.pagination.current;
+
+      let { sortBy, sortDesc, page, itemsPerPage } = this.options;
+      let sortedBy = sortBy ? sortBy[0] : "";
+      let sortedDesc = sortDesc ? sortDesc[0] : "";
+
+      this.perPage = itemsPerPage;
+      // if (!page > 0) return false;
       this.loading = true;
-      let page = this.pagination.current;
       let options = {
         params: {
           page: page,
-          per_page: this.pagination.per_page,
+          //sortBy: sortedBy,
+          sortDesc: sortedDesc,
+          per_page: itemsPerPage,
+          pagination: true,
+
           company_id: this.$auth.user.company.id,
           search: this.search,
           type: this.type,
@@ -382,6 +428,8 @@ export default {
         this.pagination.current = data.current_page;
         this.pagination.total = data.last_page;
         this.loading = false;
+        this.totalRowsCount = data.total;
+        this.currentPage = page;
       });
     },
     editItem(item) {

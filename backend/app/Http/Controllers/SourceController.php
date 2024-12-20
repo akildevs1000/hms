@@ -37,7 +37,7 @@ class SourceController extends Controller
 
         $model->with("customers");
 
-        return $model->paginate(10 ?? $request->perPage);
+        return $model->paginate($request->per_page ?? 10);
     }
 
     public function getSourceType(Request $request)
@@ -121,7 +121,7 @@ class SourceController extends Controller
         $model->where('id', env("WILD_CARD") ?? 'ILIKE', "%$key%");
         $model->where('company_id', $request->company_id);
         $model->orWhere('name', env("WILD_CARD") ?? 'ILIKE', "%$key%");
-        return $model->paginate($request->per_page);
+        return $model->paginate($request->per_page ?? 10);
     }
 
     public function destroy($id)

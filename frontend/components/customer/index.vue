@@ -52,7 +52,7 @@
       :loading="loading"
       :options.sync="options"
       :footer-props="{
-        itemsPerPageOptions: [20, 50, 100, 500, 1000],
+        itemsPerPageOptions: [10, 20, 50, 100, 500, 1000],
       }"
       class="px-2"
       :server-items-length="totalTableRowsCount"
@@ -312,7 +312,7 @@ export default {
       this.getDataFromApi();
       this.viewCustomerDialog = false;
     },
-    
+
     viewCustomerBilling(item) {
       // this.$router.push(`/customer/history/${item.id}`);
       this.customer_id = item.id;
