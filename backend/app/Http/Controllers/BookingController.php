@@ -2197,6 +2197,11 @@ class BookingController extends Controller
 
         $model->where('room_category_type', null);
 
+
+        $model->whereHas('bookedRooms', function ($q) use ($request) {
+            $q->where('company_id',  $request->company_id);
+        });
+
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
             $model->where('source', env("WILD_CARD") ?? 'ILIKE', '%' . $request->source . '%');
         }

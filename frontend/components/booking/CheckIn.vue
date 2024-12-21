@@ -707,7 +707,10 @@ export default {
         })
         .catch((e) => {
           this.loading = false;
-          console.log(e)
+
+          this.errors = data.errors;
+
+          console.log(e);
         });
     },
 
