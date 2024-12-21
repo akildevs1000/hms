@@ -21,6 +21,11 @@ export default ({ app }, inject) => {
       return values.reduce((acc, curr) => acc + curr, 0);
     },
     currency_format(n, type = "₹") {
+      const value = NaN;
+
+      if (isNaN(n)) {
+        n = 0;
+      }
       if (!n) {
         n = 0;
       }
