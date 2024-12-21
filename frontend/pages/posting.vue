@@ -1,9 +1,9 @@
 <template>
   <v-card v-if="can(`posting_access`)">
-    <h3>
+    <h4>
       Postings : Total
       {{ $utils.currency_format(total) }}
-    </h3>
+    </h4>
     <v-row class="pt-3">
       <v-col style="max-width: 50px"
         ><v-icon color="primary" right class="mt-1" @click="getDataFromApi()"

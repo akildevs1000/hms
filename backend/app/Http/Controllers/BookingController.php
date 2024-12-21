@@ -776,12 +776,12 @@ class BookingController extends Controller
                     'guest.contact_no' => 'required|string|max:15',
                     'guest.whatsapp' => 'nullable|string|max:15',
                     'guest.email' => 'required|max:100',
-                    'guest.dob' => 'required|date',
+                    'guest.dob' => 'nullable|date',
                     'guest.nationality' => 'required|string|max:50',
                     'guest.city' => 'required|string|max:50',
                     'guest.state' => 'required|string|max:50',
                     'guest.country' => 'required|string|max:50',
-                    'guest.zip_code' => 'required|string|max:50',
+                    'guest.zip_code' => 'nullable|string|max:50',
                 ]);
 
                 if ($validatedData) {
