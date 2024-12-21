@@ -117,6 +117,11 @@ class PostingController extends Controller
             $room_no              = BookedRoom::find($data['booked_room_id'])->room_no;
             $booking              = Booking::find($data['booking_id']);
             $data['posting_date'] = now();
+
+
+
+
+            $data['tax_rate'] = $data['tax_type'] === "Food" ? 5 : 12;
             $posting              = Posting::create($data);
 
             $transactionData = [
