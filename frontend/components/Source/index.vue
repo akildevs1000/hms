@@ -300,17 +300,32 @@ export default {
         sortable: false,
         filterable: false,
       },
-      { text: "Name", value: "name" },
-      { text: "Company", value: "company" },
-      { text: "Type", value: "type" },
-      { text: "Mobile", value: "mobile" },
-      { text: "Landline", value: "landline" },
-      { text: "Email", value: "email" },
-      { text: "GST", value: "gst" },
-      { text: "Address", value: "address" },
-      { text: "Total Customer", value: "bookings_count" },
-      { text: "created_at", value: "created_at" },
-      { text: "Action", value: "action" },
+      { text: "Name", value: "name", sortable: false, filterable: false },
+      { text: "Company", value: "company", sortable: false, filterable: false },
+      { text: "Type", value: "type", sortable: false, filterable: false },
+      { text: "Mobile", value: "mobile", sortable: false, filterable: false },
+      {
+        text: "Landline",
+        value: "landline",
+        sortable: false,
+        filterable: false,
+      },
+      { text: "Email", value: "email", sortable: false, filterable: false },
+      { text: "GST", value: "gst", sortable: false, filterable: false },
+      { text: "Address", value: "address", sortable: false, filterable: false },
+      {
+        text: "Total Customer",
+        value: "bookings_count",
+        sortable: false,
+        filterable: false,
+      },
+      {
+        text: "created_at",
+        value: "created_at",
+        sortable: false,
+        filterable: false,
+      },
+      { text: "Action", value: "action", sortable: false, filterable: false },
     ],
     totalRowsCount: 0,
     pagination: {
@@ -385,7 +400,7 @@ export default {
   methods: {
     can(per) {
       let u = this.$auth.user;
-      console.log(u.permissions);
+
       return (
         (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
@@ -404,6 +419,7 @@ export default {
     getDataFromApi() {
       //let page = this.pagination.current;
       this.currentPage = this.currentPage ?? 1;
+
       let { sortBy, sortDesc, page, itemsPerPage } = this.options;
       let sortedBy = sortBy ? sortBy[0] : "";
       let sortedDesc = sortDesc ? sortDesc[0] : "";

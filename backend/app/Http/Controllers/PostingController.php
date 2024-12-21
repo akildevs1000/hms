@@ -16,6 +16,12 @@ class PostingController extends Controller
 
     public function index(Request $request)
     {
+        $model = $this->filter($request);
+
+        return $model->paginate($request->per_page ?? 50);
+    }
+    public function filter($request)
+    {
         $model = Posting::query();
         $model->where('company_id', $request->company_id);
 
@@ -26,28 +32,11 @@ class PostingController extends Controller
             'bookedRoom',
         ]);
 
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek   = Carbon::now()->endOfWeek();
+        $model->where('posting_date', ">=",  $request->date_from . ' 00:00:00');
+        $model->whereDate('posting_date', "<=",    $request->date_to . ' 23:59:59');
 
-        if ($request->filterType == 1) {
-            $model->whereDate('posting_date', date('Y-m-d')); //today
-        }
 
-        if ($request->filterType == 2) {
-            $model->whereDate('posting_date', date('Y-m-d', strtotime('-1 day'))); //Yesterday
-        }
 
-        if ($request->filterType == 3) {
-            $model->whereBetween('posting_date', [$startOfWeek, $endOfWeek]); //This Week
-        }
-
-        if ($request->filterType == 4) {
-            $model->whereMonth('posting_date', date('m')); //This month
-        }
-
-        if ($request->filterType == 5) {
-            $model->whereBetween('created_at', [$request->from . ' 00:00:00', $request->to . ' 23:59:59']);
-        }
 
         if ($request->search != "" && $request->filled('search')) {
             $key = $request->search;
@@ -66,21 +55,33 @@ class PostingController extends Controller
             });
         }
 
-        // filter base room id
-        $model->when($request->filled('room_id'), function ($model) use ($request) {
-            $model->whereHas('bookedRoom', function (Builder $query) use ($request) {
-                $query->where('room_id', $request->room_id);
-            });
-        });
+        // // filter base room id
+        // $model->when($request->filled('room_id'), function ($model) use ($request) {
+        //     $model->whereHas('bookedRoom', function (Builder $query) use ($request) {
+        //         $query->where('room_id', $request->room_id);
+        //     });
+        // });
 
-        //filter base customer id
-        $model->when($request->filled('customer_id'), function ($model) use ($request) {
-            $model->whereHas('booking', function (Builder $query) use ($request) {
-                $query->where('customer_id', $request->customer_id);
-            });
-        });
+        // //filter base customer id
+        // $model->when($request->filled('customer_id'), function ($model) use ($request) {
+        //     $model->whereHas('booking', function (Builder $query) use ($request) {
+        //         $query->where('customer_id', $request->customer_id);
+        //     });
+        // });
 
-        return $model->paginate($request->per_page ?? 50);
+
+        return $model;
+    }
+    public function total(Request $request)
+
+    {
+
+
+        $model = $this->filter($request)->get();
+
+        $totalSum = $model->sum('amount_with_tax');
+
+        return   response()->json(['total' => round($totalSum, 2)]);
     }
 
     public function search(Request $request, $key)

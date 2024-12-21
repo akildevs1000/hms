@@ -325,7 +325,7 @@
               >
                 <template v-slot:top>
                   <v-toolbar flat dense class="mb-5">
-                    {{ Model }} {{ DialogKey }}
+                    {{ Model }}
                     <v-spacer></v-spacer>
                     <v-btn
                       v-if="can(`inquiry_create`)"

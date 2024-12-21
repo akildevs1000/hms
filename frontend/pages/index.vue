@@ -853,6 +853,10 @@ export default {
   //   }, 1000 * 60);
   // },
   created() {
+    if (!this.$auth.user.company) {
+      this.$router.push(`/login`);
+    }
+
     console.log("Index");
 
     console.log("company loading.............");

@@ -605,7 +605,7 @@ export default {
   },
 
   created() {
-    console.log("Default Created");
+    // console.log("Default Created");
 
     // console.log(
     //   "this.$auth.user_verified_mobileotp",
@@ -649,8 +649,8 @@ export default {
 
   mounted() {
     document.addEventListener("mousemove", this.updateMouseLocation);
-    console.log("company auth", this.$auth);
-    console.log("company", this.$auth.user);
+    // console.log("company auth", this.$auth);
+    //console.log("company", this.$auth.user);
 
     let timezone = "Asia/Kolkata";
 
@@ -716,7 +716,7 @@ export default {
       return this.activeMenu === menu;
     },
     setActive(menu) {
-      console.log(menu);
+      // console.log(menu);
       // return;
       this.activeMenu = menu;
       this.filteredMenu = this.items.filter((e) => e.topMenu == menu.name);
@@ -816,7 +816,10 @@ export default {
     async logout() {
       this.$axios.get(`/logout`).then(({ res }) => {
         this.$auth.logout();
+        this.$router.push(`/login`);
       });
+
+      this.$router.push(`/login`);
     },
   },
 };

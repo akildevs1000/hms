@@ -19,7 +19,13 @@ export default {
   components: {
     DatePicker,
   },
-  props: ["defaultFilterType", "height", "defaultDates"],
+  props: [
+    "defaultFilterType",
+    "height",
+    "defaultDates",
+    "default_date_from",
+    "default_date_to",
+  ],
   data() {
     return {
       // -------------------end chart ----------------
@@ -53,7 +59,24 @@ export default {
     this.to_date = to_date.toISOString().slice(0, 10);
 
     this.dateRange = [this.from_date, this.to_date];
+    if (this.default_date_from && this.default_date_to) {
+      this.from_date = this.default_date_from;
 
+      this.to_date = this.default_date_to;
+
+      this.dateRange = [this.from_date, this.to_date];
+      console.log(this.default_date_from);
+      let data = {
+        from: this.from_date,
+        to: this.to_date,
+        type: 1,
+        search: "this.search",
+      };
+
+      console.log(this.dateRange);
+
+      this.$emit("filter-attr", data);
+    }
     if (this.defaultDates) {
       this.from_date = new Date().toJSON().slice(0, 10);
       this.to_date = new Date().toJSON().slice(0, 10);
