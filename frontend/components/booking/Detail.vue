@@ -758,7 +758,7 @@
                                   Success
                                 </p>
                                 <p v-else style="color: red; font-weight: bold">
-                                  Failed
+                                  ---
                                 </p>
                               </div>
                             </v-col>

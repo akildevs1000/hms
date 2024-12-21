@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Agent;
 use App\Models\BookedRoom;
 use App\Models\Booking;
+use App\Models\Company;
 use App\Models\Payment;
 use App\Models\Posting;
 use Carbon\Carbon;
@@ -119,9 +120,12 @@ class PostingController extends Controller
             $data['posting_date'] = now();
 
 
+            $company_food_tax = Company::whereId($data['company_id'])->pluck('food_tax')->first();
 
 
-            $data['tax_rate'] = $data['tax_type'] === "Food" ? 5 : 12;
+
+
+            $data['tax_rate'] = $data['tax_type'] === "Food" ? $company_food_tax : 12;
             $posting              = Posting::create($data);
 
             $transactionData = [
