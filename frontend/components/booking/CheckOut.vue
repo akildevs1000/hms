@@ -825,7 +825,7 @@ export default {
     },
     guestPostingAmount() {
       return this.roomData.postings.reduce((acc, cur) => {
-        return acc + cur.amount_with_tax;
+        return parseFloat(acc) + parseFloat(cur.amount_with_tax);
       }, 0);
     },
     setInitialBalance() {
