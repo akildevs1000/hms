@@ -851,7 +851,10 @@ export default {
       if (this.posting_payment.paid == 0 && this.posting_payment.balance == 0) {
         return this.guestPostingAmount;
       }
-      return this.posting_payment.balance;
+      let total =
+        parseFloat(this.guestPostingAmount) +
+        parseFloat(this.posting_payment.balance);
+      return total.toFixed(2);
     },
     isGroupBooking() {
       return this.BookingData.group_name == "yes";
