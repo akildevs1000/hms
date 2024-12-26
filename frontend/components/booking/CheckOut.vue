@@ -642,9 +642,20 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="4">
+                          <!-- {{ guestPostingAmount }}
+                          {{ posting_payment }} -->
                           <v-text-field
                             readonly
                             v-model="setInitialBalance"
+                            label="Balance"
+                            outlined
+                            dense
+                            hide-details
+                          ></v-text-field>
+
+                          <v-text-field
+                            readonly
+                            v-model="roomData.booking.balance"
                             label="Balance"
                             outlined
                             dense
