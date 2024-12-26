@@ -653,14 +653,14 @@
                             hide-details
                           ></v-text-field>
 
-                          <v-text-field
+                          <!-- <v-text-field
                             readonly
                             v-model="roomData.booking.balance"
                             label="Balance"
                             outlined
                             dense
                             hide-details
-                          ></v-text-field>
+                          ></v-text-field> -->
                         </v-col>
                         <v-col cols="4">
                           <v-text-field
