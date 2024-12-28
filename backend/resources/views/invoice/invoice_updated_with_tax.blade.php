@@ -74,7 +74,7 @@
                                             <br>
                                             {{ $booking->customer->contact_no ?? '' }}
                                             <br>
-                                            GSt: {{ $booking->customer->gst_number ?? '' }}
+                                            GST: {{ $booking->customer->gst_number ?? '---' }}
                                             <br>
                                             {{ strtolower($booking->customer->address) ?? '' }}
                                         </p>
