@@ -21,14 +21,14 @@
                                 <div class="tm_logo">
 
                                     @if (env('APP_ENV') == 'production')
-                                    <img src="{{ urldecode($booking->company->logo) }}" height="100px"
-                                        width="100" style="margin-left: 50px;margin-top: 0px">
+                                        <img src="{{ urldecode($booking->company->logo) }}" height="100px"
+                                            width="100" style="margin-left: 50px;margin-top: 0px">
                                     @elseif ($booking->company_id == 1)
-                                    <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
-                                        style="max-height:70px!important;margin-top:10px">
+                                        <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
+                                            style="max-height:70px!important;margin-top:10px">
                                     @elseif ($booking->company_id == 2 || $booking->company_id == 3)
-                                    <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
-                                        style="max-height:100px!important">
+                                        <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
+                                            style="max-height:100px!important">
                                     @endif
                                 </div>
                             </div>
@@ -69,12 +69,17 @@
                                     <div>
                                         <b class="tm_primary_color">Guest Info</b>
                                         <p class="tm_m0">{{ ucfirst(strtolower($booking->customer->full_name ?? '')) }}
-                                            <br>
-                                            {{ $booking->source ?? '' }}
+                                            @if ($booking->source)
+                                                <br>
+                                                {{ $booking->source ?? '' }}
+                                            @endif
                                             <br>
                                             {{ $booking->customer->contact_no ?? '' }}
-                                            <br>
-                                            GST: {{ $booking->customer->gst_number ?? '---' }}
+                                            @if ($booking->source)
+                                                <br>
+                                                GST: {{ $booking->customer->gst_number ?? '---' }}
+                                            @endif
+
                                             <br>
                                             {{ strtolower($booking->customer->address) ?? '' }}
                                         </p>
@@ -151,138 +156,142 @@
 
                                             @php
 
-                                            $subtotal_price = 0;
-                                            $subtotal_cgst = 0;
-                                            $subtotal_sgst = 0;
-                                            $subtotal_total = 0;
+                                                $subtotal_price = 0;
+                                                $subtotal_cgst = 0;
+                                                $subtotal_sgst = 0;
+                                                $subtotal_total = 0;
 
                                             @endphp
                                             @foreach ($orderRooms as $room)
-                                            @php
-                                            $subtotal_price += $room->inv_room_listing_price;
-                                            $subtotal_sgst += $room->inv_room_sgst;
-                                            $subtotal_cgst += $room->inv_room_cgst;
+                                                @php
+                                                    $subtotal_price += $room->inv_room_listing_price;
+                                                    $subtotal_sgst += $room->inv_room_sgst;
+                                                    $subtotal_cgst += $room->inv_room_cgst;
 
-                                            $subtotal_total += $room->inv_room_listing_price + $room->inv_room_sgst + $room->inv_room_cgst;
+                                                    $subtotal_total +=
+                                                        $room->inv_room_listing_price +
+                                                        $room->inv_room_sgst +
+                                                        $room->inv_room_cgst;
 
-                                            @endphp
-                                            <tr class="inv-tr-txt">
-                                                <td>
-                                                    {{ date('d M Y', strtotime($room->date)) }}
-
-
-                                                </td>
-                                                <td>
-                                                    {{ $room->room_no }} ({{ $room->room_type }})
-                                                </td>
-                                                <td>
-                                                    {{ $room->no_of_adult + $room->no_of_child }}(pax)
-                                                </td>
-
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_listing_price, 2) }}
-                                                </td>
+                                                @endphp
+                                                <tr class="inv-tr-txt">
+                                                    <td>
+                                                        {{ date('d M Y', strtotime($room->date)) }}
 
 
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_sgst, 2) }}
-                                                </td>
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->inv_room_cgst, 2) }}
-                                                </td>
+                                                    </td>
+                                                    <td>
+                                                        {{ $room->room_no }} ({{ $room->room_type }})
+                                                    </td>
+                                                    <td>
+                                                        {{ $room->no_of_adult + $room->no_of_child }}(pax)
+                                                    </td>
+
+                                                    <td class="  tm_text_right">
+                                                        {{ number_format($room->inv_room_listing_price, 2) }}
+                                                    </td>
 
 
-                                                <td class="  tm_text_right">
-                                                    {{ number_format(($room->inv_room_listing_price + $room->inv_room_sgst + $room->inv_room_cgst),2) }}
-                                                </td>
-                                            </tr>
-
-                                            @if ($room->miscellaneous_total>0)
-
-                                            @php
-                                            $subtotal_price += $room->miscellaneous_total_without_tax;
-                                            $subtotal_sgst += $room->miscellaneous_tax/2;
-                                            $subtotal_cgst += $room->miscellaneous_tax/2;
-
-                                            $subtotal_total += $room->miscellaneous_total_without_tax + $room->miscellaneous_tax;
-
-                                            @endphp
-                                            <tr class="inv-tr-txt">
-                                                <td>
-                                                    {{ date('d M Y', strtotime($room->date)) }}
+                                                    <td class="  tm_text_right">
+                                                        {{ number_format($room->inv_room_sgst, 2) }}
+                                                    </td>
+                                                    <td class="  tm_text_right">
+                                                        {{ number_format($room->inv_room_cgst, 2) }}
+                                                    </td>
 
 
-                                                </td>
-                                                <td>
-                                                    {{ $room->room_no }} ({{ $room->room_type }})
-                                                </td>
-                                                <td>
-                                                    Misc...
-                                                </td>
+                                                    <td class="  tm_text_right">
+                                                        {{ number_format($room->inv_room_listing_price + $room->inv_room_sgst + $room->inv_room_cgst, 2) }}
+                                                    </td>
+                                                </tr>
 
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_total_without_tax, 2) }}
-                                                </td>
+                                                @if ($room->miscellaneous_total > 0)
+                                                    @php
+                                                        $subtotal_price += $room->miscellaneous_total_without_tax;
+                                                        $subtotal_sgst += $room->miscellaneous_tax / 2;
+                                                        $subtotal_cgst += $room->miscellaneous_tax / 2;
+
+                                                        $subtotal_total +=
+                                                            $room->miscellaneous_total_without_tax +
+                                                            $room->miscellaneous_tax;
+
+                                                    @endphp
+                                                    <tr class="inv-tr-txt">
+                                                        <td>
+                                                            {{ date('d M Y', strtotime($room->date)) }}
 
 
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_tax/2, 2) }}
-                                                </td>
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_tax/2, 2) }}
-                                                </td>
+                                                        </td>
+                                                        <td>
+                                                            {{ $room->room_no }} ({{ $room->room_type }})
+                                                        </td>
+                                                        <td>
+                                                            Misc...
+                                                        </td>
+
+                                                        <td class="  tm_text_right">
+                                                            {{ number_format($room->miscellaneous_total_without_tax, 2) }}
+                                                        </td>
 
 
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($room->miscellaneous_total, 2) }}
-                                                </td>
-                                            </tr>
-                                            @endif
+                                                        <td class="  tm_text_right">
+                                                            {{ number_format($room->miscellaneous_tax / 2, 2) }}
+                                                        </td>
+                                                        <td class="  tm_text_right">
+                                                            {{ number_format($room->miscellaneous_tax / 2, 2) }}
+                                                        </td>
+
+
+                                                        <td class="  tm_text_right">
+                                                            {{ number_format($room->miscellaneous_total, 2) }}
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                             @endforeach
 
                                             @php
-                                            $postings = App\Models\Posting::with('room')
-                                            ->where('booking_id', $booking->id)
+                                                $postings = App\Models\Posting::with('room')
+                                                    ->where('booking_id', $booking->id)
 
-                                            ->get();
+                                                    ->get();
                                             @endphp
                                             @foreach ($postings as $post)
-                                            <tr class=" inv-tr-txt">
-                                                <td class=" ">
-                                                    {{ date('d M Y', strtotime($post->posting_date)) }}
-                                                </td>
+                                                <tr class=" inv-tr-txt">
+                                                    <td class=" ">
+                                                        {{ date('d M Y', strtotime($post->posting_date)) }}
+                                                    </td>
 
-                                                <td class="  ">
-                                                    {{ $post->item }} ({{ $post->room->room_no }} )
-                                                </td>
-                                                <td class="  ">
-                                                    {{ $post->qty }}
-                                                </td>
-                                                <td class="  tm_text_right ">
-                                                    {{ number_format($post->amount, 2) }}
-                                                </td>
+                                                    <td class="  ">
+                                                        {{ $post->item }} ({{ $post->room->room_no }} )
+                                                    </td>
+                                                    <td class="  ">
+                                                        {{ $post->qty }}
+                                                    </td>
+                                                    <td class="  tm_text_right ">
+                                                        {{ number_format($post->amount, 2) }}
+                                                    </td>
 
 
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($post->sgst, 2) }} <br>
-                                                    {{-- ({{ (float) $post->tax_type / 2 }}%) --}}
-                                                </td>
-                                                <td class="  tm_text_right">
-                                                    {{ number_format($post->cgst, 2) }} <br>
-                                                    {{-- ({{ (float) $post->tax_type / 2 }} %) --}}
-                                                </td>
-                                                <td class="  tm_text_right">
-                                                    {{ number_format((float) $post->amount_with_tax, 2) }}
-                                                </td>
-                                            </tr>
-                                            @php
+                                                    <td class="  tm_text_right">
+                                                        {{ number_format($post->sgst, 2) }} <br>
+                                                        {{-- ({{ (float) $post->tax_type / 2 }}%) --}}
+                                                    </td>
+                                                    <td class="  tm_text_right">
+                                                        {{ number_format($post->cgst, 2) }} <br>
+                                                        {{-- ({{ (float) $post->tax_type / 2 }} %) --}}
+                                                    </td>
+                                                    <td class="  tm_text_right">
+                                                        {{ number_format((float) $post->amount_with_tax, 2) }}
+                                                    </td>
+                                                </tr>
+                                                @php
 
-                                            $subtotal_price += $post->amount;
-                                            $subtotal_sgst += $post->cgst;
-                                            $subtotal_cgst += $post->sgst;
+                                                    $subtotal_price += $post->amount;
+                                                    $subtotal_sgst += $post->cgst;
+                                                    $subtotal_cgst += $post->sgst;
 
-                                            $subtotal_total += $post->amount_with_tax;
-                                            @endphp
+                                                    $subtotal_total += $post->amount_with_tax;
+                                                @endphp
                                             @endforeach
                                             <tr class="inv-tr-txt" style="font-weight:bold;border-top:groove;">
                                                 <td class=" ">
