@@ -241,6 +241,8 @@
             </template>
 
             <template v-slot:item.room_status="{ item }">
+              <div v-if="item.booking_id != ''">Sold</div>
+
               <div style="color: red" v-if="getRoomStatus(item.room_id) == 0">
                 Empty
               </div>

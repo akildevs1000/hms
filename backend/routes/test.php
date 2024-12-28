@@ -14,6 +14,7 @@ use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
 use App\Models\Company;
+use App\Models\Device;
 use App\Models\Expense;
 use App\Models\Food;
 use App\Models\OrderRoom;
@@ -26,12 +27,114 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 
-Route::get('/datetest', function (Request $request) {
+Route::get('/checkroomstatus', function (Request $request) {
 
+
+
+
+
+
+    $device_room_number = $request->room_number;
+    $status = $request->status;
+
+    // if ($request->status == 1) {
+    //     $status = 0;
+    // } else if ($request->status == 0) {
+    //     $status = 1;
+    // }
+    $notificationMessage = "";
+    $device = Device::with("company")->where("serial_number", $device_room_number)->first();
+    if ($device) {
+        $deviceTimezone = $device->utc_time_zone;
+
+
+        $timeZone = 'Asia/Dubai';
+
+        if ($deviceTimezone != '') {
+            $timeZone = $deviceTimezone;
+        }
+
+        $dateTime = new DateTime(date("Y-m-d H:i:s"));
+        $dateTime->setTimezone(new DateTimeZone($timeZone));
+
+
+        $company_id = $device->company_id;
+        $todayDate = $dateTime->format('Y-m-d'); //date("Y-m-d");
+
+
+
+        $model = BookedRoom::query();
+        // $bookingStatusId = $model
+        //     ->whereDate('check_in', '<=', $todayDate)
+        //     ->WhereDate('check_out', '>=', date('Y-m-d', strtotime('+1 day', strtotime($todayDate))))
+        //     ->where('company_id', $company_id)
+        //     ->where('room_id',  $device->room_id)
+
+        //     //->where('room_id',  $device->room_id)
+        //     ->pluck("booking_status")->first();
+        $data = [];
+        if ($dateTime->format('H') >= 12) {
+            $data = $model
+                ->whereDate('check_in', '<=', $todayDate)
+                ->WhereDate('check_out', '>', $todayDate)
+                ->where('company_id', $company_id)
+                ->where('room_id',  $device->room_id)
+                ->first();
+        } else {
+            $data =  $model
+                ->whereDate('check_in', '<=', $todayDate)
+                ->whereDate('check_out', '>=', $todayDate)
+                ->where('company_id', $company_id)
+                ->where('room_id',  $device->room_id)
+                ->first();
+        }
+
+
+        return $data;
+    }
+
+    return false;
+
+
+
+
+
+    $json = json_decode('[{"employeeID":157,"logDate":"2024-12-19T07:46:00.000Z","terminalID":"OX-9662210080053","createdDate":"2024-12-19T07:46:00.000Z","functionNo":"in","depNo":null}]');
+    return $response = Http::timeout(300)
+        ->withoutVerifying()
+        ->withHeaders([
+            'Content-Type' => 'application/json',
+            'Authorization' => ' Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyTmFtZSI6ImF0dGVuZGFuY2V1c2VyIiwibG9naW5Tb3VyY2UiOiJIUiIsImVtcE5vIjoiMCIsImV4cCI6MTczNDY4NTA4MCwiaXNzIjoiSFJTeXN0ZW0iLCJhdWQiOiJIUlN5c3RlbSJ9.4TLwmakzdiL7plcntIZjHOBdeJ5HhBnsx1hseULYsvo',
+
+        ])
+        ->post("https://aquhrsys.alqasimia.ac.ae/HRENDPointAtt/api/InsertAccessLog", "{}");
+
+
+    return Company::with("timezone")->get();
+
+    $todayDate = "2024-12-07";
+    $model = BookedRoom::query();
+
+
+
+    $bookingStatusId = $model
+        ->whereDate('check_in', '<=', $todayDate)
+        ->WhereDate('check_out', '>=', $todayDate)
+        ->where('company_id', 1)
+        ->where('room_id', 203)
+
+
+        ->pluck("booking_status")->first();
+
+    if (!$bookingStatusId) {
+        $bookingStatusId = 0;
+    }
+    return $bookingStatusId;
 
     return (new DeviceController())->sendWhatsappNotification("Hello");
     return date('Y-m-d H:i:s');
