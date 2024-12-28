@@ -250,11 +250,14 @@
                 Empty
               </div>
               <div style="" v-else>Sold</div> -->
-              <!-- {{ roomStatus[item.serial_number] }} -
-              {{ roomStatus[`"${item.serial_number}"`] }} -->
+              <!-- {{ roomStatus }}
+              {{ roomStatus.length }} -->
+              <!-- {{ updatesstatukey }} -->
+              <div v-if="updatesstatukey == 1">---</div>
               <div
+                :key="updatesstatukey"
                 style="color: red"
-                v-if="roomStatus[item.serial_number] == 0"
+                v-else-if="getroomStatus1(item.serial_number) == 0"
               >
                 Empty
               </div>
@@ -458,7 +461,7 @@ export default {
     roomList: [],
 
     endpoint: "devices",
-
+    updatesstatukey: 1,
     newItemDialog: false,
     DeviceLogDialog: false,
     DeviceLogCompKey: 1,
@@ -498,7 +501,13 @@ export default {
 
     this.intervalObj = setInterval(() => {
       this.getDataFromApi();
+      this.updateStatus();
     }, 1000 * 60);
+
+    setTimeout(() => {
+      this.updatesstatukey++;
+      //this.getDataFromApi();
+    }, 1000 * 5);
   },
   methods: {
     async getRoomStatusBySerialNumber(serial_number) {
@@ -506,6 +515,9 @@ export default {
 
       let status = await this.$axios.get(`device-getbookingstatus`, options);
       return status;
+    },
+    getroomStatus1(serial_number) {
+      return this.roomStatus[serial_number];
     },
     getRoomStatus(roomId) {
       let status = 0;
@@ -605,62 +617,34 @@ export default {
         this.loading = false;
         this.data = data.data;
         this.totalTableRowsCount = data.total;
-
-        // Collect serial numbers to fetch statuses in bulk
-        const serialNumbers = this.data.map((element) => element.serial_number);
-
-        // Example of bulk fetching statuses
-        const statuses = await this.getBulkRoomStatuses(serialNumbers);
-
-        // console.log(statuses.message);
-
-        // statuses.message.forEach((element) => {
-        //   console.log(element);
-        // });
-        var array1 = [];
-        if (
-          typeof statuses.message === "object" &&
-          !Array.isArray(statuses.message)
-        ) {
-          Object.entries(statuses.message).forEach(([key, value]) => {
-            console.log("Key:", key, "Value:", value);
-
-            //array1[key] = key;
-
-            this.roomStatus[key] = value;
-
-            console.log(this.roomStatus[key]);
-          });
-        }
-        // try {
-        //   // Parse JSON if necessary (depends on the return format of getBulkRoomStatuses)
-        //   // const statuses1 =
-        //   //   typeof statuses === "string" ? JSON.parse(statuses) : statuses;
-
-        //   // // Debugging: log parsed statuses
-        //   // console.log("Parsed Statuses:", statuses1, statuses1.T103);
-
-        //   const cleanedObject = Object.fromEntries(
-        //     Object.entries(statuses).map(([key, value]) => [
-        //       key.replace(/\\"/g, ""),
-        //       value,
-        //     ])
-        //   );
-        //   console.log(cleanedObject.T103);
-
-        //   // // Map room statuses using serial numbers
-        //   // serialNumbers.forEach((serialNumber) => {
-        //   //   this.roomStatus[serialNumber] =
-        //   //     statuses1['""' + serialNumber + '""'] || null; // Assign status or null if not found
-        //   //   console.log(
-        //   //     `Room Status [${serialNumber}]:`,
-        //   //     this.roomStatus['""' + serialNumber + '""']
-        //   //   );
-        //   // });
-        // } catch (error) {
-        //   console.error("Error parsing or processing statuses:", error);
-        // }
+        this.updateStatus();
+        // setTimeout(() => {
+        //   await this.updateStatus();
+        // }, 1000 * 5);
       });
+    },
+
+    async updateStatus() {
+      //this.roomStatus = [];
+      // Collect serial numbers to fetch statuses in bulk
+      const serialNumbers = this.data.map((element) => element.serial_number);
+
+      const statuses = await this.getBulkRoomStatuses(serialNumbers);
+
+      if (
+        typeof statuses.message === "object" &&
+        !Array.isArray(statuses.message)
+      ) {
+        Object.entries(statuses.message).forEach(([key, value]) => {
+          // console.log("Key:", key, "Value:", value);
+
+          //array1[key] = key;
+
+          this.roomStatus[key] = value;
+        });
+      }
+
+      console.log(this.roomStatus);
     },
     async getBulkRoomStatuses(serialNumbers) {
       try {
