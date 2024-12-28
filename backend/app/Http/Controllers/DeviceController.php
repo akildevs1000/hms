@@ -31,7 +31,68 @@ class DeviceController extends Controller
     {
         return $model->with(['status'])->where('company_id', $request->company_id)->get();
     }
+    public function deviceGetBookingStatus(Request $request)
+    {
 
+
+        $serial_number = $request->serial_number;
+
+        // if ($request->status == 1) {
+        //     $status = 0;
+        // } else if ($request->status == 0) {
+        //     $status = 1;
+        // }
+        $notificationMessage = "";
+        $device = Device::with("company")->where("serial_number", $serial_number)->first();
+        if ($device) {
+            $deviceTimezone = $device->utc_time_zone;
+
+
+            $timeZone = 'Asia/Dubai';
+
+            if ($deviceTimezone != '') {
+                $timeZone = $deviceTimezone;
+            }
+
+            $dateTime = new DateTime(date("Y-m-d H:i:s"));
+            $dateTime->setTimezone(new DateTimeZone($timeZone));
+
+
+            $company_id = $device->company_id;
+            $todayDate = $dateTime->format('Y-m-d'); //date("Y-m-d");
+
+
+
+            $model = BookedRoom::query();
+            // $bookingStatusId = $model
+            //     ->whereDate('check_in', '<=', $todayDate)
+            //     ->WhereDate('check_out', '>=', date('Y-m-d', strtotime('+1 day', strtotime($todayDate))))
+            //     ->where('company_id', $company_id)
+            //     ->where('room_id',  $device->room_id)
+
+            //     //->where('room_id',  $device->room_id)
+            //     ->pluck("booking_status")->first();
+            $data = [];
+            if ($dateTime->format('H') >= 12) {
+                $data = $model
+                    ->whereDate('check_in', '<=', $todayDate)
+                    ->WhereDate('check_out', '>', $todayDate)
+                    ->where('company_id', $company_id)
+                    ->where('room_id',  $device->room_id)
+                    ->first();
+            } else {
+                $data =  $model
+                    ->whereDate('check_in', '<=', $todayDate)
+                    ->whereDate('check_out', '>=', $todayDate)
+                    ->where('company_id', $company_id)
+                    ->where('room_id',  $device->room_id)
+                    ->first();
+            }
+
+
+            return $data ? count($data) : 0;
+        }
+    }
     public function store(Device $model, StoreRequest $request)
     {
 

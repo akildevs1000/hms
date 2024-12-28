@@ -250,6 +250,14 @@
                 Empty
               </div>
               <div style="" v-else>Sold</div>
+              <!-- 
+              <div
+                style="color: red"
+                v-if="getRoomStatusBySerialNumber(item.serial_number) == 0"
+              >
+                Empty
+              </div>
+              <div style="" v-else>Sold</div>-->
             </template>
 
             <template
@@ -491,6 +499,12 @@ export default {
     }, 1000 * 60);
   },
   methods: {
+    async getRoomStatusBySerialNumber(serial_number) {
+      let options = { params: { serial_number: serial_number } };
+
+      let status = await this.$axios.get(`device-getbookingstatus`, options);
+      return status;
+    },
     getRoomStatus(roomId) {
       let status = 0;
       try {

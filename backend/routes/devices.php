@@ -15,3 +15,5 @@ Route::get('devices_list', [DeviceController::class, 'getDevicesList']);
 
 Route::get('device-settings', [DeviceController::class, 'getDeviceSettings']);
 Route::post('device-settings-update', [DeviceController::class, 'updateDeviceSettings']);
+
+Route::get('device-getbookingstatus', [DeviceController::class, 'deviceGetBookingStatus']);
