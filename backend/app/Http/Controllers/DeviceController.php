@@ -33,6 +33,44 @@ class DeviceController extends Controller
     }
     public function deviceGetBookingStatus(Request $request)
     {
+        $serial_numbers = $request->serialNumbers; // Assume this is an array of serial numbers
+        $response = [];
+
+        $devices = Device::with('company')
+            ->whereIn('serial_number', $serial_numbers)
+            ->get();
+
+        foreach ($devices as $device) {
+            // Determine device timezone, defaulting to 'Asia/Dubai'
+            $timeZone = $device->utc_time_zone ?: 'Asia/Dubai';
+
+            $dateTime = new DateTime('now', new DateTimeZone($timeZone));
+            $todayDate = $dateTime->format('Y-m-d');
+            $currentHour = $dateTime->format('H');
+
+            $company_id = $device->company_id;
+
+            // Query booked room
+            $query = BookedRoom::where('company_id', $company_id)
+                ->where('room_id', $device->room_id)
+                ->whereDate('check_in', '<=', $todayDate)
+                ->whereDate('check_out', '>=', $todayDate);
+
+            // Adjust query for current hour (if needed)
+            if ($currentHour >= 12) {
+                $query->whereDate('check_out', '>', $todayDate);
+            }
+
+            $data = $query->first();
+
+            // Add result to the response array
+            $response[$device->serial_number] = $data ? 1 : 0;
+        }
+
+        // Return the bulk response
+        // return response()->json($response);
+
+        return $this->response($response, null, null);
 
 
         $serial_number = $request->serial_number;
@@ -64,14 +102,7 @@ class DeviceController extends Controller
 
 
             $model = BookedRoom::query();
-            // $bookingStatusId = $model
-            //     ->whereDate('check_in', '<=', $todayDate)
-            //     ->WhereDate('check_out', '>=', date('Y-m-d', strtotime('+1 day', strtotime($todayDate))))
-            //     ->where('company_id', $company_id)
-            //     ->where('room_id',  $device->room_id)
 
-            //     //->where('room_id',  $device->room_id)
-            //     ->pluck("booking_status")->first();
             $data = [];
             if ($dateTime->format('H') >= 12) {
                 $data = $model

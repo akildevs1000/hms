@@ -241,7 +241,7 @@
             </template>
 
             <template v-slot:item.room_status="{ item }">
-              <div v-if="item.booking_id > 0">Sold</div>
+              <!-- <div v-if="item.booking_id > 0">Sold</div>
 
               <div
                 style="color: red"
@@ -249,15 +249,16 @@
               >
                 Empty
               </div>
-              <div style="" v-else>Sold</div>
-              <!-- 
+              <div style="" v-else>Sold</div> -->
+              <!-- {{ roomStatus[item.serial_number] }} -
+              {{ roomStatus[`"${item.serial_number}"`] }} -->
               <div
                 style="color: red"
-                v-if="getRoomStatusBySerialNumber(item.serial_number) == 0"
+                v-if="roomStatus[item.serial_number] == 0"
               >
                 Empty
               </div>
-              <div style="" v-else>Sold</div>-->
+              <div style="" v-else>Sold</div>
             </template>
 
             <template
@@ -339,6 +340,7 @@ export default {
   components: { DeviceSettings },
   props: ["addNew"],
   data: () => ({
+    roomStatus: [],
     //datatable varables
     dialogDeviceSettings: false,
     key: 1,
@@ -599,11 +601,77 @@ export default {
           ...this.filters,
         },
       };
-      this.$axios.get(`${url}?page=${page}`, options).then(({ data }) => {
+      this.$axios.get(`${url}?page=${page}`, options).then(async ({ data }) => {
         this.loading = false;
         this.data = data.data;
         this.totalTableRowsCount = data.total;
+
+        // Collect serial numbers to fetch statuses in bulk
+        const serialNumbers = this.data.map((element) => element.serial_number);
+
+        // Example of bulk fetching statuses
+        const statuses = await this.getBulkRoomStatuses(serialNumbers);
+
+        // console.log(statuses.message);
+
+        // statuses.message.forEach((element) => {
+        //   console.log(element);
+        // });
+        var array1 = [];
+        if (
+          typeof statuses.message === "object" &&
+          !Array.isArray(statuses.message)
+        ) {
+          Object.entries(statuses.message).forEach(([key, value]) => {
+            console.log("Key:", key, "Value:", value);
+
+            //array1[key] = key;
+
+            this.roomStatus[key] = value;
+
+            console.log(this.roomStatus[key]);
+          });
+        }
+        // try {
+        //   // Parse JSON if necessary (depends on the return format of getBulkRoomStatuses)
+        //   // const statuses1 =
+        //   //   typeof statuses === "string" ? JSON.parse(statuses) : statuses;
+
+        //   // // Debugging: log parsed statuses
+        //   // console.log("Parsed Statuses:", statuses1, statuses1.T103);
+
+        //   const cleanedObject = Object.fromEntries(
+        //     Object.entries(statuses).map(([key, value]) => [
+        //       key.replace(/\\"/g, ""),
+        //       value,
+        //     ])
+        //   );
+        //   console.log(cleanedObject.T103);
+
+        //   // // Map room statuses using serial numbers
+        //   // serialNumbers.forEach((serialNumber) => {
+        //   //   this.roomStatus[serialNumber] =
+        //   //     statuses1['""' + serialNumber + '""'] || null; // Assign status or null if not found
+        //   //   console.log(
+        //   //     `Room Status [${serialNumber}]:`,
+        //   //     this.roomStatus['""' + serialNumber + '""']
+        //   //   );
+        //   // });
+        // } catch (error) {
+        //   console.error("Error parsing or processing statuses:", error);
+        // }
       });
+    },
+    async getBulkRoomStatuses(serialNumbers) {
+      try {
+        const { data } = await this.$axios.post("device-getbookingstatus", {
+          serialNumbers,
+        });
+        return data; // Assumes the API returns an array of statuses in the same order
+      } catch (error) {
+        console.error("Error fetching room statuses:", error);
+        return [];
+      }
     },
 
     getroomList() {
