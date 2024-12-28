@@ -66,23 +66,24 @@
                             <div class="" style="width:100%">
                                 <div
                                     class="tm_grid_row tm_col_4 tm_col_2_sm tm_invoice_info_in tm_gray_bg tm_round_border">
+
                                     <div>
-                                        <b class="tm_primary_color">Guest Info</b>
-                                        <p class="tm_m0">{{ ucfirst(strtolower($booking->customer->full_name ?? '')) }}
+                                        <span>Guest Info:</span> <br>
+                                        <p>
                                             @if ($booking->source)
-                                                <br>
                                                 {{ $booking->source ?? '' }}
-                                            @endif
-                                            <br>
-                                            {{ $booking->customer->contact_no ?? '' }}
-                                            @if ($booking->source)
                                                 <br>
                                                 GST: {{ $booking->customer->gst_number ?? '---' }}
+                                                <br>
                                             @endif
-
+                                        </p>
+                                        <div>
+                                            {{ ucfirst(strtolower($booking->customer->full_name ?? '')) }}
+                                            <br>
+                                            {{ strtolower($booking->customer->contact_no) ?? '' }}
                                             <br>
                                             {{ strtolower($booking->customer->address) ?? '' }}
-                                        </p>
+                                        </div>
                                     </div>
                                     <div>
                                         <span>Check In:</span> <br>
