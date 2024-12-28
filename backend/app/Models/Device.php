@@ -29,6 +29,15 @@ class Device extends Model
         return $this->hasOne(BookedRoom::class, "room_id", "room_id")->latest("updated_at");;
     }
 
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class, 'booking_id', 'id');
+    }
+    public function bookedroomid()
+    {
+        return $this->belongsTo(BookedRoom::class, 'booked_room_id', 'id');
+    }
+
 
     protected $casts = [
         'created_at' => 'datetime:d-M-y',

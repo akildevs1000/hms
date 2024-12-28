@@ -21,7 +21,7 @@ class DeviceController extends Controller
 {
     public function index(Device $model, Request $request)
     {
-        return $model->with(['room', 'company', "bookedRoom"])->where('company_id', $request->company_id)
+        return $model->with(['room', 'company', "bookedRoom",  "booking", "bookedroomid"])->where('company_id', $request->company_id)
 
             ->orderBy('latest_status', "DESC")
             ->paginate($request->per_page ?? 50);
@@ -167,13 +167,6 @@ class DeviceController extends Controller
 
     public function updateDevicRoomFileStatus(Request $request)
     {
-
-
-
-
-
-
-
         $device_room_number = $request->room_number;
         $status = $request->status;
 
@@ -204,18 +197,45 @@ class DeviceController extends Controller
 
 
             $model = BookedRoom::query();
-            $bookingStatusId = $model
-                ->whereDate('check_in', '<=', $todayDate)
-                ->WhereDate('check_out', '>=', date('Y-m-d', strtotime('+1 day', strtotime($todayDate))))
-                ->where('company_id', $company_id)
-                ->where('room_id',  $device->room_id)
+            // $bookingStatusId = $model
+            //     ->whereDate('check_in', '<=', $todayDate)
+            //     ->WhereDate('check_out', '>=', date('Y-m-d', strtotime('+1 day', strtotime($todayDate))))
+            //     ->where('company_id', $company_id)
+            //     ->where('room_id',  $device->room_id)
 
-                //->where('room_id',  $device->room_id)
-                ->pluck("booking_status")->first();
-
-            if (!$bookingStatusId) {
-                $bookingStatusId = 0;
+            //     //->where('room_id',  $device->room_id)
+            //     ->pluck("booking_status")->first();
+            $data = [];
+            if ($dateTime->format('H') >= 12) {
+                $data = $model
+                    ->whereDate('check_in', '<=', $todayDate)
+                    ->WhereDate('check_out', '>', $todayDate)
+                    ->where('company_id', $company_id)
+                    ->where('room_id',  $device->room_id)
+                    ->first();
+            } else {
+                $data =  $model
+                    ->whereDate('check_in', '<=', $todayDate)
+                    ->whereDate('check_out', '>=', $todayDate)
+                    ->where('company_id', $company_id)
+                    ->where('room_id',  $device->room_id)
+                    ->first();
             }
+            $bookingStatusId = 0;
+            $booked_room_id = 0;
+            $booking_id = 0;
+
+
+
+            if ($data &&   isset($data["booking_status"])) {
+                $bookingStatusId = $data["booking_status"];
+                $booked_room_id = $data["id"];
+                $booking_id = $data["booking_id"];
+            }
+
+            // if (!$bookingStatusId) {
+            //     $bookingStatusId = 0;
+            // }
 
             //BookedRoom::CHECKED_IN
 
@@ -231,12 +251,15 @@ class DeviceController extends Controller
                 $logs["status"] = $status;
                 $logs["raw_data"] =  json_encode($request->all());
 
-
                 $logs["log_time"] = $dateTime->format('Y-m-d H:i:s');
 
 
 
                 if ($status == 1) {
+
+                    $logs["booked_room_id"] = $booked_room_id;
+                    $logs["booking_id"] = $booking_id;
+
 
                     $logs["start_datetime"] = $dateTime->format('Y-m-d H:i:s');
 
@@ -244,6 +267,9 @@ class DeviceController extends Controller
                     $row = [];
                     $row["latest_status"] = $status;
                     $row["latest_status_time"] = $dateTime->format('Y-m-d H:i:s');
+
+                    $row["booked_room_id"] = $booked_room_id;
+                    $row["booking_id"] = $booking_id;
 
                     Device::where("serial_number", $device_room_number)
                         ->update($row);
@@ -283,6 +309,10 @@ class DeviceController extends Controller
 
                         $row["latest_status"] = 0;
                         $row["latest_status_time"] = $dateTime->format('Y-m-d H:i:s');
+
+                        $row["booked_room_id"] = null;
+                        $row["booking_id"] = null;
+
 
                         Device::where("serial_number", $device_room_number)
                             ->update($row);
@@ -363,7 +393,7 @@ class DeviceController extends Controller
     {
 
         // $modelDevicesArray = Devices::query()->where("company_id", $request->company_id)->get()->pluck("serial_number");
-        $model = DeviceLogs::with("device.room");
+        $model = DeviceLogs::with(["device.room", "booking", "bookedroom"]);
 
         $model->whereIn("serial_number", Devices::query()->where("company_id", $request->company_id)->get()->pluck("serial_number"));
         $model->when($request->filled('serial_number'), function ($q) use ($request) {
@@ -404,5 +434,79 @@ class DeviceController extends Controller
     public function getDevicesList(Request $request)
     {
         return Devices::query()->with("room")->where("company_id", $request->company_id)->get();
+    }
+    public function getDeviceSettings(Request $request)
+    {
+
+        if ($request->filled('serial_number')) {
+
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'http://64.227.164.43:6000/device-config/' . $request->serial_number,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'GET',
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+
+
+            //return json_decode($response);
+            // return  json_decode($response, true);
+
+            return $this->response(json_decode($response, true), "", true);
+        }
+    }
+
+    public function updateDeviceSettings(Request $request)
+    {
+
+
+
+        if ($request->filled('serial_number')) {
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => 'http://64.227.164.43:6000/device-config-update/' . $request->serial_number,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => '{
+  "action": "UPDATE_CONFIG",
+  "serialNumber": "' . $request->serial_number . '",
+  "config": {
+     "serverURL": "' . $request->serverURL . '",        
+        "intervalHeartbeat": ' . $request->intervalHeartbeat . ',
+        "server_ip": "' . $request->server_ip . '",
+        "server_port": "' . $request->server_port . '",
+        "gmtTimeZone": "' . $request->gmtTimeZone . '" 
+        
+  }
+}',
+                CURLOPT_HTTPHEADER => array(
+                    'Content-Type: application/json'
+                ),
+            ));
+
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            return $this->response('Updated Successfully', $response, true);
+        }
     }
 }

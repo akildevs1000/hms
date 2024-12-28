@@ -32,4 +32,12 @@ class DeviceLogs extends Model
     {
         return $this->belongsTo(Device::class, 'serial_number', 'serial_number');
     }
+    public function booking()
+    {
+        return $this->belongsTo(Booking::class, 'booking_id', 'id');
+    }
+    public function bookedroom()
+    {
+        return $this->belongsTo(BookedRoom::class, 'booked_room_id', 'id');
+    }
 }

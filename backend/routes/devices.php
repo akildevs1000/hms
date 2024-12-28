@@ -11,3 +11,7 @@ Route::get('update_device_room_fill_status', [DeviceController::class, 'updateDe
 
 Route::get('devices_logs', [DeviceController::class, 'getDevicesLogs']);
 Route::get('devices_list', [DeviceController::class, 'getDevicesList']);
+
+
+Route::get('device-settings', [DeviceController::class, 'getDeviceSettings']);
+Route::post('device-settings-update', [DeviceController::class, 'updateDeviceSettings']);

@@ -10,6 +10,31 @@
         {{ snackbarResponse }}
       </v-snackbar>
     </div>
+    <v-dialog v-model="dialogDeviceSettings" max-width="600">
+      <v-card>
+        <v-card-title dense class="primary white--text background">
+          <span v-if="viewMode">View Device Info </span>
+          <span v-else-if="editedItemIndex == -1"
+            >Device Settings : {{ editedItem.serial_number }}
+          </span>
+          <span v-else>Device Settings </span>
+          <v-spacer></v-spacer>
+          <v-icon
+            @click="dialogDeviceSettings = false"
+            outlined
+            dark
+            color="white"
+          >
+            mdi mdi-close-circle
+          </v-icon>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <DeviceSettings :key="key" :editedItem="editedItem" />
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="DeviceLogDialog" max-width="900">
       <v-card>
         <v-toolbar color="blue" dark dense flat>
@@ -183,6 +208,26 @@
             <template v-slot:item.room_type.name="{ item }">
               {{ item.room_type.name }}</template
             >
+            <template v-slot:item.reservation_no="{ item }">
+              {{ item.booked_room.name }}</template
+            ><template v-slot:item.reservation_number="{ item }">
+              {{ item.booking?.reservation_no || "---" }}
+            </template>
+            <template v-slot:item.check_in="{ item }">
+              {{
+                item.bookedroomid?.check_in
+                  ? $dateFormat.format11(item.bookedroomid?.check_in)
+                  : "---"
+              }}
+            </template>
+            <template v-slot:item.check_out="{ item }">
+              {{
+                item.bookedroomid?.check_out
+                  ? $dateFormat.format11(item.bookedroomid?.check_out)
+                  : "---"
+              }}
+            </template>
+
             <template v-slot:item.latest_status="{ item }">
               <v-icon v-if="item.latest_status == 0" color="black"
                 >mdi-lightbulb-outline
@@ -244,6 +289,15 @@
                       Edit
                     </v-list-item-title>
                   </v-list-item>
+                  <!-- <v-list-item
+                    v-if="can('devices_edit')"
+                    @click="editDeviceSettings(item, false)"
+                  >
+                    <v-list-item-title style="cursor: pointer">
+                      <v-icon color="secondary" small> mdi-pencil </v-icon>
+                      Settings
+                    </v-list-item-title>
+                  </v-list-item> -->
                   <v-list-item
                     v-if="can('device_delete')"
                     @click="deleteItem(item)"
@@ -265,10 +319,16 @@
 </template>
 <script>
 import timeZones from "../../defaults/utc_time_zones.json";
+
+import DeviceSettings from "./DeviceSettings.vue";
+
 export default {
+  components: { DeviceSettings },
   props: ["addNew"],
   data: () => ({
     //datatable varables
+    dialogDeviceSettings: false,
+    key: 1,
     page: 1,
     timeZones: timeZones,
     perPage: 50,
@@ -340,6 +400,33 @@ export default {
         key: "room_id",
         filterable: true,
         filterSpecial: true,
+      },
+      {
+        text: "Resv.No",
+        value: "reservation_number",
+        align: "left",
+        sortable: false,
+        key: "reservation_number",
+        filterable: false,
+        filterSpecial: false,
+      },
+      {
+        text: "Check In",
+        value: "check_in",
+        align: "left",
+        sortable: false,
+        key: "check_in",
+        filterable: false,
+        filterSpecial: false,
+      },
+      {
+        text: "Check Out",
+        value: "check_out",
+        align: "left",
+        sortable: false,
+        key: "check_out",
+        filterable: false,
+        filterSpecial: false,
       },
       {
         text: "Light Status Time",
@@ -473,6 +560,7 @@ export default {
       this.$set(this.options, "page", 1);
       this.getDataFromApi(this.endpoint, 1);
     },
+
     getDataFromApi(url = this.endpoint, customPage = 0) {
       this.loading = true;
       let { sortBy, sortDesc, page, itemsPerPage } = this.options;
@@ -513,6 +601,13 @@ export default {
       this.$store.commit("device_logs_id", item.serial_number);
       this.DeviceLogDialog = true;
       this.DeviceLogCompKey++;
+    },
+    editDeviceSettings(item, viewMode = false) {
+      this.errors = {};
+      this.viewMode = viewMode;
+      this.editedItem = item;
+      this.key += 1;
+      this.dialogDeviceSettings = true;
     },
     editItem(item, viewMode = false) {
       this.errors = {};

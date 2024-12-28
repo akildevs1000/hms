@@ -136,6 +136,24 @@
             <template v-slot:item.device.room.room_type.name="{ item }">
               {{ caps(item.device.room.room_type.name) }}
             </template>
+
+            <template v-slot:item.reservation_number="{ item }">
+              {{ item.booking?.reservation_no || "---" }}
+            </template>
+            <template v-slot:item.check_in="{ item }">
+              {{
+                item.bookedroom?.check_in
+                  ? $dateFormat.format11(item.bookedroom?.check_in)
+                  : "---"
+              }}
+            </template>
+            <template v-slot:item.check_out="{ item }">
+              {{
+                item.bookedroom?.check_out
+                  ? $dateFormat.format11(item.bookedroom?.check_out)
+                  : "---"
+              }}
+            </template>
             <template v-slot:item.start_datetime="{ item }">
               <div v-if="item.start_datetime"></div>
               {{ $dateFormat.format6(item.start_datetime) }}
@@ -265,6 +283,27 @@ export default {
         text: "Room Status",
         value: "status",
         key: "status",
+        align: "left",
+        sortable: false,
+      },
+      {
+        text: "Resv.no",
+        value: "reservation_number",
+        key: "reservation_number",
+        align: "left",
+        sortable: false,
+      },
+      {
+        text: "Check In",
+        value: "check_in",
+        key: "check_in",
+        align: "left",
+        sortable: false,
+      },
+      {
+        text: "Check Out",
+        value: "check_out",
+        key: "check_out",
         align: "left",
         sortable: false,
       },
