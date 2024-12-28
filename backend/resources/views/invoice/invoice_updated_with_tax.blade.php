@@ -68,11 +68,13 @@
                                     class="tm_grid_row tm_col_4 tm_col_2_sm tm_invoice_info_in tm_gray_bg tm_round_border">
                                     <div>
                                         <b class="tm_primary_color">Guest Info</b>
-                                        <p class="tm_m0">{{ $booking->customer->full_name ?? '' }}
+                                        <p class="tm_m0">{{ ucfirst(strtolower($booking->customer->full_name ?? '')) }}
+                                            <br>
+                                            {{ $booking->source ?? '' }}
                                             <br>
                                             {{ $booking->customer->contact_no ?? '' }}
                                             <br>
-                                            {{ $booking->customer->gst_number ?? '' }}
+                                            GSt: {{ $booking->customer->gst_number ?? '' }}
                                             <br>
                                             {{ strtolower($booking->customer->address) ?? '' }}
                                         </p>
