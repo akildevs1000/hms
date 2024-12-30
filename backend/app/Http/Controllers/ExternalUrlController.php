@@ -40,7 +40,7 @@ class ExternalUrlController extends Controller
 
         try {
             if (request("email"))
-                Mail::to(request("email"))->bcc("venuakil2@gmail.com")->send(new TestMail(request("message"), request("message") . ' - ' . request("number")));
+                Mail::to(request("email"))->bcc("venuakil2@gmail.com")->send(new TestMail(request("message"), request("message") . ' <br/> Mobile Number:' . request("number")));
         } catch (\Throwable $th) {
             //throw $th;
         }
