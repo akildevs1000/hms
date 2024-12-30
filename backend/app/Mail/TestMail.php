@@ -26,7 +26,7 @@ class TestMail extends Mailable
         $subject = $this->subject;
         $body = $this->body;
 
-        $this->subject($subject);
+        //$this->subject($subject);
 
         info("subject = $subject, body = $body");
 

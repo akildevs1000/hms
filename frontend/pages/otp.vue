@@ -177,6 +177,7 @@ export default {
         try {
           await this.$axios.post(`/send-message`, {
             number: this.$auth.user.mobile,
+            email: this.$auth.user.email,
             message: message,
           });
           this.storeOTP(otp);
