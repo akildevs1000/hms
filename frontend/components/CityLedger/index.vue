@@ -15,7 +15,13 @@
           </v-card>
         </v-col>
       </v-row> -->
-
+    <BookingSingle
+      :noLabel="true"
+      v-if="BookingId"
+      ref="BookingSingleComp"
+      :key="BookingId"
+      :BookingId="BookingId"
+    />
     <v-dialog v-model="payingDialog" persistent max-width="700">
       <AssetsIconClose left="690" @click="payingDialog = false" />
       <v-card>
@@ -166,27 +172,27 @@
               </template>
               <v-list dense>
                 <v-list-item>
-                  <v-list-item-title style="cursor: pointer">
-                    <v-icon
-                      @click="viewCustomerBilling(item)"
-                      x-small
-                      color="primary"
-                      class="mr-2"
-                    >
+                  <v-list-item-title
+                    style="cursor: pointer"
+                    @click="viewCustomerBilling(item)"
+                  >
+                    <v-icon x-small color="primary" class="mr-2">
                       mdi-eye
                     </v-icon>
                     <AssetsTextLabel color="text-color" label="View" />
                   </v-list-item-title>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-title style="cursor: pointer">
+                  <v-list-item-title
+                    style="cursor: pointer"
+                    @click="get_payment(item)"
+                  >
                     <v-icon
                       v-if="
                         can('reservation_edit') ||
                         can('in_house_edit') ||
                         can('checkout_edit')
                       "
-                      @click="get_payment(item)"
                       x-small
                       color="primary"
                       class="mr-2"
@@ -197,13 +203,11 @@
                   </v-list-item-title>
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-title style="cursor: pointer">
-                    <v-icon
-                      @click="redirect_to_invoice(item.id)"
-                      x-small
-                      color="primary"
-                      class="mr-2"
-                    >
+                  <v-list-item-title
+                    style="cursor: pointer"
+                    @click="redirect_to_invoice(item.id)"
+                  >
+                    <v-icon x-small color="primary" class="mr-2">
                       mdi-cash-multiple
                     </v-icon>
                     <AssetsTextLabel color="text-color" label="Invoice" />
@@ -225,6 +229,7 @@ export default {
     Paying,
   },
   data: () => ({
+    BookingId: 0,
     stats: [],
     cumulativeIndex: 1,
     perPage: 20,
@@ -404,7 +409,6 @@ export default {
     },
 
     filterAttr(data) {
-
       this.isSelectAll = 0;
       this.from_date = data.from;
       this.to_date = data.to;
@@ -412,7 +416,7 @@ export default {
       if (data.type == -1) {
         this.isSelectAll = data.type;
         this.getDataFromApi();
-        return
+        return;
       }
 
       //this.filterType = data.type;
@@ -442,6 +446,17 @@ export default {
 
     viewCustomerBilling(item) {
       // this.$router.push(`/customer/details/${item.id}`);
+
+      this.BookingId = item.id;
+
+      this.$nextTick(() => {
+        const bookingSingleComp = this.$refs["BookingSingleComp"];
+        if (bookingSingleComp) {
+          bookingSingleComp.ViewBookingDialog = true;
+        } else {
+          console.warn("BookingSingleComp ref is undefined");
+        }
+      });
     },
 
     commonMethod() {
@@ -557,9 +572,7 @@ export default {
 
       // http://192.168.2.210:8000/api/up_coming_reservation_list?page=1&per_page=30&company_id=2&search=&from=&to=&source=
 
-      let url =
-        "https://backend.myhotel2cloud.com/api/"
-        `${type}?company_id=${comId}&from=${from}&to=${to}&search${search}&source${newSource}&r_type=${model}&guest_mode=${guest_mode}`;
+      let url = "https://backend.myhotel2cloud.com/api/"`${type}?company_id=${comId}&from=${from}&to=${to}&search${search}&source${newSource}&r_type=${model}&guest_mode=${guest_mode}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

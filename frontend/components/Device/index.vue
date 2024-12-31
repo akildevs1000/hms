@@ -502,6 +502,8 @@ export default {
     this.intervalObj = setInterval(() => {
       this.getDataFromApi();
       this.updateStatus();
+
+      this.updatesstatukey++;
     }, 1000 * 60);
 
     setTimeout(() => {
