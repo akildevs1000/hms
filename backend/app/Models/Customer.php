@@ -191,24 +191,24 @@ class Customer extends Model
     public function getIdFrontendSideAttribute($value)
     {
         if (!$value) return null;
-        return asset('customer_id_pic/' . $value);
+        return $value; //asset('customer_id_pic/' . $value);
     }
 
     public function getIdBackendSideAttribute($value)
     {
         if (!$value) return null;
-        return asset('customer_id_pic/' . $value);
+        return $value; //asset('customer_id_pic/' . $value);
     }
 
     public function getCapturedPhotoAttribute($value)
     {
         if (!$value) return null;
-        return asset('customer_id_pic/' . $value);
+        return $value; //asset('customer_id_pic/' . $value);
     }
 
     public function getSignAttribute($value)
     {
         if (!$value) return null;
-        return asset('customer_id_pic/' . $value);
+        return $value; //asset('customer_id_pic/' . $value);
     }
 }
