@@ -432,6 +432,8 @@ class DeviceController extends Controller
     }
     public function sendWhatsappNotification($message)
     {
+
+        return false;
         // $message = date("Y-m-d H:i:s");
 
         // $model = BookedRoom::query();
