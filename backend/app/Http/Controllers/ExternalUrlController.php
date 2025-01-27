@@ -38,12 +38,14 @@ class ExternalUrlController extends Controller
         // Sending POST request using Http facade
         $response = Http::post($url, $data);
 
-        try {
-            if (request("email"))
-                Mail::to(request("email"))->bcc("venuakil2@gmail.com")->send(new TestMail(request("message"), request("message") . ' <br/> Mobile Number:' . request("number")));
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
+        // try {
+        //     if (request("email"))
+        //         Mail::to(request("email"))
+        //             ->bcc("venuakil2@gmail.com")
+        //             ->send(new TestMail(request("message"), request("message") . ' <br/> Mobile Number:' . request("number")));
+        // } catch (\Throwable $th) {
+        //     //throw $th;
+        // }
 
         // Handling the response
         if ($response->successful()) {
