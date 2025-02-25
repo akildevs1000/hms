@@ -15,9 +15,25 @@
           style="display: flex"
           max-width="250"
         >
-          <v-card-text>
-            <div class="text-h6 text--primary text-center">
-              Whatsapp {{ index + 1 }}
+          <v-card-text class="pa-2">
+            <div style="width: 100%; display: flex; align-items: center">
+              <div
+                style="width: 100%"
+                class="text-h6 text--primary text-center mb-1"
+              >
+                <v-text-field
+                  placeholder="Enter Title"
+                  dense
+                  v-model="account.label"
+                  hide-details
+                ></v-text-field>
+              </div>
+
+              <div>
+                <v-icon small color="red" @click="deleteItem(index)"
+                  >mdi-close</v-icon
+                >
+              </div>
             </div>
 
             <div v-if="account.qrCodeDisplay == true">
@@ -87,9 +103,30 @@ export default {
   // },
 
   methods: {
+    async deleteItem(index) {
+      const confirmDelete = window.confirm(
+        "Are you sure you want to delete this account?"
+      );
+      if (!confirmDelete) return; // Stop if user cancels
 
+      this.accounts.splice(index, 1);
+
+      try {
+        let payload = {
+          company_id: this.$auth.user.company_id,
+          accounts: this.accounts,
+        };
+        console.log("🚀 ~ Sending payload:", payload);
+        await this.$axios.post(`whatsapp-client-json`, payload);
+
+        await this.getWhatsappAccount(this.$auth.user.company_id);
+      } catch (error) {
+        console.error("Error inserting account:", error);
+      }
+    },
     async insertAccountIntoDB() {
-      if (this.clicked) { // Ensure `clicked` is true before executing
+      if (this.clicked) {
+        // Ensure `clicked` is true before executing
         try {
           let payload = {
             company_id: this.$auth.user.company_id,
@@ -134,6 +171,7 @@ export default {
         disconnectButton: false,
         connectButton: false,
         statusColor: null,
+        label: "Title",
       });
 
       // await this.connect(clientId, this.accounts.length);
