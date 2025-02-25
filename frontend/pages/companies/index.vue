@@ -690,7 +690,7 @@
                 <TaxSlabs />
               </v-tab-item>
               <v-tab-item>
-                <WhatsappInstance />
+                <Whatsapp />
               </v-tab-item>
               <v-tab-item>
                 <EmailNotifications />
