@@ -30,7 +30,7 @@ class ExternalUrlController extends Controller
 
         // Data to send in the request
         $data = [
-            'company_id' => 13,
+            'company_id' => request("company_id", 13),
             'mobile_number' =>  request("number"),
             'message' => request("message"),
 
