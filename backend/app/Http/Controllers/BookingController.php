@@ -164,7 +164,22 @@ class BookingController extends Controller
             } else {
             }
 
+            $fields = [
+                "title"     => ucfirst($request->title) ?? 'Mr',
+                "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
+                "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
+            ];
 
+            if ($request->email) {
+                $fields["email"] = $request->email;
+                $this->sendMailIfRequired(Template::BOOKING_CREATE, $fields);
+            }
+
+            if ($request->whatsapp) {
+                $fields["whatsapp"] = $request->whatsapp;
+                $this->sendWhatsappIfRequired(Template::BOOKING_CREATE, $fields, $request->company_id);
+            }
 
 
             // all good
@@ -877,17 +892,22 @@ class BookingController extends Controller
                 ]);
 
             $fields = [
-                "title"     => ucfirst($customer['title']) ?? 'Mr',
-                "full_name" => ucfirst($customer['full_name']) ?? 'Guest',
-                "check_in"  => date('d-M-y H:i', strtotime($booking->check_in)),
-                "check_out" => date('d-M-y H:i', strtotime($booking->check_out)),
-                "email" => $customer['email'],
-                "whatsapp" => $customer->whatsapp,
+                "title"     => ucfirst($request->title) ?? 'Mr',
+                "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
+                "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
             ];
 
-            $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
-            $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields);
+            if ($request->email) {
+                $fields["email"] = $request->email;
+                $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+            }
 
+            if ($request->whatsapp) {
+                $fields["whatsapp"] = $request->whatsapp;
+                $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields, $request->company_id);
+            }
+            
             return response()
                 ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
         } catch (\Throwable $th) {
@@ -993,19 +1013,23 @@ class BookingController extends Controller
                 $customerData['id'] = $request->customer_id;
                 $this->customerUpdateById($customerData);
 
-                $fields = [
-                    "title"     => ucfirst($customer['title']) ?? 'Mr',
-                    "full_name" => ucfirst($customer['full_name']) ?? 'Guest',
-                    "check_in"  => date('d-M-y H:i', strtotime($booking->check_in)),
-                    "check_out" => date('d-M-y H:i', strtotime($booking->check_out)),
-                    "email" => $customer['email'],
-                    "whatsapp" => $customer->whatsapp,
-                    // "location" => $company->map, from company model
 
+                $fields = [
+                    "title"     => ucfirst($request->title) ?? 'Mr',
+                    "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                    "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
+                    "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
                 ];
 
-                $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
-                $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+                if ($request->email) {
+                    $fields["email"] = $request->email;
+                    $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+                }
+    
+                if ($request->whatsapp) {
+                    $fields["whatsapp"] = $request->whatsapp;
+                    $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields, $request->company_id);
+                }
 
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
             }
@@ -1129,18 +1153,21 @@ class BookingController extends Controller
                     );
 
                 $fields = [
-                    "title"     => ucfirst($customer['title']) ?? 'Mr',
-                    "full_name" => ucfirst($customer['full_name']) ?? 'Guest',
-                    "check_in"  => date('d-M-y H:i', strtotime($booking->check_in)),
-                    "check_out" => date('d-M-y H:i', strtotime($booking->check_out)),
-                    "email" => $customer['email'],
-                    "whatsapp" => $customer->whatsapp,
-                    // "location" => $company->map, from company model
-
+                    "title"     => ucfirst($request->title) ?? 'Mr',
+                    "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                    "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
+                    "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
                 ];
 
-                $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
-                $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields);
+                if ($request->email) {
+                    $fields["email"] = $request->email;
+                    $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
+                }
+    
+                if ($request->whatsapp) {
+                    $fields["whatsapp"] = $request->whatsapp;
+                    $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields, $request->company_id);
+                }
 
                 return response()
                     ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
@@ -1257,16 +1284,21 @@ class BookingController extends Controller
             );
 
             $fields = [
-                "title"     => ucfirst($customer['title']) ?? 'Mr',
-                "full_name" => ucfirst($customer['full_name']) ?? 'Guest',
-                "check_in"  => date('d-M-y H:i', strtotime($booking->check_in)),
-                "check_out" => date('d-M-y H:i', strtotime($booking->check_out)),
-                "email" => $customer['email'],
-                "whatsapp" => $customer->whatsapp,
+                "title"     => ucfirst($request->title) ?? 'Mr',
+                "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
+                "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
             ];
 
-            $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
-            $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields);
+            if ($request->email) {
+                $fields["email"] = $request->email;
+                $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
+            }
+
+            if ($request->whatsapp) {
+                $fields["whatsapp"] = $request->whatsapp;
+                $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields, $request->company_id);
+            }
 
             return response()
                 ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
@@ -2537,7 +2569,6 @@ class BookingController extends Controller
 
     public function groupBooking(Request $request)
     {
-
         // $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
         // // if ($diff_in_seconds < 0) {
         // //     return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
@@ -2593,6 +2624,23 @@ class BookingController extends Controller
             }
 
             DB::commit();
+
+            $fields = [
+                "title"     => ucfirst($request->title) ?? 'Mr',
+                "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
+                "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
+            ];
+
+            if ($request->email) {
+                $fields["email"] = $request->email;
+                $this->sendMailIfRequired(Template::BOOKING_CREATE, $fields);
+            }
+
+            if ($request->whatsapp) {
+                $fields["whatsapp"] = $request->whatsapp;
+                $this->sendWhatsappIfRequired(Template::BOOKING_CREATE, $fields, $request->company_id);
+            }
 
             return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
 
@@ -2810,7 +2858,26 @@ class BookingController extends Controller
                     Booking::whereId($booking->id)->update($data);
                 }
             }
+
             DB::commit();
+
+            $fields = [
+                "title"     => ucfirst($request->title) ?? 'Mr',
+                "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
+                "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
+            ];
+
+            if ($request->email) {
+                $fields["email"] = $request->email;
+                $this->sendMailIfRequired(Template::BOOKING_CREATE, $fields);
+            }
+
+            if ($request->whatsapp) {
+                $fields["whatsapp"] = $request->whatsapp;
+                $this->sendWhatsappIfRequired(Template::BOOKING_CREATE, $fields, $request->company_id);
+            }
+
             return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
 
             // all good

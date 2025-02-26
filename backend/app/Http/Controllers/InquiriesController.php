@@ -90,7 +90,7 @@ class InquiriesController extends Controller
 
             if ($inquiry->whatsapp) {
                 $fields["whatsapp"] = $inquiry->whatsapp;
-                $this->sendWhatsappIfRequired(Template::INQUERY_CREATE, $fields);
+                $this->sendWhatsappIfRequired(Template::INQUERY_CREATE, $fields, $request->company_id);
             }
 
 

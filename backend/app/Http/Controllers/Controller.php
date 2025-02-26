@@ -9,6 +9,7 @@ use App\Models\Booking;
 use App\Models\Expense;
 use App\Models\Payment;
 use App\Models\Template;
+use App\Models\WhatsappClient;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -225,63 +226,70 @@ class Controller extends BaseController
         }
     }
 
-    public function sendWhatsappIfRequired($action, $fields)
+    public function sendWhatsappIfRequired($action, $fields, $company_id = 0)
     {
-        // $response = Http::withoutVerifying()->get('https://ezwhat.com/api/send.php', [
-        //     'number' => "971554501483",
-        //     'type' => 'text',
-        //     'message' => "hi",
-        //     'instance_id' => '65772646BBF76',
-        //     'access_token' => 'a27e1f9ca2347bb766f332b8863ebe9f',
-        // ]);
 
-        // return $response->json();
+        $clientId = WhatsappClient::where("company_id", $company_id)->value("accounts")[0]["clientId"] ?? false;
 
-        // if ($response->successful()) {
-        // } else {
-        //     return $response->body();
-        // }
-        // return "sent";      
+        if (!$clientId) {
+            Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
+                'recipient' => "971554501483",
+                'text' => "Whatsapp Account not found",
+                'clientId' => $clientId,
+            ]);
+            return;
+        }
 
+        if (!$fields['whatsapp']) {
+            Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
+                'recipient' => "971554501483",
+                'text' => "Whatsapp number not found",
+                'clientId' => $clientId,
+            ]);
+            return;
+        };
 
         $found = Template::where([
             "action_id" => $action,
             "medium" => "whatsapp"
         ])->first();
 
+        if (!$found) {
+            Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
+                'recipient' => "971554501483",
+                'text' => "Template not found",
+                'clientId' => $clientId,
+            ]);
+            return;
+        };
 
-        if ($found) {
+        $room_type = $fields['room_type'] ?? '';
 
+        $subject = $found->name;
 
-            $room_type = $fields['room_type'] ?? '';
-            $subject = $found->name;
+        $body = str_replace(
+            ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]'],
+            [
+                $fields['title'],
+                $fields['full_name'],
+                date('d-M-y', strtotime($fields['check_in'])),
+                date('d-M-y', strtotime($fields['check_out'])),
+                $room_type
+            ],
+            $found->body
+        );
 
-            $body = str_replace(
-                ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]'],
-                [
-                    $fields['title'],
-                    $fields['full_name'],
-                    date('d-M-y', strtotime($fields['check_in'])),
-                    date('d-M-y', strtotime($fields['check_out'])),
-                    $room_type
-                ],
-                $found->body
-            );
+        $body = preg_replace('/<p>(.*?)<\/p>/s', "$1\n\n", $body); // Convert <p> to new lines
 
-            // Format the WhatsApp message
-            $whatsappMessage = "Hello {$fields['title']} {$fields['full_name']}, 👋"
-                . PHP_EOL . PHP_EOL
-                . "Your booking is confirmed: ✅"
-                . PHP_EOL . "From: 🗓️ " . date('d-M-y', strtotime($fields['check_in']))
-                . PHP_EOL . "To: 🗓️ " . date('d-M-y', strtotime($fields['check_out']))
-                . PHP_EOL . "Room Type: 🛏️ {$room_type}"
-                . PHP_EOL . PHP_EOL
-                . "Thank you for choosing us! 🙏";
+        $body = strip_tags($body); // Ensure no remaining tags
 
-            info("WhatsApp Message below " . PHP_EOL . $whatsappMessage);
+        $response = Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
+            'recipient' => "971554501483",
+            'text' => trim($body), // Trim extra spaces
+            'clientId' => $clientId,
+        ]);
 
-            return true;
-        }
+        return !$response->successful() ? false : true;
     }
 
     public function sendSignal($id)

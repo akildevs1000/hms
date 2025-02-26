@@ -179,13 +179,18 @@ class QuotationController extends Controller
                 "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
                 "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
                 "rooms_type" => $quotation->rooms_type,
-                "email" => $quotation->customer->email,
-                "whatsapp" => $quotation->customer->whatsapp,
             ];
 
-            $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields, $quotation->id);
+            if ($quotation->customer->email) {
+                $fields["email"] = $quotation->customer->email;
+                $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
+            }
 
-            $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields);
+            if ($quotation->customer->whatsapp) {
+                $fields["whatsapp"] = $quotation->customer->whatsapp;
+                $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields, $request->company_id);
+            }
+
 
             return $quotation;
         } catch (\Exception $e) {

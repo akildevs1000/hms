@@ -25,6 +25,7 @@ class Template extends Model
     const AFTER_CHECKOUT = 7;
     const BIRTHDAY_WISH = 8;
     const FESTIVAL_MESSAGE = 9;
+    const BOOKING_CREATE = 10;
     const UNKNOWN = 0;
 
 
@@ -38,6 +39,7 @@ class Template extends Model
         7 => "after_checkout",
         8 => "birthday_wish",
         9 => "festival_message",
+        10 => "booking_create",
         0 => "unknown",
     ];
 

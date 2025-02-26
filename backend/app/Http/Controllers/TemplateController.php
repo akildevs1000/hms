@@ -28,6 +28,7 @@ class TemplateController extends Controller
         // }
 
         return [
+            ["id" => 10, "name" => 'On Booking'],
             ["id" => 1, "name" => 'Inquery Create'],
             ["id" => 2, "name" => 'Quotation Create'],
             ["id" => 3, "name" => '1 Day before arrival'],
