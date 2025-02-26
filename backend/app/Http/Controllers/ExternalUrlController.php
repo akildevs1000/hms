@@ -28,12 +28,17 @@ class ExternalUrlController extends Controller
         // API endpoint URL
         $url = 'https://backend.mytime2cloud.com/api/send-whatsapp-wessage';
 
+
+        $clientId = WhatsappClient::where("company_id", request("company_id", 13))
+            ->latest("id")
+            ->value("accounts")[0]["clientId"] ?? 0;
+
         // Data to send in the request
         $data = [
             'company_id' => request("company_id", 13),
             'mobile_number' =>  request("number"),
             'message' => request("message"),
-
+            'clientId' => $clientId,
         ];
 
         // Sending POST request using Http facade
