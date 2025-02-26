@@ -188,7 +188,7 @@ class ExternalUrlController extends Controller
     public function getLastWhatsappClientId($id)
     {
 
-        $accounts = WhatsappClient::where("company_id", request("company_id", 13))
+        $accounts = WhatsappClient::where("company_id", $id)
             ->value("accounts");
 
         $clientId = !empty($accounts) ? last($accounts)["clientId"] ?? 0 : 0;
