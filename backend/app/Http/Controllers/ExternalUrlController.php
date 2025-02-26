@@ -28,10 +28,10 @@ class ExternalUrlController extends Controller
         // API endpoint URL
         $url = 'https://wa.mytime2cloud.com/send-message';
 
+        $accounts = WhatsappClient::where("company_id", request("company_id", 13))
+            ->value("accounts");
 
-        $clientId = WhatsappClient::where("company_id", request("company_id", 13))
-            ->latest("id")
-            ->value("accounts")[0]["clientId"] ?? 0;
+        $clientId = !empty($accounts) ? last($accounts)["clientId"] ?? 0 : 0;
 
         // Data to send in the request
         $data = [
@@ -187,9 +187,11 @@ class ExternalUrlController extends Controller
 
     public function getLastWhatsappClientId($id)
     {
-        $clientId = WhatsappClient::where("company_id", $id)
-            ->latest("id")
-            ->value("accounts")[0]["clientId"] ?? 0;
+
+        $accounts = WhatsappClient::where("company_id", request("company_id", 13))
+            ->value("accounts");
+
+        $clientId = !empty($accounts) ? last($accounts)["clientId"] ?? 0 : 0;
 
         return [
             "clientId" => $clientId
