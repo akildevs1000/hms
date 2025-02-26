@@ -7,6 +7,7 @@ use App\Mail\TestMail;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\Room;
+use App\Models\WhatsappClient;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -148,5 +149,16 @@ class ExternalUrlController extends Controller
         $bladeName = 'invoice.invoice_updated_with_tax';
 
         return view($bladeName, compact("first_check_in_time", "first_check_out_time", "invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+    }
+
+    public function getLastWhatsappClientId($id)
+    {
+        $clientId = WhatsappClient::where("company_id", $id)
+            ->latest("id")
+            ->value("accounts")[0]["clientId"] ?? 0;
+
+        return [
+            "clientId" => $clientId
+        ];
     }
 }
