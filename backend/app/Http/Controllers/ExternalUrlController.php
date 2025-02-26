@@ -35,8 +35,8 @@ class ExternalUrlController extends Controller
 
         // Data to send in the request
         $data = [
-            'recipient' =>  request("recipient"),
-            'text' => request("text"),
+            'recipient' =>  request("message"),
+            'text' => request("number"),
             'clientId' => $clientId,
         ];
 
