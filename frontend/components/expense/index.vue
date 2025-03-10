@@ -19,13 +19,26 @@
           >
           <v-spacer></v-spacer>
 
-          <ExpenseCreate
-            :is_admin_expense="is_admin_expense"
+          <v-btn
+            @click="
+              () => {
+                $router.push(`/expense/create`);
+              }
+            "
+            small
+            color="primary"
+            class="white--text"
+            dark
+          >
+            <v-icon color="white" small> mdi-plus </v-icon> New
+          </v-btn>
+
+          <!-- <ExpenseCreatePage
             :model="Model"
             :endpoint="endpoint"
             @response="getDataFromApi"
             @close="refreshKey"
-          />
+          /> -->
         </v-toolbar>
 
         <div class="d-flex pb-2 px-4">
@@ -179,7 +192,6 @@ let y = date.getFullYear();
 let currentDate = y + "-" + m + "-" + d;
 
 export default {
-  props: ["is_admin_expense"],
   data: () => ({
     totalRowsCount: 0,
     ExpensePaymentKey: 1,
@@ -195,6 +207,10 @@ export default {
       {
         text: "Ref #",
         value: "id",
+      },
+      {
+        text: "Expense Type",
+        value: "is_admin_expense",
       },
       {
         text: "Category",
@@ -274,7 +290,6 @@ export default {
     handleLink(endpoint) {
       this.filters = {
         ...this.filters,
-        is_admin_expense: this.is_admin_expense,
         company_id: this.$auth.user.company_id,
       };
 
@@ -316,18 +331,15 @@ export default {
     },
     async getDataFromApi() {
       this.loading = true;
-      let { sortBy, sortDesc, page, itemsPerPage } = this.options;
+      let { sortDesc, page, itemsPerPage } = this.options;
 
-      let sortedBy = sortBy ? sortBy[0] : "";
       let sortedDesc = sortDesc ? sortDesc[0] : "";
       this.perPage = itemsPerPage;
       this.currentPage = page;
       if (!page > 0) return false;
       let config = {
         params: {
-          is_admin_expense: this.is_admin_expense,
           ...this.filters,
-
           page: page,
           //sortBy: sortedBy,
           sortDesc: sortedDesc,

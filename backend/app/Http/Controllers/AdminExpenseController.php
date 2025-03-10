@@ -91,9 +91,10 @@ class AdminExpenseController extends Controller
             ->when($vendor_id, function ($q) use ($vendor_id) {
                 $q->where('vendor_id', $vendor_id);
             })
-
+            ->when(request()->has('is_admin_expense'), function ($q) {
+                $q->where('is_admin_expense', request("is_admin_expense"));
+            })
             ->whereHas("vendor")
-            ->where("is_admin_expense", request("is_admin_expense", AdminExpense::NonManagementExpense))
             ->where("company_id", request("company_id"))
             ->orderBy("id", "desc");
     }
