@@ -195,6 +195,7 @@
                             style="text-align: right"
                             type="text"
                             v-model="item.qty"
+                            @input="calculateAmount(item)"
                           />
                         </div>
                       </td>
@@ -208,6 +209,7 @@
                             style="text-align: right"
                             type="text"
                             v-model="item.rate"
+                            @input="calculateAmount(item)"
                           />
                         </div>
                       </td>
@@ -230,6 +232,7 @@
                             item-text="name"
                             item-value="id"
                             v-model="item.tax"
+                            @input="calculateAmount(item)"
                             style="text-align: right"
                           >
                           </v-autocomplete>
@@ -239,14 +242,7 @@
                         style="width: 100px"
                         class="border-bottom text-color text-right"
                       >
-                        <div>
-                          <input
-                            class="input-no-border"
-                            style="text-align: right"
-                            type="text"
-                            v-model="item.amount"
-                          />
-                        </div>
+                        <div>{{item.amount}}</div>
                       </td>
                       <td
                         style="width: 20px"
@@ -366,9 +362,7 @@
                 <span class="red--text">{{ errorResponse }}</span>
               </v-col>
               <v-col cols="12">
-                <v-btn small color="primary" @click="submit">
-                  Submit
-                </v-btn>
+                <v-btn small color="primary" @click="submit"> Submit </v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -404,11 +398,11 @@ export default {
 
         items: [
           {
-            detail: "Sed hic mollit in no",
-            rate: "32",
-            qty: "682",
+            detail: "Add Item",
+            rate: 0,
+            qty: 0,
             tax: 0,
-            amount: "54",
+            amount: 0,
           },
         ],
         attachments: [],
@@ -493,6 +487,13 @@ export default {
     this.getVendors();
   },
   methods: {
+    calculateAmount(item) {
+      let subAmount = (item.qty || 0) * (item.rate || 0);
+      // let percent = item.tax > 0 ? subAmount + (subAmount * (item.tax || 0) / 100) : subAmount
+      item.amount =  subAmount;
+
+      this.calculateOverAll();
+    },
     previewImages() {
       this.imagePreviews = [];
       if (this.files.length) {
@@ -519,11 +520,11 @@ export default {
     },
     addItem() {
       this.payload.items.push({
-        detail: "Sed hic mollit in no",
-        rate: "32",
-        qty: "682",
+        detail: "Add Item",
+        rate: 0,
+        qty: 0,
         tax: 0,
-        amount: "54",
+        amount: 0,
       });
     },
     getVendors() {
