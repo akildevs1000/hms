@@ -320,7 +320,7 @@
                         style="border: 1px solid #dddddd;"
                         class="text-right text-color pa-1"
                       >
-                        {{ $utils.convert_decimal(payload.sub_total) }}
+                        {{ $utils.currency_format(payload.sub_total) }}
                       </td>
                     </tr>
                     <tr>
@@ -334,7 +334,7 @@
                         style="border: 1px solid #dddddd;"
                         class="text-right text-color pa-1"
                       >
-                        {{ $utils.convert_decimal(payload.tax) }}
+                        {{ $utils.currency_format(payload.tax) }}
                       </td>
                     </tr>
                     <tr>

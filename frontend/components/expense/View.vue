@@ -1,5 +1,29 @@
 <template>
   <v-dialog v-model="dialog" width="900">
+    <style scoped>
+      .custom-text-fields input {
+        text-align: right;
+        padding: 0;
+        margin: 0;
+      }
+
+      .input-no-border {
+        font-size: 12px !important;
+        color: grey !important;
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 100%;
+      }
+
+      .input-no-border:focus,
+      .input-no-border:hover,
+      .input-no-border:active {
+        border: none;
+        outline: none;
+        box-shadow: none;
+      }
+    </style>
     <template v-slot:activator="{ on, attrs }">
       <div v-bind="attrs" v-on="on">
         <v-icon color="blue" small> mdi-eye </v-icon>
@@ -9,279 +33,273 @@
 
     <AssetsIconClose @click="dialog = false" />
 
-    <div
-      class="grey lighten-3 pa-2"
-      style="overflow: hidden"
-      v-if="payload && payload.id"
-    >
-      <v-row>
-        <v-col cols="4">
-          <v-card
-            style="border: 3px solid white"
-            :style="`min-height:${
-              vendorObject?.type == `Personal` ? '447px' : '397px'
-            }`"
-          >
-            <v-card-text>
-              <v-row no-gutter>
-                <v-col cols="12" class="pa-0 ma-0">
-                  <AssetsHeadDialog>
-                    <template #label>
-                      <span>Local Expense</span>
-                    </template>
-                  </AssetsHeadDialog>
-                </v-col>
-                <v-col cols="12">
-                  <table>
-                    <tr>
-                      <td class="blue--text">Receipt Number</td>
-                      <td class="blue--text">
-                        : {{ $utils.add_zeros(payload.id) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Date</td>
-                      <td>: {{ $dateFormat.dmy(payload.created_at)  }}</td>
-                    </tr>
-                    <tr>
-                      <td>Category</td>
-                      <td>
-                        :
-                        {{ displayVendor?.vendor_category?.name || "---" }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Customer Invoice</td>
-                      <td>: {{ payload.bill_number }}</td>
-                    </tr>
-                    <tr>
-                      <td>Invoice Date</td>
-                      <td>: {{ $dateFormat.dmy(payload.bill_date)  }}</td>
-                    </tr>
-                    <tr>
-                      <td>Prepared By</td>
-                      <td>: {{ $auth.user.name }}</td>
-                    </tr>
-                  </table>
-                </v-col>
-                <v-col cols="12">
-                  <table cellspacing="0" style="width: 100%">
-                    <tr>
-                      <td class="blue--text">
-                        <span v-if="vendorObject">
-                          {{
-                            vendorObject?.type == "Personal"
-                              ? vendorObject?.full_name
-                              : vendorObject?.company_name
-                          }}
-                        </span>
-                        <span v-else>---</span>
-                      </td>
-                      <td class="blue--text text-right">
-                        <VendorEdit
-                          v-if="vendorEditItem && vendorEditItem.id"
-                          :ley="vendorEditItem.id"
-                          :model="null"
-                          :endpoint="`vendor`"
-                          :item="vendorEditItem"
-                          @updated_vendor="handleFoundVendor"
-                        />
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        Tel :
-                        {{
-                          vendorObject && vendorObject.type == "Company"
-                            ? vendorObject?.work_phone
-                            : vendorObject?.mobile
-                        }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Email : {{ vendorObject?.email || "---" }}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        GST Number :
-                        {{ vendorObject?.tax_number || "---" }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Address : {{ vendorObject?.address }}</td>
-                    </tr>
-                  </table>
-                </v-col>
+    <v-card v-if="payload && payload.id">
+      <v-alert dense flat dark class="primary">View Expense</v-alert>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col cols="3"> Expense Type </v-col>
+            <v-col cols="9">
+              <v-autocomplete
+                readonly
+                append-icon=""
+                :items="[
+                  { id: 1, name: `Manager Expense` },
+                  { id: 0, name: `Non Manager Expense` },
+                ]"
+                item-text="name"
+                item-value="id"
+                outlined
+                dense
+                hide-details
+                v-model="payload.is_admin_expense"
+              >
+              </v-autocomplete>
+            </v-col>
+            <v-col cols="3"> Vendor </v-col>
+            <v-col cols="9">
+              <v-autocomplete
+               readonly
+                append-icon=""
+                v-model="selectedVendor"
+                :items="vendors"
+                item-text="full_name"
+                item-value="id"
+                return-object
+                dense
+                hide-details
+                outlined
+              >
+              </v-autocomplete>
 
-                <v-col
-                  cols="12"
-                  v-if="vendorObject && vendorObject.type == 'Company'"
-                >
-                  <table cellspacing="0" style="width: 100%">
-                    <tr>
-                      <td class="blue--text">
-                        {{ vendorObject?.full_name }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Mobile : {{ vendorObject?.mobile || "---" }}</td>
-                    </tr>
-                  </table>
-                </v-col>
+              <v-container
+                v-if="selectedVendor"
+                class="grey lighten-2 mt-2 pa-4"
+              >
+                <v-row no-gutters
+                  ><v-col v-if="selectedVendor.type != 'Personal'">
+                    <strong>Company:</strong>
+                    {{ selectedVendor.company_name }}</v-col
+                  >
+                  <v-col cols="4">
+                    <strong>Account Type:</strong>
+                  </v-col>
+                  <v-col cols="8">
+                    {{ selectedVendor.type }}
+                  </v-col>
+                  <v-col cols="4">
+                    <strong>Category:</strong>
+                  </v-col>
+                  <v-col cols="8">
+                    {{ selectedVendor?.vendor_category?.name }}
+                  </v-col>
+                  <v-col cols="4">
+                    <strong>Email:</strong>
+                  </v-col>
+                  <v-col cols="8">
+                    {{ selectedVendor.email }}
+                  </v-col>
+                  <v-col cols="4">
+                    <strong>Work Phone:</strong>
+                  </v-col>
+                  <v-col cols="8">
+                    {{ selectedVendor.work_phone }}
+                  </v-col>
+                  <v-col cols="4">
+                    <strong>Mobile:</strong>
+                  </v-col>
+                  <v-col cols="8">
+                    {{ selectedVendor.mobile }}
+                  </v-col>
+                  <v-col cols="4">
+                    <strong>Tax Number:</strong>
+                  </v-col>
+                  <v-col cols="8">
+                    {{ selectedVendor.tax_number }}
+                  </v-col>
+                  <v-col cols="4">
+                    <strong>Address:</strong>
+                  </v-col>
+                  <v-col cols="8">
+                    {{ selectedVendor.country }} {{ selectedVendor.state }}
+                    {{ selectedVendor.city }} {{ selectedVendor.zip_code }}
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-col>
+            <v-col cols="3"> Invoice Number </v-col>
+            <v-col cols="9">
+              <v-text-field
+                outlined
+                dense
+                hide-details
+                v-model="payload.bill_number"
+              >
+              </v-text-field>
+            </v-col>
+            <v-col cols="3"> Invoice Date </v-col>
+            <v-col cols="9">
+              <AssetsPickerDate
+                :defaultDate="payload.bill_date"
+                @date="
+                  (e) => {
+                    payload.bill_date = e;
+                  }
+                "
+              />
+            </v-col>
 
-                <v-col cols="12">
-                  <table cellspacing="0" style="width: 100%">
-                    <tr>
-                      <td colspan="3" class="blue--text">
-                        Last Invoice Detail
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="" style="width: 33%">INV</td>
-                      <td class="">Date</td>
-                      <td class="text-right">Amount</td>
-                    </tr>
-
-                    <tr
-                      v-for="(record, index) in lastThreeRecords"
-                      :key="index"
+            <v-col cols="12">
+              <table style="width: 100%">
+                <thead>
+                  <tr>
+                    <td
+                      style="border: 1px solid #dddddd; padding: 8px"
+                      class="primary--text border-top border-bottom"
                     >
-                      <td>{{ record.vn }}</td>
-                      <td>{{ record.date }}</td>
-                      <td class="text-right">{{ record.amount }}</td>
-                    </tr>
-                    <tr v-for="(n, index) in emptyRowLength" :key="index">
-                      <td>---</td>
-                      <td>---</td>
-                      <td class="text-right">---</td>
-                    </tr>
-                  </table>
-                </v-col>
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col cols="8">
-          <v-card
-            style="border: 3px solid white"
-            :style="detailContainerHeight"
-          >
-            <v-card-text>
-              <v-row no-gutter>
-                <v-col cols="12" class="pa-0 ma-0">
-                  <AssetsHeadDialog>
-                    <template #label> <span>View Detail</span> </template>
-                    <!-- <template #search
-                        ><VendorSearch @foundVendor="handleFoundVendor"
-                      /></template> -->
-                  </AssetsHeadDialog>
-                </v-col>
-                <v-col cols="12">
-                  <AssetsTable :headers="headers" :items="payload.items">
-                    <template #rate="{ item }">
-                      {{ $utils.currency_format(item.rate) }}
-                    </template>
-                    <template #tax="{ item }"> {{ item.tax }}% </template>
-                    <template #amount="{ item }">
-                      {{ $utils.currency_format(item.amount) }}
-                    </template>
-                    <template #action="{ item }">
-                      <v-icon
-                        style="cursor: pointer"
-                        @click="deleteItem(index, item)"
-                        small
-                        color="red"
-                        >mdi-close</v-icon
-                      >
-                    </template>
-                    <!-- <template #row>
-                        <tr>
-                          <td colspan="5" class="pt-1">
-                            <ExpenseItem
-                              @selectedItem="
-                                (e) => {
-                                  payload.items.push(e);
-                                  calculateOverAll();
-                                }
-                              "
-                            />
-                          </td>
-                        </tr>
-                      </template> -->
-                  </AssetsTable>
-                </v-col>
-
-                <v-col cols="6">
-                  <v-textarea
-                    readonly
-                    color="grey lighten-1"
-                    outlined
-                    rows="2"
-                    label="Notes"
-                    hide-details
-                    v-model="payload.notes"
-                  ></v-textarea>
-                </v-col>
-                <v-col cols="3"></v-col>
-                <v-col cols="3" class="text-right">
-                  <table cellspacing="0" style="width: 100%">
-                    <tr>
-                      <td class="border-top border-bottom text-color">
-                        Sub Total:
-                      </td>
-                      <td
-                        class="text-right border-top border-bottom text-color"
-                      >
-                        {{ $utils.currency_format(payload.sub_total) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="border-bottom text-color">Tax:</td>
-                      <td class="text-right border-bottom text-color">
-                        {{ $utils.currency_format(payload.tax) }}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="border-bottom primary--text">Total:</td>
-                      <td class="text-right border-bottom primary--text">
-                        {{ $utils.currency_format(payload.total) }}
-                      </td>
-                    </tr>
-                  </table>
-                </v-col>
-
-                <!-- <v-col cols="12">
-                  <span class="primary--text">
-                    <UploadMultipleAttachments
-                      @files-selected="handleMultipleFileSelection($event)"
-                    />
-                  </span>
-                </v-col>
-                <v-col cols="12" v-if="errorResponse">
-                  <span class="red--text">{{ errorResponse }}</span>
-                </v-col>
-                <v-col cols="12" class="text-center">
-                  <AssetsButton
-                    :options="{
-                      color: `red`,
-                      label: `cancel`,
-                    }"
-                    @click="close"
-                  />
-                  <AssetsButton
-                    :options="{
-                      color: `green`,
-                      label: `Submit`,
-                    }"
-                    @click="submit"
-                  />
-                </v-col> -->
-              </v-row>
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-    </div>
+                      Item Details
+                    </td>
+                    <td
+                      style="border: 1px solid #dddddd; padding: 8px"
+                      class="primary--text border-top border-bottom"
+                    >
+                      Qty
+                    </td>
+                    <td
+                      style="border: 1px solid #dddddd; padding: 8px"
+                      class="primary--text border-top border-bottom text-right"
+                    >
+                      Rate
+                    </td>
+                    <td
+                      style="border: 1px solid #dddddd; padding: 8px"
+                      class="primary--text border-top border-bottom"
+                    >
+                      Tax
+                    </td>
+                    <td
+                      style="border: 1px solid #dddddd; padding: 8px"
+                      class="primary--text"
+                    >
+                      Amount
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in payload.items" :key="index">
+                    <td
+                      style="
+                        width: 500px;
+                        border: 1px solid #dddddd;
+                        padding: 8px;
+                      "
+                      class="text-color"
+                    >
+                      <div style="width: 100%">
+                        {{ item.detail }}
+                      </div>
+                    </td>
+                    <td
+                      style="
+                        width: 100px;
+                        border: 1px solid #dddddd;
+                        padding: 8px;
+                      "
+                      class="text-color text-right"
+                    >
+                      <div>
+                        {{ item.qty }}
+                      </div>
+                    </td>
+                    <td
+                      style="
+                        width: 100px;
+                        border: 1px solid #dddddd;
+                        padding: 8px;
+                      "
+                      class="text-color text-right"
+                    >
+                      <div>
+                        {{ $utils.currency_format(item.rate) }}
+                      </div>
+                    </td>
+                    <td
+                      style="
+                        border: 1px solid #dddddd;
+                        padding: 8px;
+                        max-width: 250px;
+                        min-width: 150px;
+                      "
+                      class="border-bottom text-color text-right"
+                    >
+                      <div>
+                        {{ item.tax == 0 ? "Exempted" : item.tax + `%` }}
+                      </div>
+                    </td>
+                    <td
+                      style="
+                        min-width: 100px;
+                        max-width: 100px;
+                        border: 1px solid #dddddd;
+                        padding: 8px;
+                      "
+                      class="text-color text-right"
+                    >
+                      <div>{{ $utils.currency_format(item.amount) }}</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3"></td>
+                    <td
+                      style="border: 1px solid #dddddd"
+                      class="text-color pa-1"
+                    >
+                      Sub Total:
+                    </td>
+                    <td
+                      style="border: 1px solid #dddddd"
+                      class="text-right text-color pa-1"
+                    >
+                      {{ $utils.currency_format(payload.sub_total) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3"></td>
+                    <td
+                      style="border: 1px solid #dddddd"
+                      class="text-color pa-1"
+                    >
+                      Tax:
+                    </td>
+                    <td
+                      style="border: 1px solid #dddddd"
+                      class="text-right text-color pa-1"
+                    >
+                      {{ $utils.currency_format(payload.tax) }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3"><b>Notes</b>: {{ payload.notes }}</td>
+                    <td
+                      style="border: 1px solid #dddddd"
+                      class="primary--text pa-1"
+                    >
+                      Total:
+                    </td>
+                    <td
+                      style="border: 1px solid #dddddd"
+                      class="text-right primary--text pa-1"
+                    >
+                      {{ $utils.currency_format(payload.total) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+    </v-card>
   </v-dialog>
 </template>
 <script>
@@ -289,9 +307,10 @@ export default {
   props: ["item", "endpoint", "model"],
   data() {
     return {
+      selectedVendor: null,
+      vendors: [],
       menu2: false,
       payload: {
-        is_admin_expense: 1,
         vendor_id: 1,
         notes: "test",
         tax: 0,
@@ -322,74 +341,57 @@ export default {
         { text: `Rate`, value: `rate`, align: `right` },
         { text: `tax`, value: `tax`, align: `right` },
         { text: `Amount`, value: `amount`, align: `right` },
-        // { text: ``, value: `action`, align: `center`, width: "30px" },
+        { text: ``, value: `action`, align: `center`, width: "30px" },
       ],
-      vendorObject: null,
       vendorEditItem: null,
       lastThreeRecords: [],
       emptyRowLength: 3,
     };
   },
-
-  computed: {
-    displayVendor() {
-      return this.item.vendor;
-    },
-    detailContainerHeight() {
-      const minHeight = {
-        Company: "515px",
-        default: "490px",
-      };
-
-      return `min-height:${
-        minHeight[this.vendorObject?.type] || minHeight.default
-      };`;
-    },
-  },
+  computed: {},
   async created() {
-    let { vendor, ...item } = this.item;
-    // attachments
+    await this.getVendors();
+    let { vendor, attachments, ...item } = this.item;
     this.payload = item;
-    this.vendorObject = {
-      ...vendor,
-      full_name: `${vendor.title}. ${vendor.first_name} ${vendor.last_name}`,
-      address: `${vendor.city} ${vendor.state}, ${vendor.country}`,
-    };
-    this.getLastThreeRecords(vendor.id, item.is_admin_expense);
+    this.selectedVendor = vendor;
   },
 
   methods: {
-    async getLastThreeRecords(vendor_id, is_admin_expense) {
-      let config = {
-        params: {
-          vendor_id: vendor_id,
-          is_admin_expense: is_admin_expense,
-        },
-      };
-      let { data } = await this.$axios.get(`get-last-three-records`, config);
-      this.lastThreeRecords = data.map((e) => ({
-        vn: e.id,
-        date: e.bill_date,
-        amount: this.$utils.currency_format(e.total),
-      }));
+    calculateAmount(item) {
+      let subAmount = (item.qty || 0) * (item.rate || 0);
+      // let percent = item.tax > 0 ? subAmount + (subAmount * (item.tax || 0) / 100) : subAmount
+      item.amount = subAmount;
 
-      let desiredLength = 3;
-
-      if (this.lastThreeRecords.length < desiredLength) {
-        this.emptyRowLength = desiredLength - this.lastThreeRecords.length;
-      } else if (this.lastThreeRecords.length >= desiredLength) {
-        this.emptyRowLength = 0;
-      }
+      this.calculateOverAll();
     },
-    handleFoundVendor(e) {
-      this.vendorObject = {
-        ...e,
-        full_name: `${e.title}. ${e.first_name} ${e.last_name}`,
-        address: `${e.city} ${e.state}, ${e.country}`,
-      };
-      this.vendorEditItem = e;
-      this.payload.vendor_id = e.id;
-      this.getLastThreeRecords(e.id);
+    addItem() {
+      this.payload.items.push({
+        admin_expense_id: this.payload.id,
+        detail: "Add Item",
+        rate: 0,
+        qty: 0,
+        tax: 0,
+        amount: 0,
+      });
+    },
+    async getVendors() {
+      this.$axios
+        .get(`vendor-list`, {
+          params: {
+            company_id: this.$auth.user.company.id,
+          },
+        })
+        .then(({ data }) => {
+          if (data) {
+            this.vendors = data.map((item) => ({
+              ...item,
+              full_name: `${item.first_name} ${item.last_name}`,
+            }));
+          } else {
+            this.vendors = [];
+          }
+        })
+        .catch(() => console.log(e));
     },
     calculateOverAll() {
       this.payload.sub_total = 0;
@@ -400,11 +402,6 @@ export default {
         this.payload.tax += parseFloat((e.qty * e.rate * e.tax) / 100);
       });
       this.payload.total = this.payload.sub_total + this.payload.tax;
-    },
-
-    calculateTotal() {
-      this.payload.total =
-        parseFloat(this.payload.sub_total) - parseFloat(this.payload.discount);
     },
     handleMultipleFileSelection(e) {
       e.forEach((v, i) => {
