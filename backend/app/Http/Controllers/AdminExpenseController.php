@@ -147,55 +147,14 @@ class AdminExpenseController extends Controller
      */
     public function update(ValidationRequest $request, AdminExpense $AdminExpense)
     {
-        $attachments = [];
-
-        $existingAttachments = [];
-
-        if ($request->attachments && count($request->attachments)) {
-
-            foreach ($request->attachments as $aKey => $attachment) {
-
-                if (array_key_exists("name", $attachment)) {
-                    $base64Image = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $attachment['attachment']));
-                    //$publicDirectory = public_path("admin_expense_attachments/" . $AdminExpense->id);
-                    $publicDirectory = public_path("expense-uploads/" . $AdminExpense->id);
-
-
-                    if (!file_exists($publicDirectory)) {
-                        mkdir($publicDirectory, 0777, true);
-                    }
-
-                    file_put_contents($publicDirectory . '/' . $attachment['name'] . ".png", $base64Image);
-
-
-                    $attachments[] = [
-                        "admin_expense_id" => $AdminExpense->id,
-                        "attachment" => $attachment['name'] . ".png",
-                        "slug" => $attachment['name'],
-                        "model" => "expense",
-                    ];
-
-                    $existingAttachments[] = $attachment['name'] . ".png";
-                }
-            }
-        }
-
-        DB::beginTransaction();
-
         try {
-            // AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->whereIn("attachment", $existingAttachments)->delete();
-
-            AdminExpenseAttachment::where("admin_expense_id", $AdminExpense->id)->delete();
-
-            AdminExpenseAttachment::insert($attachments);
+            DB::beginTransaction();
 
             AdminExpenseItem::where("admin_expense_id", $AdminExpense->id)->delete();
 
             AdminExpenseItem::insert($request->items);
 
             $AdminExpense->update($request->validated());
-
-
 
             DB::commit();
 
@@ -369,6 +328,8 @@ class AdminExpenseController extends Controller
                     "model" => "expense",
                 ];
             }
+
+            AdminExpenseAttachment::where("admin_expense_id", $modelId)->delete();
 
             AdminExpenseAttachment::insert($attachments);
 
