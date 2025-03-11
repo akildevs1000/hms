@@ -293,9 +293,12 @@ class AdminExpenseController extends Controller
 
     public function FileUploads(Request $request, $modelId = 0)
     {
+        if (!$modelId) {
+            return response()->json(["message" => "Vendor Id Missing"], 422);
+        }
         try {
             $request->validate([
-                'files.*' => 'required|max:2048', // Example validation
+                'files.*' => 'required|mimes:png,jpg,jpeg,pdf|max:2048', // Allow only PNG, JPG, JPEG, and PDF
             ]);
 
             $attachments = [];
@@ -329,7 +332,11 @@ class AdminExpenseController extends Controller
                 ];
             }
 
-            AdminExpenseAttachment::where("admin_expense_id", $modelId)->delete();
+            $attachmentIds = request()->input('attachment_ids_to_delete', []);
+
+            if (!empty($attachmentIds)) {
+                AdminExpenseAttachment::whereIn('id', $attachmentIds)->delete();
+            }
 
             AdminExpenseAttachment::insert($attachments);
 

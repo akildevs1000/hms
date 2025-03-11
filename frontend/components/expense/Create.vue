@@ -621,7 +621,7 @@ export default {
       }
       this.loading = true;
       try {
-        this.payload.vendor_id = this.selectedVendor.id;
+        this.payload.vendor_id = this.selectedVendor?.id ?? null;
         this.payload.company_id = this.$auth.user.company_id;
         let { data } = await this.$axios.post(`/admin-expense`, this.payload);
 
@@ -633,6 +633,7 @@ export default {
         this.closePopup();
         this.$emit("response", "Expense has been inserted");
       } catch (error) {
+        console.log("🚀 ~ submit ~ error:", error)
         this.errorResponse = error?.response?.data?.message || "Unknown error";
         this.loading = false;
       }
