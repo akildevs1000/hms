@@ -334,44 +334,49 @@ class AdminExpenseController extends Controller
 
     public function FileUploads(Request $request, $modelId = 0)
     {
-        // // Validate the files if needed
-        // $request->validate([
-        //     'files.*' => 'required|file|mimes:pdf|max:2048', // Example validation
-        // ]);
+        try {
+            $request->validate([
+                'files.*' => 'required|max:2048', // Example validation
+            ]);
 
-        $attachments = [];
+            $attachments = [];
 
-        $uploadedFiles = $request->file('files'); // Get all uploaded files
+            $uploadedFiles = $request->file('files'); // Get all uploaded files
 
-        foreach ($uploadedFiles as $key =>  $file) {
+            foreach ($uploadedFiles as $key =>  $file) {
 
-            // Save the file with the original extension
-            $extension = $file->getClientOriginalExtension();
+                // Save the file with the original extension
+                $extension = $file->getClientOriginalExtension();
 
-            // Generate a unique file name
-            $uniqueFileName = $key . uniqid();
+                // Generate a unique file name
+                $uniqueFileName = $key . uniqid();
 
-            $uniqueFileNameWithExt = $uniqueFileName . '.' . $extension;
+                $uniqueFileNameWithExt = $uniqueFileName . '.' . $extension;
 
-            $publicDirectory = public_path("expense-uploads/" . $modelId);
+                $publicDirectory = public_path("expense-uploads/" . $modelId);
 
-            if (!file_exists($publicDirectory)) {
-                mkdir($publicDirectory, 0777, true);
+                if (!file_exists($publicDirectory)) {
+                    mkdir($publicDirectory, 0777, true);
+                }
+
+                // Store the file in the public directory under 'uploads' folder
+                $file->move($publicDirectory, $uniqueFileNameWithExt);
+
+                $attachments[] = [
+                    "admin_expense_id" => $modelId,
+                    "attachment" => $uniqueFileNameWithExt,
+                    "slug" => $uniqueFileName,
+                    "model" => "expense",
+                ];
             }
 
-            // Store the file in the public directory under 'uploads' folder
-            $file->move($publicDirectory, $uniqueFileNameWithExt);
+            AdminExpenseAttachment::insert($attachments);
 
-            $attachments[] = [
-                "admin_expense_id" => $modelId,
-                "attachment" => $uniqueFileNameWithExt,
-                "slug" => $uniqueFileName,
-                "model" => "expense",
-            ];
+            DB::commit();
+            return response()->json(['message' => 'Files uploaded successfully']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['message' => 'Failed to upload file'], 500);
         }
-
-        AdminExpenseAttachment::insert($attachments);
-
-        return response()->json(['message' => 'Files uploaded successfully']);
     }
 }

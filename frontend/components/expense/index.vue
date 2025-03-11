@@ -19,7 +19,7 @@
           >
           <v-spacer></v-spacer>
 
-          <v-btn
+          <!-- <v-btn
             @click="
               () => {
                 $router.push(`/expense/create`);
@@ -31,14 +31,14 @@
             dark
           >
             <v-icon color="white" small> mdi-plus </v-icon> New
-          </v-btn>
+          </v-btn> -->
 
-          <!-- <ExpenseCreatePage
+          <ExpenseCreate
             :model="Model"
             :endpoint="endpoint"
             @response="getDataFromApi"
             @close="refreshKey"
-          /> -->
+          />
         </v-toolbar>
 
         <div class="d-flex pb-2 px-4">
@@ -91,6 +91,9 @@
             />
           </div>
         </div>
+      </template>
+      <template v-slot:item.is_admin_expense="{ item }">
+        {{ item.is_admin_expense ? "Management Expense" : "Non Management" }}
       </template>
       <template v-slot:item.attachments="{ item }">
         <div v-if="item.attachments.length > 0">
