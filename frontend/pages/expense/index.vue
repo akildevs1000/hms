@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-tabs right>
-      <v-tab v-if="can(`expense_access`)">Expense</v-tab>
+      <v-tab>Expense</v-tab>
       <v-tab v-if="can(`vendors_access`)">Vendor</v-tab>
       <v-tab v-if="can(`expense_category_access`)">Category</v-tab>
-      <v-tab-item v-if="can(`expense_access`)">
+      <v-tab-item>
         <Expense />
       </v-tab-item>
       <v-tab-item v-if="can(`vendors_access`)"><Vendor /></v-tab-item>
