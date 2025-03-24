@@ -343,7 +343,7 @@
                                         "
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="4">
+                                    <!-- <v-col cols="4">
                                       <v-text-field
                                         v-model="discount"
                                         label="Discount"
@@ -363,7 +363,7 @@
                                         dense
                                         hide-details
                                       ></v-text-field>
-                                    </v-col>
+                                    </v-col> -->
                                     <v-col>
                                       <v-text-field
                                         v-model="full_payment"

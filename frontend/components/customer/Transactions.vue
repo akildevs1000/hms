@@ -83,7 +83,7 @@
                 <v-row>
                   <v-col cols="8">
                     <v-row>
-                      <v-col cols="4">
+                      <v-col cols="6">
                         <v-autocomplete
                           label="Mode"
                           v-model="payment.payment_mode_id"
@@ -102,7 +102,7 @@
                           hide-details
                         ></v-autocomplete>
                       </v-col>
-                      <v-col cols="8">
+                      <v-col cols="6">
                         <v-text-field
                           label="Reference"
                           dense
@@ -112,7 +112,7 @@
                           hide-details
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="4">
+                      <v-col cols="6">
                         <v-text-field
                           readonly
                           v-model="totalTransactionAmount"
@@ -122,7 +122,7 @@
                           hide-details
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="4">
+                      <!-- <v-col cols="4">
                         <v-text-field
                           v-model="payment.discount"
                           label="Discount"
@@ -131,8 +131,8 @@
                           hide-details
                           @keyup="setAfterDiscount(payment.discount)"
                         ></v-text-field>
-                      </v-col>
-                      <v-col cols="4">
+                      </v-col> -->
+                      <!-- <v-col cols="4">
                         <v-text-field
                           readonly
                           v-model="payment.after_discount"
@@ -141,7 +141,7 @@
                           dense
                           hide-details
                         ></v-text-field>
-                      </v-col>
+                      </v-col> -->
                       <v-col>
                         <v-text-field
                           v-model="payment.paid"

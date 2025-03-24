@@ -526,7 +526,17 @@
                             hide-details
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12">
+                        <v-col cols="4">
+                          <v-text-field
+                            readonly
+                            v-model="tempBalance"
+                            label="Balance"
+                            outlined
+                            dense
+                            hide-details
+                          ></v-text-field>
+                        </v-col>
+                        <!-- <v-col cols="12">
                           <v-row class="pr-5">
                             <v-col cols="5">
                               <v-text-field
@@ -557,12 +567,12 @@
                               >
                             </v-col>
                           </v-row>
-                        </v-col>
+                        </v-col> -->
 
-                        <v-col cols="12">
+                        <v-col cols="8">
                           <v-text-field
                             v-model="full_payment"
-                            label="New Balance"
+                            label="Amount to Pay"
                             outlined
                             dense
                             hide-details
