@@ -257,7 +257,7 @@ class Controller extends BaseController
         if (!$found) {
             Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
                 'recipient' => "971554501483",
-                'text' => "Template not found. client: " . $clientId,
+                'text' => "Template not found against $action action. Whatsapp client id : $clientId",
                 'clientId' => $clientId,
             ]);
             return;
