@@ -614,6 +614,16 @@
                                 v-model="booking.request"
                               ></v-text-field>
                             </v-col>
+                            <v-col cols="12">
+                              <v-text-field
+                                label="Receptionist Comments"
+                                dense
+                                outlined
+                                hide-details
+                                readonly
+                                v-model="booking.receptionist_comments"
+                              ></v-text-field>
+                            </v-col>
                           </v-row>
                         </v-col>
                       </v-row>

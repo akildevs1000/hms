@@ -287,6 +287,18 @@
       </v-col>
     </v-row>
     <v-row>
+      <v-col md="12">
+        <v-textarea
+          class="custom-text-field"
+          rows="3"
+          label="Receptionist Comments"
+          v-model="booking.receptionist_comments"
+          hide-details
+          outlined
+        ></v-textarea>
+      </v-col>
+    </v-row>
+    <v-row>
       <v-col cols="12" class="text-right mb-2">
         <v-hover v-slot:default="{ hover, props }">
           <span v-bind="props">
@@ -480,6 +492,7 @@ export default {
               source: latest_booking.source,
               purpose: latest_booking.purpose,
               request: latest_booking.request,
+              receptionist_comments: latest_booking.receptionist_comments,
               reference_no: latest_booking.reference_no,
               paid_by: latest_booking.paid_by,
             };
