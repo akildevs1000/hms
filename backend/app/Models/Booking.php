@@ -297,6 +297,7 @@ class Booking extends Model
             "total_price",
             "remaining_price",
             "request",
+            "receptionist_comments", //receptionist_comments
             "company_id",
             "remark",
             "rooms",

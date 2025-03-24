@@ -19,7 +19,7 @@
       <v-container>
         <v-text-field
           class="ma-0 pa-0"
-          label="Search By Mobile Number"
+          label="Search By Reservation No"
           dense
           outlined
           v-model="contact_no"
@@ -58,7 +58,7 @@ export default {
     get_customer() {
       this.checkLoader = true;
       if (this.contact_no == undefined || this.contact_no == "") {
-        alert("Enter contact number");
+        alert("Enter Reservation No");
         this.checkLoader = false;
         return;
       }
