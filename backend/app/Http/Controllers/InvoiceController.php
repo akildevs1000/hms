@@ -186,4 +186,36 @@ class InvoiceController extends Controller
             ->setPaper('a4', 'portrait')
             ->stream();
     }
+
+
+    public function roomInvoicePDF($id)
+    {
+        $quotation = Invoice::with("company", "customer")->where("invoice_type", "room")->find($id);
+        $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
+        $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
+        $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
+
+        return Pdf::loadView('invoice.room', compact("quotation"))
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function hallInvoicePDF($id)
+    {
+        $quotation = Invoice::with("company", "customer")->where("invoice_type", "hall")->find($id);
+        $quotation->total_no_of_nights = array_sum(array_column($quotation->items, "no_of_nights"));
+        $quotation->total_no_of_rooms = array_sum(array_column($quotation->items, "no_of_rooms"));
+        $quotation->room_types = join(",", array_column($quotation->items, "room_type"));
+
+        return Pdf::loadView('invoice.hall', compact("quotation"))
+            // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->download();
+    }
 }
