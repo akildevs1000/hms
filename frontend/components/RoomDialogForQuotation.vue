@@ -263,9 +263,9 @@ export default {
 
     await this.get_additional_charges();
 
-    this.temp.check_in = this.item.check_in;
-    this.temp.check_out = this.item.check_out;
-    this.room_type_object = this.item.room_type;
+    this.temp.check_in = this.item?.check_in;
+    this.temp.check_out = this.item?.check_out;
+    this.room_type_object = this.item?.room_type;
 
     this.get_available_rooms(this.room_type_object);
     this.selectRoom(this.room_type_object);

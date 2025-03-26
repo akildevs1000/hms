@@ -1,61 +1,103 @@
 <template>
-  <v-data-table
-    dense
-    :headers="headers"
-    :items="expenses"
-    :loading="loading"
-    :options.sync="options"
-    :footer-props="{
-      itemsPerPageOptions: [100, 500, 1000],
-    }"
-  >
-    <template v-slot:top>
-      <v-toolbar flat dense class="mb-5">
-        {{ Model }}
-        <v-icon color="primary" right @click="getDataFromApi()"
-          >mdi-reload</v-icon
+  <v-row no-gutters>
+    <v-col cols="3" style="max-width: 350px">
+      <v-container>
+        <v-toolbar flat dense>
+          <v-icon @click="getDataFromApi()" color="primary">mdi-reload</v-icon>
+          <v-spacer></v-spacer>
+          <span class="subtitle-1">{{ Model }}s</span>
+          <!-- Reduced font size here -->
+        </v-toolbar>
+        <v-data-table
+          dense
+          :headers="headers"
+          :items="expenses"
+          :loading="loading"
+          :options.sync="options"
+          :footer-props="{
+            itemsPerPageOptions: [100, 500, 1000],
+          }"
+          hide-default-header
+          hide-default-footer
         >
-        <v-spacer></v-spacer>
-        <!-- <InvoiceV1Create
-            :model="Model"
-            :endpoint="endpoint"
-            @response="getDataFromApi"
-          /> -->
-      </v-toolbar>
-    </template>
-    <template v-slot:item.customer="{ item }">
-      {{ item?.customer?.first_name || "---" }}
-      {{ item?.customer?.last_name || "---" }}
-    </template>
-    <template v-slot:item.options="{ item }">
-      <v-menu bottom left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on">
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
+          <template v-slot:item.customer="{ item }">
+            <v-row @click="selectedItem = item" class="d-flex align-center py-2">
+              <!-- Customer Info with Smaller Font Sizes -->
+              <v-col cols="12" md="6">
+                <div>
+                  <b
+                    >{{ item?.customer?.first_name || "---" }}
+                    {{ item?.customer?.last_name || "---" }}</b
+                  >
+                </div>
+                <div>
+                  <small>
+                    {{ item?.ref_no || "---" }} -
+                    {{ item?.created_at || "---" }}
+                  </small>
+                </div>
+              </v-col>
 
-        <v-list width="120" dense>
-          <v-list-item 
-            @click="openExternalWinodwForInvoice(item.id, item.invoice_type)"
+              <!-- Total and Status with Smaller Font Sizes -->
+              <v-col cols="12" md="6" class="text-right">
+                <div>
+                  <b>{{ item.total }}</b>
+                </div>
+                <div>
+                  <small :class="item?.status ? 'success--text' : 'grey--text'">
+                    {{ item?.status || "Pending" }}
+                  </small>
+                </div>
+              </v-col>
+            </v-row>
+          </template>
+        </v-data-table>
+      </v-container>
+    </v-col>
+    <v-col class="pt-3"
+      ><v-toolbar class="primary" flat dense>
+        <div>
+          <v-btn class="primary darken-1" small
+            ><v-icon small @click="getDataFromApi()" color="white"
+              >mdi-pencil</v-icon
+            >
+            Edit</v-btn
           >
-            <v-list-item-title>
-              <v-icon small color="primary">mdi-eye</v-icon> View
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-title>
-              <InvoiceV1Delete
-                :id="item.id"
-                :endpoint="endpoint"
-                @response="getDataFromApi"
-              />
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </template>
-  </v-data-table>
+          <v-btn
+            class="primary darken-1"
+            small
+            @click="openExternalWinodwForInvoice(selectedItem)"
+            ><v-icon small color="white">mdi-file</v-icon> Print/PDF</v-btn
+          >
+        </div>
+      </v-toolbar>
+      <v-container
+        style="
+          background: white !important;
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          padding: 50px;
+        "
+      >
+        <v-card
+          flat
+          style="
+            width: 100%;
+            max-width: 820px; /* Adjust width as needed */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          "
+        >
+          <iframe
+            :src="pdfUrl + '#toolbar=0'"
+            width="100%"
+            height="800"
+            style="border: none; background: white"
+          ></iframe>
+        </v-card>
+      </v-container>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -79,45 +121,22 @@ export default {
     errors: [],
     headers: [
       {
-        text: "Ref #",
-        value: "ref_no",
-      },
-      // {
-      //   text: "LPO Number #",
-      //   value: "lpo_number",
-      // },
-      {
         text: "Customer",
         value: "customer",
       },
-      {
-        text: "Book Date",
-        value: "book_date",
-      },
-      {
-        text: "Invoice Type",
-        value: "invoice_type",
-      },
-      // {
-      //   text: "Departure Date",
-      //   value: "departure_date",
-      // },
-      {
-        text: "Total",
-        value: "total",
-      },
-      {
-        text: "Action",
-        align: "center",
-        sortable: false,
-        value: "options",
-      },
     ],
     componentKey: 1,
+    selectedItem: null,
   }),
-
   async created() {
     this.getDataFromApi();
+  },
+  computed: {
+    pdfUrl() {
+      if (!this.selectedItem) return null;
+      let { id, invoice_type } = this.selectedItem;
+      return `${this.$backendUrl}invoice-${invoice_type}/${id}`;
+    },
   },
   mounted() {},
   watch: {
@@ -129,22 +148,24 @@ export default {
     },
   },
   methods: {
-    openExternalWinodwForInvoice(id, type) {
-      let url = `https://backend.myhotel2cloud.com/api/invoice-${type}/${id}`;
+    openExternalWinodwForInvoice(selectedItem) {
+      if (!selectedItem) return;
+      let { id, invoice_type } = selectedItem;
+      let url = `${this.$backendUrl}invoice-${invoice_type}/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
       document.body.appendChild(element);
       element.click();
     },
-    getRandomeId() {
-      return Math.random();
-    },
     async getDataFromApi() {
       this.loading = true;
       let { data } = await this.$axios.get(this.endpoint);
       this.loading = false;
       this.expenses = data.data;
+      if (data.data.length) {
+        this.selectedItem = data.data[0];
+      }
     },
   },
 };
