@@ -21,7 +21,10 @@
           hide-default-footer
         >
           <template v-slot:item.customer="{ item }">
-            <v-row @click="selectedItem = item" class="d-flex align-center py-2">
+            <v-row
+              @click="selectedItem = item"
+              class="d-flex align-center py-2"
+            >
               <!-- Customer Info with Smaller Font Sizes -->
               <v-col cols="12" md="6">
                 <div>
@@ -58,17 +61,33 @@
       ><v-toolbar class="primary" flat dense>
         <div>
           <v-btn class="primary darken-1" small
-            ><v-icon small @click="getDataFromApi()" color="white"
-              >mdi-pencil</v-icon
-            >
-            Edit</v-btn
+            ><v-icon small color="white">mdi-pencil</v-icon> Edit</v-btn
           >
-          <v-btn
-            class="primary darken-1"
-            small
-            @click="openExternalWinodwForInvoice(selectedItem)"
-            ><v-icon small color="white">mdi-file</v-icon> Print/PDF</v-btn
-          >
+
+          <v-menu bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn class="primary darken-1" small v-bind="attrs" v-on="on">
+                Print/PDF <v-icon>mdi-chevron-down</v-icon>
+              </v-btn>
+            </template>
+
+            <v-list width="140" dense>
+              <v-list-item
+                @click="openExternalWindowForInvoice(selectedItem, 'print')"
+              >
+                <v-list-item-title style="cursor: pointer">
+                  Print
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                @click="openExternalWindowForInvoice(selectedItem, 'pdf')"
+              >
+                <v-list-item-title style="cursor: pointer">
+                  PDF
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </div>
       </v-toolbar>
       <v-container
@@ -148,10 +167,10 @@ export default {
     },
   },
   methods: {
-    openExternalWinodwForInvoice(selectedItem) {
+    openExternalWindowForInvoice(selectedItem, model = "print") {
       if (!selectedItem) return;
       let { id, invoice_type } = selectedItem;
-      let url = `${this.$backendUrl}invoice-${invoice_type}/${id}`;
+      let url = `${this.$backendUrl}invoice-${invoice_type}-${model}/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
