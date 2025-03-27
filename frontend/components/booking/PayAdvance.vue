@@ -12,7 +12,7 @@
         Payment
       </v-alert>
       <v-card-text>
-        <v-row no-gutter v-if="BookingData && BookingData.id">
+        <v-row no-gutter v-if="BookingData && BookingData.id && roomData && roomData.id">
           <v-col cols="6" class="text-center">
             <v-container>
               <v-row>
@@ -91,8 +91,6 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" class="pt-10">
-                  <!-- <pre>{{ roomData }}</pre> -->
-
                   <table style="width: 100%">
                     <tr>
                       <td
@@ -272,21 +270,7 @@
                         <v-col cols="6">
                           <Heading label="Payment" />
                         </v-col>
-                        <v-col cols="6" class="text-right">
-                          <!-- <v-icon
-                            small
-                            color="primary"
-                            @click="redirect_to_invoice(roomData.booking_id)"
-                            >mdi-printer</v-icon
-                          >
-                          &nbsp;
-                          <v-icon
-                            small
-                            color="primary"
-                            @click="redirect_to_invoice(roomData.booking_id)"
-                            >mdi-download</v-icon
-                          > -->
-                        </v-col>
+                        <v-col cols="6" class="text-right"> </v-col>
                         <v-col cols="4">
                           <v-autocomplete
                             label="Mode"
@@ -328,18 +312,8 @@
                         </v-col>
                         <v-col cols="6">
                           <v-text-field
-                            v-model="discount"
-                            label="Discount"
-                            outlined
-                            dense
-                            hide-details
-                            @keyup="setNewBalance(tempBalance, discount)"
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="12">
-                          <v-text-field
                             v-model="full_payment"
-                            label="New Balance"
+                            label="Amount to Pay"
                             outlined
                             dense
                             hide-details
@@ -462,17 +436,16 @@ export default {
   },
   created() {
     this.preloader = false;
+    let { grand_remaining_price, remaining_price } = this.BookingData;
+    this.grand_remaining_price = grand_remaining_price;
+    this.remaining_price = remaining_price;
+    this.full_payment = remaining_price - this.discount;
+    this.after_discount_balance = grand_remaining_price;
+    this.get_transaction(this.BookingData.id);
+
     if (this.roomData && this.roomData.id) {
-      let { grand_remaining_price, remaining_price } = this.BookingData;
-      this.grand_remaining_price = grand_remaining_price;
-      this.remaining_price = remaining_price;
-      this.full_payment = remaining_price - this.discount;
-      this.after_discount_balance = grand_remaining_price;
-
       this.actualCheckoutTime = this.roomData.check_out_time;
-
       this.calculateHoursQty(this.actualCheckoutTime);
-      this.get_transaction();
     }
   },
   computed: {
@@ -593,8 +566,7 @@ export default {
       });
     },
 
-    get_transaction() {
-      let id = this.BookingData.id;
+    get_transaction(id) {
       let payload = {
         params: {
           company_id: this.$auth.user.company.id,

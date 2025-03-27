@@ -187,26 +187,6 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="payingAdvance" persistent max-width="700px">
-      <v-card>
-        <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
-          <span>{{ formTitle }}</span>
-          <v-spacer></v-spacer>
-          <v-icon dark class="pa-0" @click="payingAdvance = false"
-            >mdi-close</v-icon
-          >
-        </v-toolbar>
-        <v-card-text>
-          <v-container>
-            <PayAdvance
-              :BookingData="checkData"
-              @close-dialog="closeDialogs"
-            ></PayAdvance>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <v-dialog v-model="changeRoomDialog" persistent width="90%">
       <v-card>
         <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
@@ -365,14 +345,20 @@
 
             <v-list-item
               link
-              @click="payingAdvance = true"
               v-if="
                 bookingStatus <= 2 &&
                 bookingStatus != 0 &&
                 checkData.paid_by != 2
               "
             >
-              <v-list-item-title>Pay Advance</v-list-item-title>
+              <v-list-item-title v-if="checkData && checkData.id">
+                <BookingPayAdvance
+                  :key="checkData.id"
+                  :BookingData="checkData"
+                  @close-dialog="closeDialogs"
+                  :roomData="roomData"
+                ></BookingPayAdvance>
+              </v-list-item-title>
             </v-list-item>
 
             <v-list-item
@@ -487,7 +473,6 @@ import interactionPlugin from "@fullcalendar/interaction";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
 import CheckIn from "../../components/booking/CheckIn.vue";
 import CheckOut from "../../components/booking/CheckOut.vue";
-import PayAdvance from "../../components/booking/PayAdvance.vue";
 import ChangeRoom from "../../components/booking/ChangeRoom.vue";
 // import { borderTopRightRadius } from "html2canvas/dist/types/css/property-descriptors/border-radius";
 // import VueMask from "vue-the-mask";
@@ -496,7 +481,6 @@ export default {
   components: {
     ChangeRoom,
     Posting,
-    PayAdvance,
     FullCalendar,
     CheckIn,
     CheckOut,
@@ -540,7 +524,6 @@ export default {
       response: "",
       isDirty: true,
       createReservationDialog: false,
-      payingAdvance: false,
       checkInDialog: false,
       checkOutDialog: false,
       postingDialog: false,
@@ -858,12 +841,6 @@ export default {
       this.formTitle = "View Post";
       this.get_posting();
     },
-
-    payingAdvance() {
-      this.formTitle = "Advance Payment";
-      this.new_advance = 0;
-      this.get_data();
-    },
   },
   computed: {
     getBalance() {
@@ -1165,6 +1142,21 @@ export default {
         this.checkInDate = data.check_in;
         this.customerId = data.customer_id;
         this.show_context_menu(jsEvent);
+        this.get_booked_room(this.evenIid);
+      });
+    },
+
+    get_booked_room(evenIid) {
+      if (evenIid == false) return false;
+      let payload = {
+        params: {
+          id: evenIid,
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`get_booked_room`, payload).then(({ data }) => {
+        this.roomData = data;
+        console.log("🚀 ~ this.$axios.get ~ this.roomData:", this.roomData);
       });
     },
 
@@ -1545,11 +1537,6 @@ export default {
       if (posting) {
         this.posting = {};
         this.postingDialog = false;
-      }
-
-      if (advance_payment) {
-        this.checkData = {};
-        this.payingAdvance = false;
       }
 
       this.get_events();

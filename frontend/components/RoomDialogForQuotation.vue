@@ -123,7 +123,7 @@
           <v-col cols="12">
             <v-autocomplete
               label="No of Pax"
-              :items="[0, 1, 2, 3]"
+              :items="[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
               dense
               outlined
               v-model="temp.no_of_adult"
@@ -256,19 +256,14 @@ export default {
     };
   },
   async created() {
-    this.get_room_types();
+
     this.preloader = false;
+
+    this.get_room_types();
 
     await this.get_food_plans();
 
     await this.get_additional_charges();
-
-    this.temp.check_in = this.item?.check_in;
-    this.temp.check_out = this.item?.check_out;
-    this.room_type_object = this.item?.room_type;
-
-    this.get_available_rooms(this.room_type_object);
-    this.selectRoom(this.room_type_object);
   },
   computed: {
     formattedCheckinDate() {
