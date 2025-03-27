@@ -491,8 +491,8 @@ export default {
               type: latest_booking.type,
               source: latest_booking.source,
               purpose: latest_booking.purpose,
-              request: latest_booking.request,
-              receptionist_comments: latest_booking.receptionist_comments,
+              request: null,
+              receptionist_comments: null,
               reference_no: latest_booking.reference_no,
               paid_by: latest_booking.paid_by,
             };

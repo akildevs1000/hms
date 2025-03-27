@@ -2,9 +2,10 @@
   <v-row no-gutters>
     <v-col md="2" cols="12">
       <ViewBox
+        :key="viewBoxKey"
         ref="ViewBox"
-        :id="$route.params.id"
-        :customer="booking.customer"
+        :id="customer?.id"
+        :customer="customer"
       />
       <div>
         <v-img
@@ -24,7 +25,7 @@
               @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
               class="zoom-on-hover"
               style="width: 100%"
-              :src="booking?.customer?.id_frontend_side || '/idf.png'"
+              :src="customer?.id_frontend_side || '/idf.png'"
             />
           </div>
         </v-col>
@@ -34,9 +35,12 @@
               @click="$refs[`ViewBox`][`viewBoxDialog`] = true"
               class="zoom-on-hover"
               style="width: 100%"
-              :src="booking?.customer?.id_backend_side || '/idb.png'"
+              :src="customer?.id_backend_side || '/idb.png'"
             />
           </div>
+        </v-col>
+        <v-col cols="12" class="text-center pa-2">
+          <BookingIDPreview v-if="!customer?.captured_photo" @getCustomerDocs="handleCustomerDocs" />
         </v-col>
       </v-row>
     </v-col>
@@ -300,6 +304,7 @@ export default {
       },
       business_sources: [],
       canOverride: false,
+      viewBoxKey: 1,
     };
   },
   async created() {
@@ -328,6 +333,12 @@ export default {
     await this.get_business_sources();
   },
   methods: {
+    handleCustomerDocs(e) {
+      this.customer = {
+        ...this.customer,
+        ...e,
+      };
+    },
     getStates(country) {
       // Find the country object from the countries array
       const countryObj = this.countries.find((e) => e.name === country);
