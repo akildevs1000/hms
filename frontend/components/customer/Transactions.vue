@@ -72,7 +72,7 @@
       </template>
     </AssetsTable>
 
-    <v-row>
+    <!-- <v-row>
       <v-col>
         <v-tabs right dense>
           <v-tab>Payment</v-tab>
@@ -122,7 +122,7 @@
                           hide-details
                         ></v-text-field>
                       </v-col>
-                      <!-- <v-col cols="4">
+                      <v-col cols="4">
                         <v-text-field
                           v-model="payment.discount"
                           label="Discount"
@@ -131,8 +131,8 @@
                           hide-details
                           @keyup="setAfterDiscount(payment.discount)"
                         ></v-text-field>
-                      </v-col> -->
-                      <!-- <v-col cols="4">
+                      </v-col>
+                      <v-col cols="4">
                         <v-text-field
                           readonly
                           v-model="payment.after_discount"
@@ -141,7 +141,7 @@
                           dense
                           hide-details
                         ></v-text-field>
-                      </v-col> -->
+                      </v-col>
                       <v-col>
                         <v-text-field
                           v-model="payment.paid"
@@ -190,7 +190,7 @@
           </v-tab-item>
         </v-tabs>
       </v-col>
-    </v-row>
+    </v-row> -->
   </span>
 </template>
 <script>

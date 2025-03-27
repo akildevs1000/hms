@@ -11,7 +11,7 @@
     <div class="grey lighten-3 pa-2" style="overflow: hidden">
       <v-row>
         <v-col cols="3">
-          <v-card style="border: 3px solid white; min-height: 477px">
+          <v-card style="border: 3px solid white; min-height: 570px">
             <v-card-text>
               <v-row no-gutter v-if="BookingData && BookingData.id">
                 <v-col cols="12" class="pa-0 ma-0">
@@ -171,7 +171,7 @@
           </v-card>
         </v-col>
         <v-col cols="9">
-          <v-card style="border: 3px solid white; min-height: 477px">
+          <v-card style="border: 3px solid white; min-height: 570px">
             <v-card-text>
               <v-row no-gutter v-if="BookingData && BookingData.id">
                 <v-col cols="12" class="pa-0 ma-0">
@@ -216,9 +216,22 @@
                       <v-row>
                         <v-col md="12">
                           <v-textarea
+                            readonly
+                            v-model="BookingData.request"
                             class="custom-text-field"
                             rows="3"
                             label="Customer Request"
+                            hide-details
+                            outlined
+                          ></v-textarea>
+                        </v-col>
+                        <v-col md="12">
+                          <v-textarea
+                            readonly
+                            v-model="BookingData.receptionist_comments"
+                            class="custom-text-field"
+                            rows="3"
+                            label="Receptionist Comments"
                             hide-details
                             outlined
                           ></v-textarea>
