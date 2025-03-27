@@ -1519,13 +1519,7 @@ export default {
       this.succuss(res);
     },
 
-    succuss(
-      data,
-      check_in = true,
-      posting = true,
-      check_out = true,
-      advance_payment = true
-    ) {
+    succuss(data, check_in = true, posting = true, check_out = true) {
       if (check_in) {
         this.checkData = {};
         this.checkInDialog = false;
@@ -1542,8 +1536,10 @@ export default {
       this.get_events();
       this.errors = [];
       this.loading = false;
-      this.snackbar = true;
-      this.response = data.message;
+      if (data?.message) {
+        this.snackbar = true;
+        this.response = data?.message || "";
+      }
     },
   },
 };
