@@ -80,19 +80,19 @@ class GRCController extends Controller
         return $text;
     }
 
-    public function grc($id)
+    public function grc($booking_id)
     {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($booking_id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($booking_id);
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
             ->stream();
     }
 
-    public function grcByCheckin($id)
+    public function grcByCheckin($booking_id)
     {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($booking_id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($booking_id);
 
         return [
             'booking' => $booking,
@@ -104,30 +104,30 @@ class GRCController extends Controller
             ->stream();
     }
 
-    public function grcPrint($id)
+    public function grcPrint($booking_id)
     {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($booking_id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($booking_id);
 
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
             ->stream();
     }
 
-    public function grcDownload($id)
+    public function grcDownload($booking_id)
     {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($booking_id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($booking_id);
 
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
             ->download();
     }
 
-    public function downloadCustomerAttachments($id)
+    public function downloadCustomerAttachments($booking_id)
     {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
-        $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($booking_id);
+        $trans = (new TransactionController)->getTransactionSummaryByBookingId($booking_id);
 
         // return $booking->customer;
 

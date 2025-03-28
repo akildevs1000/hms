@@ -50,11 +50,11 @@
   Route::get('reservation_report_print', [ReportController::class, 'reservationReport']);
   Route::get('reservation_report_download', [ReportController::class, 'reservationReportDownload']);
 
-  Route::get('grc/{id}', [GRCController::class, 'grc']);
-  Route::get('grc_by_checkin/{id}', [GRCController::class, 'grcByCheckin']);
-  Route::get('grc_report_print/{id}', [GRCController::class, 'grcPrint']);
-  Route::get('grc_report_download/{id}', [GRCController::class, 'grcDownload']);
-  Route::get('download_customer_attachments/{id}', [GRCController::class, 'downloadCustomerAttachments']);
+  Route::get('grc/{booking_id}', [GRCController::class, 'grc']);
+  Route::get('grc_by_checkin/{booking_id}', [GRCController::class, 'grcByCheckin']);
+  Route::get('grc_report_print/{booking_id}', [GRCController::class, 'grcPrint']);
+  Route::get('grc_report_download/{booking_id}', [GRCController::class, 'grcDownload']);
+  Route::get('download_customer_attachments/{booking_id}', [GRCController::class, 'downloadCustomerAttachments']);
 
   Route::get('revenue_monthly_report_print', [ReportController::class, 'revenueMonthlyReportPrint']);
   Route::get('revenue_monthly_report_download', [ReportController::class, 'revenueMonthlyReportDownload']);

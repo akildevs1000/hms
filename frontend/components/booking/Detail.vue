@@ -7,7 +7,7 @@
     <ViewBox
       v-if="customer && customer.id"
       ref="ViewBox"
-      :id="$route.params.id"
+      :booking_id="booking.id"
       :customer="booking.customer"
     />
 

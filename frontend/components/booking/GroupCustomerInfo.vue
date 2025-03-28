@@ -4,7 +4,7 @@
       <ViewBox
         :key="viewBoxKey"
         ref="ViewBox"
-        :id="customer?.id"
+        :booking_id="booking.id"
         :customer="customer"
       />
       <div>
@@ -323,6 +323,7 @@ export default {
         let latest_booking = this.customer.latest_booking;
 
         this.booking = {
+          id: latest_booking.id,
           type: latest_booking.type,
           source: latest_booking.source,
           purpose: latest_booking.purpose,

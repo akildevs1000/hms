@@ -10,7 +10,7 @@
     <ViewBox
       v-if="customer && customer.id"
       ref="ViewBox"
-      :id="$route.params.id"
+      :booking_id="booking.id"
       :customer="booking.customer"
     />
 
@@ -632,7 +632,7 @@
                         <v-col md="2" cols="12">
                           <ViewBox
                             ref="ViewBox"
-                            :id="$route.params.id"
+                            :booking_id="booking.id"
                             :customer="booking.customer"
                           />
                           <div>
