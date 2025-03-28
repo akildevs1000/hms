@@ -267,10 +267,10 @@
 
 
     <div class="row mt-3">
-        <div class="col-12">
+        <div class="col-12" style="border:1px solid grey;">
             <label for="name" class="label-txt">Customer Sign:</label>
             <br>
-            <img style="height: 100px" src="{{ $booking->customer->sign ?? '' }}" alt="">
+            <img style="height: 200px" src="{{ $booking->customer->sign ?? '' }}" alt="">
         </div>
     </div>
 
