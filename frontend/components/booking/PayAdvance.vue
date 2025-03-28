@@ -9,10 +9,18 @@
     </template>
     <v-card>
       <v-alert dense flat class="grey lighten-3 primary--text">
-        Payment
+        <v-row>
+          <v-col> Payment </v-col>
+          <v-col class="text-right">
+            Reservation # {{ BookingData?.reservation_no }}
+          </v-col>
+        </v-row>
       </v-alert>
       <v-card-text>
-        <v-row no-gutter v-if="BookingData && BookingData.id && roomData && roomData.id">
+        <v-row
+          no-gutter
+          v-if="BookingData && BookingData.id && roomData && roomData.id"
+        >
           <v-col cols="6" class="text-center">
             <v-container>
               <v-row>

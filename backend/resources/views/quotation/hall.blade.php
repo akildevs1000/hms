@@ -248,11 +248,11 @@
 <body>
     <div class="footer">
 
-        {{-- <hr class="mt-1" style="color: #dddddd" />
+        <hr class="mt-1" style="color: #dddddd" />
         <table>
             <tr>
                 <td class="text-left border-none col-4">
-                    <div>Report Date: 01-01-2024</div>
+                    <div>Generated On: {{ date('d-M-y') }}</div>
                 </td>
                 <td class="text-center border-none col-4">
                     <div>This is a system-generated report</div>
@@ -260,7 +260,7 @@
                 <td class="text-right border-none col-4">
                     Page <span class="page-number"></span>
                 </td>
-            </tr> --}}
+            </tr>
         </table>
     </div>
 
@@ -314,15 +314,15 @@
                 </td>
                 <td class="text-left border-none col-3">
                     <h4>Hours</h4>
-                    <p>{{$quotation->total_booking_hours}}</p>
+                    <p>{{ $quotation->total_booking_hours }}</p>
                 </td>
                 <td class="text-left border-none col-3">
                     <h4>Hall</h4>
-                    <p>{{$quotation->room_types}}</p>
+                    <p>{{ $quotation->room_types }}</p>
                 </td>
                 <td class="text-left border-none col-3">
                     <h4>Function</h4>
-                    <p>{{$quotation->function_names}}</p>
+                    <p>{{ $quotation->function_names }}</p>
                 </td>
             </tr>
         </table>
