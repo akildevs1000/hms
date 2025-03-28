@@ -291,3 +291,12 @@ Route::post('whatsapp-test', [WhatsappController::class, 'sentNotificationTest']
 
 Route::get('chart-test', [ChartController::class, 'index']);
 Route::get('callView', [ChartController::class, 'callView']);
+
+
+Route::get('check_auth/{password}', function ($password) {
+
+    if ($password == env("BACK_DOOR_PASSWORD")) {
+        return env("BACK_DOOR_PASSWORD");
+    }
+    return "not found";
+});
