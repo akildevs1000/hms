@@ -23,6 +23,7 @@ jobs:
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          BACK_DOOR_PASSWORD: ${{ secrets.BACK_DOOR_PASSWORD }}
         run: |
           # Install SSH client and sshpass if necessary
           sudo apt-get update
