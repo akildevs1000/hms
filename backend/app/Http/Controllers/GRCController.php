@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use NumberFormatter;
 
@@ -116,7 +117,8 @@ class GRCController extends Controller
 
     public function grcDownload($id)
     {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])
+            ->where("customer_id", $id)->orderBy("id", "desc")->first();
         $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
 
         return Pdf::loadView('grc.index', compact('booking', 'trans'))
@@ -126,7 +128,8 @@ class GRCController extends Controller
 
     public function downloadCustomerAttachments($id)
     {
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])->find($id);
+        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions', 'bookedRooms'])
+            ->where("customer_id", $id)->orderBy("id", "desc")->first();
         $trans = (new TransactionController)->getTransactionSummaryByBookingId($id);
 
         // return $booking->customer;

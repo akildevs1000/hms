@@ -236,8 +236,6 @@
     <div class="row">
         <div class="col-4">
             <p class="header-txt">HYDERS PARK</p>
-            <span
-                class="header-txt-span">{{ $booking->company_id == 1 ? 'The Business Hotel' : 'The Luxuery Hotel' }}</span>
         </div>
         <div class="col-4" style="margin: 0px">
             {{-- @if ($booking->company_id == 1)
