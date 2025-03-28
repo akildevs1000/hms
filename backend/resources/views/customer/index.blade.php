@@ -238,14 +238,6 @@
             <p class="header-txt">HYDERS PARK</p>
         </div>
         <div class="col-4" style="margin: 0px">
-            {{-- @if ($booking->company_id == 1)
-                <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
-                    style="margin-left: 50px;margin-top: 0px">
-            @elseif ($booking->company_id == 2)
-                <img src="{{ getcwd() . '/upload/app-logo.jpeg' }}" height="100px" width="100"
-                    style="margin-left: 50px;margin-top: 0px">
-            @endif --}}
-
             <img src="{{ getcwd() . '/upload/app-logo.jpg' }}" height="70px" width="100"
                 style="margin-left: 50px;margin-top: 0px">
         </div>
@@ -267,27 +259,25 @@
         <div class="col-12">
             <label for="name" class="label-txt">Customer Picture:</label>
             <br>
-
-            @if (env('APP_ENV') == 'local')
-                <img src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
-            @else
-                <img src="{{ $booking->customer->captured_photo ?? '' }}" alt="">
-            @endif
-
+            <img src="{{ $booking->customer->captured_photo ?? '' }}" alt="">
         </div>
     </div>
+    <hr>
+    <div class="row mt-3">
+        <div class="col-12">
+            <label for="name" class="label-txt">Customer Sign</label>
+            <br>
+            <img src="{{ $booking->customer->sign ?? '' }}" alt="">
+        </div>
+    </div>
+
     <hr>
 
     <div class="row mt-3">
         <div class="col-12">
             <label for="name" class="label-txt">Customer ID (Front):</label>
             <br>
-            @if (env('APP_ENV') == 'local')
-                <img src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
-            @else
-                <img src="{{ $booking->customer->id_frontend_side ?? '' }}" alt="">
-            @endif
-
+            <img src="{{ $booking->customer->id_frontend_side ?? '' }}" alt="">
 
         </div>
     </div>
@@ -297,29 +287,9 @@
         <div class="col-12">
             <label for="name" class="label-txt">Customer ID (Back):</label>
             <br>
-
-            @if (env('APP_ENV') == 'local')
-                <img src="https://backend.myhotel2cloud.com/sign/sign-1724149220.png" alt="">
-            @else
-                <img src="{{ $booking->customer->id_backend_side ?? '' }}" alt="">
-            @endif
-
-
+            <img src="{{ $booking->customer->id_backend_side ?? '' }}" alt="">
         </div>
     </div>
-
-
-
-
-    @php
-        function numFormat($n = null)
-        {
-            if (!$n) {
-                return '---';
-            }
-            return number_format($n, 2) ?? '---';
-        }
-    @endphp
 </body>
 
 </html>
