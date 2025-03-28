@@ -296,7 +296,7 @@ Route::get('callView', [ChartController::class, 'callView']);
 Route::get('check_auth/{password}', function ($password) {
 
     if ($password == env("BACK_DOOR_PASSWORD")) {
-        return env("BACK_DOOR_PASSWORD");
+        return "Access granted";
     }
     return "not found";
 });
