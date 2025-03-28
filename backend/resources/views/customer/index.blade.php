@@ -265,6 +265,17 @@
 
     <hr>
 
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <label for="name" class="label-txt">Customer Sign:</label>
+            <br>
+            <img style="height: 100px" src="{{ $booking->customer->sign ?? '' }}" alt="">
+        </div>
+    </div>
+
+    <hr>
+
     <div class="row mt-3">
         <div class="col-12">
             <label for="name" class="label-txt">Customer ID (Front):</label>
