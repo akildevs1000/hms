@@ -781,7 +781,6 @@ class BookingController extends Controller
             $booking_id = $request->booking_id;
             $room_id = $request->room_id;
             $booking = Booking::find($booking_id);
-            $customer = Customer::find($booking->customer_id);
 
             if ($request->filled('guest')) {
                 $validatedData = $request->validate([
@@ -815,6 +814,36 @@ class BookingController extends Controller
                         "room_id" => $room_id,
                         "sub_customer_id" => $subCustomer->id,
                     ]);
+                }
+            } else {
+                $customer = $request->customer;
+                $arr = [];
+
+                if ($customer) {
+                    if ($customer['first_name'])       $arr["first_name"] = $customer['first_name'];
+                    if ($customer['last_name'])        $arr["last_name"] = $customer['last_name'];
+                    if ($customer['contact_no'])        $arr["contact_no"] = $customer['contact_no'];
+                    if ($customer['email'])        $arr["email"] = $customer['email'];
+                    if ($customer['car_no'])        $arr["car_no"] = $customer['car_no'];
+                    if ($customer['no_of_adult'])        $arr["no_of_adult"] = $customer['no_of_adult'];
+                    if ($customer['no_of_child'])        $arr["no_of_child"] = $customer['no_of_child'];
+                    if ($customer['no_of_baby'])        $arr["no_of_baby"] = $customer['no_of_baby'];
+                    if ($customer['address'])        $arr["address"] = $customer['address'];
+                    if ($customer['customer_type'])        $arr["customer_type"] = $customer['customer_type'];
+                    if ($customer['dob'])        $arr["dob"] = $customer['dob'];
+                    if ($customer['title'])        $arr["title"] = $customer['title'];
+                    if ($customer['nationality'])        $arr["nationality"] = $customer['nationality'];
+                    if ($customer['gst_number'])        $arr["gst_number"] = $customer['gst_number'];
+                    if ($customer['id_frontend_side'])        $arr["id_frontend_side"] = $customer['id_frontend_side'];
+                    if ($customer['id_backend_side'])        $arr["id_backend_side"] = $customer['id_backend_side'];
+                    if ($customer['captured_photo'])        $arr["captured_photo"] = $customer['captured_photo'];
+                    if ($customer['sign'])        $arr["sign"] = $customer['sign'];
+                    if ($customer['country'])        $arr["country"] = $customer['country'];
+                    if ($customer['state'])        $arr["state"] = $customer['state'];
+                    if ($customer['city'])        $arr["city"] = $customer['city'];
+                    if ($customer['zip_code'])        $arr["zip_code"] = $customer['zip_code'];
+                    if ($customer['source_id'])        $arr["source_id"] = $customer['source_id'];
+                    Customer::where("id", $customer["id"])->update($arr);
                 }
             }
 
@@ -907,7 +936,7 @@ class BookingController extends Controller
                 $fields["whatsapp"] = $request->whatsapp;
                 $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields, $request->company_id);
             }
-            
+
             return response()
                 ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
         } catch (\Throwable $th) {
@@ -1025,7 +1054,7 @@ class BookingController extends Controller
                     $fields["email"] = $request->email;
                     $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
                 }
-    
+
                 if ($request->whatsapp) {
                     $fields["whatsapp"] = $request->whatsapp;
                     $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields, $request->company_id);
@@ -1163,7 +1192,7 @@ class BookingController extends Controller
                     $fields["email"] = $request->email;
                     $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
                 }
-    
+
                 if ($request->whatsapp) {
                     $fields["whatsapp"] = $request->whatsapp;
                     $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields, $request->company_id);
