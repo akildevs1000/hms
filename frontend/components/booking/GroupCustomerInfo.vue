@@ -13,7 +13,7 @@
           class="zoom-on-hover"
           style="z-index: 1; width: 100%"
           :src="
-            booking?.customer?.captured_photo ||
+            customer?.captured_photo ||
             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRudDbHeW2OobhX8E9fAY-ctpUAHeTNWfaqJA&usqp=CAU'
           "
         />
@@ -334,6 +334,7 @@ export default {
   },
   methods: {
     handleCustomerDocs(e) {
+      console.log("🚀 ~ handleCustomerDocs ~ e:", e)
       this.customer = {
         ...this.customer,
         ...e,
