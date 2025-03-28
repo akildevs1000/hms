@@ -696,6 +696,7 @@ export default {
         isHall: this.isHall,
         exceedHoursCharges: this.exceedHoursCharges,
         room_id: this.roomData.room_id,
+        customer: this.defaultCustomer,
       };
 
       if (this.isGroupBooking) {

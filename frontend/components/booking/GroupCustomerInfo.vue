@@ -40,7 +40,10 @@
           </div>
         </v-col>
         <v-col cols="12" class="text-center pa-2">
-          <BookingIDPreview v-if="!customer?.captured_photo" @getCustomerDocs="handleCustomerDocs" />
+          <BookingIDPreview
+            v-if="!customer?.captured_photo"
+            @getCustomerDocs="handleCustomerDocs"
+          />
         </v-col>
       </v-row>
     </v-col>
@@ -334,11 +337,12 @@ export default {
   },
   methods: {
     handleCustomerDocs(e) {
-      console.log("🚀 ~ handleCustomerDocs ~ e:", e)
       this.customer = {
         ...this.customer,
         ...e,
       };
+
+      this.submit();
     },
     getStates(country) {
       // Find the country object from the countries array
