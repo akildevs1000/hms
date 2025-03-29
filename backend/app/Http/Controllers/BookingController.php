@@ -2312,6 +2312,37 @@ class BookingController extends Controller
             ->paginate($request->per_page ?? 20);
     }
 
+    public function bookingInvoices(Request $request)
+    {
+        $model = Booking::query()
+            ->latest()
+            ->filter(request('search'));
+
+        $model->whereHas('bookedRooms', function ($q) use ($request) {
+            $q->where('company_id',  $request->company_id);
+        });
+
+        if ($request->filled('status') && $request->status == "Unpaid") {
+            $model->where('balance', ">", 0);
+        } else if ($request->filled('status') && $request->status == "Paid") {
+            $model->where('balance', 0);
+        }
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereBetween('booking_date', [$request->from, $request->to]);
+        }
+
+        return $model
+            ->with([
+                'bookedRooms:booking_id,id,room_no,room_type,booking_status',
+                'customer:id,first_name,last_name,document',
+            ])
+            ->where('company_id', $request->company_id)
+            ->orderBy('id', 'desc')
+            ->paginate($request->per_page ?? 20);
+    }
+
+
     public function allReservationList(Request $request)
     {
         return $this->getReservationList($request, '');

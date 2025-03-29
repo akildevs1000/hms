@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\Room;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,7 +20,7 @@ class Booking extends Model
     const VERIFICATION_SLEEP = 0;
     const VERIFICATION_REQUIRED = 1;
     const VERIFICATION_COMPLETED = 2;
-    
+
     const AVAILABLE = 0;
     const BOOKED = 1;
     const CHECKED_IN = 2;
@@ -42,8 +43,15 @@ class Booking extends Model
 
         'hall_check_in_date',
         'hall_check_out_date',
-
+        'formatted_invoice_date'
     ];
+
+    public function getFormattedInvoiceDateAttribute()
+    {
+        $dateToBeFilter = min(Carbon::parse($this->check_out_date), Carbon::parse($this->updated_at));
+        return $dateToBeFilter->format('d M Y');
+    }
+    
     protected $casts = [
         // 'booking_date' => 'datetime:Y-m-d',
         'check_in_date' => 'datetime:d-M-y H:i',
@@ -241,6 +249,7 @@ class Booking extends Model
         $query->when($filter ?? false, fn($query, $search) =>
         $query->where(
             fn($query) => $query
+                ->orWhere('id', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('reference_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                 ->orWhere('type', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
