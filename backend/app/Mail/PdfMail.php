@@ -20,7 +20,7 @@ class PdfMail extends Mailable implements ShouldQueue
     public $filePath;
 
 
-    public function __construct($filePath)
+    public function __construct($filePath = null)
     {
         $this->filePath = $filePath;
     }

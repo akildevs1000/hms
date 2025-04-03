@@ -21,13 +21,13 @@ class CheckMail extends Command
 
     public function handle()
     {
-        // Test email address, replace with a valid one
+        // // Test email address, replace with a valid one
         $testEmail = 'francisgill1000@gmail.com';
-        $testImagePath = "https://backend.myhotel2cloud.com/invoices/invoice_1743693202.png"; // Path to a test image
+        // $testImagePath = "https://backend.myhotel2cloud.com/invoices/invoice_1743693202.png"; // Path to a test image
 
         try {
             // Attempt to send the email
-            Mail::to($testEmail)->queue(new PdfMail($testImagePath));
+            Mail::to($testEmail)->queue(new PdfMail());
 
             $this->info('Test email sent successfully!');
         } catch (\Exception $e) {
