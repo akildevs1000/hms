@@ -30,7 +30,7 @@ class PDFController extends Controller
         $imageData = base64_decode($base64String);
 
         // Set the directory path where images will be stored
-        $imageDirectory = public_path('storage/images'); // path to 'public/storage/images' directory
+        $imageDirectory = public_path('invoices'); // path to 'public/invoices' directory
 
         // Ensure the directory exists, if not, create it
         if (!File::exists($imageDirectory)) {
@@ -53,7 +53,7 @@ class PDFController extends Controller
         // Optionally, return the URL of the saved image
         return response()->json([
             'message' => 'Image uploaded successfully!',
-            'image_url' => asset('storage/images/' . $fileName),
+            'image_url' => asset('invoices/' . $fileName),
         ]);
     }
 }
