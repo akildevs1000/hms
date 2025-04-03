@@ -47,7 +47,7 @@ class PDFController extends Controller
         file_put_contents($imagePath, $imageData);
 
         Mail::to($request->email ?? 'recipient@example.com') // Replace with the recipient's email address
-            ->send(new PdfMail($imagePath));
+            ->queue(new PdfMail($imagePath));
 
 
         // Optionally, return the URL of the saved image
