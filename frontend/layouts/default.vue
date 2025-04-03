@@ -833,6 +833,9 @@ export default {
 };
 </script>
 <style>
+.font-color {
+  color: #5e5e5e;
+}
 .my-checkbox label {
   /* background: red; */
   font-size: 11px;
