@@ -960,6 +960,7 @@ export default {
           })
           .then((response) => {
             console.log("Image uploaded successfully", response);
+            this.mailDialog = false;
           })
           .catch((error) => {
             console.error("Error uploading image", error);
