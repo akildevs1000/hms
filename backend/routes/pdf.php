@@ -2,7 +2,8 @@
 
   use App\Http\Controllers\CustomerController;
   use App\Http\Controllers\GRCController;
-  use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ReportController;
   use App\Http\Controllers\ReportGenerateController;
   use Illuminate\Support\Facades\Route;
 
@@ -70,3 +71,6 @@
 
   Route::get('html-test', [ReportController::class, 'htmlTest']);
   Route::get('generate-night-audit-report/{id}/{data}', [ReportGenerateController::class, 'processData']);
+
+
+  Route::post('/upload-image', [PDFController::class, 'uploadImage'])->name('upload.pdf');

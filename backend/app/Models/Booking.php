@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
+use NumberFormatter;
 
 class Booking extends Model
 {
@@ -43,7 +44,9 @@ class Booking extends Model
 
         'hall_check_in_date',
         'hall_check_out_date',
-        'formatted_invoice_date'
+        'formatted_invoice_date',
+        'total_with_posting',
+        'total_with_posting_in_words',
     ];
 
     public function getFormattedInvoiceDateAttribute()
@@ -51,7 +54,7 @@ class Booking extends Model
         $dateToBeFilter = min(Carbon::parse($this->check_out_date), Carbon::parse($this->updated_at));
         return $dateToBeFilter->format('d M Y');
     }
-    
+
     protected $casts = [
         // 'booking_date' => 'datetime:Y-m-d',
         'check_in_date' => 'datetime:d-M-y H:i',
@@ -67,6 +70,11 @@ class Booking extends Model
     {
         return $this->belongsTo(HallBookings::class, 'id', 'booking_id');
     }
+    public function postings()
+    {
+        return $this->hasMany(Posting::class);
+    }
+
     public function payment_mode()
     {
         return $this->belongsTo(PaymentMode::class);
@@ -332,6 +340,24 @@ class Booking extends Model
     {
         return $this->hasMany(Customer::class, "id");
     }
+
+    public function getTotalWithPostingAttribute()
+    {
+        return $this->total_price + ($this->postings()->sum("amount_with_tax") ?? 0);
+    }
+
+    public function getTotalWithPostingInWordsAttribute()
+    {
+        $amount = $this->total_with_posting;
+
+        $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
+        $text = ucwords($formatter->format($amount));
+        return $text . " Only";
+    }
+
+
+
+
 
     // protected static function boot()
     // {

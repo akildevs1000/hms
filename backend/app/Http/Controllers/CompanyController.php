@@ -411,4 +411,22 @@ class CompanyController extends Controller
             return $this->response("Document cannot delete", null, true);
         }
     }
+
+    public function getEncodedLogo()
+    {
+        $url = request("url", 'https://hms-backend.test/upload/1743250338.jpeg');
+
+        $context = stream_context_create([
+            "ssl" => [
+                "verify_peer" => false,
+                "verify_peer_name" => false,
+            ],
+        ]);
+
+        $imageData = file_get_contents($url, false, $context);
+
+        $md5string = base64_encode($imageData);
+
+        return "data:image/png;base64,$md5string";
+    }
 }

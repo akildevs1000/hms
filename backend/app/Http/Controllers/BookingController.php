@@ -2335,8 +2335,12 @@ class BookingController extends Controller
         return $model
             ->with([
                 'bookedRooms:booking_id,id,room_no,room_type,booking_status',
-                'customer:id,first_name,last_name,document',
+                'customer:id,first_name,last_name,document,contact_no',
+                'postings.room',
             ])
+            ->with(['orderRooms' => function ($q) {
+                $q->withOut(['booking', "postings"]);
+            }])
             ->where('company_id', $request->company_id)
             ->orderBy('id', 'desc')
             ->paginate($request->per_page ?? 20);

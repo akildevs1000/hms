@@ -65,3 +65,5 @@ Route::get('employee-document/{id}', [EmployeeController::class, "documentShow"]
 Route::post('employee-document/{id}', [EmployeeController::class, "documentUpdate"]);
 Route::get('employee-document', [EmployeeController::class, "documentList"]);
 Route::delete('employee-document/{id}', [EmployeeController::class, "documentDestroy"]);
+
+Route::get('get-encoded-logo', [CompanyController::class, "getEncodedLogo"]);
