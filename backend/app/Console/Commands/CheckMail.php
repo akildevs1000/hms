@@ -23,7 +23,7 @@ class CheckMail extends Command
     {
         // Test email address, replace with a valid one
         $testEmail = 'francisgill1000@gmail.com';
-        $testImagePath = public_path('invoices/test_image.png'); // Path to a test image
+        $testImagePath = "https://backend.myhotel2cloud.com/invoices/invoice_1743693202.png"; // Path to a test image
 
         try {
             // Attempt to send the email
