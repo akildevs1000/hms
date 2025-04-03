@@ -27,7 +27,7 @@ class CheckMail extends Command
 
         try {
             // Attempt to send the email
-            Mail::to($testEmail)->queue(new PdfMail());
+            Mail::to($testEmail)->send(new PdfMail());
 
             $this->info('Test email sent successfully!');
         } catch (\Exception $e) {
