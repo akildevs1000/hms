@@ -33,7 +33,7 @@ class PdfMail extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->subject('PDF Attachment')
-            ->view('emails.pdf_mail') // View for email body
-            ->attach($this->filePath);
+            ->view('emails.pdf_mail'); // View for email body
+        // ->attach($this->filePath);
     }
 }
