@@ -1,5 +1,6 @@
 <template>
-  <v-row>
+  <v-container>
+    <v-row>
     <v-col>
       <table cellspacing="0" style="width: 100%">
         <tr>
@@ -111,9 +112,33 @@
         </tr>
         <tr></tr>
       </table>
+
+      <div class="pt-5">
+        <v-row>
+          <v-col cols="12" class="text-center">
+            <AssetsButton
+              :options="{
+                label: `Cancel`,
+                color: `red`,
+              }"
+              @click="store_advance(BookingData)"
+            />
+            &nbsp;
+            <AssetsButton
+              :options="{
+                label: `Submit`,
+                color: `green`,
+              }"
+              @click="store_advance(BookingData)"
+            />
+          </v-col> 
+        </v-row>
+      </div>
     </v-col>
+    <v-divider vertical></v-divider>
     <v-col>
-      <AssetsTable :headers="headers" :items="transactions">
+      <div class="mb-2">Transactions</div>
+      <AssetsTable :headers="headers" :items="transactions" height="500">
         <template #debit="{ item }">
           {{ $utils.currency_format(item.debit) }}
         </template>
@@ -133,24 +158,8 @@
         </template>
       </AssetsTable>
     </v-col>
-    <v-col cols="12" class="text-center">
-      <AssetsButton
-        :options="{
-          label: `Cancel`,
-          color: `red`,
-        }"
-        @click="store_advance(BookingData)"
-      />
-      &nbsp;
-      <AssetsButton
-        :options="{
-          label: `Submit`,
-          color: `green`,
-        }"
-        @click="store_advance(BookingData)"
-      />
-    </v-col>
   </v-row>
+  </v-container>
 </template>
 <script>
 export default {

@@ -7,8 +7,8 @@
       :key="BookingId"
       :BookingId="BookingId"
     />
-    <v-dialog v-model="payingDialog" persistent max-width="700">
-      <AssetsIconClose left="690" @click="payingDialog = false" />
+    <v-dialog v-model="payingDialog" persistent max-width="800">
+      <AssetsIconClose left="790" @click="payingDialog = false" />
       <v-card>
         <v-alert class="rounded-md" color="grey lighten-3" dense flat>
           <span>Payment</span>
@@ -210,33 +210,66 @@
               </div>
             </v-col>
             <v-col>
+              <style scoped>
+                .hover-bold:hover {
+                  font-weight: bold;
+                }
+                .hover-bold:hover .ml-1 {
+                  color: black !important;
+                }
+              </style>
               <v-toolbar class="grey lighten-3" flat dense>
                 <v-row>
                   <v-col>
-                    <v-btn
+                    <span
+                      class="hover-bold"
+                      text
+                      style="
+                        background: none;
+                        border: none !important;
+                        font-size: 13px;
+                        cursor: pointer;
+                      "
                       @click="
                         () => {
                           mailDialog = true;
                           email = selectedItem?.customer?.email ?? '';
                         }
                       "
-                      outlined
                       small
                     >
-                      Send Mail
-                      <v-icon small class="ml-1">mdi-cash-multiple</v-icon>
-                    </v-btn>
-                    <v-btn
-                      outlined
+                      Send Mail <v-icon small class="ml-1">mdi-email</v-icon>
+                    </span>
+                    <span
+                      class="hover-bold ml-5"
+                      text
+                      style="
+                        background: none;
+                        border: none !important;
+                        font-size: 13px;
+                        cursor: pointer;
+                      "
                       small
                       @click="viewCustomerBilling(selectedItem.id)"
                     >
                       View
                       <v-icon small class="ml-1">mdi-eye</v-icon>
-                    </v-btn>
+                    </span>
                     <v-menu bottom right>
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn outlined small v-bind="attrs" v-on="on">
+                        <span
+                          class="hover-bold ml-5"
+                          text
+                          style="
+                            background: none;
+                            border: none !important;
+                            font-size: 13px;
+                            cursor: pointer;
+                          "
+                          small
+                          v-bind="attrs"
+                          v-on="on"
+                        >
                           Print/PDF
                           <v-progress-circular
                             class="ml-1"
@@ -244,10 +277,9 @@
                             size="15"
                             width="2"
                             indeterminate
-                            color="white"
                           ></v-progress-circular>
-                          <v-icon v-else class="ml-1">mdi-chevron-down</v-icon>
-                        </v-btn>
+                          <v-icon v-else>mdi-chevron-down</v-icon>
+                        </span>
                       </template>
 
                       <v-list width="140" dense>
@@ -264,14 +296,23 @@
                       </v-list>
                     </v-menu>
 
-                    <v-btn
+                    <span
+                      text
                       @click="get_payment(selectedItem)"
-                      outlined
+                      style="
+                        background: none;
+                        border: none !important;
+                        font-size: 13px;
+                        cursor: pointer;
+                      "
                       small
+                      class="hover-bold ml-5"
                     >
                       Record Payment
-                      <v-icon small class="ml-1">mdi-cash-multiple</v-icon>
-                    </v-btn>
+                      <v-icon small class="ml-1" style="margin-top: -4px"
+                        >mdi-cash-multiple</v-icon
+                      >
+                    </span>
                   </v-col>
                   <v-col>
                     <div class="text-right">
