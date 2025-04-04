@@ -77,25 +77,25 @@
                   {{ item.description }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item.Cash) }}
+                  {{ $utils.currency_format(item?.Cash ?? 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item.Card) }}
+                  {{ $utils.currency_format(item?.Card ?? 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item.Online) }}
+                  {{ $utils.currency_format(item?.Online ?? 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item.Bank) }}
+                  {{ $utils.currency_format(item?.Bank ?? 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item.UPI) }}
+                  {{ $utils.currency_format(item?.UPI ?? 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item.Cheque) }}
+                  {{ $utils.currency_format(item?.Cheque ?? 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item.CityLedger) }}
+                  {{ $utils.currency_format(item?.CityLedger ?? 0) }}
                 </td>
               </tr>
             </tbody>
@@ -103,25 +103,25 @@
             <tr>
               <td colspan="7" class="py-2 border-bottom">Total</td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats.Cash) }}
+                {{ $utils.currency_format(incomeStats?.Cash ?? 0) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats.Card) }}
+                {{ $utils.currency_format(incomeStats?.Card ?? 0) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats.Online) }}
+                {{ $utils.currency_format(incomeStats?.Online ?? 0) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats.Bank) }}
+                {{ $utils.currency_format(incomeStats?.Bank ?? 0) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats.UPI) }}
+                {{ $utils.currency_format(incomeStats?.UPI ?? 0) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats.Cheque) }}
+                {{ $utils.currency_format(incomeStats?.Cheque ?? 0) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats.CityLedger) }}
+                {{ $utils.currency_format(incomeStats?.CityLedger ?? 0) }}
               </td>
             </tr>
           </table>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AdminExpense;
 use App\Models\Payment;
 use App\Models\PaymentMode;
+use App\Models\Transaction;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -131,5 +132,37 @@ class PaymentController extends Controller
             'profit' => max($finalTotal, 0),  // Profit if positive
             'loss' => min($finalTotal, 0),    // Loss if negative
         ];
+    }
+
+    public function Payments(Request $request)
+    {
+
+        $model = Transaction::query();
+
+
+        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
+            $model->WhereBetween('date', [$request->from, $request->to]);
+        }
+
+
+        // Optional search value
+        $search = $request->search;
+
+        if ($search) {
+            $model->where(function ($q) use ($search) {
+                $q->orWhereHas('booking', function ($bookingQuery) use ($search) {
+                    $bookingQuery->where('id', $search)
+                        ->orWhere('reservation_no', $search);
+                });
+            });
+        }
+
+
+        return $model
+            ->with("paymentMode", "booking")
+            ->where('company_id', $request->company_id)
+            ->where('credit', ">", 0)
+            ->orderBy('id', 'desc')
+            ->paginate($request->per_page ?? 20);
     }
 }
