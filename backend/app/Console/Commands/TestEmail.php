@@ -20,7 +20,13 @@ class TestEmail extends Command
 
         // Extract filename and set storage path
         $fileName = basename(parse_url($attachmentUrl, PHP_URL_PATH));
-        $filePath = public_path("invoices/$fileName");
+        $directoryPath = public_path("invoices");
+        $filePath = "$directoryPath/$fileName";
+
+        // Ensure the directory exists
+        if (!file_exists($directoryPath)) {
+            mkdir($directoryPath, 0777, true);
+        }
 
         // Download the file if it does not exist
         if (!file_exists($filePath)) {
