@@ -138,7 +138,7 @@ class BirthDayWish extends Command
 
     function getClient($company_id)
     {
-        return "AE00012_1744876475404";
+        return "RS_1_1745417458638";
         $clientId = WhatsappClient::where("company_id", $company_id)->value("accounts")[0]["clientId"] ?? "RS_1_1745417458638";
         return $clientId;
     }
