@@ -103,7 +103,7 @@ class BirthDayWish extends Command
                     ['[title]', '[full_name]'],
                     [
                         $customer->title,
-                        $customer->full_name,
+                        trim($customer->full_name),
                     ],
                     $messageBody
                 );
