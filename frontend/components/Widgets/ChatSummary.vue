@@ -1,44 +1,40 @@
 <template>
-  <v-card dense>
-    <v-card-text>
-      <v-row no-gutter>
-        <v-col style="font-size: 12px">
-          <v-icon left color="blue">mdi-chat</v-icon> Chat
-        </v-col>
-        <v-col class="text-right" style="font-size: 12px">
-          <span
-            class="blue--text"
-            style="cursor: pointer"
-            @click="$router.push(`/chat`)"
-            >View All</span
-          >
-        </v-col>
-        <v-col cols="12">
-          <v-simple-table dense>
-            <template v-slot:default>
-              <tbody>
-                <tr v-for="(item, index) in items" :key="index">
-                  <td style="font-size: 11px">
-                    {{ item?.lattest_room?.room_no }}
-                  </td>
-                  <td style="font-size: 11px">
-                    {{ $dateFormat.hm(item.created_at) }}
-                  </td>
-                  <td style="font-size: 11px">
-                    <WidgetsReadMore :text="item.message" :textLength="10" />
-                  </td>
-                  <td style="font-size: 11px">{{ item.service }}</td>
-                  <td style="font-size: 11px">
-                    <WidgetsChatResponseDialog :item="item" />
-                  </td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
-        </v-col>
-      </v-row>
-    </v-card-text>
-  </v-card>
+  <v-row no-gutter>
+    <v-col style="font-size: 12px">
+      <v-icon left color="blue">mdi-chat</v-icon> Chat
+    </v-col>
+    <v-col class="text-right" style="font-size: 12px">
+      <span
+        class="blue--text"
+        style="cursor: pointer"
+        @click="$router.push(`/chat`)"
+        >View All</span
+      >
+    </v-col>
+    <v-col cols="12">
+      <v-simple-table dense>
+        <template v-slot:default>
+          <tbody>
+            <tr v-for="(item, index) in items" :key="index">
+              <td style="font-size: 11px">
+                {{ item?.lattest_room?.room_no }}
+              </td>
+              <td style="font-size: 11px">
+                {{ $dateFormat.hm(item.created_at) }}
+              </td>
+              <td style="font-size: 11px">
+                <WidgetsReadMore :text="item.message" :textLength="10" />
+              </td>
+              <td style="font-size: 11px">{{ item.service }}</td>
+              <td style="font-size: 11px">
+                <WidgetsChatResponseDialog :item="item" />
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

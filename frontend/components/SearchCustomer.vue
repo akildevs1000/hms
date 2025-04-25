@@ -29,7 +29,7 @@
             <v-icon
               style="
                 border-radius: 5px;
-                padding: 7px;
+                padding: 4px;
                 top: 0px;
                 position: absolute;
                 right: 1px;

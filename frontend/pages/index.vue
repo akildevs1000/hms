@@ -1,10 +1,5 @@
 <template>
   <div v-if="isPageLoad">
-    <!-- <link
-        href="matrix/dist/css/style.min.css"
-        rel="stylesheet"
-        v-if="isIndex"
-      /> -->
     <div class="text-center ma-2">
       <v-snackbar
         v-model="snackbar"
@@ -364,7 +359,10 @@
             </v-card>
           </v-col>
           <v-col cols="12" class="pt-0">
-            <v-card :loading="gridLoading" style="min-height: 410px">
+            <v-card
+              :loading="gridLoading"
+              style="display: flex; flex-direction: column; height: 65vh"
+            >
               <v-tabs hide-slider right v-model="tab" color="#0d652d">
                 <div class="ma-2">
                   <v-icon @click="refreshRoomList">mdi-reload</v-icon>
@@ -493,107 +491,119 @@
         </v-row>
       </v-col>
       <v-col cols="3">
-        <v-row no-gutters>
-          <v-col cols="12">
-            <v-row no-gutters>
-              <v-col class="mr-2">
-                <v-card class="elevation-2" style="height: 135px">
-                  <v-card-text>
-                    <div class="pb-1">
-                      <v-icon color="purple" @click="FoodDialog = true"
-                        >mdi-food</v-icon
-                      ><span class="ml-3 text-color">Food</span>
-                    </div>
-                    <table>
-                      <tr
-                        v-for="(item, index) in [
-                          {
-                            color: `blue`,
-                            text: `Breakfast`,
-                            value: foodOrdersCount.breakfast,
-                          },
-                          {
-                            color: `green`,
-                            text: `Lunch`,
-                            value: foodOrdersCount.lunch,
-                          },
-                          {
-                            color: `orange`,
-                            text: `Dinner`,
-                            value: foodOrdersCount.dinner,
-                          },
-                        ]"
-                        :key="index"
-                      >
-                        <td style="font-size: 11px" class="border-bottom">
-                          <v-icon :color="colors[index]"
-                            >mdi-square-medium</v-icon
-                          >
-                          {{ item.text }}
-                        </td>
-                        <td style="font-size: 11px" class="border-bottom">
-                          <span>
-                            {{ item.value == 0 ? 0 : parseInt(item.value) }}
-                          </span>
-                        </td>
-                      </tr>
-                    </table>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-              <v-col>
-                <v-card class="elevation-2" style="height: 135px">
-                  <v-card-text>
-                    <div class="pb-1">
-                      <v-icon color="purple" @click="InHouseDialog = true"
-                        >mdi-human-male-female-child</v-icon
-                      ><span class="ml-3 text-color">Occupancy</span>
-                    </div>
-                    <table>
-                      <tr
-                        v-for="(item, index) in [
-                          {
-                            color: `blue`,
-                            text: `Adult`,
-                            value: members.adult,
-                          },
-                          {
-                            color: `green`,
-                            text: `Children`,
-                            value: members.child,
-                          },
-                        ]"
-                        :key="index"
-                      >
-                        <td style="font-size: 11px" class="border-bottom">
-                          <v-icon :color="colors[index]"
-                            >mdi-square-medium</v-icon
-                          >
-                          {{ item.text }}
-                        </td>
-                        <td style="font-size: 11px" class="border-bottom">
-                          <span>
-                            {{ item.value == 0 ? 0 : parseInt(item.value) }}
-                          </span>
-                        </td>
-                      </tr>
-                    </table>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-col>
+        <div class="fill-height d-flex flex-column">
+          <v-row no-gutters>
+            <v-col class="mr-2">
+              <v-card style="height: 150px">
+                <v-card-text>
+                  <div class="pb-1">
+                    <v-icon color="purple" @click="FoodDialog = true"
+                      >mdi-food</v-icon
+                    ><span class="ml-3 text-color">Food</span>
+                  </div>
+                  <table>
+                    <tr
+                      v-for="(item, index) in [
+                        {
+                          color: `blue`,
+                          text: `Breakfast`,
+                          value: foodOrdersCount.breakfast,
+                        },
+                        {
+                          color: `green`,
+                          text: `Lunch`,
+                          value: foodOrdersCount.lunch,
+                        },
+                        {
+                          color: `orange`,
+                          text: `Dinner`,
+                          value: foodOrdersCount.dinner,
+                        },
+                      ]"
+                      :key="index"
+                    >
+                      <td style="font-size: 11px" class="border-bottom">
+                        <v-icon :color="colors[index]"
+                          >mdi-square-medium</v-icon
+                        >
+                        {{ item.text }}
+                      </td>
+                      <td style="font-size: 11px" class="border-bottom">
+                        <span>
+                          {{ item.value == 0 ? 0 : parseInt(item.value) }}
+                        </span>
+                      </td>
+                    </tr>
+                  </table>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col>
+              <v-card style="height: 150px">
+                <v-card-text>
+                  <div class="pb-1">
+                    <v-icon color="purple" @click="InHouseDialog = true"
+                      >mdi-human-male-female-child</v-icon
+                    ><span class="ml-3 text-color">Occupancy</span>
+                  </div>
+                  <table>
+                    <tr
+                      v-for="(item, index) in [
+                        {
+                          color: `blue`,
+                          text: `Adult`,
+                          value: members.adult,
+                        },
+                        {
+                          color: `green`,
+                          text: `Children`,
+                          value: members.child,
+                        },
+                      ]"
+                      :key="index"
+                    >
+                      <td style="font-size: 11px" class="border-bottom">
+                        <v-icon :color="colors[index]"
+                          >mdi-square-medium</v-icon
+                        >
+                        {{ item.text }}
+                      </td>
+                      <td style="font-size: 11px" class="border-bottom">
+                        <span>
+                          {{ item.value == 0 ? 0 : parseInt(item.value) }}
+                        </span>
+                      </td>
+                    </tr>
+                  </table>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
 
-          <v-col cols="12" class="pt-2">
-            <WidgetsOnlineBooking :key="keyTabAllTop" />
-          </v-col>
-          <v-col cols="12" class="pt-2">
-            <WidgetsChatSummary :key="keyTabAllTop" />
-          </v-col>
-          <v-col cols="12" class="pt-2">
+          <v-row no-gutters class="mt-3">
+            <v-col>
+              <v-card class="pt-3" style="height: 200px">
+                <v-card-text>
+                  <WidgetsOnlineBooking :key="keyTabAllTop" />
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <v-row no-gutters class="mt-3">
+            <v-col>
+              <v-card class="pt-3" style="height: 200px">
+                <v-card-text>
+                  <WidgetsChatSummary :key="keyTabAllTop" />
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+
+          <v-card class="fill-height d-flex flex-column mt-3">
             <WidgetsTenDaysForCast :key="keyTabAllTop" />
-          </v-col>
-        </v-row>
+          </v-card>
+        </div>
       </v-col>
     </v-row>
     <ChatDialog />
