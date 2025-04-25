@@ -9,7 +9,6 @@
         <v-card-text>
           <v-container>
             <AssetsTable
-              v-if="income"
               :headers="[
                 { text: `Cash`, value: `Cash`, align: `center` },
                 { text: `Card`, value: `Card`, align: `center` },
@@ -21,13 +20,13 @@
               ]"
               :items="[
                 {
-                  Cash: $utils.currency_format(income.Cash),
-                  Card: $utils.currency_format(income.Card),
-                  Online: $utils.currency_format(income.Online),
-                  Bank: $utils.currency_format(income.Bank),
-                  UPI: $utils.currency_format(income.UPI),
-                  Cheque: $utils.currency_format(income.Cheque),
-                  CityLedger: $utils.currency_format(income.CityLedger),
+                  Cash: $utils.currency_format(income?.Cash || 0),
+                  Card: $utils.currency_format(income?.Card || 0),
+                  Online: $utils.currency_format(income?.Online || 0),
+                  Bank: $utils.currency_format(income?.Bank || 0),
+                  UPI: $utils.currency_format(income?.UPI || 0),
+                  Cheque: $utils.currency_format(income?.Cheque || 0),
+                  CityLedger: $utils.currency_format(income?.CityLedger || 0),
                 },
               ]"
             />
@@ -135,7 +134,6 @@
     <v-row dense>
       <v-col cols="3">
         <v-card
-          v-if="income"
           @click="IncomeCardDialog = true"
           class="elevation-2"
           style="height: 230px"
@@ -162,16 +160,24 @@
               :total="'100'"
               :colors="colors"
               :labels="[
-                { color: `#4caf50`, text: `Cash`, value: income.Cash },
-                { color: `#538234`, text: `Card`, value: income.Card },
-                { color: `#0f642b`, text: `Online`, value: income.Online },
-                { color: `#010002`, text: `Bank`, value: income.Bank },
-                { color: `#010002`, text: `UPI`, value: income.UPI },
-                { color: `#010002`, text: `Cheque`, value: income.Cheque },
+                { color: `#4caf50`, text: `Cash`, value: income?.Cash || 0 },
+                { color: `#538234`, text: `Card`, value: income?.Card || 0 },
+                {
+                  color: `#0f642b`,
+                  text: `Online`,
+                  value: income?.Online || 0,
+                },
+                { color: `#010002`, text: `Bank`, value: income?.Bank || 0 },
+                { color: `#010002`, text: `UPI`, value: income?.UPI || 0 },
+                {
+                  color: `#010002`,
+                  text: `Cheque`,
+                  value: income?.Cheque || 0,
+                },
                 {
                   color: `#010002`,
                   text: `CityLedger`,
-                  value: income.CityLedger,
+                  value: income?.CityLedger || 0,
                 },
               ]"
             />
