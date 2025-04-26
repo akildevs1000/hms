@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
@@ -23,11 +24,16 @@ class EmailSender implements ShouldQueue
     {
         $recipient = $this->request['recipient'] ?? null;
         $messageBody = $this->request['text'] ?? null;
+        $heading = $this->request['heading'] ?? null;
+
+
+        echo "\n" . json_encode($this->request, JSON_PRETTY_PRINT);
+
 
         if ($recipient && $messageBody) {
-            Mail::raw($messageBody, function ($message) use ($recipient) {
+            Mail::raw($messageBody, function ($message) use ($recipient, $heading) {
                 $message->to($recipient)
-                        ->subject('Happy Birthday!');
+                    ->subject($heading ?? 'Happy Birthday!');
             });
         }
     }

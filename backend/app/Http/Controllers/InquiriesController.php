@@ -6,6 +6,8 @@ use App\Models\Inquiry;
 use Illuminate\Http\Request;
 use App\Http\Requests\Inquiry\StoreRequest;
 use App\Http\Requests\Inquiry\UpdateRequest;
+use App\Jobs\EmailSender;
+use App\Jobs\WhatsappSender;
 use App\Models\Template;
 
 class InquiriesController extends Controller
@@ -75,22 +77,37 @@ class InquiriesController extends Controller
         try {
             $inquiry = Inquiry::create($request->validated());
 
-            $fields = [
-                "title"     => $inquiry->title,
-                "full_name" => $inquiry->full_name,
-                "check_in"  => date('d-M-y', strtotime($inquiry->check_in)),
-                "check_out" => date('d-M-y', strtotime($inquiry->check_out)),
-                "rooms_type" => "------"
+            $payload = [
+                "command" => Template::INQUERY_CREATE,
+                "heading" => "Inquiry",
+                "company_id" => $request->company_id,
+                "whatsapp" => $inquiry->whatsapp,
+                "email" => $inquiry->email,
+
+                "fields" => [
+                    "title"     => $inquiry->title,
+                    "full_name" => $inquiry->full_name,
+                    "from_date"  => date('d-M-y', strtotime($inquiry->check_in)),
+                    "to_date" => date('d-M-y', strtotime($inquiry->check_out)),
+                    "rooms_type" => "---------",
+                ]
             ];
 
-            if ($inquiry->email) {
-                $fields["email"] = $inquiry->email;
-                $this->sendMailIfRequired(Template::INQUERY_CREATE, $fields);
+            if ($payload["whatsapp"]) {
+                WhatsappSender::dispatch([
+                    'recipient' => $payload["whatsapp"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                ]);
             }
 
-            if ($inquiry->whatsapp) {
-                $fields["whatsapp"] = $inquiry->whatsapp;
-                $this->sendWhatsappIfRequired(Template::INQUERY_CREATE, $fields, $request->company_id);
+            if ($payload["email"]) {
+                EmailSender::dispatch([
+                    'recipient' => $payload["email"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                    'heading' => $payload["heading"],
+                ]);
             }
 
 

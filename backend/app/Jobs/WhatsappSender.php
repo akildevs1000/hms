@@ -27,7 +27,7 @@ class WhatsappSender implements ShouldQueue
 
         $request['clientId'] = $this->getClient($request["company_id"]);
 
-        echo json_encode($request, JSON_PRETTY_PRINT);
+        echo "\n" . json_encode($request, JSON_PRETTY_PRINT);
 
         Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', $request);
     }

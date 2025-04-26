@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Quotation\ValidationRequest;
+use App\Jobs\EmailSender;
+use App\Jobs\WhatsappSender;
 use App\Mail\ActionMarkdownMail;
 use App\Models\Customer;
 use App\Models\Quotation;
@@ -173,24 +175,38 @@ class QuotationController extends Controller
 
             $quotation->load('customer');
 
-            $fields = [
-                "title"     => $quotation->customer->title,
-                "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
-                "check_in"  => date('d-M-y', strtotime($quotation->arrival_date)),
-                "check_out" => date('d-M-y', strtotime($quotation->departure_date)),
-                "rooms_type" => $quotation->rooms_type,
+            $payload = [
+                "command" => Template::QUOTATION_CREATE,
+                "heading" => "QUOTATION",
+                "company_id" => $data["company_id"],
+                "whatsapp" => $quotation->customer->whatsapp,
+                "email" => $quotation->customer->email,
+
+                "fields" => [
+                    "title"     => $quotation->customer->title,
+                    "full_name" => $quotation->customer->first_name . " " . $quotation->customer->last_name,
+                    "from_date"  => date('d-M-y', strtotime($quotation->arrival_date)),
+                    "to_date" => date('d-M-y', strtotime($quotation->departure_date)),
+                    "rooms_type" => $quotation->rooms_type,
+                ]
             ];
 
-            if ($quotation->customer->email) {
-                $fields["email"] = $quotation->customer->email;
-                $this->sendMailIfRequired(Template::QUOTATION_CREATE, $fields);
+            if ($payload["whatsapp"]) {
+                WhatsappSender::dispatch([
+                    'recipient' => $payload["whatsapp"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                ]);
             }
 
-            if ($quotation->customer->whatsapp) {
-                $fields["whatsapp"] = $quotation->customer->whatsapp;
-                $this->sendWhatsappIfRequired(Template::QUOTATION_CREATE, $fields, $request->company_id);
+            if ($payload["email"]) {
+                EmailSender::dispatch([
+                    'recipient' => $payload["email"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                    'heading' => $payload["heading"],
+                ]);
             }
-
 
             return $quotation;
         } catch (\Exception $e) {

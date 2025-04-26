@@ -312,4 +312,25 @@ class Controller extends BaseController
             return $e->getMessage();
         }
     }
+
+    function prepareMessage(array $fields, string $type, $command): ?string
+    {
+        $templates = Template::whereActionId(["action_id" => $command])->orderBy("id", "desc")->get();
+
+        if (!count($templates)) {
+            return 'Template not found.';
+        }
+
+        $template = collect($templates)->firstWhere('medium', $type);
+
+        if (!$template) {
+            return null;
+        }
+
+        $messageBody = $template->body ?? Template::DEFAULT_MESSAGES[$command];
+        $replacedMessage = str_replace(Template::TAGS[$command], $fields, $messageBody);
+        $finalMessage = preg_replace('/<p>(.*?)<\/p>/s', "$1\n", $replacedMessage);
+
+        return trim(strip_tags($finalMessage));
+    }
 }

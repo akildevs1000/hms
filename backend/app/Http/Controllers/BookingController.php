@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Booking\BookingRequest;
 use App\Http\Requests\Booking\DocumentRequest;
+use App\Jobs\EmailSender;
 use App\Jobs\StoreBookedRoomsJob;
+use App\Jobs\WhatsappSender;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
@@ -164,24 +166,38 @@ class BookingController extends Controller
             } else {
             }
 
-            $fields = [
-                "title"     => ucfirst($request->title) ?? 'Mr',
-                "full_name" => ucfirst($request->full_name) ?? 'Guest',
-                "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
-                "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
+            $payload = [
+                "command" => Template::BOOKING_CREATE,
+                "company_id" => $request->company_id,
+                "whatsapp" => $request->whatsapp,
+                "email" => $request->email,
+
+                "fields" => [
+                    "title"     => ucfirst($request->title) ?? 'Mr',
+                    "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                    "from_date"  => date('d-M-y H:i', strtotime($request->check_in)),
+                    "to_date" => date('d-M-y H:i', strtotime($request->check_out)),
+                    // 'room_type' => "castle",
+                ]
             ];
 
-            if ($request->email) {
-                $fields["email"] = $request->email;
-                $this->sendMailIfRequired(Template::BOOKING_CREATE, $fields);
+            if ($payload["whatsapp"]) {
+                WhatsappSender::dispatch([
+                    'recipient' => $payload["whatsapp"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                ]);
             }
 
-            if ($request->whatsapp) {
-                $fields["whatsapp"] = $request->whatsapp;
-                $this->sendWhatsappIfRequired(Template::BOOKING_CREATE, $fields, $request->company_id);
+            if ($payload["email"]) {
+                EmailSender::dispatch([
+                    'recipient' => $payload["email"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                ]);
             }
 
-
+            // echo json_encode($payload, JSON_PRETTY_PRINT);
             // all good
         } catch (\Exception $e) {
             // DB::rollback();
