@@ -20,9 +20,9 @@ class Template extends Model
     const QUOTATION_CREATE = 2; //  done
     const ONE_DAY_BEFORE_ARRIVAL = 3; // done
     const ON_ARRIVAL_DATE = 4; // done
-    const WHEN_CUSTOMER_ARRIVED = 5;
+    const WHEN_CUSTOMER_ARRIVED = 5; // done
     const ON_CHECKOUT_DATE_CHECKOUT_REMINDER = 6;
-    const AFTER_CHECKOUT = 7;
+    const AFTER_CHECKOUT = 7; // done
     const BIRTHDAY_WISH = 8; // done
     const FESTIVAL_MESSAGE = 9; // hold
     const BOOKING_CREATE = 10; // done

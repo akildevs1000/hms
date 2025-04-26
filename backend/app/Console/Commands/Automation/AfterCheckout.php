@@ -25,7 +25,7 @@ class AfterCheckout extends Command
     {
         $payload = [
             "command" => Template::AFTER_CHECKOUT,
-            "heading" => "WHEN_CUSTOMER_ARRIVED",
+            "heading" => "AFTER_CHECKOUT",
             "company_id" => 1,
             "whatsapp" => "971554501483",
             "email" => "francisgill1000@gmail.com",

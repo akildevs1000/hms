@@ -1076,21 +1076,38 @@ class BookingController extends Controller
                 $this->customerUpdateById($customerData);
 
 
-                $fields = [
-                    "title"     => ucfirst($request->title) ?? 'Mr',
-                    "full_name" => ucfirst($request->full_name) ?? 'Guest',
-                    "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
-                    "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
+                $payload = [
+                    "command" => Template::WHEN_CUSTOMER_ARRIVED,
+                    "heading" => "WHEN_CUSTOMER_ARRIVED",
+                    "company_id" => $request->company_id,
+                    "whatsapp" => $request->whatsapp,
+                    "email" => $request->email,
+
+                    "fields" => [
+
+                        "title"     => ucfirst($request->title) ?? 'Mr',
+                        "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                        "from_date"  => date('d-M-y H:i', strtotime($request->check_in)),
+                        "to_date" => date('d-M-y H:i', strtotime($request->check_out)),
+
+                    ]
                 ];
 
-                if ($request->email) {
-                    $fields["email"] = $request->email;
-                    $this->sendMailIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields);
+                if ($payload["whatsapp"]) {
+                    WhatsappSender::dispatch([
+                        'recipient' => $payload["whatsapp"],
+                        'text' => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
+                        'company_id' => $payload["company_id"],
+                    ]);
                 }
 
-                if ($request->whatsapp) {
-                    $fields["whatsapp"] = $request->whatsapp;
-                    $this->sendWhatsappIfRequired(Template::WHEN_CUSTOMER_ARRIVED, $fields, $request->company_id);
+                if ($payload["email"]) {
+                    EmailSender::dispatch([
+                        'recipient' => $payload["email"],
+                        'text' => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
+                        'company_id' => $payload["company_id"],
+                        'heading' => $payload["heading"],
+                    ]);
                 }
 
                 return response()->json(['data' => '', 'message' => 'Successfully checked', 'status' => true]);
@@ -1361,21 +1378,36 @@ class BookingController extends Controller
                 ]
             );
 
-            $fields = [
-                "title"     => ucfirst($request->title) ?? 'Mr',
-                "full_name" => ucfirst($request->full_name) ?? 'Guest',
-                "check_in"  => date('d-M-y H:i', strtotime($request->check_in)),
-                "check_out" => date('d-M-y H:i', strtotime($request->check_out)),
+            $payload = [
+                "command" => Template::AFTER_CHECKOUT,
+                "heading" => "AFTER_CHECKOUT",
+                "company_id" => $request->company_id,
+                "whatsapp" => $request->whatsapp,
+                "email" => $request->email,
+
+                "fields" => [
+                    "title"     => ucfirst($request->title) ?? 'Mr',
+                    "full_name" => ucfirst($request->full_name) ?? 'Guest',
+                    "from_date"  => date('d-M-y H:i', strtotime($request->check_in)),
+                    "to_date" => date('d-M-y H:i', strtotime($request->check_out)),
+                ]
             ];
 
-            if ($request->email) {
-                $fields["email"] = $request->email;
-                $this->sendMailIfRequired(Template::AFTER_CHECKOUT, $fields);
+            if ($payload["whatsapp"]) {
+                WhatsappSender::dispatch([
+                    'recipient' => $payload["whatsapp"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                ]);
             }
 
-            if ($request->whatsapp) {
-                $fields["whatsapp"] = $request->whatsapp;
-                $this->sendWhatsappIfRequired(Template::AFTER_CHECKOUT, $fields, $request->company_id);
+            if ($payload["email"]) {
+                EmailSender::dispatch([
+                    'recipient' => $payload["email"],
+                    'text' => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
+                    'company_id' => $payload["company_id"],
+                    'heading' => $payload["heading"],
+                ]);
             }
 
             return response()
