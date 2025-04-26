@@ -44,8 +44,8 @@ class Template extends Model
     ];
 
     const TAGS = [
-        1 => ['[title]', '[full_name]'],
-        2 => ['[title]', '[full_name]'],
+        1 => ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]'],
+        2 => ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]'],
         3 => ['[title]', '[full_name]'],
         4 => ['[title]', '[full_name]'],
         5 => ['[title]', '[full_name]'],
