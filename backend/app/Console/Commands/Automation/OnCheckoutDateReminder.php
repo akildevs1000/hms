@@ -10,11 +10,11 @@ use App\Models\Template;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class OnArrivalDate extends Command
+class OnCheckoutDateReminder extends Command
 {
-    protected $signature = 'one_arrival_date';
+    protected $signature = 'on_checkout_date_reminder';
 
-    protected $description = 'Send OnArrivalDate to customer';
+    protected $description = 'Send OnCheckoutDateReminder to customer';
 
     protected $templates = [];
 
@@ -31,15 +31,15 @@ class OnArrivalDate extends Command
             ->get();
 
         if (count($bookings) == 0) {
-            $this->info("no record found for one_arrival_date");
+            $this->info("no record found for on_checkout_date_reminder");
             return;
         }
 
         foreach ($bookings as $booking) {
 
             $payload = [
-                "command" => Template::ON_ARRIVAL_DATE,
-                "heading" => "ON_ARRIVAL_DATE",
+                "command" => Template::ON_CHECKOUT_DATE_CHECKOUT_REMINDER,
+                "heading" => "ON_CHECKOUT_DATE_REMINDER",
                 "company_id" => $booking->company_id,
                 "whatsapp" => $booking->customer->whatsapp ?? null,
                 "email" => $booking->customer->email ?? null,

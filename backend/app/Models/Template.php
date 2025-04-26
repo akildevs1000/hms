@@ -21,7 +21,7 @@ class Template extends Model
     const ONE_DAY_BEFORE_ARRIVAL = 3; // done
     const ON_ARRIVAL_DATE = 4; // done
     const WHEN_CUSTOMER_ARRIVED = 5; // done
-    const ON_CHECKOUT_DATE_CHECKOUT_REMINDER = 6;
+    const ON_CHECKOUT_DATE_CHECKOUT_REMINDER = 6; // done
     const AFTER_CHECKOUT = 7; // done
     const BIRTHDAY_WISH = 8; // done
     const FESTIVAL_MESSAGE = 9; // hold
