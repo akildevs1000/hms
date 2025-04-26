@@ -348,6 +348,10 @@ class Booking extends Model
 
     public function getTotalWithPostingInWordsAttribute()
     {
+        if (env("APP_ENV") == "local") {
+            return;
+        }
+
         $amount = $this->total_with_posting;
 
         $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
