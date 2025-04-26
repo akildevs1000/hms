@@ -275,7 +275,36 @@ class Booking extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(Payment::class)->orderBy("id");
+    }
+
+    public function cash()
+    {
+        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::CASH);
+    }
+    public function card()
+    {
+        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::CARD);
+    }
+    public function online()
+    {
+        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::ONLINE);
+    }
+    public function bank()
+    {
+        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::BANK);
+    }
+    public function upi()
+    {
+        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::UPI);
+    }
+    public function cheque()
+    {
+        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::CHEQUE);
+    }
+    public function pending()
+    {
+        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::CITYLEDGER);
     }
 
     public function cityLedgerPayments()

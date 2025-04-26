@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminExpense;
+use App\Models\Booking;
 use App\Models\Payment;
 use App\Models\PaymentMode;
 use App\Models\Transaction;
@@ -136,18 +137,19 @@ class PaymentController extends Controller
 
     public function Payments(Request $request)
     {
+        $dateRage = [$request->from_date . " 00:00:00", $request->to_date . " 23:59:59"];
 
-        $model = Transaction::query();
+        $companyId = $request->company_id;
 
-
-        if (($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
-            $model->WhereBetween('date', [$request->from, $request->to]);
-        }
-
-
-        // Optional search value
         $search = $request->search;
 
+
+
+        $model = Booking::query();
+
+        if (($request->filled('from_date') && $request->from_date) && ($request->filled('to_date') && $request->to_date)) {
+            $model->WhereBetween('booking_date', $dateRage);
+        }
         if ($search) {
             $model->where(function ($q) use ($search) {
                 $q->orWhereHas('booking', function ($bookingQuery) use ($search) {
@@ -156,12 +158,20 @@ class PaymentController extends Controller
                 });
             });
         }
-
-
         return $model
-            ->with("paymentMode", "booking")
-            ->where('company_id', $request->company_id)
-            ->where('credit', ">", 0)
+            ->select("id", "customer_id", "booking_date", "reservation_no")
+            ->with([
+                "cash:id,booking_id,amount,date,time",
+                "card:id,booking_id,amount,date,time",
+                "online:id,booking_id,amount,date,time",
+                "bank:id,booking_id,amount,date,time",
+                "upi:id,booking_id,amount,date,time",
+                "cheque:id,booking_id,amount,date,time",
+                "pending:id,booking_id,amount,date,time",
+                "orderRooms:id,booking_id,room_no,room_type",
+                "customer:id,first_name,last_name"
+            ])
+            ->where('company_id', $companyId)
             ->orderBy('id', 'desc')
             ->paginate($request->per_page ?? 20);
     }

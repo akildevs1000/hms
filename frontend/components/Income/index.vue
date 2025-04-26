@@ -52,76 +52,70 @@
                   {{ index + 1 }}
                 </td>
                 <td class="text-center py-2 border-bottom">
-                  {{ item.date }}
-                </td>
-                <td class="text-center py-2 border-bottom">
-                  {{ item.time }}
+                  {{ item.booking_date }}
                 </td>
                 <td class="text-center py-2 border-bottom">
                   <span @click="goToRevView(item)" style="cursor: pointer">
-                    {{ item.booking.reservation_no || "---" }}
+                    {{ item?.reservation_no || "---" }}
                   </span>
                 </td>
                 <td class="text-center py-2 border-bottom">
-                  {{ item.room || "---" }}
-                </td>
-                <td class="text-center py-2 border-bottom">
                   {{
-                    item &&
-                    item.booking &&
-                    item.booking.customer &&
-                    item.booking.customer.first_name
+                    Array.isArray(item?.order_rooms) && item?.order_rooms.length
+                      ? item?.order_rooms.map((e) => e.room_no).join(", ")
+                      : "---"
                   }}
                 </td>
-                <td class="text-left py-2 border-bottom">
-                  {{ item.description }}
+
+                <td class="text-center py-2 border-bottom">
+                  {{ item && item?.customer && item.customer?.first_name }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.Cash ?? 0) }}
+                  {{ $utils.currency_format(item?.cash?.amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.Card ?? 0) }}
+                  {{ $utils.currency_format(item?.card?.amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.Online ?? 0) }}
+                  {{ $utils.currency_format(item?.online?.amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.Bank ?? 0) }}
+                  {{ $utils.currency_format(item?.bank?.amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.UPI ?? 0) }}
+                  {{ $utils.currency_format(item?.upi?.amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.Cheque ?? 0) }}
+                  {{ $utils.currency_format(item?.cheque?.amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.CityLedger ?? 0) }}
+                  {{ $utils.currency_format(item?.pending?.amount || 0) }}
                 </td>
               </tr>
             </tbody>
 
-            <tr>
-              <td colspan="7" class="py-2 border-bottom">Total</td>
+            <tr v-if="allTotalProcessed">
+              <td colspan="5" class="py-2 border-bottom">Total</td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats?.Cash ?? 0) }}
+                {{ $utils.currency_format(totals.cash) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats?.Card ?? 0) }}
+                {{ $utils.currency_format(totals.card) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats?.Online ?? 0) }}
+                {{ $utils.currency_format(totals.online) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats?.Bank ?? 0) }}
+                {{ $utils.currency_format(totals.bank) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats?.UPI ?? 0) }}
+                {{ $utils.currency_format(totals.upi) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats?.Cheque ?? 0) }}
+                {{ $utils.currency_format(totals.cheque) }}
               </td>
               <td class="text-right py-2 border-bottom">
-                {{ $utils.currency_format(incomeStats?.CityLedger ?? 0) }}
+                {{ $utils.currency_format(totals.pending) }}
               </td>
             </tr>
           </table>
@@ -161,15 +155,12 @@ export default {
     incomeData: [],
     counts: [],
     loading: false,
-    total: 0,
     incomeHeaders: [
       { align: "center", text: "#" },
       { align: "center", text: "Date" },
-      { align: "center", text: "Time" },
       { align: "center", text: "Rev. No" },
       { align: "center", text: "Rooms" },
       { align: "center", text: "Guest" },
-      { align: "left", text: "Description" },
       { align: "right", text: "Cash" },
       { align: "right", text: "Card" },
       { align: "right", text: "Online" },
@@ -198,13 +189,22 @@ export default {
       Cheque: 0,
       CityLedger: 0,
     },
+    totals: {
+      cash: 0,
+      card: 0,
+      online: 0,
+      bank: 0,
+      upi: 0,
+      cheque: 0,
+      pending: 0,
+    },
+    allTotalProcessed: false,
   }),
   created() {
     this.getData();
   },
   watch: {
     filters: {
-      deep: true, // Deep watch for object changes
       handler(data) {
         this.from_date = data.from;
         this.to_date = data.to;
@@ -213,10 +213,39 @@ export default {
           this.getData();
         }
       },
+      deep: true,
+      immediate: true, // Optional: triggers the watcher immediately on component mount
     },
   },
   computed: {},
   methods: {
+    getTotalCash(data) {
+      this.allTotalProcessed = false;
+
+      const totals = {
+        cash: 0,
+        card: 0,
+        online: 0,
+        bank: 0,
+        upi: 0,
+        cheque: 0,
+        pending: 0,
+      };
+
+      for (const item of data) {
+        totals.cash += Number(item?.cash?.amount) || 0;
+        totals.card += Number(item?.card?.amount) || 0;
+        totals.online += Number(item?.online?.amount) || 0;
+        totals.bank += Number(item?.bank?.amount) || 0;
+        totals.upi += Number(item?.upi?.amount) || 0;
+        totals.cheque += Number(item?.cheque?.amount) || 0;
+        totals.pending += Number(item?.pending?.amount) || 0;
+      }
+
+      this.totals = totals;
+      this.allTotalProcessed = true;
+    },
+
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -232,14 +261,26 @@ export default {
       let comId = this.$auth.user.company.id; //company id
       let from = this.from_date;
       let to = this.to_date;
-      let url =
-        `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}&from=${from}&to=${to}`;
+      let url = `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}&from=${from}&to=${to}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}`);
       document.body.appendChild(element);
       element.click();
+    },
+    incomeByPaymentMode(item, paymentModeKey) {
+      let payments = item.payments;
+      payments.forEach((e) => {
+        const paymentMode = (e?.payment_mode?.name ?? "Cash").replace(" ", "");
+        if (paymentMode === paymentModeKey) {
+          console.log("🚀 ~ payments.forEach ~ paymentMode:", paymentMode);
+          console.log("🚀 ~ payments.forEach ~ e:", parseFloat(e?.amount || 0));
+          return parseFloat(e?.amount || 0);
+        } else {
+          return 0;
+        }
+      });
     },
     getData() {
       if (this.loading) return false;
@@ -255,8 +296,11 @@ export default {
           search: this.search,
         },
       };
+
       this.$axios.get(this.endpoint, options).then(({ data }) => {
         this.incomeData = data.data;
+
+        this.getTotalCash(data.data);
         this.incomeStats = data.stats;
         this.$emit("stats", data.stats);
         this.loading = false;

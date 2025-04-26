@@ -19,6 +19,41 @@ class Payment extends Model
         // 'created_at' => 'datetime:d-M-y',
     ];
 
+    public function cash()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id')->where("id", PaymentMode::CASH);
+    }
+
+    public function card()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id')->where("id", PaymentMode::CARD);
+    }
+
+    public function online()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id')->where("id", PaymentMode::ONLINE);
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id')->where("id", PaymentMode::BANK);
+    }
+
+    public function upi()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id')->where("id", PaymentMode::UPI);
+    }
+
+    public function cheque()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id')->where("id", PaymentMode::CHEQUE);
+    }
+
+    public function city_ledger()
+    {
+        return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id')->where("id", PaymentMode::CITYLEDGER);
+    }
+
     public function paymentMode()
     {
         return $this->belongsTo(PaymentMode::class, 'payment_mode', 'id');
