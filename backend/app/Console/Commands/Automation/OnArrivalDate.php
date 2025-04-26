@@ -9,13 +9,12 @@ use App\Models\Booking;
 use App\Models\Template;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
-class OneDayBeforeArrival extends Command
+class OnArrivalDate extends Command
 {
-    protected $signature = 'one_day_before_arrival';
+    protected $signature = 'one_arrival_date';
 
-    protected $description = 'Send OneDayBeforeArrival to customer';
+    protected $description = 'Send OnArrivalDate to customer';
 
     protected $templates = [];
 
@@ -27,20 +26,20 @@ class OneDayBeforeArrival extends Command
     public function handle()
     {
         $bookings = Booking::with("customer:id,title,first_name,last_name,email,whatsapp")
-            ->whereDate('check_in', Carbon::now()->format('Y-m-d'))
-            // ->take(1)
+            // ->whereDate('check_in', Carbon::now()->format('Y-m-d'))
+            ->take(1)
             ->get();
 
         if (count($bookings) == 0) {
-            $this->info("no record found for one_day_before_arrival");
+            $this->info("no record found for one_arrival_date");
             return;
         }
 
         foreach ($bookings as $booking) {
 
             $payload = [
-                "command" => Template::ONE_DAY_BEFORE_ARRIVAL,
-                "heading" => "ONE_DAY_BEFORE_ARRIVAL",
+                "command" => Template::ON_ARRIVAL_DATE,
+                "heading" => "ON_ARRIVAL_DATE",
                 "company_id" => $booking->company_id,
                 "whatsapp" => $booking->customer->whatsapp ?? null,
                 "email" => $booking->customer->email ?? null,
