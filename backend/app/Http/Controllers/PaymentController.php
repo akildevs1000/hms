@@ -160,17 +160,13 @@ class PaymentController extends Controller
         }
         return $model
             ->select("id", "customer_id", "booking_date", "reservation_no")
-            ->with([
-                "cash:id,booking_id,amount,date,time",
-                "card:id,booking_id,amount,date,time",
-                "online:id,booking_id,amount,date,time",
-                "bank:id,booking_id,amount,date,time",
-                "upi:id,booking_id,amount,date,time",
-                "cheque:id,booking_id,amount,date,time",
-                "pending:id,booking_id,amount,date,time",
-                "orderRooms:id,booking_id,room_no,room_type",
-                "customer:id,first_name,last_name"
-            ])
+            ->withSum("cash", "amount")
+            ->withSum("card", "amount")
+            ->withSum("online", "amount")
+            ->withSum("bank", "amount")
+            ->withSum("upi", "amount")
+            ->withSum("cheque", "amount")
+            ->withSum("pending", "amount")
             ->where('company_id', $companyId)
             ->orderBy('id', 'desc')
             ->paginate($request->per_page ?? 20);

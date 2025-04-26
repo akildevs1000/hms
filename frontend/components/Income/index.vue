@@ -71,25 +71,25 @@
                   {{ item && item?.customer && item.customer?.first_name }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.cash?.amount || 0) }}
+                  {{ $utils.currency_format(item?.cash_sum_amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.card?.amount || 0) }}
+                  {{ $utils.currency_format(item?.card_sum_amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.online?.amount || 0) }}
+                  {{ $utils.currency_format(item?.online_sum_amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.bank?.amount || 0) }}
+                  {{ $utils.currency_format(item?.bank_sum_amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.upi?.amount || 0) }}
+                  {{ $utils.currency_format(item?.upi_sum_amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.cheque?.amount || 0) }}
+                  {{ $utils.currency_format(item?.cheque_sum_amount || 0) }}
                 </td>
                 <td class="text-right py-2 border-bottom">
-                  {{ $utils.currency_format(item?.pending?.amount || 0) }}
+                  {{ $utils.currency_format(item?.pending_sum_amount || 0) }}
                 </td>
               </tr>
             </tbody>
@@ -233,13 +233,13 @@ export default {
       };
 
       for (const item of data) {
-        totals.cash += Number(item?.cash?.amount) || 0;
-        totals.card += Number(item?.card?.amount) || 0;
-        totals.online += Number(item?.online?.amount) || 0;
-        totals.bank += Number(item?.bank?.amount) || 0;
-        totals.upi += Number(item?.upi?.amount) || 0;
-        totals.cheque += Number(item?.cheque?.amount) || 0;
-        totals.pending += Number(item?.pending?.amount) || 0;
+        totals.cash += Number(item?.cash_sum_amount) || 0;
+        totals.card += Number(item?.card_sum_amount) || 0;
+        totals.online += Number(item?.online_sum_amount) || 0;
+        totals.bank += Number(item?.bank_sum_amount) || 0;
+        totals.upi += Number(item?.upi_sum_amount) || 0;
+        totals.cheque += Number(item?.cheque_sum_amount) || 0;
+        totals.pending += Number(item?.pending_sum_amount) || 0;
       }
 
       this.totals = totals;

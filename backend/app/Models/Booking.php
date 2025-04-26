@@ -280,23 +280,23 @@ class Booking extends Model
 
     public function cash()
     {
-        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::CASH);
+        return $this->hasMany(Payment::class)->where('payment_mode', PaymentMode::CASH);
     }
     public function card()
     {
-        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::CARD);
+        return $this->hasMany(Payment::class)->where('payment_mode', PaymentMode::CARD);
     }
     public function online()
     {
-        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::ONLINE);
+        return $this->hasMany(Payment::class)->where('payment_mode', PaymentMode::ONLINE);
     }
     public function bank()
     {
-        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::BANK);
+        return $this->hasMany(Payment::class)->where('payment_mode', PaymentMode::BANK);
     }
     public function upi()
     {
-        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::UPI);
+        return $this->hasMany(Payment::class)->where('payment_mode', PaymentMode::UPI);
     }
     public function cheque()
     {
@@ -304,7 +304,7 @@ class Booking extends Model
     }
     public function pending()
     {
-        return $this->hasOne(Payment::class)->where('payment_mode', PaymentMode::CITYLEDGER);
+        return $this->hasMany(Payment::class)->where('payment_mode', PaymentMode::CITYLEDGER);
     }
 
     public function cityLedgerPayments()
