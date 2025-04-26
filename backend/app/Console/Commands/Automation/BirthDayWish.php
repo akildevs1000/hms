@@ -28,7 +28,7 @@ class BirthDayWish extends Command
     {
         $this->tags = Template::TAGS[$this->type];
 
-        $today = Carbon::now()->format('m-25');
+        $today = Carbon::now()->format('m-d');
 
         $customers = Customer::whereNotNull('whatsapp')
             ->where(function ($query) {
