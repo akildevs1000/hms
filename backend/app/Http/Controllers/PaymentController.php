@@ -102,6 +102,7 @@ class PaymentController extends Controller
 
     public function ProfitLoss(Request $request)
     {
+        // Set default values for company_id, from_date, and to_date
         $companyId = $request->company_id;
         $fromDate = $request->from_date ?? date("Y-m-d");
         $toDate = $request->to_date ?? $fromDate;
@@ -110,11 +111,15 @@ class PaymentController extends Controller
         $paymentTotals = Payment::query()
             ->selectRaw('
             SUM(CASE WHEN is_city_ledger = 0 THEN amount ELSE 0 END) as income,
-            SUM(CASE WHEN is_city_ledger = 1 THEN amount ELSE 0 END) as cityLedger
+            SUM(CASE WHEN is_city_ledger = 1 THEN amount ELSE 0 END) as cityledger
         ')
             ->where('company_id', $companyId)
             ->whereBetween('date', [$fromDate, $toDate])
-            ->first() ?? (object)['income' => 0, 'cityLedger' => 0]; // Handle no records case
+            ->first();
+
+        // If no records, default to zero
+        $income = $paymentTotals->income ?? 0;
+        $cityledger = $paymentTotals->cityledger ?? 0;
 
         // Calculate total expenses
         $expenseTotals = AdminExpense::query()
@@ -122,18 +127,19 @@ class PaymentController extends Controller
             ->where('status', AdminExpense::PAYMENT_STATUS_PAID)
             ->whereBetween('bill_date', [$fromDate, $toDate])
             ->sum('total') ?? 0;
-        // Calculate profit or loss
 
-        $finalTotal = $paymentTotals->income - $expenseTotals;
+        // Calculate profit or loss
+        $finalTotal = $income - $expenseTotals;
 
         return [
-            'income' => $paymentTotals->income ?? 0,
-            'cityLedger' => $paymentTotals->cityLedger ?? 0,
-            'expense' => $expenseTotals ?? 0,
+            'income' => (int)$income,
+            'cityLedger' => (int)$cityledger,
+            'expense' => (int)$expenseTotals,
             'profit' => max($finalTotal, 0),  // Profit if positive
             'loss' => min($finalTotal, 0),    // Loss if negative
         ];
     }
+
 
     public function Payments(Request $request)
     {
