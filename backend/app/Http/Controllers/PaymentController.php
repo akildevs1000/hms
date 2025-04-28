@@ -158,8 +158,10 @@ class PaymentController extends Controller
                 });
             });
         }
+
         return $model
             ->select("id", "customer_id", "booking_date", "reservation_no")
+            ->with("customer:id,first_name,last_name", "orderRooms:id,booking_id,room_no,room_type")
             ->withSum("cash", "amount")
             ->withSum("card", "amount")
             ->withSum("online", "amount")
