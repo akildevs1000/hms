@@ -951,6 +951,7 @@ export default {
         );
         //console.log("🚀 ~ checkRoomCleaningNewEvent ~ data:", data);
         this.refreshRoomList();
+        this.room_list();
         this.$localStorage.set("roomCleaningEventCount", data);
       }
     },
