@@ -142,9 +142,9 @@ class CompanyController extends Controller
 
             $user['randPass'] = $randPass;
 
-            if (($company && $user) && env('IS_MAIL')) {
-                NotificationsController::toSend($user, new CompanyCreationNotification, $company);
-            }
+            // if (($company && $user) && env('IS_MAIL')) {
+            //     NotificationsController::toSend($user, new CompanyCreationNotification, $company);
+            // }
 
             if (!$company) {
                 return $this->response('Company cannot add.', null, false);
