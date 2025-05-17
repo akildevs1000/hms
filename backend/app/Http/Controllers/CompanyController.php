@@ -70,7 +70,8 @@ class CompanyController extends Controller
 
     public function store(StoreRequest $request)
     {
-        $randPass = RPG::Generate("luds", 8, 0, 0);
+        // $randPass = RPG::Generate("luds", 8, 0, 0);
+        $randPass = "welcome";
 
         if (env("APP_ENV") == "local") {
             Storage::put('password.txt', $randPass);
