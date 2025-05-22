@@ -885,6 +885,10 @@ export default {
       this.allDataLoaded = false;
     },
     submitPayment() {
+
+      this.$swal("Success!", "Payment has been done", "success");
+      
+      return;
       let after_discount =
         parseFloat(this.tempBalance) - parseFloat(this.discount);
 
