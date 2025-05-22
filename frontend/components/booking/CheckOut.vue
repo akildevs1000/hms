@@ -938,9 +938,9 @@ export default {
 
     store_check_out() {
       
-      if (!this.isPaymentBeforeSubmitted) {
-        this.submitPayment();
-      }
+      // if (!this.isPaymentBeforeSubmitted) {
+      //   this.submitPayment();
+      // }
       // let full_payment = parseFloat(this.full_payment);
       // if (full_payment <= 0) {
       //   this.alert("Warning", "Payment should be greater than zero","error");
