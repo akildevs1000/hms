@@ -227,6 +227,23 @@
                           </v-text-field>
                         </v-col>
 
+                        <v-col cols="12">
+                          <v-textarea
+                            rows="3"
+                            label="Location"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.location"
+                          >
+                          </v-textarea>
+                          <span
+                            v-if="errors && errors.location"
+                            class="error--text mt-2"
+                            >{{ errors.location[0] }}</span
+                          >
+                        </v-col>
+
                         <v-col cols="12" class="text-right">
                           <AssetsButton
                             :options="{
@@ -518,74 +535,6 @@
                 <CompanyDocument />
               </v-tab-item>
 
-              <!-- <v-tab-item>
-                <v-card flat>
-                  <v-card-text>
-                    <v-row>
-                      <v-col cols="6">
-                      <v-text-field
-                        label="Lat"
-                        dense
-                        outlined
-                        hide-details
-                        v-model="geographic_payload.lat"
-                      >
-                      </v-text-field>
-                      <span
-                        v-if="errors && errors.lat"
-                        class="error--text mt-2"
-                        >{{ errors.lat[0] }}</span
-                      >
-                    </v-col>
-                    <v-col cols="6">
-                      <v-text-field
-                        label="Lon"
-                        dense
-                        outlined
-                        hide-details
-                        v-model="geographic_payload.lon"
-                      >
-                      </v-text-field>
-                      <span
-                        v-if="errors && errors.lon"
-                        class="error--text mt-2"
-                        >{{ errors.lon[0] }}</span
-                      >
-                    </v-col>
-                    <v-col cols="12">
-                      <v-textarea
-                        rows="3"
-                        label="Location"
-                        dense
-                        outlined
-                        hide-details
-                        v-model="geographic_payload.location"
-                      >
-                      </v-textarea>
-                      <span
-                        v-if="errors && errors.location"
-                        class="error--text mt-2"
-                        >{{ errors.location[0] }}</span
-                      >
-                    </v-col>
-                    <v-col cols="12">
-                      <div class="text-right">
-                        <v-btn
-                          v-if="can('company_edit')"
-                          small
-                          :loading="loading"
-                          color="primary"
-                          @click="update_geographic"
-                        >
-                          Submit
-                        </v-btn>
-                      </div>
-                    </v-col>
-                    </v-row>
-                  </v-card-text>
-                </v-card>
-              </v-tab-item> -->
-
               <v-tab-item>
                 <v-card flat>
                   <v-card-text>
@@ -767,8 +716,8 @@ export default {
       password_confirmation: "",
     },
     geographic_payload: {
-      lat: "",
-      lon: "",
+      lat: "---",
+      lon: "---",
       location: "",
     },
     e1: 1,
