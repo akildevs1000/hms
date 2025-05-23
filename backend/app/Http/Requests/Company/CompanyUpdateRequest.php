@@ -45,6 +45,10 @@ class CompanyUpdateRequest extends FormRequest
             'whatsapp_instance_id' => ['nullable'],
             'currency' => ['nullable'],
 
+            'name' => ['nullable'],
+            'location' => ['nullable'],
+
+
         ];
     }
 
