@@ -40,7 +40,7 @@ class CompanyUpdateRequest extends FormRequest
             'max_employee' => ['nullable', 'integer'],
             'max_devices' => ['nullable', 'integer'],
             'logo' => ['image', 'mimes:jpeg,png,jpg,svg', 'max:2048', 'sometimes', 'nullable'],
-            'mol_id' => ['nullable', 'max:15'], 'min:2',
+            'mol_id' => ['nullable', 'max:20'], 'min:2',
             'p_o_box_no' => ['nullable', 'max:15', 'min:2'],
             'whatsapp_instance_id' => ['nullable'],
             'currency' => ['nullable'],
