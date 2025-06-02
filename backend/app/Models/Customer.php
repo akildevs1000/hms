@@ -16,11 +16,17 @@ class Customer extends Model
     protected $appends = [
         'full_name',
         'document_name',
+        'full_address'
     ];
 
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function getFullAddressAttribute()
+    {
+        return "{$this->city}, {$this->state}, {$this->zip_code}, {$this->country}";
     }
 
     /**
