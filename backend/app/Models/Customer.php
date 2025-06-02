@@ -44,6 +44,8 @@ class Customer extends Model
             $address .= $this->country;
         }
 
+        return $address;
+
         return trim($address); // Remove trailing newline
     }
 
