@@ -26,7 +26,25 @@ class Customer extends Model
 
     public function getFullAddressAttribute()
     {
-        return "{$this->city}, {$this->state}, {$this->zip_code}, {$this->country}";
+        $address = '';
+
+        if ($this->city) {
+            $address .= $this->city . "\n";
+        }
+
+        if ($this->state) {
+            $address .= $this->state . "\n";
+        }
+
+        if ($this->zip_code) {
+            $address .= $this->zip_code . "\n";
+        }
+
+        if ($this->country) {
+            $address .= $this->country;
+        }
+
+        return trim($address); // Remove trailing newline
     }
 
     /**
