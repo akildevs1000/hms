@@ -39,7 +39,7 @@
                                     </b>
                                     <br>
                                     <span style="text-transform:capitalize">
-                                        {{ strtolower($company->location) ?? '' }}
+                                        {!! nl2br(e(strtolower($company->location))) !!}
                                     </span><br>
                                     {{ strtolower($company->user->email) ?? '' }} <br>
                                     {{ strtolower($company->contact->number ?? '') }}<br>
@@ -70,19 +70,33 @@
                                     <div>
                                         <span>Guest Info:</span> <br>
                                         <p>
-                                            @if ($booking->source)
+                                            @if ($booking->customer->source)
                                                 {{ $booking->source ?? '' }}
                                                 <br>
-                                                GST: {{ $booking->customer->gst_number ?? '---' }}
+                                                GST: {{ $booking->customer->source->gst ?? '---' }}
                                                 <br>
                                             @endif
-                                        </p>
+                                            </pre>
                                         <div>
                                             {{ ucfirst(strtolower($booking->customer->full_name ?? '')) }}
                                             <br>
-                                            {{ strtolower($booking->customer->contact_no) ?? '' }}
-                                            <br>
-                                            {{ strtolower($booking->customer->address) ?? '' }}
+                                            {{ $booking->customer->contact_no ?? '' }}
+
+                                            @if ($booking->customer->city)
+                                                <br>
+                                                {{ $booking->customer->city ?? '' }}
+                                            @endif
+                                            @if ($booking->customer->state)
+                                                <br>
+                                                {{ $booking->customer->state ?? '' }}
+                                            @endif
+                                            @if ($booking->customer->zip_code)
+                                                , {{ $booking->customer->zip_code ?? '' }}
+                                            @endif
+                                            @if ($booking->customer->country)
+                                                <br>
+                                                {{ $booking->customer->country ?? '' }}
+                                            @endif
                                         </div>
                                     </div>
                                     <div>
