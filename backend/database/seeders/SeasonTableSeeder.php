@@ -16,6 +16,7 @@ class SeasonTableSeeder extends Seeder
     public function run()
     {
         Weekend::truncate();
+
         Weekend::create([
             'day' => ["Sun", "Sat"],
             'company_id' => 1
@@ -29,6 +30,11 @@ class SeasonTableSeeder extends Seeder
         Weekend::create([
             'day' => ["Sun", "Sat"],
             'company_id' => 3
+        ]);
+
+        Weekend::create([
+            'day' => ["Sun", "Sat"],
+            'company_id' => 11
         ]);
     }
 }
