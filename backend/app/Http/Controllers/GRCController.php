@@ -17,6 +17,11 @@ class GRCController extends Controller
         $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
             ->find($id);
 
+        if ($booking->company_id == 11) {
+            $invNo = $this->getInvoiceNumber($booking->company_id, $id);
+        }
+
+
         $orderRooms = $booking->orderRooms;
         $company = $booking->company;
         $transactions = $booking->transactions;
@@ -134,5 +139,19 @@ class GRCController extends Controller
         return Pdf::loadView('customer.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
             ->stream();
+    }
+
+    public function getInvoiceNumber($company_id, $id)
+    {
+        $count =  $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
+            ->where("id", "<=", $id)
+            ->where("company_id", $company_id)
+            ->count() ?? 0;
+
+        if ($count == 0) {
+            $count = 1;
+        }
+
+        return str_pad(1000 + $count, 8, '0', STR_PAD_LEFT);
     }
 }
