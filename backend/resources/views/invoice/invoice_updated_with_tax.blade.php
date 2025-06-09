@@ -41,8 +41,8 @@
                                     <span style="text-transform:capitalize">
                                         {!! nl2br(e(strtolower($company->location))) !!}
                                     </span><br>
-                                    {{ strtolower($company->user->email) ?? '' }}<br>
-                                    @if ($booking->contact->number)
+                                    {{ strtolower($company->user->email ?? "") ?? '' }}<br>
+                                    @if ($booking->contact->number ?? "")
                                         {{ $booking->contact->number ?? '' }}<br>
                                     @endif
                                     {{ $company->mol_id ?? '' }}
