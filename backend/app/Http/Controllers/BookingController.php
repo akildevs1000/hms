@@ -18,6 +18,7 @@ use App\Models\Holiday;
 use App\Models\IdCardType;
 use App\Models\OrderRoom;
 use App\Models\Payment;
+use App\Models\Posting;
 use App\Models\PostingPayment;
 use App\Models\Room;
 use App\Models\RoomType;
@@ -3102,6 +3103,27 @@ class BookingController extends Controller
                 'company_id' => $payload["company_id"],
                 "heading" => $heading,
             ]);
+        }
+    }
+
+    public function deleteBooking($id)
+    {
+        DB::beginTransaction();
+        try {
+            Booking::where('id', $id)->delete();
+            Payment::where('booking_id', $id)->delete();
+            Transaction::where('booking_id', $id)->delete();
+            OrderRoom::where('booking_id', $id)->delete();
+            BookedRoom::without(['postings', 'booking'])->where('booking_id', $id)->delete();
+            Posting::where('booking_id', $id)->delete();
+            DB::commit();
+            return response()->noContent();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to delete booking',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }
