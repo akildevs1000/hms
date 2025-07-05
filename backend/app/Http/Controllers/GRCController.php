@@ -33,7 +33,7 @@ class GRCController extends Controller
         $prefix = "";
 
         if ($isPending) {
-            $prefix = "P";
+            $prefix = "";
         } else if ($isCash) {
             $prefix = "C";
         }
