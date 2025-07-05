@@ -89,8 +89,8 @@
         <template v-slot:item.paid="{ item }">
           <AssetsTextLabel :label="$utils.currency_format(item.paid_amounts)" />
         </template>
-        <template v-slot:item.balance="item">
-          <AssetsTextLabel :label="$utils.currency_format(item.item.balance)" />
+        <template v-slot:item.balance="{ item }">
+          <AssetsTextLabel :label="$utils.currency_format(item.balance)" />
         </template>
         <template v-slot:item.res_date="{ item }">
           <AssetsTextLabel :label="convert_date_format(item.booking_date)" />
@@ -134,6 +134,14 @@
                     mdi-cash-multiple
                   </v-icon>
                   <AssetsTextLabel color="text-color" label="Invoice" />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="deleteItem(item.id)">
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon x-small color="black" class="mr-2">
+                    mdi-delete
+                  </v-icon>
+                  <AssetsTextLabel color="text-color" label="Delete" />
                 </v-list-item-title>
               </v-list-item>
             </v-list>
@@ -405,6 +413,15 @@ export default {
       element.click();
     },
 
+    async deleteItem(id) {
+      try {
+        await this.$axios.delete(`delete-booking/${id}`);
+        this.getDataFromApi();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     convert_date_format(val) {
       const date = new Date(val);
       const year = date.getFullYear();
@@ -631,8 +648,8 @@ export default {
 
       const totals = data.reduce(
         (acc, e) => {
-          acc.total_price += parseFloat(e.total_price)|| 0;
-          acc.total_posting_amount += parseFloat(e.total_posting_amount )|| 0;
+          acc.total_price += parseFloat(e.total_price) || 0;
+          acc.total_posting_amount += parseFloat(e.total_posting_amount) || 0;
           acc.paid_amounts += parseFloat(e.paid_amounts) || 0;
           acc.balance += parseFloat(e.balance) || 0;
           return acc;
