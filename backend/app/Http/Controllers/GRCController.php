@@ -164,19 +164,19 @@ class GRCController extends Controller
 
         $model = Booking::where("id", "<=", $id)->where("company_id", $company_id);
 
-        if ($isCash) {
-            $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [PaymentMode::CASH]));
-        } else {
+        // if ($isCash) {
+        //     $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [PaymentMode::CASH]));
+        // } else {
 
-            $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [
-                PaymentMode::CARD,
-                PaymentMode::ONLINE,
-                PaymentMode::BANK,
-                PaymentMode::UPI,
-                PaymentMode::CHEQUE,
-                PaymentMode::CHEQUE,
-            ]));
-        }
+        //     $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [
+        //         PaymentMode::CARD,
+        //         PaymentMode::ONLINE,
+        //         PaymentMode::BANK,
+        //         PaymentMode::UPI,
+        //         PaymentMode::CHEQUE,
+        //         PaymentMode::CHEQUE,
+        //     ]));
+        // }
 
         $count = $model->count();
 
