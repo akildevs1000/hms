@@ -41,8 +41,8 @@
                                     <span style="text-transform:capitalize">
                                         {!! nl2br(e(strtolower($company->location))) !!}
                                     </span><br>
-                                    {{ strtolower($company->user->email ?? "") ?? '' }}<br>
-                                    @if ($booking->contact->number ?? "")
+                                    {{ strtolower($company->user->email ?? '') ?? '' }}<br>
+                                    @if ($booking->contact->number ?? '')
                                         {{ $booking->contact->number ?? '' }}<br>
                                     @endif
                                     {{ $company->mol_id ?? '' }}
@@ -57,7 +57,7 @@
                                 <spna style="font-size:20px">Invoice</span>
                             </div>
                             <div style="text-align:right">
-                                Invoice Number - {{ $invNo }}
+                                {{ $booking?->customer?->source?->gst ? 'GST-' : 'INV-' }}{{ $invNo }}
                             </div>
 
 
