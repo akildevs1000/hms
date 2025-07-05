@@ -136,14 +136,14 @@
                   <AssetsTextLabel color="text-color" label="Invoice" />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item @click="deleteItem(item.id)">
+              <!-- <v-list-item @click="deleteItem(item.id)">
                 <v-list-item-title style="cursor: pointer">
                   <v-icon x-small color="black" class="mr-2">
                     mdi-delete
                   </v-icon>
                   <AssetsTextLabel color="text-color" label="Delete" />
                 </v-list-item-title>
-              </v-list-item>
+              </v-list-item> -->
             </v-list>
           </v-menu>
         </template>
@@ -154,7 +154,7 @@
 <script>
 import Paying from "../../components/booking/Paying.vue";
 export default {
-  props: ["endpoint", "Model", "filter"],
+  props: ["endpoint", "Model", "filter", "is_cash"],
   components: {
     Paying,
   },
@@ -559,6 +559,7 @@ export default {
             to: this.to_date,
             source: newSource,
             ...this.filters,
+            is_cash: this.is_cash,
           },
         };
 

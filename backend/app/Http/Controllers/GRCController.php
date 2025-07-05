@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Payment;
+use App\Models\PaymentMode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use NumberFormatter;
 
@@ -12,15 +14,23 @@ class GRCController extends Controller
     public function index($id, $inv = "")
     {
 
-        $invNo = $inv == "" ? "0000" . $id : $inv;
+        $booking = Booking::with([
+            'orderRooms',
+            'customer',
+            'company.user',
+            'company.contact',
+            'transactions' => function ($query) {
+                $query->latest('id'); // or 'created_at' if timestamp is preferred
+            },
+            'transactions.paymentMode',
+            'bookedRooms'
+        ])->find($id);
 
-        $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
-            ->find($id);
+        $isCash = $booking?->transactions?->value("payment_method_id") == PaymentMode::CASH;
 
-        if ($booking->company_id == 11) {
-            $invNo = $this->getInvoiceNumber($booking->company_id, $id);
-        }
+        $prefix = $isCash ? "C" : "";
 
+        $invNo = $prefix . $this->getInvoiceNumber($booking->company_id, $id, $isCash);
 
         $orderRooms = $booking->orderRooms;
         $company = $booking->company;

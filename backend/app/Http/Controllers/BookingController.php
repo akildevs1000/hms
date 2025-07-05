@@ -18,6 +18,7 @@ use App\Models\Holiday;
 use App\Models\IdCardType;
 use App\Models\OrderRoom;
 use App\Models\Payment;
+use App\Models\PaymentMode;
 use App\Models\Posting;
 use App\Models\PostingPayment;
 use App\Models\Room;
@@ -2180,6 +2181,12 @@ class BookingController extends Controller
             ->latest()
             ->filter(request('search'));
 
+        if ($request->filled('is_cash')) {
+            $model->whereHas('cash', function ($q) use ($request) {
+                $q->where('payment_mode_id', PaymentMode::CASH); // replace 1 with actual CASH value
+            });
+        }
+
         $model->where('room_category_type', null);
 
 
@@ -2209,7 +2216,7 @@ class BookingController extends Controller
 
 
 
-        $model->orderBy('id', 'desc');
+        // $model->orderBy('id', 'desc');
 
         switch ($status) {
             case 'upcoming':
@@ -3108,6 +3115,8 @@ class BookingController extends Controller
 
     public function deleteBooking($id)
     {
+        return false;
+
         DB::beginTransaction();
         try {
             Booking::where('id', $id)->delete();

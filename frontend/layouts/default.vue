@@ -484,16 +484,8 @@ export default {
           topMenu: "account",
           icon: "mdi-cash",
           module: "gst_bills",
-          title: "GST Bills",
-          to: "/taxable",
-          menu: "accounts_gst_access",
-        },
-        {
-          topMenu: "account",
-          icon: "mdi-cash",
-          module: "gst_bills",
           title: "Invoices",
-          to: "/booking/invoices",
+          to: "/booking/cash_invoices",
           menu: "accounts_gst_access",
         },
         {

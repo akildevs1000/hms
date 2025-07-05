@@ -494,7 +494,7 @@
                 </div>
                 <div>
                   {{
-                    room.booked_room.booking.booking_type !== "hall"
+                    room?.booked_room?.booking?.booking_type !== "hall"
                       ? caps(room.room_type.name)
                       : "---"
                   }}
