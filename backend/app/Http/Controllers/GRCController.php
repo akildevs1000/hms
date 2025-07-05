@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
-use App\Models\Payment;
 use App\Models\PaymentMode;
 use Barryvdh\DomPDF\Facade\Pdf;
 use NumberFormatter;
@@ -26,9 +25,18 @@ class GRCController extends Controller
             'bookedRooms'
         ])->find($id);
 
+        $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
+
+        $isPending = $booking?->transactions?->value("payment_method_id") == PaymentMode::CITYLEDGER;
         $isCash = $booking?->transactions?->value("payment_method_id") == PaymentMode::CASH;
 
-        $prefix = $isCash ? "C" : "";
+        $prefix = "";
+
+        if ($isPending) {
+            $prefix = "P";
+        } else if ($isCash) {
+            $prefix = "C";
+        }
 
         $invNo = $prefix . $this->getInvoiceNumber($booking->company_id, $id, $isCash);
 
@@ -151,12 +159,26 @@ class GRCController extends Controller
             ->stream();
     }
 
-    public function getInvoiceNumber($company_id, $id)
+    public function getInvoiceNumber($company_id, $id, $isCash = false)
     {
-        $count =  $booking = Booking::with(['orderRooms', 'customer', 'company' => ['user', 'contact'], 'transactions.paymentMode', 'bookedRooms'])
-            ->where("id", "<=", $id)
-            ->where("company_id", $company_id)
-            ->count() ?? 0;
+
+        $model = Booking::where("id", "<=", $id)->where("company_id", $company_id);
+
+        if ($isCash) {
+            $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [PaymentMode::CASH]));
+        } else {
+
+            $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [
+                PaymentMode::CARD,
+                PaymentMode::ONLINE,
+                PaymentMode::BANK,
+                PaymentMode::UPI,
+                PaymentMode::CHEQUE,
+                PaymentMode::CHEQUE,
+            ]));
+        }
+
+        $count = $model->count();
 
         if ($count == 0) {
             $count = 1;
