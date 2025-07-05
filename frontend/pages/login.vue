@@ -287,24 +287,13 @@ export default {
                 is_verified: 1,
               });
               this.$auth.setUser(updatedUser);
-              // setTimeout(() => {
-              //   this.$router.push(`/`);
-              // }, 1000);
               this.$router.push(`/`);
-              // return;
             }
 
             if (data.user && data.user.user_type == "master") {
               this.$router.push(`/master/companies`);
               id = data.user?.id;
               name = data.user?.name;
-            }
-
-            if (LoginUser.employee_role_id > 0) {
-              this.set_otp(this.$auth.user.id);
-              this.$auth.user_verified_mobileotp = false;
-              this.$router.push(`/otp`);
-              return;
             }
           })
           .catch(({ response }) => {
