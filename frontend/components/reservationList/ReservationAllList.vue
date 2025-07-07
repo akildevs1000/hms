@@ -226,6 +226,14 @@ export default {
         value: "rooms",
       },
       {
+        text: "Invoice Number",
+        align: "left",
+        sortable: false,
+        key: "invoice_number",
+        filterable: true,
+        value: "invoice_number",
+      },
+      {
         text: "Source Type",
         align: "left",
         sortable: false,
@@ -406,6 +414,7 @@ export default {
 
     redirect_to_invoice(id) {
       let url = "https://backend.myhotel2cloud.com/api/invoice";
+      // url = "https://hms-backend.test/api/invoice";
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", `${url}/${id}`);

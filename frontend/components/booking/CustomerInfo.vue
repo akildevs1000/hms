@@ -196,7 +196,6 @@
                 dense
                 outlined
                 hide-details
-                :rules="[(v) => !!v || 'Nationality is required']"
               ></v-text-field>
             </v-col>
             <v-col md="4">
