@@ -352,7 +352,7 @@ export default {
         },
         {
           topMenu: "reports",
-          icon: "mdi-chart-areaspline",
+          icon: "mdi-chart-areaspline", // Analytics - chart icon fits well
           module: "analytics",
           title: "Analytics",
           to: "/reports",
@@ -360,7 +360,7 @@ export default {
         },
         {
           topMenu: "reports",
-          icon: "mdi-chart-areaspline",
+          icon: "mdi-weather-night", // Night Audit - night/moon icon
           module: "night_audit",
           title: "Night Audit",
           to: "/management/report/night_audit",
@@ -368,7 +368,7 @@ export default {
         },
         {
           topMenu: "reports",
-          icon: "mdi-chart-areaspline",
+          icon: "mdi-file-chart", // Summary - document with chart icon
           module: "summary",
           title: "Summary",
           to: "/management/report/summary",
@@ -376,7 +376,7 @@ export default {
         },
         {
           topMenu: "reports",
-          icon: "mdi-chart-areaspline",
+          icon: "mdi-cash-multiple", // Cash Report - cash/money icon
           module: "cash",
           title: "Cash Report",
           to: "/management/report/cash",
@@ -384,20 +384,20 @@ export default {
         },
         {
           topMenu: "reports",
-          icon: "mdi-chart-areaspline",
+          icon: "mdi-airplane", // OTA Report - airplane (Online Travel Agent)
           module: "ota",
           title: "OTA Report",
           to: "/management/report/ota",
           menu: "ota_access",
         },
-        {
-          topMenu: "reports",
-          icon: "mdi-chart-areaspline",
-          module: "ota_trn",
-          title: "OTA TRN",
-          to: "/management/report/trn",
-          menu: "ota_trn_access",
-        },
+        // {
+        //   topMenu: "reports",
+        //   icon: "mdi-receipt", // OTA TRN - receipt/invoice icon for Tax Registration Number
+        //   module: "ota_trn",
+        //   title: "OTA TRN",
+        //   to: "/management/report/trn",
+        //   menu: "ota_trn_access",
+        // },
         {
           topMenu: "dashboard",
           icon: "mdi-bed",
