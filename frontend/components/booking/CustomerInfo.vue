@@ -191,8 +191,8 @@
             </v-col>
             <v-col md="4" cols="12" sm="12">
               <v-text-field
-                v-model="customer.nationality"
-                label="Nationality"
+                v-model="customer.gst_number"
+                label="GST"
                 dense
                 outlined
                 hide-details
