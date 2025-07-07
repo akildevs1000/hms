@@ -34,6 +34,7 @@ class Booking extends Model
 
     protected $guarded = [];
     protected $appends = [
+        'invoice_number',
         'resourceId',
         'title',
         'background',
@@ -389,8 +390,27 @@ class Booking extends Model
     }
 
 
+    public function getInvoiceNumberAttribute()
+    {
+        $count = self::where('company_id', $this->company_id)
+            ->where('id', '<=', $this->id)
+            ->whereHas('customer', function ($q) {
+                $q->whereNotNull('gst_number')
+                    ->orWhereHas('source', function ($q2) {
+                        $q2->whereNotNull('gst');
+                    });
+            })->count() ?? 1;
 
+        $number = str_pad(1000 + $count, 8, '0', STR_PAD_LEFT);
 
+        $prefix = 'INV-';
+
+        if ($this->customer?->source?->gst != null || $this->customer->gst_number != null) {
+            $prefix = 'GST-';
+        }
+
+        return $prefix . $number;
+    }
 
     // protected static function boot()
     // {

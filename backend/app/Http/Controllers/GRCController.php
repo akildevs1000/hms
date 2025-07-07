@@ -18,27 +18,12 @@ class GRCController extends Controller
             'customer',
             'company.user',
             'company.contact',
-            'transactions' => function ($query) {
-                $query->latest('id'); // or 'created_at' if timestamp is preferred
-            },
+            'transactions',
             'transactions.paymentMode',
             'bookedRooms'
         ])->find($id);
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
-
-        $isPending = $booking?->transactions?->value("payment_method_id") == PaymentMode::CITYLEDGER;
-        $isCash = $booking?->transactions?->value("payment_method_id") == PaymentMode::CASH;
-
-        $prefix = "";
-
-        if ($isPending) {
-            $prefix = "";
-        } else if ($isCash) {
-            $prefix = "C";
-        }
-
-        $invNo = $prefix . $this->getInvoiceNumber($booking->company_id, $id, $isCash);
 
         $orderRooms = $booking->orderRooms;
         $company = $booking->company;
@@ -77,7 +62,7 @@ class GRCController extends Controller
         //     $bladeName = 'invoice.invoice_old_bills';
         // }
 
-        return view($bladeName, compact("first_check_in_time", "first_check_out_time", "invNo", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+        return view($bladeName, compact("first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
 
         return Pdf::loadView($bladeName, compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
             // ->setPaper('a4', 'landscape')
@@ -157,33 +142,5 @@ class GRCController extends Controller
         return Pdf::loadView('customer.index', compact('booking', 'trans'))
             ->setPaper('a4', 'portrait')
             ->stream();
-    }
-
-    public function getInvoiceNumber($company_id, $id, $isCash = false)
-    {
-
-        $model = Booking::where("id", "<=", $id)->where("company_id", $company_id);
-
-        // if ($isCash) {
-        //     $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [PaymentMode::CASH]));
-        // } else {
-
-        //     $model->whereHas("payments", fn($q) => $q->whereIn("payment_mode", [
-        //         PaymentMode::CARD,
-        //         PaymentMode::ONLINE,
-        //         PaymentMode::BANK,
-        //         PaymentMode::UPI,
-        //         PaymentMode::CHEQUE,
-        //         PaymentMode::CHEQUE,
-        //     ]));
-        // }
-
-        $count = $model->count();
-
-        if ($count == 0) {
-            $count = 1;
-        }
-
-        return str_pad(1000 + $count, 8, '0', STR_PAD_LEFT);
     }
 }

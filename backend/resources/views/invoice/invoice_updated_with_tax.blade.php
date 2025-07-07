@@ -57,10 +57,8 @@
                                 <spna style="font-size:20px">Invoice</span>
                             </div>
                             <div style="text-align:right">
-                                {{ $booking?->customer?->source?->gst ? 'GST-' : 'INV-' }}{{ $invNo }}
+                                {{ $booking?->invoice_number }}
                             </div>
-
-
                         </div>
 
                         <div class="tm_invoice_info tm_mb25">
@@ -75,10 +73,11 @@
                                             @if ($booking->customer->source)
                                                 {{ $booking->source ?? '' }}
                                                 <br>
-                                                GST: {{ $booking->customer->source->gst ?? '---' }}
-                                                <br>
+                                                GST: {{ $booking?->customer?->source?->gst ?? '---' }}
+                                            @elseif ($booking?->customer?->gst_number)
+                                                GST: {{ $booking?->customer?->gst_number ?? '---' }}
                                             @endif
-                                            </pre>
+                                            <br>
                                         <div>
                                             {{ ucfirst(strtolower($booking->customer->full_name ?? '')) }}
                                             <br>
@@ -222,7 +221,7 @@
                                                     </td>
                                                 </tr>
 
-                                                @if ($room->miscellaneous_total > 0)
+                                                {{-- @if ($room->miscellaneous_total > 0)
                                                     @php
                                                         $subtotal_price += $room->miscellaneous_total_without_tax;
                                                         $subtotal_sgst += $room->miscellaneous_tax / 2;
@@ -263,7 +262,7 @@
                                                             {{ number_format($room->miscellaneous_total, 2) }}
                                                         </td>
                                                     </tr>
-                                                @endif
+                                                @endif --}}
                                             @endforeach
 
                                             @php

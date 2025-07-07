@@ -2182,8 +2182,11 @@ class BookingController extends Controller
             ->filter(request('search'));
 
         if ($request->filled('is_cash')) {
-            $model->whereHas('cash', function ($q) use ($request) {
-                $q->where('payment_mode_id', PaymentMode::CASH); // replace 1 with actual CASH value
+            $model->whereDoesntHave('customer', function ($q) {
+                $q->whereNotNull('gst_number')
+                    ->orWhereHas('source', function ($q2) {
+                        $q2->whereNotNull('gst');
+                    });
             });
         }
 
@@ -2237,7 +2240,7 @@ class BookingController extends Controller
         return $model
             ->with([
                 'bookedRooms:booking_id,id,room_no,room_type,booking_status',
-                'customer:id,first_name,last_name,document',
+                'customer:id,first_name,last_name,document,source_id,gst_number',
             ])
             ->where('company_id', $request->company_id)
             ->paginate($request->per_page ?? 20);
