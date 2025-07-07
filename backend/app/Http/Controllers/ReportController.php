@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\Payment;
+use App\Models\PaymentMode;
 use App\Models\Room;
 use App\Models\Taxable;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -881,6 +882,75 @@ class ReportController extends Controller
         //     return response()->json(['error' => 'Failed to fetch data'], $response->status());
         // }
     }
+
+    public function reportByPayment(Request $request)
+    {
+        $companyId = $request->input('company_id', 0);
+        $fromDate = request("filter_from_date", date("Y-m-d"));
+        $toDate = request("filter_to_date", date("Y-m-d"));
+
+        // Define color map
+        $colorMap = [
+            'Cash' => 'green',
+            'Bank' => 'blue',
+            'UPI' => 'purple',
+            'Credit card' => 'orange',
+            'Online' => 'grey',
+            'City Ledger' => 'red',
+        ];
+
+        // Set default structure for all known sources (even if revenue is 0)
+        $defaultSources = collect($colorMap)->map(function ($color, $source) {
+            return [
+                'color' => $color,
+                'source' => $source,
+                'percentage' => '0.00%',
+                'revenue' => 0,
+            ];
+        });
+
+        // Get payments with booking and paymentMode
+        $payments = Payment::query()
+            ->with('paymentMode')
+            ->where('company_id', $companyId)
+            ->whereHas('booking', function ($q) {
+                $q->where('booking_status', '!=', -1);
+            })
+            ->whereBetween('date', [$fromDate . " 00:00:00", $toDate . " 23:59:59"])
+            ->get();
+
+        // Calculate total revenue
+        $totalRevenue = $payments->sum(function ($payment) {
+            return floatval($payment->amount);
+        });
+
+        // Group and calculate values
+        $grouped = $payments->groupBy(function ($payment) {
+            return $payment->paymentMode->name ?? 'Unknown';
+        })->map(function ($group, $source) use ($totalRevenue, $colorMap) {
+            $revenue = $group->sum(function ($payment) {
+                return floatval($payment->amount);
+            });
+
+            return [
+                'color' => $colorMap[$source] ?? 'black',
+                'source' => $source,
+                'percentage' => $totalRevenue > 0
+                    ? number_format(($revenue / $totalRevenue) * 100, 2) . '%'
+                    : '0.00%',
+                'revenue' => round($revenue),
+            ];
+        });
+
+        // Merge default sources with actual data (overwrite defaults if data exists)
+        $result = $defaultSources->mapWithKeys(function ($item) {
+            return [$item['source'] => $item];
+        })->merge($grouped)->values();
+
+        return response()->json($result);
+    }
+
+
 
     public function getReportTopTenCustomers(Request $request)
     {

@@ -1,109 +1,66 @@
 <template>
-   <v-row no-gutters>
-      <v-col cols="6">
-        <table class="mt-12">
-          <thead>
-            <tr>
-              <td class="text-center">
-                <small>COLOR</small>
-              </td>
-              <td><small>Payment</small></td>
-              <td class="text-center"><small>PERCENTAGE %</small></td>
-              <td class="text-center"><small>REVENUE</small></td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in tableData" :key="index">
-              <td class="text-center">
-                <v-icon :style="{ color: item.color, fontSize: '24px' }"
-                  >mdi-circle</v-icon
-                >
-              </td>
-              <td>{{ item.source }}</td>
-              <td class="text-center">{{ item.percentage }}</td>
-              <td class="text-center">{{ item.revenue.toFixed(2) }}</td>
-            </tr>
-            <tr>
-              <td colspan="2">TOTAL</td>
-              <td class="text-center">100%</td>
-              <td class="text-center">{{ totalRevenue.toFixed(2) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </v-col>
-      <v-col cols="6" class="text-center">
-        <!-- <highcharts :options="pieChartOptions"></highcharts> -->
-        <v-tabs v-if="!loading" right>
-          <v-tab>pie chart </v-tab>
-          <v-tab>statistical </v-tab>
-          <v-tab-item>
-            <highcharts :options="pieChartOptions"></highcharts>
-          </v-tab-item>
-          <v-tab-item>
-            <highcharts :options="barChartOptions"></highcharts>
-          </v-tab-item>
-        </v-tabs>
-      </v-col>
-    </v-row>
+  <v-row no-gutters>
+    <style scoped>
+      td {
+        padding: 5px;
+      }
+    </style>
+    <v-col cols="6">
+      <table class="mt-12" border="1">
+        <thead>
+          <tr>
+            <td class="text-center">
+              <small>COLOR</small>
+            </td>
+            <td><small>Payment</small></td>
+            <td class="text-center"><small>PERCENTAGE %</small></td>
+            <td class="text-center"><small>REVENUE</small></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in tableData" :key="index">
+            <td class="text-center">
+              <v-icon :style="{ color: item.color, fontSize: '20px' }"
+                >mdi-circle</v-icon
+              >
+            </td>
+            <td>{{ item.source }}</td>
+            <td class="text-center">{{ item.percentage }}</td>
+            <td class="text-center">{{ item.revenue.toFixed(2) }}</td>
+          </tr>
+          <tr>
+            <td colspan="2">TOTAL</td>
+            <td class="text-center">100%</td>
+            <td class="text-center">{{ totalRevenue.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </v-col>
+    <v-col cols="6" class="text-center">
+      <!-- <highcharts :options="pieChartOptions"></highcharts> -->
+      <v-tabs v-if="!loading" right>
+        <v-tab>pie chart </v-tab>
+        <v-tab>statistical </v-tab>
+        <v-tab-item>
+          <highcharts :options="pieChartOptions"></highcharts>
+        </v-tab-item>
+        <v-tab-item>
+          <highcharts :options="barChartOptions"></highcharts>
+        </v-tab-item>
+      </v-tabs>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
 export default {
-  props: {
-    heading: {
-      default: "Payment Report",
-    },
-  },
+  props: ["filters"],
 
   data() {
     return {
       loading: true,
       selectedDate: null,
-      dateOptions: [
-        { text: "Today", value: "today" },
-        { text: "Yesterday", value: "yesterday" },
-        { text: "This week", value: "this_week" },
-        { text: "This month", value: "this_month" },
-        { text: "Customized date", value: "customized_date" },
-      ],
-      tableData: [
-        {
-          color: "red",
-          source: "Cash",
-          percentage: "45.00%",
-          revenue: 450000.0,
-        },
-        {
-          color: "blue",
-          source: "Bank",
-          percentage: "22.50%",
-          revenue: 125000.0,
-        },
-        {
-          color: "purple",
-          source: "UPI",
-          percentage: "12.65%",
-          revenue: 7500.0,
-        },
-        {
-          color: "orange",
-          source: "Credit card",
-          percentage: "7.23%",
-          revenue: 5500.0,
-        },
-        {
-          color: "grey",
-          source: "Online",
-          percentage: "5.14%",
-          revenue: 5400.0,
-        },
-        {
-          color: "green",
-          source: "City Ledger",
-          percentage: "5.00%",
-          revenue: 4500.0,
-        },
-      ],
+      tableData: [],
       pieChartOptions: {
         chart: {
           type: "pie",
@@ -175,6 +132,54 @@ export default {
         ],
       },
     };
+  },
+  watch: {
+    filters: {
+      handler(data) {
+        this.fetchPaymentReport();
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
+  methods: {
+    async fetchPaymentReport() {
+      this.loading = true;
+
+      try {
+
+        const response = await this.$axios.get("/report-by-payment", {
+          params: this.filters,
+        });
+
+        this.tableData = response.data;
+
+        // Prepare data for chart
+        const dataSet = this.tableData.map(({ source, revenue, color }) => ({
+          source,
+          revenue,
+          color,
+        }));
+
+        // Update pie chart
+        this.pieChartOptions.series[0].data = dataSet.map((d) => [
+          d.source,
+          d.revenue,
+        ]);
+        this.pieChartOptions.colors = dataSet.map((d) => d.color);
+
+        // Update bar chart
+        this.barChartOptions.xAxis.categories = dataSet.map((d) => d.source);
+        this.barChartOptions.series[0].data = dataSet.map((d) => ({
+          y: d.revenue,
+          color: d.color,
+        }));
+      } catch (error) {
+        console.error("Error fetching report-by-payment:", error);
+      } finally {
+        this.loading = false;
+      }
+    },
   },
   mounted() {
     // Prepare data for chart

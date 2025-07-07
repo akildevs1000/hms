@@ -27,6 +27,7 @@
         v-if="currentComponent"
         :data="tableData.data"
         :colors="tableData.colors"
+        :filters="filters"
       ></component>
     </v-col>
   </v-row>
@@ -114,7 +115,10 @@ export default {
     },
 
     async getSourceData(config) {
-      let { data } = await this.$axios.get(`https://backend.myhotel2cloud.com/api/report-by-source?company_id=1`, config);
+      let { data } = await this.$axios.get(
+        `https://backend.myhotel2cloud.com/api/report-by-source?company_id=1`,
+        config
+      );
       this.tableData = data;
       this.compKey++;
     },
