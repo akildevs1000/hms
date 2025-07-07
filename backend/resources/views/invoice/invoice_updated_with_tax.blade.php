@@ -221,7 +221,7 @@
                                                     </td>
                                                 </tr>
 
-                                                {{-- @if ($room->miscellaneous_total > 0)
+                                                @if ($room->miscellaneous_total > 0)
                                                     @php
                                                         $subtotal_price += $room->miscellaneous_total_without_tax;
                                                         $subtotal_sgst += $room->miscellaneous_tax / 2;
@@ -262,7 +262,7 @@
                                                             {{ number_format($room->miscellaneous_total, 2) }}
                                                         </td>
                                                     </tr>
-                                                @endif --}}
+                                                @endif
                                             @endforeach
 
                                             @php
