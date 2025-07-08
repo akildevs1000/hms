@@ -57,7 +57,7 @@
                                 <spna style="font-size:20px">Invoice</span>
                             </div>
                             <div style="text-align:right">
-                                {{ $booking?->invoice }}
+                                {{ $invoice }}
                             </div>
                         </div>
 
