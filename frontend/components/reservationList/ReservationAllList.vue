@@ -226,14 +226,6 @@ export default {
         value: "rooms",
       },
       {
-        text: "Invoice Number",
-        align: "left",
-        sortable: false,
-        key: "invoice_number",
-        filterable: true,
-        value: "invoice_number",
-      },
-      {
         text: "Source Type",
         align: "left",
         sortable: false,
