@@ -216,7 +216,7 @@
                                                         {{ number_format($room_cgst, 2) }}
                                                     </td>
                                                     <td class="tm_text_right">
-                                                        {{ number_format($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst, 2) }}
+                                                        {{ number_format(round($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst, -2), 2) }}
                                                     </td>
                                                 </tr>
                                             @endforeach
