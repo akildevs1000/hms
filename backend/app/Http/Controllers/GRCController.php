@@ -29,7 +29,6 @@ class GRCController extends Controller
             $prefix = 'GST-';
         }
 
-// Ensure $id is padded to 4 digits (e.g., 0001, 0012, 0456)
         $invoice = $prefix . str_pad($id, 4, '0', STR_PAD_LEFT);
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
