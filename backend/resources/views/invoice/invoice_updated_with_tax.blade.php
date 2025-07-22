@@ -350,7 +350,7 @@
                                                 </td>
                                                 <td
                                                     class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
-                                                    {{ $company->currency ? $company->currency : '' }} {{ number_format(round($subtotal_total - $booking->paid_amounts, -2), 2) }}
+                                                    {{ ($company->currency ?? '') . ' ' . number_format(round($subtotal_total - $booking->paid_amounts, -2), 2) }}
                                                 </td>
                                             </tr>
                                         </tbody>
