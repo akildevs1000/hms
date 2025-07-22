@@ -287,7 +287,7 @@
                                                     {{ number_format($subtotal_cgst, 2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                    {{ number_format($subtotal_total, 2) }}
+                                                    {{ number_format(round($subtotal_total, -2), 2) }}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -329,7 +329,8 @@
                                                 <td
                                                     class="tm_width_3 tm_primary_color tm_bold tm_text_right tm_border_none tm_pt0">
                                                     {{ $company->currency ? $company->currency : '' }}
-                                                    {{ number_format($subtotal_total, 2) }}
+
+                                                    {{ number_format(round($subtotal_total, -2), 2) }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -339,7 +340,7 @@
                                                 <td
                                                     class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
                                                     {{ $company->currency ? $company->currency : '' }}
-                                                    {{ number_format($booking->paid_amounts, 2) ?? 0 }}
+                                                    {{ number_format(round($booking->paid_amounts, -2), 2) }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -349,33 +350,15 @@
                                                 </td>
                                                 <td
                                                     class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
-                                                    {{ $company->currency ? $company->currency : '' }}{{ number_format($subtotal_total - $booking->paid_amounts, 2) ?? 0 }}
+                                                    {{ $company->currency ? $company->currency : '' }} {{ number_format(round($subtotal_total - $booking->paid_amounts, -2), 2) }}
                                                 </td>
                                             </tr>
-                                            <!-- <tr>
-                                                <td class="tm_width_3 tm_primary_color tm_border_none tm_pt0">
-                                                    Paid
-                                                </td>
-                                                <td class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
-                                                    {{ $company->currency ? $company->currency : '' }} {{ number_format($transactions->sum('credit'), 2) ?? 0 }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_gray_bg tm_radius_6_0_0_6">
-                                                    Balance
-                                                </td>
-                                                <td class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
-                                                    {{ $company->currency ? $company->currency : '' }}{{ number_format($transactions->sum('debit') - $transactions->sum('credit'), 2) ?? 0 }}
-                                                </td>
-                                            </tr> -->
-
-
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                             <div class="tm_text_right">
-                                <br>Amount: <?php echo (new App\Http\Controllers\GRCController())->amountToText($subtotal_total); ?> Only
+                                <br>Amount: <?php echo new App\Http\Controllers\GRCController()->amountToText($subtotal_total); ?> Only
                             </div>
                         </div>
                         <div class="tm_note tm_text_center tm_font_style_normal"><br>
