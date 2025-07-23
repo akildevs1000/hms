@@ -678,10 +678,10 @@ export default {
         return;
       }
 
-      if (!this.defaultCustomer.nationality) {
-        alert("Customer Nationality is required");
-        return;
-      }
+      // if (!this.defaultCustomer.nationality) {
+      //   alert("Customer Nationality is required");
+      //   return;
+      // }
       let payload = {
         booking_id: this.BookingData.id,
         grand_remaining_price: this.grand_remaining_price,
