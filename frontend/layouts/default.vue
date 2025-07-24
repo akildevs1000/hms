@@ -531,6 +531,14 @@ export default {
         },
         {
           topMenu: "setting",
+          icon: "mdi-whatsapp",
+          module: "automation",
+          title: "Whatsapp",
+          to: "/whatsapp",
+          menu: "settings_rooms_category_access",
+        },
+        {
+          topMenu: "setting",
           icon: "mdi-email",
           module: "automation",
           title: "Automation",
