@@ -522,20 +522,20 @@ export default {
           menu: "devices_permissions_access",
         },
         {
+          topMenu: "dashboard",
+          icon: "mdi-whatsapp",
+          module: "automation",
+          title: "Whatsapp",
+          to: "/whatsapp",
+          menu: "dashboard",
+        },
+        {
           topMenu: "setting",
           icon: "mdi mdi-account-details",
           module: "company",
           title: "Company",
           to: "/companies",
           menu: "settings_permissions_access",
-        },
-        {
-          topMenu: "setting",
-          icon: "mdi-whatsapp",
-          module: "automation",
-          title: "Whatsapp",
-          to: "/whatsapp",
-          menu: "settings_rooms_category_access",
         },
         {
           topMenu: "setting",
