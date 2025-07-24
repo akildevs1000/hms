@@ -38,10 +38,10 @@ class EmployeeUpdateRequest extends FormRequest
                 'string',
                 'min:6', // must be at least 10 characters in length
                 'max:25', // must be maximum 25 characters in length
-                // 'regex:/[a-z]/', // must contain at least one lowercase letter
-                // 'regex:/[A-Z]/', // must contain at least one uppercase letter
-                // 'regex:/[0-9]/', // must contain at least one digit
-                // 'regex:/[@$!%*#?&]/', // must contain a special character
+                'regex:/[a-z]/', // must contain at least one lowercase letter
+                'regex:/[A-Z]/', // must contain at least one uppercase letter
+                'regex:/[0-9]/', // must contain at least one digit
+                'regex:/[@$!%*#?&]/', // must contain a special character
             ],
 
         ];
