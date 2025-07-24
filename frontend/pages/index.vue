@@ -317,7 +317,7 @@
                 />
 
                 <div>
-                  <v-text-field
+                  <!-- <v-text-field
                     small
                     class="global-search-textbox"
                     clearable
@@ -325,7 +325,7 @@
                     label="Search..."
                     outlined
                     v-model="searchQuery"
-                  ></v-text-field>
+                  ></v-text-field> -->
                 </div>
                 <div>
                   <v-menu
