@@ -58,7 +58,7 @@ class  BookingRequest extends FormRequest
             'customer_type'   => 'nullable',
             'dob'             => 'nullable',
             'title'      => 'required',
-            'nationality' => 'required',
+            'nationality' => 'nullable',
 
             'image' => 'max:2048',
         ];
