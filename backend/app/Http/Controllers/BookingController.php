@@ -2106,7 +2106,7 @@ class BookingController extends Controller
 
             'remaining_price'       => $remaining_price,
             'grand_remaining_price' => $grand_remaining_price,
-            // 'after_discount' => $after_discount,
+            'discount' => $request->json["discount"],
         ];
 
         // booking
