@@ -346,6 +346,7 @@ export default {
       const result = [];
 
       entries.forEach((entry) => {
+        console.log("🚀 ~ entries.forEach ~ entry:", entry)
         const existingEntry = result.find(
           (e) => e.room_type === entry.room_type
         );
@@ -355,7 +356,7 @@ export default {
         } else {
           result.push({
             ...entry,
-            no_of_nights: entries.length,
+            no_of_nights: payload.days,
           });
         }
       });

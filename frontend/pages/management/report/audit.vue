@@ -1,1172 +1,165 @@
 <template>
-  <div v-if="can(`night_audit_access`)">
-    <style scoped>
-      td,
-      th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-      }
-    </style>
+  <v-container>
+    <!-- Summary Section -->
     <v-row>
-      <v-col cols="3">
-        <v-card style="background-color: #800000" dark>
-          <v-card-text>
-            <strong class="white--text">Cash</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ GrandTotalCash || 0 }}
-            </div>
-          </v-card-text>
+      <!-- Room Status -->
+      <v-col v-for="item in roomData" :key="item.label" cols="12" sm="4" md="2">
+        <v-card :color="item.color" class="pa-3" tile>
+          <v-card-title class="white--text">
+            {{ item.label }}
+          </v-card-title>
+          <v-card-subtitle class="white--text">
+            {{ item.value }}
+          </v-card-subtitle>
         </v-card>
       </v-col>
 
-      <v-col cols="3">
-        <v-card style="background-color: #ffbe00" dark>
-          <v-card-text>
-            <strong class="white--text">Card</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ GrandTotalCard || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3">
-        <v-card style="background-color: #74166d" dark>
-          <v-card-text>
-            <strong class="white--text">Bank</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ GrandTotalBank || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3">
-        <v-card style="background-color: #00b300" dark>
-          <v-card-text>
-            <strong class="white--text">Online</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ GrandTotalTodayOnline || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3">
-        <v-card style="background-color: #18069e" dark>
-          <v-card-text>
-            <strong class="white--text">UPI</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ GrandTotalTodayUPI || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3">
-        <v-card style="background-color: #4390fc" dark>
-          <v-card-text>
-            <strong class="white--text">City Ledger</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ GrandTotalBalance || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3">
-        <v-card style="background-color: #02ada4" dark>
-          <v-card-text>
-            <strong class="white--text">Expenses</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ totExpense || 0 }}
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-
-      <v-col cols="3">
-        <v-card style="background-color: #ce008e" dark>
-          <v-card-text>
-            <strong class="white--text">Income</strong>
-            <div class="white--text">
-              {{ $auth.user.company.currency }}{{ GrandTotal || 0 }}
-            </div>
-          </v-card-text>
+      <!-- Guest Meals -->
+      <v-col v-for="item in guestData" :key="item.label" cols="12" sm="4" md="2">
+        <v-card :color="item.color" class="pa-3" tile>
+          <v-card-title class="white--text">
+            {{ item.label }}
+          </v-card-title>
+          <v-card-subtitle class="white--text">
+            {{ item.value }}
+          </v-card-subtitle>
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- Income & Expense Section -->
     <v-row>
-      <v-col md="2">
-        <v-menu
-          v-model="from_menu"
-          :close-on-content-click="false"
-          :nudge-right="40"
-          transition="scale-transition"
-          offset-y
-          min-width="auto"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="from_date"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-              dense
-              :hide-details="true"
-              outlined
-              label="Date"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            no-title
-            v-model="from_date"
-            @input="from_menu = false"
-            @change="commonMethod"
-          ></v-date-picker>
-        </v-menu>
+      <!-- Income -->
+      <v-col v-for="item in incomeData" :key="item.label" cols="12" sm="4" md="2">
+        <v-card :color="item.color" class="pa-3" tile>
+          <v-card-title class="white--text">
+            {{ item.label }}
+          </v-card-title>
+          <v-card-subtitle class="white--text">
+            {{ item.value }}
+          </v-card-subtitle>
+        </v-card>
+      </v-col>
+
+      <!-- Expense -->
+      <v-col v-for="item in expenseData" :key="item.label" cols="12" sm="4" md="2">
+        <v-card :color="item.color" class="pa-3" tile>
+          <v-card-title class="white--text">
+            {{ item.label }}
+          </v-card-title>
+          <v-card-subtitle class="white--text">
+            {{ item.value }}
+          </v-card-subtitle>
+        </v-card>
       </v-col>
     </v-row>
 
-    <div>
-      <v-card class="mb-5 rounded-md mt-3" elevation="0">
-        <v-tabs
-          v-model="activeTab"
-          :vertical="vertical"
-          background-color="primary"
-          dark
-          show-arrows
-        >
-          <v-spacer></v-spacer>
-          <v-tab active-class="active-link"> Today Checkin Report </v-tab>
-          <v-tab active-class="active-link"> Continue Report </v-tab>
-          <v-tab active-class="active-link"> CheckOut Report </v-tab>
-          <v-tab active-class="active-link"> Today Booking Report </v-tab>
-          <v-tab active-class="active-link"> City Ledger Report </v-tab>
-          <v-tab active-class="active-link"> Cancel Rooms </v-tab>
-          <v-tab active-class="active-link"> Food Order List </v-tab>
+    <!-- Profit/Loss Section -->
+    <v-row>
+      <v-col v-for="item in profitLossData" :key="item.label" cols="12" sm="4" md="2">
+        <v-card :color="item.color" class="pa-3" tile>
+          <v-card-title class="white--text">
+            {{ item.label }}
+          </v-card-title>
+          <v-card-subtitle class="white--text">
+            {{ item.value }}
+          </v-card-subtitle>
+        </v-card>
+      </v-col>
+    </v-row>
 
-          <v-tabs-slider color="#1259a7"></v-tabs-slider>
-          <!-- today checkin -->
-          <v-tab-item>
-            <v-container fluid>
-              <table>
-                <tr class="">
-                  <td
-                    :class="`text-${item.align}`"
-                    v-for="(item, index) in headers"
-                    :key="index"
-                  >
-                    <span v-html="item.text"></span>
-                  </td>
-                </tr>
-                <tr v-for="(item, index) in todayCheckIn" :key="index">
-                  <td>{{ ++index }}</td>
-                  <td>
-                    {{ item && item.customer && item.customer.first_name }}
-                  </td>
-                  <td>
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.reservation_no }}
-                    </span>
-                  </td>
-                  <td class="room-width">
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.rooms }}
-                    </span>
-                  </td>
-                  <td>{{ item && item.source }}</td>
-                  <td>{{ item && item.check_in }}</td>
-                  <td>{{ item && item.check_out }}</td>
-                  <td class="text-right">{{ item.total_price }}</td>
-                  <td class="text-right">
-                    {{ setAdvancePayment(item.advance_price) }}
-                  </td>
-                  <td class="text-right">
-                    {{ getPaymentMode(item, 1) }}
-                  </td>
-                  <td class="text-right">
-                    {{ getPaymentMode(item, 2) }}
-                  </td>
-                  <td class="text-right">
-                    {{ getPaymentMode(item, 3) }}
-                  </td>
-                  <td class="text-right">
-                    {{ getPaymentMode(item, 4) }}
-                  </td>
-                  <td class="text-right">
-                    {{ getPaymentMode(item, 5) }}
-                  </td>
+    <!-- Bookings By Source -->
+    <v-row>
+      <v-col v-for="item in bookingsSourceData" :key="item.label" cols="12" sm="4" md="2">
+        <v-card :color="item.color" class="pa-3" tile>
+          <v-card-title class="white--text">
+            <v-icon :color="item.color">{{ item.icon }}</v-icon> {{ item.label }}
+          </v-card-title>
+          <v-card-subtitle class="white--text">
+            {{ item.value }} ({{ item.percentage }})
+          </v-card-subtitle>
+        </v-card>
+      </v-col>
+    </v-row>
 
-                  <td class="text-right">
-                    {{ item.balance }}
-                  </td>
-                  <td>
-                    {{ item.balance > 0 ? "Due" : "Paid" }}
-                  </td>
-                </tr>
-                <tr class="text-right">
-                  <td class="text-right" colspan="9">Total</td>
-                  <td class="text-right">{{ totalCash }}</td>
-                  <td class="text-right">{{ totalCard }}</td>
-                  <td class="text-right">{{ totalOnline }}</td>
-                  <td class="text-right">{{ totalBank }}</td>
-                  <td class="text-right">{{ totalUPI }}</td>
-                  <td class="text-right">{{ totalBalance }}</td>
-                  <td class="text-right"></td>
-                  <td class="text-center">
-                    {{ checkInFileGenerateDateTime }}
-                  </td>
-                  <td class="text-center">
-                    <v-icon
-                      small
-                      color="primary"
-                      @click="openExternalLink(checkInFilePath)"
-                      >mdi-file</v-icon
-                    >
-                  </td>
-                </tr>
-              </table>
-            </v-container>
-          </v-tab-item>
+    <!-- Balance Sheet -->
+    <v-row>
+      <v-col v-for="(item, index) in balanceSheetData.values" :key="index" cols="12" sm="6" md="3">
+        <v-card :color="item.color || 'grey'" class="pa-3" tile>
+          <v-card-title class="white--text">
+            {{ item.value }}
+          </v-card-title>
+        </v-card>
+      </v-col>
+    </v-row>
 
-          <!-- continueRooms -->
-          <v-tab-item>
-            <v-container fluid>
-              <table>
-                <tr>
-                  <td v-for="(item, index) in headers" :key="index">
-                    <span v-html="item.text"></span>
-                  </td>
-                </tr>
-                <tr v-for="(item, index) in continueRooms" :key="index">
-                  <td>{{ ++index }}</td>
-                  <td>
-                    {{ item && item.customer && item.customer.first_name }}
-                  </td>
-                  <td>
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.reservation_no }}
-                    </span>
-                  </td>
-                  <td class="room-width">
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.rooms }}
-                    </span>
-                  </td>
-
-                  <td>{{ item && item.source }}</td>
-                  <td>{{ item && item.check_in }}</td>
-                  <td>{{ item && item.check_out }}</td>
-                  <td class="text-right">{{ item.total_price }}</td>
-                  <td class="text-right">{{ item.advance_price }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-                  <td class="text-right">
-                    {{ item.balance }}
-                  </td>
-                  <td>
-                    {{ item.balance > 0 ? "Due" : "Paid" }}
-                  </td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr class="text-right">
-                  <td class="text-right" colspan="9">Total</td>
-                  <td class="text-right">{{ continueTotalCash }}</td>
-                  <td class="text-right">{{ continueTotalCard }}</td>
-                  <td class="text-right">{{ continueTotalOnline }}</td>
-                  <td class="text-right">{{ continueTotalBank }}</td>
-                  <td class="text-right">{{ continueTotalUPI }}</td>
-                  <td class="text-right">{{ continueTotalBalance }}</td>
-                  <td class="text-right"></td>
-                  <td class="text-center">
-                    {{ continueRoomsFileGenerateDateTime }}
-                  </td>
-                  <td class="text-center">
-                    <v-icon
-                      small
-                      color="primary"
-                      @click="openExternalLink(continueRoomsFilePath)"
-                      >mdi-file</v-icon
-                    >
-                  </td>
-                </tr>
-              </table>
-            </v-container>
-          </v-tab-item>
-
-          <!-- today payment -->
-          <v-tab-item>
-            <v-container fluid>
-              <table>
-                <tr>
-                  <td v-for="(item, index) in headers" :key="index">
-                    <span v-html="item.text"></span>
-                  </td>
-                </tr>
-                <tr v-for="(item, index) in todayCheckOut" :key="index">
-                  <td>{{ ++index }}</td>
-                  <td>
-                    {{ item && item.customer && item.customer.first_name }}
-                  </td>
-                  <td>
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.reservation_no }}
-                    </span>
-                  </td>
-                  <td class="room-width">
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.rooms }}
-                    </span>
-                  </td>
-
-                  <td>{{ item && item.source }}</td>
-                  <td>{{ item && item.check_in }}</td>
-                  <td>{{ item && item.check_out }}</td>
-                  <td class="text-right">{{ item.total_price }}</td>
-                  <td class="text-right">
-                    {{ setAdvancePayment(item.advance_price) }}
-                  </td>
-                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-                  <td class="text-right">
-                    {{ item.balance }}
-                  </td>
-                  <td>
-                    {{ item.balance > 0 ? "Due" : "Paid" }}
-                  </td>
-                </tr>
-                <tr class="text-right">
-                  <td class="text-right" colspan="9">Total</td>
-                  <td class="text-right">{{ checkoutTotalCash }}</td>
-                  <td class="text-right">{{ checkoutTotalCard }}</td>
-                  <td class="text-right">{{ checkoutTotalOnline }}</td>
-                  <td class="text-right">{{ checkoutTotalBank }}</td>
-                  <td class="text-right">{{ checkoutTotalUPI }}</td>
-                  <td class="text-right">{{ checkoutTotalBalance }}</td>
-                  <td class="text-right"></td>
-                  <td class="text-center">
-                    {{ todayCheckOutGenerateDateTime }}
-                  </td>
-                  <td class="text-center">
-                    <v-icon
-                      small
-                      color="primary"
-                      @click="openExternalLink(todayCheckOutPath)"
-                      >mdi-file</v-icon
-                    >
-                  </td>
-                </tr>
-              </table>
-            </v-container>
-          </v-tab-item>
-
-          <!-- today payment -->
-          <v-tab-item>
-            <v-container fluid>
-              <table>
-                <tr>
-                  <td v-for="(item, index) in headers" :key="index">
-                    <span v-html="item.text"></span>
-                  </td>
-                </tr>
-                <tr v-for="(item, index) in todayPayments" :key="index">
-                  <td>{{ ++index }}</td>
-                  <td>
-                    {{ item && item.customer && item.customer.first_name }}
-                  </td>
-                  <td>
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.reservation_no }}
-                    </span>
-                  </td>
-                  <td class="room-width">
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.rooms }}
-                    </span>
-                  </td>
-
-                  <td>{{ item && item.source }}</td>
-                  <td>{{ item && item.check_in }}</td>
-                  <td>{{ item && item.check_out }}</td>
-                  <td class="text-right">{{ item.total_price }}</td>
-                  <td class="text-right">
-                    {{ setAdvancePayment(item.advance_price) }}
-                  </td>
-                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-                  <td class="text-right">
-                    {{ item.balance }}
-                  </td>
-                  <td>
-                    {{ item.balance > 0 ? "Due" : "Paid" }}
-                  </td>
-                </tr>
-                <tr class="text-right">
-                  <td class="text-right" colspan="9">Total</td>
-                  <td class="text-right">{{ todayPaymentTotalCash }}</td>
-                  <td class="text-right">{{ todayPaymentTotalCard }}</td>
-                  <td class="text-right">{{ todayPaymentTotalOnline }}</td>
-                  <td class="text-right">{{ todayPaymentTotalBank }}</td>
-                  <td class="text-right">{{ todayPaymentTotalUPI }}</td>
-                  <td class="text-right">{{ todayPaymentTotalBalance }}</td>
-                  <td></td>
-                  <td class="text-center">
-                    {{ todayPaymentsGenerateDateTime }}
-                  </td>
-                  <td class="text-center">
-                    <v-icon
-                      small
-                      color="primary"
-                      @click="openExternalLink(todayPaymentsPath)"
-                      >mdi-file</v-icon
-                    >
-                  </td>
-                </tr>
-              </table>
-            </v-container>
-          </v-tab-item>
-
-          <!-- today cityledger -->
-          <v-tab-item>
-            <v-container fluid>
-              <table>
-                <tr>
-                  <td v-for="(item, index) in headers" :key="index">
-                    <span v-html="item.text"></span>
-                  </td>
-                </tr>
-                <tr
-                  v-for="(item, index) in cityLedgerPaymentsAudit"
-                  :key="index"
-                >
-                  <td>{{ ++index }}</td>
-                  <td>
-                    {{ item && item.customer && item.customer.first_name }}
-                  </td>
-                  <td>
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.reservation_no }}
-                    </span>
-                  </td>
-                  <td class="room-width">
-                    <span
-                      class="blue--text"
-                      @click="goToRevView(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item.rooms }}
-                    </span>
-                  </td>
-
-                  <td>{{ item && item.source }}</td>
-                  <td>{{ item && item.check_in }}</td>
-                  <td>{{ item && item.check_out }}</td>
-                  <td class="text-right">{{ item.total_price }}</td>
-                  <td class="text-right">
-                    {{ setAdvancePayment(item.advance_price) }}
-                  </td>
-                  <td class="text-right">{{ getPaymentMode(item, 1) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 2) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 3) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 4) }}</td>
-                  <td class="text-right">{{ getPaymentMode(item, 5) }}</td>
-
-                  <td class="text-right">
-                    {{ item.balance }}
-                  </td>
-                  <td>
-                    {{ item.balance > 0 ? "Due" : "Paid" }}
-                  </td>
-                </tr>
-                <tr class="text-right">
-                  <td class="text-right" colspan="9">Total</td>
-                  <td class="text-right">{{ cityLedgerTotalCash }}</td>
-                  <td class="text-right">{{ cityLedgerTotalCard }}</td>
-                  <td class="text-right">{{ cityLedgerTotalOnline }}</td>
-                  <td class="text-right">{{ cityLedgerTotalBank }}</td>
-                  <td class="text-right">{{ cityLedgerTotalUPI }}</td>
-                  <td class="text-right">{{ cityLedgerTotalBalance }}</td>
-                  <td></td>
-                  <td class="text-center">
-                    {{ cityLedgerGenerateDateTime }}
-                  </td>
-                  <td class="text-center">
-                    <v-icon
-                      small
-                      color="primary"
-                      @click="openExternalLink(cityLedgerPath)"
-                      >mdi-file</v-icon
-                    >
-                  </td>
-                </tr>
-              </table>
-            </v-container>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-container fluid>
-              <table>
-                <tr>
-                  <td>Rev. No</td>
-                  <td>Room No</td>
-                  <td>Room Type</td>
-                  <td>Booking</td>
-                  <td>C/In Time</td>
-                  <td>Cancel Time</td>
-                  <td>Amount</td>
-                  <td>Reason</td>
-                  <td>Reason</td>
-                  <td>File Generated Date Time</td>
-                  <td>PDF File</td>
-                  <td>Action</td>
-                  <td>Cancel By</td>
-                  <td>Status</td>
-                </tr>
-                <tr v-for="(item, index) in cancelRooms" :key="index">
-                  <td class="room-width">
-                    <span
-                      class="blue--text"
-                      @click="goToRevViewFromCancel(item)"
-                      style="cursor: pointer"
-                    >
-                      {{ item && item.booking && item.booking.reservation_no }}
-                    </span>
-                  </td>
-                  <td>{{ item && item.room_no }}</td>
-                  <td>{{ item && item.room_type }}</td>
-                  <td>{{ item && item.booking.created_at }}</td>
-                  <td>
-                    {{
-                      item.status_before_cancelation == 2
-                        ? item.check_in
-                        : "---"
-                    }}
-                  </td>
-                  <td>{{ item && item.time }}</td>
-                  <td class="text-right">{{ item && item.grand_total }}</td>
-                  <td>{{ item && item.reason }}</td>
-                  <td>{{ item && item.action }}</td>
-                  <td class="text-center">
-                    {{ cancelRoomsGenerateDateTime }}
-                  </td>
-                  <td class="text-center">
-                    <v-icon
-                      small
-                      color="primary"
-                      @click="openExternalLink(cancelRoomsPath)"
-                      >mdi-file</v-icon
-                    >
-                  </td>
-                  <td>{{ item && item.user && item.user.name }}</td>
-                  <td>{{ item && item.status_before_cancelation_msg }}</td>
-                </tr>
-              </table>
-            </v-container>
-          </v-tab-item>
-
-          <v-tab-item>
-            <v-container fluid>
-              <v-row class="text-right">
-                <v-col>
-                  <AssetsIcon
-                    icon="printer-outline"
-                    @click="openExternalLink(foodPath)"
-                  />
-                </v-col>
-              </v-row>
-              <table
-                v-for="(item, index) in FoodData"
-                :key="index"
-                class="mt-4"
-              >
-                <tr
-                  style="background-color: #ecf0f4; color: black"
-                  class="my-0 py-0"
-                >
-                  <th class="my-0 py-0">
-                    Room No - {{ item.room_no || "---" }}
-                  </th>
-                  <th class="my-0 py-0">Adult</th>
-                  <th class="my-0 py-0">Child</th>
-                  <th class="my-0 py-0">Baby</th>
-                </tr>
-                <tr style="background-color: white" class="my-0 py-0">
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.breakfast && item.breakfast.title) ||
-                      "Breakfast"
-                    }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.breakfast && item.breakfast.no_of_adult) ||
-                      "---"
-                    }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.breakfast && item.breakfast.no_of_child) ||
-                      "---"
-                    }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.breakfast && item.breakfast.no_of_baby) ||
-                      "---"
-                    }}
-                  </td>
-                </tr>
-                <tr style="background-color: white" class="my-0 py-0">
-                  <td class="my-0 py-0">
-                    {{ (item && item.lunch && item.lunch.title) || "Lunch" }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.lunch && item.lunch.no_of_adult) || "---"
-                    }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.lunch && item.lunch.no_of_child) || "---"
-                    }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{ (item && item.lunch && item.lunch.no_of_baby) || "---" }}
-                  </td>
-                </tr>
-                <tr style="background-color: white" class="my-0 py-0">
-                  <td class="my-0 py-0">
-                    {{ (item && item.dinner && item.dinner.title) || "Dinner" }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.dinner && item.dinner.no_of_adult) || "---"
-                    }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.dinner && item.dinner.no_of_child) || "---"
-                    }}
-                  </td>
-                  <td class="my-0 py-0">
-                    {{
-                      (item && item.dinner && item.dinner.no_of_baby) || "---"
-                    }}
-                  </td>
-                </tr>
-              </table>
-            </v-container>
-          </v-tab-item>
-        </v-tabs>
-      </v-card>
-    </div>
-  </div>
-  <NoAccess v-else />
+  </v-container>
 </template>
 
 <script>
-import CheckinAudit from "../../../components/audit/CheckinAudit.vue";
 export default {
-  components: {
-    CheckinAudit,
-  },
-  data: () => ({
-    stats: [
-      {
-        colors: [`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`],
+  data() {
+    return {
+      roomData: [
+        { label: "Checkin", value: 1, color: "#ffc000" },
+        { label: "Continue", value: 85, color: "#03c1ec" },
+        { label: "Day Use", value: 0, color: "#71de36" },
+        { label: "Complementary", value: 0, color: "#800080" },
+        { label: "Checkout", value: 0, color: "#dc3545" },
+        { label: "Closing", value: 0, color: "#a6a6a6" },
+      ],
+      guestData: [
+        { label: "Breakfast", value: 0, color: "green" },
+        { label: "Lunch", value: 0, color: "purple" },
+        { label: "Dinner", value: 0, color: "orange" },
+      ],
+      incomeData: [
+        { label: "Cash", value: 22344, color: "green" },
+        { label: "Card", value: 0, color: "purple" },
+        { label: "Online", value: 0, color: "orange" },
+        { label: "Bank", value: 0, color: "red" },
+        { label: "UPI", value: 0, color: "teal" },
+        { label: "Cheque", value: 0, color: "blue" },
+        { label: "Total", value: 22344, color: "grey" },
+      ],
+      expenseData: [
+        { label: "Cash", value: 100, color: "green" },
+        { label: "Card", value: 0, color: "purple" },
+        { label: "Online", value: 0, color: "orange" },
+        { label: "Bank", value: 0, color: "red" },
+        { label: "UPI", value: 0, color: "teal" },
+        { label: "Cheque", value: 0, color: "blue" },
+        { label: "Total", value: 100, color: "grey" },
+      ],
+      profitLossData: [
+        { label: "Loss", value: 0, color: "red" },
+        { label: "Profit", value: 22144, color: "green" },
+        { label: "City Ledger", value: 3360, color: "orange" },
+      ],
+      bookingsSourceData: [
+        { icon: "mdi-walk", value: 0, percentage: "0%", label: "Walk", col: 7, color: "green" },
+        { icon: "mdi-laptop", value: 0, percentage: "0%", label: "OTA", col: 7, color: "rgb(0, 217, 255)" },
+        { icon: "mdi-account-tie", value: 0, percentage: "0%", label: "Corp", col: 7, color: "orange" },
+        { icon: "mdi-cloud-outline", value: 0, percentage: "0%", label: "Web", col: 7, color: "purple" },
+        { icon: "mdi-gift-outline", value: 0, percentage: "0%", label: "Comp", col: 7, color: "pink" },
+        { icon: "mdi-account-outline", value: 0, percentage: "0%", label: "Agent", col: 7, color: "teal" },
+        { icon: "---", value: "", percentage: "100.00%", label: "Vacant 36 (100.00%)", col: 7, color: "#c5c5c5" },
+      ],
+      balanceSheetData: {
+        values: [
+          { value: 22344 },
+          { value: 0 },
+          { value: 100 },
+          { value: 100 },
+          { value: "Cash in Hand (22244)", color: "green" },
+        ],
+        totals: [
+          { value: 22344, colspan: 2 },
+          { value: 200, colspan: 2 },
+          { value: "Profit/Loss (22144)", color: "green" },
+        ],
       },
-      {
-        colors: [`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`],
-      },
-      {
-        colors: [`#139c4a`, `#71de36`, `#ffc000`, `#dc3545`],
-      },
-    ],
-    Model: "Audit Report",
-    // from_date: new Date().toJSON().slice(0, 10),
-    from_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-      .toISOString()
-      .substr(0, 10),
-    from_menu: false,
-    options: {},
-    endpoint: "expense",
-    search: "",
-    snackbar: false,
-    dialog: false,
-    todayCheckIn: [],
-    todayCheckOut: [],
-    continueRooms: [],
-    todayPayments: [],
-    cityLedgerPaymentsAudit: [],
-    cancelRooms: [],
-
-    checkInFileGenerateDateTime: null,
-    checkInFilePath: null,
-
-    continueRoomsFileGenerateDateTime: null,
-    continueRoomsFilePath: null,
-
-    todayCheckOutGenerateDateTime: null,
-    todayCheckOutPath: null,
-
-    todayPaymentsGenerateDateTime: null,
-    todayPaymentsPath: null,
-
-    cityLedgerGenerateDateTime: null,
-    cityLedgerPath: null,
-
-    cancelRoomsGenerateDateTime: null,
-    cancelRoomsPath: null,
-
-    foodGenerateDateTime: null,
-    foodPath: null,
-
-    counts: [],
-    loading: false,
-    total: 0,
-    totExpense: 0,
-
-    vertical: false,
-    activeTab: 0,
-
-    headers: [
-      { align: "left", text: "#" },
-      { align: "left", text: "Guest" },
-      { align: "left", text: "Rev. No" },
-      { align: "left", text: "Rooms" },
-      { align: "left", text: "Source" },
-      { align: "left", text: "CheckIn" },
-      { align: "left", text: "CheckOut" },
-      { align: "left", text: "Tariff" },
-      { align: "left", text: "Advance" },
-      { align: "left", text: "Cash" },
-      { align: "left", text: "Card" },
-      { align: "left", text: "Online" },
-      { align: "left", text: "Bank" },
-      { align: "left", text: "UPI" },
-      { align: "left", text: "Balance" },
-      { align: "left", text: "Remark" },
-      { align: "center", text: "File Generated Date Time" },
-      { align: "center", text: "PDF File" },
-    ],
-    response: "",
-    loss: "",
-    profit: "",
-    errors: [],
-    FoodData: [],
-    editedItem: {
-      item: null,
-      amount: null,
-      payment_modes: "CASH",
-    },
-    totalExpenses: {},
-  }),
-
-  created() {
-    let filters = this.$store.getters.getDataToSend;
-    if (filters.date) {
-      this.from_date = filters.date;
-    }
-
-    this.loading = true;
-    this.getdata();
-    this.get_food_order_list();
-  },
-
-  computed: {
-    totalBalance() {
-      let sum = 0;
-      this.todayCheckIn.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    totalCash() {
-      return this.getSum(this.todayCheckIn, 1);
-    },
-    totalCard() {
-      return this.getSum(this.todayCheckIn, 2);
-    },
-    totalBank() {
-      return this.getSum(this.todayCheckIn, 4);
-    },
-    totalOnline() {
-      return this.getSum(this.todayCheckIn, 3);
-    },
-    totalUPI() {
-      return this.getSum(this.todayCheckIn, 5);
-    },
-
-    continueTotalBalance() {
-      let sum = 0;
-      this.continueRooms.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    continueTotalCash() {
-      return this.getSum(this.continueRooms, 1);
-    },
-    continueTotalCard() {
-      return this.getSum(this.continueRooms, 2);
-    },
-    continueTotalBank() {
-      return this.getSum(this.continueRooms, 4);
-    },
-    continueTotalOnline() {
-      return this.getSum(this.continueRooms, 3);
-    },
-    continueTotalUPI() {
-      return this.getSum(this.continueRooms, 5);
-    },
-
-    checkoutTotalBalance() {
-      let sum = 0;
-      this.todayCheckOut.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    checkoutTotalCash() {
-      return this.getSum(this.todayCheckOut, 1);
-    },
-    checkoutTotalCard() {
-      return this.getSum(this.todayCheckOut, 2);
-    },
-    checkoutTotalBank() {
-      return this.getSum(this.todayCheckOut, 4);
-    },
-    checkoutTotalOnline() {
-      return this.getSum(this.todayCheckOut, 3);
-    },
-    checkoutTotalUPI() {
-      return this.getSum(this.todayCheckOut, 5);
-    },
-
-    todayPaymentTotalBalance() {
-      let sum = 0;
-      this.todayPayments.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    todayPaymentTotalCash() {
-      return this.getSum(this.todayPayments, 1);
-    },
-    todayPaymentTotalCard() {
-      return this.getSum(this.todayPayments, 2);
-    },
-    todayPaymentTotalBank() {
-      return this.getSum(this.todayPayments, 4);
-    },
-    todayPaymentTotalOnline() {
-      return this.getSum(this.todayPayments, 3);
-    },
-    todayPaymentTotalUPI() {
-      return this.getSum(this.todayPayments, 5);
-    },
-
-    cityLedgerTotalBalance() {
-      let sum = 0;
-      this.cityLedgerPaymentsAudit.map((e) => (sum += parseFloat(e.balance)));
-      return sum.toFixed(2);
-    },
-    cityLedgerTotalCash() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 1);
-    },
-    cityLedgerTotalCard() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 2);
-    },
-    cityLedgerTotalBank() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 4);
-    },
-    cityLedgerTotalOnline() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 3);
-    },
-    cityLedgerTotalUPI() {
-      return this.getSum(this.cityLedgerPaymentsAudit, 5);
-    },
-
-    GrandTotal() {
-      let tot =
-        parseFloat(this.GrandTotalCash) +
-        parseFloat(this.GrandTotalCard) +
-        parseFloat(this.GrandTotalBank) +
-        parseFloat(this.GrandTotalTodayOnline) +
-        parseFloat(this.GrandTotalTodayUPI);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalCash() {
-      let tot =
-        parseFloat(this.cityLedgerTotalCash) +
-        parseFloat(this.totalCash) +
-        // parseFloat(this.totalUPI) +
-        parseFloat(this.checkoutTotalCash) +
-        parseFloat(this.continueTotalCash) +
-        parseFloat(this.todayPaymentTotalCash);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalCard() {
-      let tot =
-        parseFloat(this.totalCard) +
-        parseFloat(this.checkoutTotalCard) +
-        parseFloat(this.continueTotalCard) +
-        parseFloat(this.todayPaymentTotalCard);
-      parseFloat(this.cityLedgerTotalCard);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalBank() {
-      let tot =
-        parseFloat(this.continueTotalBank) +
-        parseFloat(this.todayPaymentTotalBank) +
-        parseFloat(this.checkoutTotalBank) +
-        parseFloat(this.cityLedgerTotalBank) +
-        parseFloat(this.totalBank);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalTodayOnline() {
-      let tot =
-        parseFloat(this.continueTotalOnline) +
-        parseFloat(this.todayPaymentTotalOnline) +
-        parseFloat(this.checkoutTotalOnline) +
-        parseFloat(this.cityLedgerTotalOnline) +
-        parseFloat(this.totalOnline);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalTodayUPI() {
-      let tot =
-        parseFloat(this.continueTotalUPI) +
-        parseFloat(this.todayPaymentTotalUPI) +
-        parseFloat(this.checkoutTotalUPI) +
-        parseFloat(this.cityLedgerTotalUPI) +
-        parseFloat(this.totalUPI);
-      return tot.toFixed(2);
-    },
-
-    GrandTotalBalance() {
-      let tot =
-        parseFloat(this.totalBalance) +
-        parseFloat(this.continueTotalBalance) +
-        parseFloat(this.checkoutTotalBalance) +
-        parseFloat(this.cityLedgerTotalBalance) +
-        parseFloat(this.todayPaymentTotalBalance);
-      return tot.toFixed(2);
-    },
-  },
-
-  methods: {
-    openExternalLink(path) {
-      let url = `https://backend.myhotel2cloud.com/api/get_audit_report_print?path=${path}`;
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", url);
-      document.body.appendChild(element);
-      console.log(element);
-      element.click();
-    },
-    onPageChange() {
-      this.getExpenseData();
-    },
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
-      );
-    },
-    caps(str) {
-      if (str == "" || str == null) {
-        return "---";
-      } else {
-        let res = str.toString();
-        return res.replace(/\b\w/g, (c) => c.toUpperCase());
-      }
-    },
-
-    convert_decimal(n) {
-      if (n === +n && n !== (n | 0)) {
-        return n.toFixed(2);
-      } else {
-        return n + ".00";
-      }
-    },
-
-    goToRevView(item) {
-      // this.$router.push(`/customer/details/${item.id}`);
-    },
-
-    goToRevViewFromCancel(item) {
-      this.$router.push(`/customer/details/${item.booking_id}`);
-    },
-
-    getTimeFromCheckIn(date) {
-      const dateObj = new Date(date);
-      const hours = dateObj.getHours().toString().padStart(2, "0");
-      const minutes = dateObj.getMinutes().toString().padStart(2, "0");
-      return `${hours}:${minutes}`;
-    },
-
-    getSum(item, type) {
-      let sum = 0;
-      item.map((e) => {
-        e.transactions.map((e) =>
-          e.payment_method_id == type ? (sum += parseFloat(e.credit)) : 0
-        );
-      });
-      return sum.toFixed(2);
-    },
-
-    setAdvancePayment(amt) {
-      return amt > 0 ? amt : 0;
-    },
-
-    process(type) {
-      alert("coming soon, developing");
-      return;
-      let comId = this.$auth.user.company.id; //company id
-      let from = this.from_date;
-      let to = this.to_date;
-      let url =
-        "https://backend.myhotel2cloud.com/api/" +
-        `${type}?company_id=${comId}&from=${from}&to=${to}`;
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${url}`);
-      document.body.appendChild(element);
-      element.click();
-    },
-
-    getPaymentMode(item, mode) {
-      // let creditTrans = item.transactions.filter((e) => e.credit > 0);
-      let creditTrans = item.transactions;
-      switch (mode) {
-        case 1:
-          return this.getPaySum(creditTrans, 1);
-        case 2:
-          return this.getPaySum(creditTrans, 2);
-        case 3:
-          return this.getPaySum(creditTrans, 3);
-        case 4:
-          return this.getPaySum(creditTrans, 4);
-        case 5:
-          return this.getPaySum(creditTrans, 5);
-        default:
-          break;
-      }
-    },
-
-    getPaySum(payload, mode) {
-      let sum = 0;
-      payload.map((e) => {
-        if (e.payment_method_id == mode) {
-          sum += parseFloat(e.credit);
-        }
-      });
-      return sum.toFixed(2);
-    },
-
-    commonMethod() {
-      this.getdata();
-    },
-
-    getdata(url = "get_audit_report") {
-      this.loading = true;
-      let options = {
-        params: {
-          company_id: this.$auth.user.company.id,
-          // date: "2023-04-10",
-          date: this.from_date,
-        },
-      };
-      this.$axios.get(url, options).then(({ data }) => {
-        this.todayCheckIn = data.check_in.data;
-        this.continueRooms = data.continue.data;
-        this.todayCheckOut = data.check_out.data;
-        this.todayPayments = data.payment.data;
-        this.cityLedgerPaymentsAudit = data.cityLedger.data;
-        this.cancelRooms = data.cancel.data;
-
-        this.checkInFileGenerateDateTime = data.check_in.dateTime;
-        this.checkInFilePath = data.check_in.file_path;
-
-        this.continueRoomsFileGenerateDateTime = data.continue.dateTime;
-        this.continueRoomsFilePath = data.continue.file_path;
-
-        this.todayCheckOutGenerateDateTime = data.check_out.dateTime;
-        this.todayCheckOutPath = data.check_out.file_path;
-
-        this.todayPaymentsGenerateDateTime = data.payment.dateTime;
-        this.todayPaymentsPath = data.payment.file_path;
-
-        this.cityLedgerGenerateDateTime = data.cityLedger.dateTime;
-        this.cityLedgerPath = data.cityLedger.file_path;
-
-        this.cancelRoomsGenerateDateTime = data.cancel.dateTime;
-        this.cancelRoomsPath = data.cancel.file_path;
-
-        this.foodGenerateDateTime = data.food.dateTime;
-        this.foodPath = data.food.file_path;
-
-        this.totExpense = data.expense.data;
-      });
-    },
-
-    get_food_order_list() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`food/`, payload).then(({ data }) => {
-        this.FoodData = data;
-      });
-    },
+    };
   },
 };
 </script>

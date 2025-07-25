@@ -179,4 +179,21 @@ class PaymentController extends Controller
             ->orderBy('id', 'desc')
             ->paginate($request->per_page ?? 20);
     }
+
+    public function PaymentsForReport(Request $request)
+    {
+        $companyId = $request->company_id;
+
+        $payments = Payment::with(['cash', 'card', 'online', 'bank', 'upi', 'cheque', 'city_ledger']) // eager load payment_mode
+            ->whereDate('date', date("Y-m-d"))
+            ->where('company_id', $companyId)
+            ->get();
+
+        // // Group by payment mode name
+        // $grouped = $payments->groupBy(function ($payment) {
+        //     return $payment->payment_mode->name ?? 'Unknown';
+        // });
+
+        return response()->json($payments);
+    }
 }

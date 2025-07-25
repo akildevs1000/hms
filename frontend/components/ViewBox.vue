@@ -87,8 +87,8 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `https://backend.myhotel2cloud.com/api/download_customer_attachments/${this.booking_id}`
-        // `https://hms-backend.test/api/download_customer_attachments/${this.booking_id}`
+        // `https://backend.myhotel2cloud.com/api/download_customer_attachments/${this.booking_id}`
+        `https://hms-backend.test/api/download_customer_attachments/${this.booking_id}`
 
       );
       document.body.appendChild(element);
@@ -99,8 +99,8 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `https://backend.myhotel2cloud.com/api/${url}/${this.booking_id}`
-        // `https://hms-backend.test/api/${url}/${this.booking_id}`
+        // `https://backend.myhotel2cloud.com/api/${url}/${this.booking_id}`
+        `https://hms-backend.test/api/${url}/${this.booking_id}`
       );
       document.body.appendChild(element);
       element.click();

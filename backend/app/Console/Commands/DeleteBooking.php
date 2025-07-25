@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\BookedRoom;
 use App\Models\Booking;
+use App\Models\Customer;
 use App\Models\OrderRoom;
 use App\Models\Payment;
 use App\Models\Posting;
@@ -32,10 +33,19 @@ class DeleteBooking extends Command
      */
     public function handle(): int
     {
+        // Booking::truncate();
+        // Payment::truncate();
+        // Transaction::truncate();
+        // OrderRoom::truncate();
+        // BookedRoom::truncate();
+        // Posting::truncate();
+        // Customer::truncate();
+        // return 0;
+
         $companyId = $this->argument('company_id');
         $reservationNo = $this->argument('reservation_no');
 
-        $booking = Booking::where("company_id",$companyId)->where('reservation_no', $reservationNo)->first();
+        $booking = Booking::where("company_id", $companyId)->where('reservation_no', $reservationNo)->first();
 
         if (!$booking) {
             $this->error("Booking with reservation number {$reservationNo} not found.");

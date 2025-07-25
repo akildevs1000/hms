@@ -1,138 +1,778 @@
 <template>
-  <div v-if="can(`night_audit_access`)">
-    <v-card class="px-2">
-      <v-row>
-        <v-col v-for="(stat, index) in stats" :key="index">
-          <AssetsCard :key="index" :options="stat" />
-        </v-col>
-      </v-row>
-    </v-card>
-    <v-card class="mt-5 px-2">
-      <v-row class="text-left">
-        <v-col cols="10"></v-col>
-        <v-col cols="2">
-          <FilterDateRange @filter-attr="filterAttr" :defaultDates="true" />
-        </v-col>
-      </v-row>
-    </v-card>
+  <v-row no-gutters align="center">
+    <v-col>
+      <AuditReport />
+    </v-col>
+    <!-- <v-col cols="8" offset="2" class="px-2">
+      <v-card>
+        <v-card-text>
+          <v-row>
+            <v-col class="text-center"
+              ><div class="title">Night Audit</div></v-col
+            >
+          </v-row>
+          <v-row>
+            <v-col cols="4">
+              <v-card class="elevation-2" style="height: 245px">
+                <v-card-title>Room Status</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <Donut
+                      :key="keyTabAllTop"
+                      name="margin"
+                      size="100%"
+                      :total="'100'"
+                      :colors="[
+                        `#139c4a`,
+                        `#71de36`,
+                        `#ffc000`,
+                        `#dc3545`,
+                        `#007bff`,
+                        `#6c757d`,
+                      ]"
+                      :labels="[
+                        {
+                          color: `#139c4a`,
+                          text: `Available`,
+                          value: availableRooms.length,
+                        },
+                        {
+                          color: `#71de36`,
+                          text: `Reserved`,
+                          value: reservedWithoutAdvance.length,
+                        },
+                        {
+                          color: `#ffc000`,
+                          text: `CheckIn`,
+                          value: Occupied.length,
+                        },
+                        {
+                          color: `#dc3545`,
+                          text: `Dirty`,
+                          value: dirtyRoomsList.length,
+                        },
 
-    <v-card class="mt-5 px-2">
-      <v-row>
-        <v-col md="12" class="text-right">
-          <AssetsTable height="500" :headers="headers" :items="items" />
-        </v-col>
-      </v-row>
-    </v-card>
-  </div>
-  <NoAccess v-else />
+                        {
+                          color: `#007bff`, // Expected CheckIn
+                          text: `Expected CheckIn`,
+                          value: `${reservedWithoutAdvance.length}`,
+                        },
+                        {
+                          color: `#6c757d`, // Expected CheckOut
+                          text: `Expected CheckOut`,
+                          value: expectCheckOut.length,
+                        },
+                      ]"
+                    />
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="4">
+              <v-card class="elevation-2" style="height: 245px">
+                <v-card-title>Food</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <Donut
+                      :key="keyTabAllTop"
+                      name="margin"
+                      size="100%"
+                      :total="'100'"
+                      :colors="[`blue`, `green`, `orange`]"
+                      :labels="[
+                        {
+                          color: `blue`,
+                          text: `Breakfast`,
+                          value: foodOrdersCount?.breakfast,
+                        },
+                        {
+                          color: `green`,
+                          text: `Lunch`,
+                          value: foodOrdersCount?.lunch,
+                        },
+                        {
+                          color: `orange`,
+                          text: `Dinner`,
+                          value: foodOrdersCount?.dinner,
+                        },
+                      ]"
+                    />
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="4">
+              <v-card class="elevation-2" style="height: 245px">
+                <v-card-title>Occupancy</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <Donut
+                      :key="keyTabAllTop"
+                      name="margin"
+                      size="100%"
+                      :total="'100'"
+                      :colors="[`blue`, `green`]"
+                      :labels="[
+                        {
+                          color: `blue`,
+                          text: `Adult`,
+                          value: members.adult,
+                        },
+                        {
+                          color: `green`,
+                          text: `Children`,
+                          value: members.child,
+                        },
+                      ]"
+                    />
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="3">
+              <v-card class="elevation-2" style="height: 245px">
+                <v-card-title>Income</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <Donut
+                      :key="keyTabAllTop"
+                      name="margin"
+                      size="100%"
+                      :total="'100'"
+                      :colors="[
+                        `#139c4a`,
+                        `#71de36`,
+                        `#ffc000`,
+                        `#dc3545`,
+                        `#007bff`,
+                        `#6c757d`,
+                      ]"
+                      :labels="[
+                        {
+                          color: `#139c4a`,
+                          text: `Available`,
+                          value: availableRooms.length,
+                        },
+                        {
+                          color: `#71de36`,
+                          text: `Reserved`,
+                          value: reservedWithoutAdvance.length,
+                        },
+                        {
+                          color: `#ffc000`,
+                          text: `CheckIn`,
+                          value: Occupied.length,
+                        },
+                        {
+                          color: `#dc3545`,
+                          text: `Dirty`,
+                          value: dirtyRoomsList.length,
+                        },
+
+                        {
+                          color: `#007bff`, // Expected CheckIn
+                          text: `Expected CheckIn`,
+                          value: `${reservedWithoutAdvance.length}`,
+                        },
+                        {
+                          color: `#6c757d`, // Expected CheckOut
+                          text: `Expected CheckOut`,
+                          value: expectCheckOut.length,
+                        },
+                      ]"
+                    />
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="3">
+              <v-card class="elevation-2" style="height: 245px">
+                <v-card-title>Expense</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <Donut
+                      :key="keyTabAllTop"
+                      name="margin"
+                      size="100%"
+                      :total="'100'"
+                      :colors="[`blue`, `green`, `orange`]"
+                      :labels="[
+                        {
+                          color: `blue`,
+                          text: `Breakfast`,
+                          value: foodOrdersCount.breakfast,
+                        },
+                        {
+                          color: `green`,
+                          text: `Lunch`,
+                          value: foodOrdersCount.lunch,
+                        },
+                        {
+                          color: `orange`,
+                          text: `Dinner`,
+                          value: foodOrdersCount.dinner,
+                        },
+                      ]"
+                    />
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="3">
+              <v-card class="elevation-2" style="height: 245px">
+                <v-card-title>Management Expense</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <Donut
+                      :key="keyTabAllTop"
+                      name="margin"
+                      size="100%"
+                      :total="'100'"
+                      :colors="[`blue`, `green`]"
+                      :labels="[
+                        {
+                          color: `blue`,
+                          text: `Adult`,
+                          value: members.adult,
+                        },
+                        {
+                          color: `green`,
+                          text: `Children`,
+                          value: members.child,
+                        },
+                      ]"
+                    />
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-col>
+            <v-col cols="3">
+              <v-card class="elevation-2" style="height: 245px">
+                <v-card-title>Profit/Loss</v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <Donut
+                      :key="keyTabAllTop"
+                      name="margin"
+                      size="100%"
+                      :total="'100'"
+                      :colors="[`blue`, `green`]"
+                      :labels="[
+                        {
+                          color: `blue`,
+                          text: `Adult`,
+                          value: members.adult,
+                        },
+                        {
+                          color: `green`,
+                          text: `Children`,
+                          value: members.child,
+                        },
+                      ]"
+                    />
+                  </v-container>
+                </v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
+         
+        </v-card-text>
+      </v-card>
+    </v-col> -->
+  </v-row>
 </template>
-
 <script>
-import CheckinAudit from "../../../components/audit/CheckinAudit.vue";
+import Posting from "../../../components/booking/Posting";
+import PayAdvance from "../../../components/booking/PayAdvance";
+import CheckIn from "../../../components/booking/CheckIn.vue";
+import CheckOut from "../../../components/booking/CheckOut.vue";
+import NewCheckIn from "../../../components/booking/NewCheckIn.vue";
+import ReservationList from "../../../components/reservation/ReservationList.vue";
+import Available from "../../../components/svg/Available.vue";
+import Dirty from "../../../components/svg/Dirty.vue";
+import Booked from "../../../components/svg/Booked.vue";
+import CheckOutSvg from "../../../components/svg/CheckOutSvg.vue";
+import PaidBookedSvg from "../../../components/svg/PaidBookedSvg.vue";
+import ExpectCheckInSvg from "../../../components/svg/ExpectCheckInSvg.vue";
+import ExpectCheckOutSvg from "../../../components/svg/ExpectCheckOutSvg.vue";
+import CheckInSvg from "../../../components/svg/CheckInSvg.vue";
+// import FoodOrderRooms from "../../../components/food/FoodOrderRooms.vue";
+
+import FoodOrderReport from "../../../components/summary_reports/FoodOrderReport.vue";
+import InHouseReport from "../../../components/summary_reports/InHouseReport.vue";
+import ExpectCheckInReport from "../../../components/summary_reports/ExpectCheckInReport.vue";
+import ExpectCheckOutReport from "../../../components/summary_reports/ExpectCheckOutReport.vue";
+import AvailableRoomsReport from "../../../components/summary_reports/AvailableRoomsReport.vue";
+import CheckInRoomsReport from "../../../components/summary_reports/CheckInRoomsReport.vue";
+import BookedRoomsReport from "../../../components/summary_reports/BookedRoomsReport.vue";
+import PaidRoomsReport from "../../../components/summary_reports/PaidRoomsReport.vue";
+import CheckOutRoomsReport from "../../../components/summary_reports/CheckOutRoomsReport.vue";
+import DirtyRoomsReport from "../../../components/summary_reports/DirtyRoomsReport.vue";
+import Grc from "../../../components/booking/GRC.vue";
+
 export default {
+  // layout({ $auth }) {
+  //   if ($auth.user.user_type != "company" && $auth.user.is_verified == 0) {
+  //     return "guest";
+  //   } else {
+  //     return "default";
+  //   }
+  // },
+
   components: {
-    CheckinAudit,
+    InHouseReport,
+    Grc,
+    DirtyRoomsReport,
+    CheckOutRoomsReport,
+    PaidRoomsReport,
+    BookedRoomsReport,
+    CheckInRoomsReport,
+    ExpectCheckOutReport,
+    ExpectCheckInReport,
+    FoodOrderReport,
+    CheckInSvg,
+    ExpectCheckOutSvg,
+    ExpectCheckInSvg,
+    CheckOutSvg,
+    Booked,
+    Available,
+    Posting,
+    PayAdvance,
+    ReservationList,
+    CheckIn,
+    CheckOut,
+    NewCheckIn,
+    Dirty,
+    PaidBookedSvg,
+    AvailableRoomsReport,
   },
-  data: () => ({
-    stats: [],
+  data() {
+    return {
+      keyTabAllTop: 1,
+      gridLoading: false,
+      keyAll: 0,
+      isActiveTab: 1,
+      BookingQuickCheckInCompKey: 1,
+      calenderColorCodes: [],
+      tab: 0,
+      filterDate: "",
+      menu2: false,
+      colors: ["#92d050", "#ff0000", "#ffc000", "#0D652D", "#174EA6"],
+      reservation: [],
+      rightClickRoomId: "",
+      selected_booked_room_id: "",
+      selected_booking_id: "",
+      cancelCheckInDialog: false,
+      checkInCancelReason: "",
+      chart: {
+        eco: 35,
+      },
 
-    Model: "Audit Report",
-    // from_date: new Date().toJSON().slice(0, 10),
-    from_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-      .toISOString()
-      .substr(0, 10),
-    to_date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-      .toISOString()
-      .substr(0, 10),
-    from_menu: false,
-    options: {},
-    search: "",
-    snackbar: false,
-    dialog: false,
-    todayCheckIn: [],
-    todayCheckOut: [],
-    continueRooms: [],
-    todayPayments: [],
-    cityLedgerPaymentsAudit: [],
-    cancelRooms: [],
+      check_out_menu: false,
+      check_out: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+        .toISOString()
+        .substr(0, 10),
 
-    checkInFileGenerateDateTime: null,
-    checkInFilePath: null,
+      temp: "",
+      isPageLoad: false,
+      loading: false,
+      cancelLoad: false,
+      snackbar: false,
+      response: "",
+      isDirty: true,
+      payingAdvance: false,
 
-    continueRoomsFileGenerateDateTime: null,
-    continueRoomsFilePath: null,
+      ArrivalReportDialog: false,
+      CheckOutReportDialog: false,
+      InHouseDialog: false,
+      FoodDialog: false,
+      checkInDialog: false,
+      checkInKey: 1,
+      checkOutDialog: false,
+      GRCDialog: false,
+      postingDialog: false,
+      viewPostingDialog: false,
+      cancelDialog: false,
+      NewBooking: false,
 
-    todayCheckOutGenerateDateTime: null,
-    todayCheckOutPath: null,
+      formTitle: "",
+      selectedItem: 0,
+      showMenu: false,
+      showMenuForNewBooking: false,
 
-    todayPaymentsGenerateDateTime: null,
-    todayPaymentsPath: null,
+      bookingStatus: 0,
+      eventStatus: "",
+      x: 0,
+      y: 0,
 
-    cityLedgerGenerateDateTime: null,
-    cityLedgerPath: null,
+      elevations: [6, 12, 18],
+      first_login_auth: 1,
+      loading: true,
 
-    cancelRoomsGenerateDateTime: null,
-    cancelRoomsPath: null,
+      logs: [],
 
-    foodGenerateDateTime: null,
-    foodPath: null,
+      orders: "",
+      products: "",
+      customers: "",
+      daily_orders: "",
+      weekly_orders: "",
+      monthly_orders: "",
+      evenIid: "",
+      eventStatus: "",
+      rooms: [],
+      postings: [],
+      dirtyRoomsList: [],
+      availableRooms: [],
+      Occupied: [],
+      checkIn: [],
+      checkOut: [],
+      reservedWithoutAdvance: [],
+      reason: "",
+      totalTransactionAmount: 0,
+      new_payment: 0,
+      new_advance: 0,
+      AdvancePayLoading: false,
+      reference: 0,
+      full_payment: 0,
+      isPrintInvoice: false,
+      items: [],
+      transactions: [],
+      checkData: {},
+      roomData: null,
+      customerId: "",
+      bookingId: "",
+      reservationId: null,
+      document: null,
+      lastTapTime: null,
+      isDbCLick: false,
+      members: {
+        adult: 0,
+        child: 0,
+        total: 0,
+      },
+      foodOrdersCount: null,
+      expectCheckOut: "",
+      headers: [
+        { text: "#" },
+        { text: "Bill Number" },
+        { text: "Room No" },
+        { text: "Room Type" },
+        { text: "Customer" },
+        { text: "Item" },
+        { text: "QTY" },
+        { text: "Amount" },
+        { text: "Date" },
+      ],
+      newBookingRoom: {},
+      isIndex: true,
 
-    counts: [],
-    loading: false,
-    total: 0,
-    totExpense: 0,
+      showMenu: false,
 
-    vertical: false,
-    activeTab: 0,
-    items: [],
-    headers: [],
-    response: "",
-    loss: "",
-    profit: "",
-    errors: [],
-    editedItem: {
-      item: null,
-      amount: null,
-      payment_modes: "CASH",
+      filtered: {
+        AvailableRooms: [],
+      },
+
+      searchQuery: null,
+      filterQuery: ``,
+      keyTabAll: 11,
+      keyTabexpected_arrival: 12,
+      keyTabdirty: 13,
+      keyTabblocked: 18,
+      keyTabavailable: 14,
+      keyTabcompliment: 15,
+      keyTabdirty: 16,
+      keyTabOccupied: 17,
+
+      roomCleaningEventCount: 0,
+      todayDate: "",
+      componentPopupOpen: false,
+    };
+  },
+  watch: {
+    searchQuery() {
+      this.keyTabAll++;
     },
-    totalExpenses: {},
-  }),
+    filterDate() {
+      this.keyTabAll++;
+      this.room_list();
+    },
+    tab() {},
+    checkInDialog() {
+      this.formTitle = "Check In";
+      this.get_data();
+      ++this.checkInKey;
+      this.checkInDialog ? (this.isIndex = false) : (this.isIndex = true);
+    },
 
+    NewBooking() {
+      this.NewBooking ? (this.isIndex = false) : (this.isIndex = true);
+    },
+
+    postingDialog() {
+      this.formTitle = "Posting";
+      this.get_data();
+    },
+
+    checkOutDialog() {
+      this.formTitle = "Check Out";
+      this.get_data();
+    },
+
+    viewPostingDialog() {
+      this.formTitle = "View Post";
+      this.get_posting();
+    },
+
+    payingAdvance() {
+      this.formTitle = "Advance Payment";
+      this.get_data();
+    },
+  },
+  // mounted() {
+  //   this.intervalObj = setInterval(() => {
+  //     this.getDataFromApi();
+  //   }, 1000 * 60);
+  // },
   created() {
-    let filters = this.$store.getters.getDataToSend;
-    if (filters.date) {
-      this.from_date = filters.date;
+    if (!this.$auth.user.company) {
+      this.$router.push(`/login`);
     }
 
-    this.loading = true;
-    this.getdata();
+    console.log("Index");
+
+    console.log("company loading.............");
+
+    console.log(
+      "this.$auth.user_verified_mobileotp",
+      this.$auth.user_verified_mobileotp
+    );
+
+    {
+      if (this.$auth.user_verified_mobileotp == true) {
+      } else {
+        this.$auth.logout();
+        this.$router.push(`/login`);
+
+        return false;
+      }
+    }
+
+    this.filterDate = new Date(
+      Date.now() - new Date().getTimezoneOffset() * 60000
+    )
+      .toISOString()
+      .substr(0, 10);
+    // this.todayDate =  ...this.filterDate  ; // Shallow clone
+    this.todayDate = this.filterDate;
+
+    this.room_list();
+    this.first_login_auth = this.$auth.user.first_login;
+
+    // setInterval(() => {
+    //   if (
+    //     this.GRCDialog ||
+    //     this.ArrivalReportDialog ||
+    //     this.CheckOutReportDialog ||
+    //     this.InHouseDialog ||
+    //     this.FoodDialog
+    //   ) {
+    //   } else {
+    //     this.room_list();
+    //     this.checkRoomCleaningNewEvent();
+    //     this.keyTabAllTop++;
+    //   }
+    // }, 1000 * 60 * 5);
+
+    setInterval(() => {
+      this.keyTabAllTop++;
+    }, 1000 * 60 * 5);
+
+    let payload = {
+      params: {
+        company_id: this.$auth.user.company.id,
+      },
+    };
+    this.$axios.get(`room-color-codes`, payload).then(({ data }) => {
+      this.calenderColorCodes = data;
+    });
   },
 
   methods: {
-    filterAttr(data) {
-      this.from_date = data.from;
-      this.to_date = data.to;
-      this.filterType = data.type;
-      //this.search = data.search;
-      if (this.from_date && this.to_date) {
-        this.getdata();
+    // todayDate() {
+    //   this.todayDate = this.filterDate;
+    // },
+    handleReservationResponse(e) {
+      //console.log("🚀 ~ handleReservationResponse ~ e:", e);
+      this.reservationId = e.id;
+      this.$nextTick(() => {
+        const bookingSingleComp = this.$refs["BookingSingleRef"];
+        if (bookingSingleComp) {
+          bookingSingleComp.ViewBookingDialog = true;
+        } else {
+          console.warn("BookingSingleComp ref is undefined");
+        }
+      });
+    },
+    async checkRoomCleaningNewEvent() {
+      let company_id = this.$auth.user.company_id;
+      let { data } = await this.$axios.get(`room-cleaning-event/${company_id}`);
+      if (data != this.roomCleaningEventCount) {
+        this.roomCleaningEventCount = this.$localStorage.get(
+          "roomCleaningEventCount"
+        );
+        //console.log("🚀 ~ checkRoomCleaningNewEvent ~ data:", data);
+        this.refreshRoomList();
+        this.room_list();
+        this.$localStorage.set("roomCleaningEventCount", data);
       }
     },
-    openExternalLink(path) {
-      let url = `https://backend.myhotel2cloud.com/api/get_audit_report_print?path=${path}`;
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", url);
-      document.body.appendChild(element);
-      console.log(element);
-      element.click();
+    handleSuccess(message) {
+      this.room_list();
+      this.alert("Success!", message, "success");
+      this.checkInDialog = false;
+      this.refreshRoomList();
+      setTimeout(() => {
+        this.refreshRoomList();
+      }, 1000);
+      setTimeout(() => {
+        this.refreshRoomList();
+      }, 1000 * 3);
+      this.keyTabAll++;
     },
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
+
+    handleNewSuccess() {
+      this.room_list();
+      this.BookingQuickCheckInCompKey += 1;
+      this.keyTabAll++;
+    },
+    refreshRoomList() {
+      this.room_list();
+      this.keyTabAll++;
+    },
+    updatePopupStatus(status) {
+      console.log("status", status);
+
+      this.componentPopupOpen = status;
+    },
+
+    get_next_day() {
+      // const today = new Date();
+      // const tomorrow = new Date(today);
+      // tomorrow.setDate(tomorrow.getDate() + 1);
+      // this.check_out_date = tomorrow.toISOString().substr(0, 10);
+
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const year = tomorrow.getFullYear();
+      const month = String(tomorrow.getMonth() + 1).padStart(2, "0");
+      const day = String(tomorrow.getDate()).padStart(2, "0");
+      const formattedDate = `${year}-${month}-${day}`;
+
+      return formattedDate;
+    },
+    goToBookingPage() {
+      //console.log(" this.newBookingRoom", this.newBookingRoom);
+      let currentDate = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      )
+        .toISOString()
+        .substr(0, 10);
+
+      this.reservation.isCalculate = true;
+      this.reservation.room_id = this.newBookingRoom.id;
+      this.reservation.room_type = this.newBookingRoom.room_type.name;
+      this.reservation.room_no = this.newBookingRoom.room_no;
+      this.reservation.check_in = currentDate;
+      this.reservation.booking_status = 2;
+
+      this.reservation.check_out = this.get_next_day();
+
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          roomType: this.reservation.room_type,
+          room_no: this.reservation.room_no,
+          checkin: this.reservation.check_in,
+          checkout: this.reservation.check_out,
+        },
+      };
+
+      this.$store.commit("booking_payload", payload);
+      this.$axios
+        .get(`get_data_by_select_with_tax`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.alert("Failure!", data.data, "error");
+            return false;
+          }
+
+          this.reservation.room_id = data.room.id;
+          this.reservation.price = data.total_price;
+          this.reservation.priceList = data.data;
+          this.reservation.total_tax = data.total_tax;
+
+          this.reservation.total_price_after_discount =
+            data.total_price_after_discount;
+          this.reservation.total_price = data.total_price;
+          this.reservation.total_discount = data.total_discount;
+
+          let commitObj = {
+            ...this.reservation,
+          };
+          ////console.log('reservation1', commitObj);
+          this.$store.commit("reservation", commitObj);
+          this.$router.push(`/hotel/new2`);
+        });
+    },
+    async logout() {
+      this.$axios.get(`/logout`).then(({ res }) => {
+        this.$auth.logout();
+        this.$router.push(`/login`);
+      });
+    },
+
+    can() {
+      if (
+        this.$auth.user.employee_role_id > 0 &&
+        this.$auth.user.is_verified == 0
+      ) {
+        this.logout();
+        this.$router.push(`login`);
+        return false;
+      } else {
+        return true;
+      }
+    },
+
+    handleTouchstart(event, room) {
+      //console.log(room);
+      this.touchstart(
+        event,
+        room?.booked_room?.id,
+        room?.booked_room?.booking?.booking_status
       );
     },
+    handleMouseOver(room) {
+      this.mouseOver(
+        room?.booked_room?.id,
+        room?.booked_room?.booking?.booking_status
+      );
+    },
+    getButtonClass(room) {
+      return room.booked_room?.background ===
+        "linear-gradient(135deg, #4390FC 0, #4390FC 100%)"
+        ? "element"
+        : "";
+    },
+    getBackgroundImage(room) {
+      return room?.booked_room?.background || "";
+    },
+    isDeviceStatusActive(room) {
+      return room.device?.latest_status === 1;
+    },
+
     caps(str) {
       if (str == "" || str == null) {
         return "---";
@@ -142,30 +782,414 @@ export default {
       }
     },
 
-    getSum(item, type) {
-      let sum = 0;
-      item.map((e) => {
-        e.transactions.map((e) =>
-          e.payment_method_id == type ? (sum += parseFloat(e.credit)) : 0
-        );
-      });
-      return sum.toFixed(2);
+    get_check_out() {
+      this.checkOutDialog = true;
+      this.get_transaction();
     },
 
-    async getdata() {
-      this.loading = true;
-      let options = {
+    get_transaction() {
+      let id = this.bookingId;
+      let payload = {
         params: {
           company_id: this.$auth.user.company.id,
-          from_date: this.from_date,
-          to_date: this.to_date,
         },
       };
+      this.$axios
+        .get(`get_transaction_by_booking_id/${id}`, payload)
+        .then(({ data }) => {
+          this.transactions = data.transactions;
+          this.totalTransactionAmount = data.totalTransactionAmount;
+        });
+    },
 
-      let { data } = await this.$axios.get("get_audit_report", options);
-      this.stats = data.stats;
-      this.headers = data.headers;
-      this.items = data.data;
+    mouseOver(bookedRoomId, bookingStatus) {
+      this.evenIid = bookedRoomId;
+      this.bookingStatus = bookingStatus;
+    },
+
+    touchstart(e, bookedRoomId, bookingStatus) {
+      this.evenIid = bookedRoomId;
+      this.bookingStatus = bookingStatus;
+      this.show(e, true);
+    },
+
+    mouseOverForAvailable(newBookingRoom) {
+      // this.newBookingRoom = newBookingRoom;
+      // //console.log(newBookingRoom);
+    },
+
+    closeNewCheckin() {
+      this.newBookingRoom = false;
+      this.NewBooking = false;
+    },
+
+    get_data(jsEvent = null) {
+      this.selected_booked_room_id = this.evenIid;
+
+      let payload = {
+        params: {
+          id: this.evenIid,
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.rightClickRoomId = "---";
+      this.$axios.get(`get_booked_room`, payload).then(({ data }) => {
+        let { booking, ...roomData } = data;
+        this.checkData = data.booking;
+        this.roomData = roomData;
+        this.bookingId = data.booking.id;
+
+        this.rightClickRoomId = data.booking.resourceId;
+
+        this.full_payment = "";
+        this.bookingStatus = data.booking_status;
+        this.customerId = data.booking.customer_id;
+        if (this.isDbCLick) {
+          this.get_event_by_db_click();
+        }
+      });
+    },
+
+    show(e, isTouch = false) {
+      this.showMenuForNewBooking = false;
+      e.preventDefault();
+      this.get_data();
+      if (isTouch) {
+        const currentTime = new Date().getTime();
+        const tapThreshold = 300; // milliseconds
+        if (this.lastTapTime && currentTime - this.lastTapTime < tapThreshold) {
+          this.$router.push(`/customer/details/${this.bookingId}`);
+          return;
+        }
+        this.lastTapTime = currentTime;
+      }
+
+      if (isTouch) {
+        const touch = e.touches[0];
+        this.x = touch.clientX;
+        this.y = touch.clientY;
+      } else {
+        this.x = e.clientX;
+        this.y = e.clientY;
+      }
+      this.$nextTick(() => {
+        this.showMenu = true;
+      });
+    },
+
+    makeNewBookingForTouch(e, newBookingRoom) {
+      this.newBookingRoom = newBookingRoom;
+      this.showMenu = false;
+      e.preventDefault();
+      const touch = e.touches[0];
+      this.x = touch.clientX;
+      this.y = touch.clientY;
+      this.$nextTick(() => {
+        this.showMenuForNewBooking = true;
+      });
+    },
+
+    makeNewBooking(e, newBookingRoom) {
+      this.newBookingRoom = newBookingRoom;
+
+      e.preventDefault();
+      this.x = e.clientX;
+      this.y = e.clientY;
+      this.$nextTick(() => {
+        this.showMenuForNewBooking = true;
+      });
+    },
+
+    roomStatus(status) {
+      let payload = {
+        company_id: this.$auth.user.company.id,
+        room_no: this.newBookingRoom.room_no,
+      };
+      this.$axios
+        .post(`set_room_status/${status}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.snackbar = data.status;
+            this.response = data.message;
+            return;
+          }
+          this.room_list();
+          this.snackbar = data.status;
+          this.response = data.message;
+        })
+        .catch((err) => console.log(err));
+    },
+
+    get_posting() {
+      let id = this.evenIid;
+      let payload = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+      this.$axios.get(`posting/${id}`, payload).then(({ data }) => {
+        this.postings = data;
+      });
+    },
+    alert(title = "Success!", message = "hello", type = "error") {
+      this.$swal(title, message, type);
+    },
+    room_list() {
+      this.gridLoading = true;
+      let payload = {
+        params: {
+          company_id: this.$auth.user && this.$auth.user.company.id,
+          // check_in: new Date().toJSON().slice(0, 10),
+          check_in: this.filterDate,
+          filter_date: this.filterDate,
+          page_name: "index",
+        },
+      };
+      this.$axios.get(`room_list_grid`, payload).then(({ data }) => {
+        if (!data.status) {
+          this.gridLoading = false;
+          this.alert("Failure!", data.data, "error");
+          return false;
+        }
+
+        this.rooms = data;
+        this.availableRooms = data.availableRooms;
+        this.reservedWithoutAdvance = data.reservedWithoutAdvance;
+        this.Occupied = data.checkIn;
+        this.expectCheckOut = data.expectCheckOut;
+        this.dirtyRoomsList = data.dirtyRoomsList;
+
+        let data1 = data.reservedWithoutAdvance.map((e) => e.room_no);
+        let data2 = data.expectCheckOut.map((e) => e.room_no);
+        let data3 = data.checkIn.map((e) => e.room_no);
+        let data4 = data.blockedRooms.map((e) => e.room_no);
+        let data5 = data.dirtyRoomsList.map((e) => e.room_no);
+        let data6 = data.bookedRooms.map((e) => e.room_no);
+
+        //console.log("data6 bookedRooms", data6);
+
+        let allRoomNumbers = [...data1, ...data2, ...data3, ...data4, ...data5];
+
+        //console.log("data6 allRoomNumbers", allRoomNumbers);
+        let uniqueRoomNumbers = [...new Set(allRoomNumbers)];
+
+        this.availableRooms = data.availableRooms.filter(
+          (e) => !uniqueRoomNumbers.includes(e.room_no)
+        );
+        //console.log("data6 availableRooms", this.availableRooms.length);
+        this.members = data.members;
+        this.foodOrdersCount = data.foodOrdersCount;
+
+        this.isIndex = true;
+        setTimeout(() => {
+          this.isPageLoad = true;
+        }, 100);
+        this.keyTabAll = 31;
+        this.keyTabexpected_arrival = 33;
+        this.keyTabdirty = 34;
+        this.keyTabblocked = 35;
+        this.keyTabavailable = 36;
+        this.keyTabcompliment = 37;
+        this.keyTabdirty = 38;
+        this.keyTabOccupied = 39;
+
+        try {
+          if (localStorage) {
+            localStorage.setItem(
+              "rooms_with_today_status",
+              JSON.stringify(data)
+            );
+          }
+        } catch (e) {
+          //console.log(e);
+        }
+        this.gridLoading = false;
+      });
+
+      this.keyTabAll++;
+    },
+
+    dblclick() {
+      this.isDbCLick = true;
+      this.get_data();
+    },
+
+    viewBillingDialog() {
+      let id = this.bookingId;
+      this.$router.push(`/customer/details/${id}`);
+    },
+
+    get_event_by_db_click() {
+      this.$router.push(`/customer/details/${this.bookingId}`);
+    },
+    changeCheckInAdminProcess() {
+      if (this.$auth.user.role.name.toLowerCase() != "admin") {
+        //alert("You are not authorized to Cancel the Checkin");
+
+        this.alert(
+          "Failure!",
+          "You are not authorized to Cancel the Checkin",
+          "error"
+        );
+        return false;
+      } else {
+        if (this.checkInCancelReason == "") {
+          alert("Enter reason");
+          return;
+        }
+
+        this.cancelLoad = true;
+
+        let payload = {
+          cancel_checkin_reason: this.checkInCancelReason,
+          cancel_checkin_userid: this.$auth.user.id,
+          booking_id: this.bookingId,
+          company_id: this.$auth.user.company.id,
+          booked_room_id: this.selected_booked_room_id,
+        };
+
+        this.$axios
+          .post(`change_checkin_to_booking_admin/${this.evenIid}`, payload)
+          .then(({ data }) => {
+            if (!data.status) {
+              this.snackbar = data.status;
+              this.response = data.message;
+              this.cancelLoad = false;
+              return;
+            }
+            this.cancelLoad = false;
+            this.room_list();
+            this.reason = "";
+            this.cancelDialog = false;
+            this.snackbar = data.status;
+            this.response = data.message;
+            this.cancelCheckInDialog = false;
+          })
+          .catch((err) => console.log(err));
+      }
+    },
+    setAvailable() {
+      let payload = {
+        cancel_by: this.$auth.user.id,
+        bookedRoomId: this.evenIid,
+      };
+
+      this.$axios
+        .post(`set_available/${this.bookingId}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.snackbar = data.status;
+            this.response = data.message;
+            return;
+          }
+          this.room_list();
+          this.cancelDialog = false;
+          this.snackbar = data.status;
+          this.response = data.message;
+        })
+        .catch((err) => console.log(err));
+    },
+
+    setMaintenance() {
+      let payload = {
+        cancel_by: this.$auth.user.id,
+      };
+      this.$axios
+        .post(`set_maintenance/${this.bookingId}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.snackbar = data.status;
+            this.response = data.message;
+            return;
+          }
+          this.room_list();
+          this.cancelDialog = false;
+          this.snackbar = data.status;
+          this.response = data.message;
+        })
+        .catch((err) => console.log(err));
+    },
+
+    cancelItem() {
+      if (this.reason == "") {
+        alert("Enter reason");
+        return;
+      }
+
+      this.cancelLoad = true;
+
+      let payload = {
+        reason: this.reason,
+        cancel_by: this.$auth.user.id,
+      };
+      this.$axios
+        .post(`cancel_room/${this.evenIid}`, payload)
+        .then(({ data }) => {
+          if (!data.status) {
+            this.snackbar = data.status;
+            this.response = data.message;
+            this.cancelLoad = false;
+            return;
+          }
+          this.cancelLoad = false;
+          this.room_list();
+          this.reason = "";
+          this.cancelDialog = false;
+          this.snackbar = data.status;
+          this.response = data.message;
+        })
+        .catch((err) => console.log(err));
+    },
+
+    succuss(
+      data,
+      check_in = true,
+      posting = true,
+      check_out = true,
+      advance_payment = true
+    ) {
+      if (check_in) {
+        this.checkData = {};
+        this.checkInDialog = false;
+        this.new_payment = 0;
+      }
+      if (check_out) {
+        this.checkData = {};
+        this.checkOutDialog = false;
+      }
+      if (posting) {
+        this.posting = {};
+        this.postingDialog = false;
+      }
+
+      if (advance_payment) {
+        this.checkData = {};
+        this.new_advance = 0;
+        this.payingAdvance = false;
+      }
+
+      this.room_list();
+      this.errors = [];
+      this.loading = false;
+      this.snackbar = true;
+      this.response = data.message;
+    },
+
+    close() {
+      this.checkInDialog = false;
+      this.new_payment = 0;
+      this.new_advance = 0;
+      this.payingAdvance = false;
+      this.checkOutDialog = false;
+      this.document = null;
+    },
+
+    closeCheckOut() {
+      this.checkOutDialog = false;
+    },
+
+    closeDialogs(res) {
+      this.succuss(res);
     },
   },
 };

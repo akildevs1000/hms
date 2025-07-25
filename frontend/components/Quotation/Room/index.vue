@@ -257,6 +257,8 @@ export default {
     },
     openExternalWinodw(id) {
       let url = `https://backend.myhotel2cloud.com/api/quotation-room/${id}`;
+      url = `https://hms-backend.test/api/quotation-room/${id}`;
+
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
@@ -265,6 +267,7 @@ export default {
     },
     openExternalWinodwForInvoice(id) {
       let url = `https://backend.myhotel2cloud.com/api/invoice-room/${id}`;
+      url = `https://hms-backend.test/api/invoice-room/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

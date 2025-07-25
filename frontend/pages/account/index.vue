@@ -20,13 +20,13 @@
               ]"
               :items="[
                 {
-                  Cash: $utils.currency_format(income?.Cash || 0),
-                  Card: $utils.currency_format(income?.Card || 0),
-                  Online: $utils.currency_format(income?.Online || 0),
-                  Bank: $utils.currency_format(income?.Bank || 0),
-                  UPI: $utils.currency_format(income?.UPI || 0),
-                  Cheque: $utils.currency_format(income?.Cheque || 0),
-                  CityLedger: $utils.currency_format(income?.CityLedger || 0),
+                  Cash: $utils.currency_format(income?.cash || 0),
+                  Card: $utils.currency_format(income?.card || 0),
+                  Online: $utils.currency_format(income?.cnline || 0),
+                  Bank: $utils.currency_format(income?.bank || 0),
+                  UPI: $utils.currency_format(income?.upi || 0),
+                  Cheque: $utils.currency_format(income?.cheque || 0),
+                  CityLedger: $utils.currency_format(income?.pending || 0),
                 },
               ]"
             />
@@ -160,24 +160,24 @@
               :total="'100'"
               :colors="colors"
               :labels="[
-                { color: `#4caf50`, text: `Cash`, value: income?.Cash || 0 },
-                { color: `#538234`, text: `Card`, value: income?.Card || 0 },
+                { color: `#4caf50`, text: `Cash`, value: income?.cash || 0 },
+                { color: `#538234`, text: `Card`, value: income?.card || 0 },
                 {
                   color: `#0f642b`,
                   text: `Online`,
                   value: income?.Online || 0,
                 },
-                { color: `#010002`, text: `Bank`, value: income?.Bank || 0 },
-                { color: `#010002`, text: `UPI`, value: income?.UPI || 0 },
+                { color: `#010002`, text: `Bank`, value: income?.bank || 0 },
+                { color: `#010002`, text: `UPI`, value: income?.upi || 0 },
                 {
                   color: `#010002`,
                   text: `Cheque`,
-                  value: income?.Cheque || 0,
+                  value: income?.cheque || 0,
                 },
                 {
                   color: `#010002`,
                   text: `CityLedger`,
-                  value: income?.CityLedger || 0,
+                  value: income?.pending || 0,
                 },
               ]"
             />
@@ -436,6 +436,7 @@ export default {
 
   methods: {
     handleIncome(e) {
+      console.log("🚀 ~ handleIncome ~ e:", e)
       this.income = e;
     },
     handleNonMagementExpense(e) {

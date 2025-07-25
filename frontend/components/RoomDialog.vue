@@ -50,7 +50,6 @@
                         ></v-text-field>
                       </template>
                       <v-date-picker
-                        :min="new Date().toISOString().substr(0, 10)"
                         v-model="temp.check_in"
                         no-title
                         @input="addOneDay(temp.check_in)"

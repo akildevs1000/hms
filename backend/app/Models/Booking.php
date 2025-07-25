@@ -394,18 +394,26 @@ class Booking extends Model
     {
         $count = self::where('company_id', $this->company_id)
             ->where('id', '<=', $this->id)
-            ->whereHas('customer', function ($q) {
-                $q->whereNotNull('gst_number')
-                    ->orWhereHas('source', function ($q2) {
-                        $q2->whereNotNull('gst');
+            ->where(function ($query) {
+                $query->whereHas('customer', function ($q) {
+                    $q->where(function ($q2) {
+                        $q2->whereNotNull('gst_number')
+                            ->orWhereHas('source', function ($q3) {
+                                $q3->whereNotNull('gst');
+                            });
                     });
-            })->count() ?? 1;
+                });
+            })
+            ->count();
 
         $number = str_pad(1000 + $count, 8, '0', STR_PAD_LEFT);
 
+        // Determine prefix
         $prefix = 'INV-';
-
-        if ($this->customer?->source?->gst != null || $this->customer->gst_number != null) {
+        if (
+            $this->customer?->gst_number !== null ||
+            $this->customer?->source?->gst !== null
+        ) {
             $prefix = 'GST-';
         }
 

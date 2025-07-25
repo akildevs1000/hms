@@ -22,3 +22,20 @@ Testing Test
 
 $ npm install vue2-datepicker --save
 
+
+
+
+
+
+queries
+--------
+select * from bookings where company_id = 11
+
+
+--select * from customers where company_id = 11 order by id desc
+
+--5466	"Walking"	"Mr"		"Lakahman.S"	"Srinivasan"
+--5465	"Walking"	"Mr"		"Sunil"	"Koshy"
+--5464	"Corporate"	"Mr"		"Samson"	"Samson"
+--5457	"Corporate"	"Mr"		"samson francis"
+

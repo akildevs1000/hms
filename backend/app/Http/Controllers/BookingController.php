@@ -2202,7 +2202,6 @@ class BookingController extends Controller
             }
         }
 
-        // $model->orderBy('id', 'desc');
 
         switch ($status) {
             case 'upcoming':
@@ -2226,6 +2225,7 @@ class BookingController extends Controller
                 'customer:id,first_name,last_name,document,source_id,gst_number',
             ])
             ->where('company_id', $request->company_id)
+            ->orderBy('check_in', 'desc')
             ->paginate($request->per_page ?? 20);
     }
 

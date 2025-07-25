@@ -180,15 +180,6 @@ export default {
       amount: null,
       payment_modes: "CASH",
     },
-    incomeStats: {
-      Cash: 0,
-      Card: 0,
-      Online: 0,
-      Bank: 0,
-      UPI: 0,
-      Cheque: 0,
-      CityLedger: 0,
-    },
     totals: {
       cash: 0,
       card: 0,
@@ -244,6 +235,8 @@ export default {
 
       this.totals = totals;
       this.allTotalProcessed = true;
+
+      this.$emit("stats", totals);
     },
 
     caps(str) {
@@ -301,8 +294,6 @@ export default {
         this.incomeData = data.data;
 
         this.getTotalCash(data.data);
-        this.incomeStats = data.stats;
-        this.$emit("stats", data.stats);
         this.loading = false;
       });
     },
