@@ -2223,7 +2223,7 @@ class BookingController extends Controller
                 'customer:id,first_name,last_name,document,source_id,gst_number',
             ])
             ->where('company_id', $request->company_id)
-            ->orderBy('check_in', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate($request->per_page ?? 20);
     }
 
@@ -2257,7 +2257,7 @@ class BookingController extends Controller
                 $q->withOut(['booking', "postings"]);
             }])
             ->where('company_id', $request->company_id)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->paginate($request->per_page ?? 20);
     }
 
