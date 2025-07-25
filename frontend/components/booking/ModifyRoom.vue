@@ -1143,9 +1143,10 @@ export default {
             parseFloat(this.old.booking.total_extra) /
             this.old.booking.booked_rooms.length;
 
+
           let discount =
-            parseFloat(this.old.booking.discount) /
-            this.old.booking.booked_rooms.length;
+            (parseFloat(this.old.booking.discount) /
+            this.old.booking.booked_rooms.length) * (total_days);
 
           // let discount =
           //   this.json.booking.discount /
@@ -1288,14 +1289,14 @@ export default {
           this.is_late_check_out = this.late_check_out > 0 ? true : false;
 
           this.json = {
-            total_days: 0,
+            discount: booking.discount * total_days,
+            total_days: total_days,
             total_price: 0,
             bed_amount: 0,
             early_check_in: 0,
             late_check_out: 0,
             food_plan_price: 0,
             total_extra: 0,
-            discount: 0,
             booking: booking,
             booking_remaining_price: 0,
             booking_total_price: 0,
