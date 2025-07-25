@@ -2164,7 +2164,6 @@ class BookingController extends Controller
     {
 
         $model = Booking::query()
-            ->latest()
             ->filter(request('search'));
 
         if ($request->filled('is_cash')) {
@@ -2224,7 +2223,7 @@ class BookingController extends Controller
                 'customer:id,first_name,last_name,document,source_id,gst_number',
             ])
             ->where('company_id', $request->company_id)
-            ->orderBy('id', 'desc')
+            ->orderBy('check_in', 'desc')
             ->paginate($request->per_page ?? 20);
     }
 
