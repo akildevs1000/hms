@@ -20,34 +20,6 @@ class BookedRoom extends Model
 
     const ROOM_STATUS = [0 => "Available", 1 => "Booked", 2 => "Checked In", 3 => "Checked Out", 4 => "Checked", 5 => "Dirty"];
 
-
-    // protected $fillable = [
-    //     "room_no",
-    //     "room_type",
-    //     "room_id",
-    //     "price",
-    //     "days",
-    //     "sgst",
-    //     "cgst",
-    //     "check_in",
-    //     "check_out",
-    //     "bed_amount",
-    //     "room_discount",
-    //     "after_discount",
-    //     "room_tax",
-    //     "total_with_tax",
-    //     "total",
-    //     "grand_total",
-    //     "company_id",
-    //     "no_of_adult",
-    //     "no_of_child",
-    //     "no_of_baby",
-    //     "tot_adult_food",
-    //     "tot_child_food",
-    //     "discount_reason",
-    //     "meal"
-    // ];
-
     protected $appends = [
         'resourceId',
         'title',
@@ -204,74 +176,9 @@ class BookedRoom extends Model
             (int) $status = 8;
         }
 
-
         return (new BookingController())->getRoomStatusColorCode($status);
 
-        // return match ($status) {
-        //     1 => 'linear-gradient(135deg, #02ADA4  0, #02ADA4 100%)', //paid advance
-        //     0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
-        //     // 2 => 'linear-gradient(135deg, #F95C39 0, #F95C39 100%)', //check in room
-        //     2 => 'linear-gradient(135deg, #800000 0, #800000 100%)', //check in room
-        //     // 3 => 'linear-gradient(135deg, #4390FC, #4390FC)',
-        //     // 3 => 'linear-gradient(135deg, #d66d75   0, #e29587 100%)', //dirty room
-        //     3 => 'linear-gradient(135deg, #ff0000   0, #ff0000 100%)', //dirty room
-        //     4 => 'linear-gradient(135deg, #34444c 0, #657177 100%)',
-        //     5 => 'green',
-        //     6 => 'linear-gradient(135deg, #FFBE00 0, #FFBE00 100%)', //only booking
-        //     7 => 'linear-gradient(135deg, #4390FC      0, #4390FC 100%)', //expect check out
-        //     8 => 'linear-gradient(135deg, #680081      0, #680081 100%)', //city ledger
-        // };
-
-        return match ($status) {
-
-            // 0 => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)', //available room
-            // 1 => '#92d051',
-            // 2 => '#0f642b',
-            // 3 => '#fe0000',
-            // 4 => 'linear-gradient(135deg, #34444c 0, #657177 100%)',
-            // 5 => 'green',
-            // 6 => 'linear-gradient(135deg, #FFBE00 0, #FFBE00 100%)', //only booking
-            // 7 => 'linear-gradient(135deg, #4390FC      0, #4390FC 100%)', //expect check out
-            // 8 => 'linear-gradient(135deg, #680081      0, #680081 100%)', //city ledger
-        };
     }
-
-    // public function SetCheckInAttribute($value)
-    // {
-    //     if (isset($this->attributes['room_category_type'])) {
-    //         if ($this->attributes['room_category_type'] == 'Hall') {
-
-    //             $this->attributes['check_in'] = $value;
-    //         }
-    //     } else {
-    //         $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
-    //     }
-    //     // $this->attributes['check_in'] = date('Y-m-d h:m', strtotime($value));
-
-
-    // }
-
-    // public function SetCheckOutAttribute($value)
-    // {
-    //     // dd($this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value)));
-
-    //     if (isset($this->attributes['room_category_type'])) {
-    //         if ($this->attributes['room_category_type'] == 'Hall') {
-
-    //             $this->attributes['check_out'] = $value;
-    //         }
-    //     } else {
-
-    //     }
-
-    //     $this->attributes['check_out'] = date('Y-m-d 11:00', strtotime($value));
-
-    //     // $date = Carbon::parse($value);
-    //     // $date->addDays(1);
-    //     // $d = $date->format('Y-m-d');
-    //     // $this->attributes['check_out'] = $d . ' ' . date('11:00:00');
-
-    // }
 
     public function GetCheckInTimeAttribute()
     {
