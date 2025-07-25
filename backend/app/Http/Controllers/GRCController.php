@@ -23,8 +23,6 @@ class GRCController extends Controller
 
         $prefix = "INV-";
 
-        $prefix = '';
-
         if ($booking->gst_number || $booking?->customer?->source?->gst) {
             $prefix = 'GST-';
         }
