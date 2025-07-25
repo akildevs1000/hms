@@ -10,6 +10,7 @@ use App\Http\Controllers\ReportController;
   // Route::get('report', [CustomerController::class, 'index']);
 
   Route::get('invoice/{id}/{inv?}', [GRCController::class, 'index'])->name('pdf.invoice');
+  Route::get('invoice-test/{id}/{inv?}', [GRCController::class, 'index_test']);
 
   Route::get('checkin_report_print', [ReportController::class, 'CHeckInReport']);
   Route::get('checkin_report_download', [ReportController::class, 'CHeckInReportDownload']);

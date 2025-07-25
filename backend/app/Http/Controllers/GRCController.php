@@ -150,4 +150,72 @@ class GRCController extends Controller
             ->setPaper('a4', 'portrait')
             ->stream();
     }
+
+    public function index_test($id)
+    {
+        $booking = Booking::with([
+            'orderRooms',
+            'customer',
+            'company.user',
+            'company.contact',
+            'transactions',
+            'transactions.paymentMode',
+            'bookedRooms',
+        ])->find($id);
+
+        $prefix = "INV-";
+
+        $prefix = '';
+
+        if ($booking->gst_number || $booking?->customer?->source?->gst) {
+            $prefix = 'GST-';
+        }
+
+        $invoice = $prefix . str_pad($id, 4, '0', STR_PAD_LEFT);
+
+        $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
+
+        $orderRooms   = $booking->orderRooms;
+        $company      = $booking->company;
+        $transactions = $booking->transactions;
+        $bookedRooms  = $booking->bookedRooms;
+
+        $first_check_in_time  = $bookedRooms[0]["check_in_time"] ?? "00:00";
+        $first_check_out_time = $bookedRooms[0]["check_out_time"] ?? "00:00";
+
+        $roomTypes   = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
+        $paymentMode = $transactions->toArray();
+        $paymentMode = end($paymentMode);
+
+        // $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
+        $amtLatter = $this->amountToText($booking->total_price ?? 0);
+
+        $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
+            return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
+        });
+
+        $roomsDiscount = $booking->bookedRooms->sum(function ($room) {
+            return $room->room_discount;
+        });
+
+        $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-31'));
+
+        $bladeName = 'invoice.invoice_updated_with_tax';
+
+        //$bladeName = 'invoice.invoice';
+
+        // if ($booking->tax_recalculated_status) {
+        //     $bladeName = 'invoice.invoice_updated_with_tax';
+        // } else if ($is_old_bill <= 0) {
+
+        //     $bladeName = 'invoice.invoice_old_bills';
+        // }
+
+        return view($bladeName, compact("invoice", "first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+
+        return Pdf::loadView($bladeName, compact("booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount"))
+        // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
 }
