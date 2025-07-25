@@ -27,7 +27,15 @@ class GRCController extends Controller
             $prefix = 'GST-';
         }
 
-        $invoice = $prefix . str_pad($id, 4, '0', STR_PAD_LEFT);
+        $previousCount = Booking::where('company_id', $booking->company_id)
+            ->where('created_at', '<', $booking->created_at)
+            ->count();
+
+        $startFrom = 1000;
+
+        $currentCount = $previousCount + $startFrom + 1;
+
+        $invoice = str_pad($prefix . $currentCount, 4, '0', STR_PAD_LEFT);
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
 
@@ -167,7 +175,14 @@ class GRCController extends Controller
             $prefix = 'GST-';
         }
 
-        $invoice = $prefix . str_pad($id, 4, '0', STR_PAD_LEFT);
+        $previousCount = Booking::where('company_id', $booking->company_id)
+            ->where('created_at', '<', $booking->created_at)
+            ->count();
+
+        $startFrom    = 1000;
+        $currentCount = $previousCount + $startFrom + 1;
+
+        $invoice = str_pad($prefix . $currentCount, 4, '0', STR_PAD_LEFT);
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
 
