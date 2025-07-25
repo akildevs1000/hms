@@ -38,8 +38,8 @@ class GRCController extends Controller
         $transactions = $booking->transactions;
         $bookedRooms  = $booking->bookedRooms;
 
-        $first_check_in_time  = $bookedRooms[0]["check_in_time"] ?? "00:00";
-        $first_check_out_time = $bookedRooms[0]["check_out_time"] ?? "00:00";
+        $first_check_in_time  = $bookedRooms[0]["actual_check_in_time"] ?? "00:00";
+        $first_check_out_time = $bookedRooms[0]["actual_check_out_time"] ?? "00:00";
 
         $roomTypes   = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
         $paymentMode = $transactions->toArray();
@@ -180,8 +180,8 @@ class GRCController extends Controller
         $transactions = $booking->transactions;
         $bookedRooms  = $booking->bookedRooms;
 
-        $first_check_in_time  = $bookedRooms[0]["check_in_time"] ?? "00:00";
-        $first_check_out_time = $bookedRooms[0]["check_out_time"] ?? "00:00";
+        $first_check_in_time  = $bookedRooms[0]["actual_check_in_time"] ?? "00:00";
+        $first_check_out_time = $bookedRooms[0]["actual_check_out_time"] ?? "00:00";
 
         $roomTypes   = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
         $paymentMode = $transactions->toArray();
