@@ -2224,6 +2224,7 @@ class BookingController extends Controller
                 'customer:id,first_name,last_name,document,source_id,gst_number',
             ])
             ->where('company_id', $request->company_id)
+            ->orderBy('id', 'desc')
             ->paginate($request->per_page ?? 20);
     }
 
