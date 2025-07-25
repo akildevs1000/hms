@@ -2257,7 +2257,7 @@ class BookingController extends Controller
                 $q->withOut(['booking', "postings"]);
             }])
             ->where('company_id', $request->company_id)
-            ->orderBy('id', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate($request->per_page ?? 20);
     }
 
