@@ -216,7 +216,7 @@
                                                         {{ number_format($room_cgst, 2) }}
                                                     </td>
                                                     <td class="tm_text_right">
-                                                        {{ number_format(round($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst, -2), 2) }}
+                                                        {{ number_format(($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst), 2) }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -287,7 +287,7 @@
                                                     {{ number_format($subtotal_cgst, 2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                     {{ number_format(round($subtotal_total, -2), 2) }}
+                                                     {{ number_format(($subtotal_total), 2) }}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -330,7 +330,7 @@
                                                     class="tm_width_3 tm_primary_color tm_bold tm_text_right tm_border_none tm_pt0">
                                                     {{ $company->currency ? $company->currency : '' }}
 
-                                                     {{ number_format(round($subtotal_total, -2), 2) }}
+                                                     {{ number_format(($subtotal_total), 2) }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -340,7 +340,7 @@
                                                 <td
                                                     class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
                                                     {{ $company->currency ? $company->currency : '' }}
-                                                    {{ number_format(round($booking->paid_amounts, -2), 2) }}
+                                                    {{ number_format(($booking->paid_amounts), 2) }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -351,7 +351,7 @@
                                                 <td
                                                     class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
                                                      
-                                                    {{ $company->currency ? $company->currency : '' }}{{ number_format(round($subtotal_total - $booking->paid_amounts, -2), 2) }}
+                                                    {{ $company->currency ? $company->currency : '' }}{{ number_format(($subtotal_total - $booking->paid_amounts), 2) }}
                                                 </td>
                                             </tr>
                                         </tbody>
