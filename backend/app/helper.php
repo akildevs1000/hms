@@ -34,9 +34,7 @@ use Illuminate\Support\Facades\File;
 //     return (isset($image)) ? $image : null;
 // }
 
-
-// function ld($arr)
-// {
-//     echo "<pre>";
-//     echo json_encode($arr, JSON_PRETTY_PRINT);
-// }
+function lightDump($arr)
+{
+    return json_encode($arr, JSON_PRETTY_PRINT);
+}
