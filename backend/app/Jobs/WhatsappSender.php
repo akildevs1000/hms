@@ -34,8 +34,7 @@ class WhatsappSender implements ShouldQueue
 
     public function getClient($company_id)
     {
-        return "RS_1_1745417458638";
-        $clientId = WhatsappClient::where("company_id", $company_id)->value("accounts")[0]["clientId"] ?? "RS_1_1745417458638";
+        $clientId = WhatsappClient::where("company_id", $company_id)->value("accounts")[0]["clientId"];
         return $clientId;
     }
 }
