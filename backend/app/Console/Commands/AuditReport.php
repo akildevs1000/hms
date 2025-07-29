@@ -72,7 +72,7 @@ class AuditReport extends Command
                 foreach ($emailsArray as $email) {
                     if (strpos($email, '@')) {
 
-                        $email  = "francisgill1000@gmail.com";
+                        // $email  = "francisgill1000@gmail.com";
 
                         $this->info("Cron: $script_name. Night Audit mail sent to $email ");
 
