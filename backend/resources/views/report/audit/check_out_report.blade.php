@@ -444,8 +444,8 @@ $balanceTotal+=$item->balance;
                     <td>{{ ++$index }}</td>
                     <td>{{ $item->customer->first_name ?? '' }}</td>
                     <td> {{ $item->reservation_no }} </td>
-                    <td class="room-width"> {{ $item->rooms }} </td>
-                    <td>{{ $item->source ?? '' }}</td>
+                    <td class="room-width"> {{ implode(',', array_column($item->bookedRooms->toArray(), 'room_type')) ?? '---' }} </td>
+                    <td>{{ $item->source ?? '---' }}</td>
                     <td>{{ $item->check_in ?? '' }}</td>
                     <td>{{ $item->check_out ?? '' }}</td>
                     <td class="text-right">{{ $item->total_price }}</td>
