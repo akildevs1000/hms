@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EmailNotifications\StoreEmailNotificationsRequest;
@@ -19,17 +18,20 @@ class EmailNotificationsController extends Controller
     public function index(Request $request)
     {
 
-        $model = EmailNotifications::with(['report_type_access.report_type']);
+        $model = EmailNotifications::where("company_id", $request->company_id)->with(['report_type_access.report_type']);
 
         //datatable Filters
         if ($request->filled('email')) {
-            $model->where('email', env("WILD_CARD") ?? 'ILIKE', "$request->email%");}
+            $model->where('email', env("WILD_CARD") ?? 'ILIKE', "$request->email%");
+        }
 
         if ($request->filled('name')) {
-            $model->where('name', env("WILD_CARD") ?? 'ILIKE', "$request->name%");}
+            $model->where('name', env("WILD_CARD") ?? 'ILIKE', "$request->name%");
+        }
 
         if ($request->filled('whatsapp_number')) {
-            $model->where('whatsapp_number', 'like', "$request->whatsapp_number%");}
+            $model->where('whatsapp_number', 'like', "$request->whatsapp_number%");
+        }
 
         if ($request->filled('status')) {
             $model->where('status', $request->status);
@@ -50,7 +52,7 @@ class EmailNotificationsController extends Controller
         } else {
             $model->orderBy('email', 'ASC');
         }
-        $model->where("company_id",$request->company_id);
+
         return $model->paginate($request->per_page);
     }
 
@@ -75,7 +77,7 @@ class EmailNotificationsController extends Controller
 
         // $data = $request->validated();
         try {
-            $data = $request->all();
+            $data      = $request->all();
             $dataArray = json_decode($data['list']);
             foreach ($dataArray as $value) {
                 $verifyIsEmail = EmailNotifications::where('company_id', $request->company_id)->where('email', $value->email)->count();
