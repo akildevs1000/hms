@@ -50,7 +50,7 @@ class EmailNotificationsController extends Controller
         } else {
             $model->orderBy('email', 'ASC');
         }
-
+        $model->where("company_id",$request->company_id);
         return $model->paginate($request->per_page);
     }
 
