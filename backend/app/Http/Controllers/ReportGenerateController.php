@@ -42,7 +42,7 @@ class ReportGenerateController extends Controller
         $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($model, $request);
         $cancelRooms             = $this->cancelRooms($request);
 
-        $foodOrderList = $this->getFoodOrderList($request);
+        // $foodOrderList = $this->getFoodOrderList($request);
 
         $totExpense = Expense::whereCompanyId($request->company_id)
             ->where('is_management', 0)
@@ -78,9 +78,9 @@ class ReportGenerateController extends Controller
             $pdf      = Pdf::loadView('report.audit.cancel_rooms', ['data' => $cancelRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
             Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
             //Food Order list
-            $fileName = "Food Order list";
-            $pdf      = Pdf::loadView('report.audit.food_order_list', ['data' => $foodOrderList, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-            Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+            // $fileName = "Food Order list";
+            // $pdf      = Pdf::loadView('report.audit.food_order_list', ['data' => $foodOrderList, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
+            // Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
 
             return 'Reports are  generated successfully ' . $company_id . '.\n';
         }
