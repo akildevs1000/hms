@@ -10,23 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ReportGenerateController extends Controller
 {
-    public function generateAuditReport()
-    {
-        $company_ids = $this->getNotificationCompanyIds();
-        $date        = date('Y-m-d');
-        //$date = date('Y-07-01');
-
-        $responses = [];
-
-        foreach ($company_ids as $company_id) {
-
-            $model       = Booking::query();
-            $responses[] = $this->processData($company_id, $model, $date, 'Today Checkin Report', 1);
-        }
-
-        return $responses;
-    }
-    public function processData($company_id, $model, $date, $fileName = "", $reportType)
+    public function processData($company_id, $date)
     {
 
         $request = [
@@ -47,36 +31,36 @@ class ReportGenerateController extends Controller
         $fileName = "Today Check-in Report";
         $pdf      = Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
             ->setPaper('a4', 'landscape')->output();
-        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        Storage::disk('public')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
         //Continue Report
         $fileName = "Continue Report";
         $pdf      = Pdf::loadView('report.audit.continue_report', ['data' => $continueRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
             ->setPaper('a4', 'landscape')->output();
-        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        Storage::disk('public')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
         //Check-out Report
         $fileName = "Check-out Report";
         $pdf      = Pdf::loadView('report.audit.check_out_report', ['data' => $todayCheckOut, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        Storage::disk('public')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
         //Today Booking Report
         $fileName = "Today Booking Report";
         $pdf      = Pdf::loadView('report.audit.today_booking_report', ['data' => $totalBookings, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        Storage::disk('public')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
         //City Ledger Report
         $fileName = "City Ledger Report";
         $pdf      = Pdf::loadView('report.audit.city_ledger_report', ['data' => $cityLedgerPayments, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        Storage::disk('public')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
         //Cancel Rooms Report
         $fileName = "Cancel Rooms Report";
         $pdf      = Pdf::loadView('report.audit.cancel_rooms', ['data' => $cancelRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        Storage::disk('public')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
         //Food Order list
         // $fileName = "Food Order list";
         // $pdf      = Pdf::loadView('report.audit.food_order_list', ['data' => $foodOrderList, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-        // Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        // Storage::disk('public')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
         // info(lightDump($request));
         // info(lightDump(count($totalBookings)));
         return [
-            "company_id" => $company_id,
+            "company_id"           => $company_id,
             'today_checkin'        => count($todayCheckin) ?? 0,
             'continue_rooms'       => count($continueRooms) ?? 0,
             'today_checkout'       => count($todayCheckOut) ?? 0,
