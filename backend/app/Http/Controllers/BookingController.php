@@ -3041,7 +3041,7 @@ class BookingController extends Controller
         ];
     }
 
-    public function processNotification($action, $heading, $request)
+    public function processNotification($action, $heading, $request,$reservation)
     {
         $payload = [
             "command"    => $action,
@@ -3055,7 +3055,9 @@ class BookingController extends Controller
                 "full_name"  => ucfirst($request->first_name) . " " . ucfirst($request->last_name) ?? 'Guest',
                 "from_date"  => date('d-M-y H:i', strtotime($request->check_in)),
                 "to_date"    => date('d-M-y H:i', strtotime($request->check_out)),
-                // 'room_type'  => "castle",
+                "room_type"  => $request->room_type,
+                "room_no"    => $request->room_no,
+                "reservation"    => $reservation,
                 "company_id" => $request->company_id,
             ],
         ];
@@ -3152,7 +3154,7 @@ class BookingController extends Controller
 
             DB::commit();
 
-            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request);
+            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request, $this->getReservationNumber($data));
 
             sleep(2);
 
