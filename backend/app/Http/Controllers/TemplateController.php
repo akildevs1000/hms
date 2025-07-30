@@ -65,7 +65,7 @@ class TemplateController extends Controller
         return Template::orderByDesc("id")->where([
             "company_id" => request("company_id", 0),
             "medium" => request("medium", "email")
-        ])->paginate(request("per_page", 15));
+        ])->paginate(100);
     }
 
     /**
