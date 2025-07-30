@@ -1,9 +1,9 @@
 <template>
   <v-dialog
     v-model="checkInDialog"
-    persistent
+    persistent width="800"
   >
-    <AssetsIconClose left="1290" @click="checkInDialog = false" />
+    <AssetsIconClose left="790" @click="checkInDialog = false" />
     <template v-slot:activator="{ on, attrs }">
       <span v-bind="attrs" v-on="on"> Cancel Room </span>
     </template>
