@@ -5,7 +5,6 @@ use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
 use App\Models\Company;
-use App\Models\Expense;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,12 +16,15 @@ class ReportGenerateController extends Controller
         $date        = date('Y-m-d');
         //$date = date('Y-07-01');
 
+        $responses = [];
+
         foreach ($company_ids as $company_id) {
-            $model = Booking::query();
-            echo $this->processData($company_id, $model, $date, 'Today Checkin Report', 1);
+
+            $model       = Booking::query();
+            $responses[] = $this->processData($company_id, $model, $date, 'Today Checkin Report', 1);
         }
 
-        return true;
+        return $responses;
     }
     public function processData($company_id, $model, $date, $fileName = "", $reportType)
     {
@@ -35,56 +37,54 @@ class ReportGenerateController extends Controller
 
         $model = Booking::query();
 
-        $todayCheckin            = $this->todayCheckinAudit($model, $request);
-        $continueRooms           = $this->continueAudit($model, $request);
-        $todayCheckOut           = $this->todayCheckOutAudit($model, $request);
-        $todayPayments           = $this->todayPaymentsAudit($model, $request);
-        $cityLedgerPaymentsAudit = $this->cityLedgerPaymentsAudit($model, $request);
-        $cancelRooms             = $this->cancelRooms($request);
+        $todayCheckin       = $this->todayCheckinAudit($model, $request);
+        $continueRooms      = $this->continueAudit($model, $request);
+        $todayCheckOut      = $this->todayCheckOutAudit($model, $request);
+        $totalBookings      = $this->todayPaymentsAudit($model, $request);
+        $cityLedgerPayments = $this->cityLedgerPaymentsAudit($model, $request);
+        $cancelRooms        = $this->cancelRooms($request);
 
-        // $foodOrderList = $this->getFoodOrderList($request);
+        $fileName = "Today Check-in Report";
+        $pdf      = Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
+            ->setPaper('a4', 'landscape')->output();
+        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        //Continue Report
+        $fileName = "Continue Report";
+        $pdf      = Pdf::loadView('report.audit.continue_report', ['data' => $continueRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
+            ->setPaper('a4', 'landscape')->output();
+        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        //Check-out Report
+        $fileName = "Check-out Report";
+        $pdf      = Pdf::loadView('report.audit.check_out_report', ['data' => $todayCheckOut, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
+        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        //Today Booking Report
+        $fileName = "Today Booking Report";
+        $pdf      = Pdf::loadView('report.audit.today_booking_report', ['data' => $totalBookings, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
+        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        //City Ledger Report
+        $fileName = "City Ledger Report";
+        $pdf      = Pdf::loadView('report.audit.city_ledger_report', ['data' => $cityLedgerPayments, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
+        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        //Cancel Rooms Report
+        $fileName = "Cancel Rooms Report";
+        $pdf      = Pdf::loadView('report.audit.cancel_rooms', ['data' => $cancelRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
+        Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        //Food Order list
+        // $fileName = "Food Order list";
+        // $pdf      = Pdf::loadView('report.audit.food_order_list', ['data' => $foodOrderList, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
+        // Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
+        // info(lightDump($request));
+        // info(lightDump(count($totalBookings)));
+        return [
+            "company_id" => $company_id,
+            'today_checkin'        => count($todayCheckin) ?? 0,
+            'continue_rooms'       => count($continueRooms) ?? 0,
+            'today_checkout'       => count($todayCheckOut) ?? 0,
+            'total_bookings'       => count($totalBookings) ?? 0,
+            'city_ledger_payments' => count($cityLedgerPayments) ?? 0,
+            'cancelled_rooms'      => count($cancelRooms) ?? 0,
+        ];
 
-        $totExpense = Expense::whereCompanyId($request->company_id)
-            ->where('is_management', 0)
-            ->whereDate('created_at', $date)
-            ->sum('total');
-
-        //if (count($todayCheckin) > 0)
-        ///Today Check-in Report
-        {
-            $fileName = "Today Check-in Report";
-            $pdf      = Pdf::loadView('report.audit.today_check_in', ['data' => $todayCheckin, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
-                ->setPaper('a4', 'landscape')->output();
-            Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-            //Continue Report
-            $fileName = "Continue Report";
-            $pdf      = Pdf::loadView('report.audit.continue_report', ['data' => $continueRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])
-                ->setPaper('a4', 'landscape')->output();
-            Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-            //Check-out Report
-            $fileName = "Check-out Report";
-            $pdf      = Pdf::loadView('report.audit.check_out_report', ['data' => $todayCheckOut, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-            Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-            //Today Booking Report
-            $fileName = "Today Booking Report";
-            $pdf      = Pdf::loadView('report.audit.today_booking_report', ['data' => $todayPayments, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-            Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-            //City Ledger Report
-            $fileName = "City Ledger Report";
-            $pdf      = Pdf::loadView('report.audit.city_ledger_report', ['data' => $cityLedgerPaymentsAudit, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-            Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-            //Cancel Rooms Report
-            $fileName = "Cancel Rooms Report";
-            $pdf      = Pdf::loadView('report.audit.cancel_rooms', ['data' => $cancelRooms, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-            Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-            //Food Order list
-            // $fileName = "Food Order list";
-            // $pdf      = Pdf::loadView('report.audit.food_order_list', ['data' => $foodOrderList, 'company' => Company::find($company_id), 'fileName' => $fileName, 'date' => $date])->setPaper('a4', 'landscape')->output();
-            // Storage::disk('local')->put("pdf/" . $date . '/' . $company_id . '/' . $fileName . '.pdf', $pdf);
-
-            return 'Reports are  generated successfully ' . $company_id . '.\n';
-        }
-        return ' data no found';
     }
     public function processData_old($company_id, $model, $date, $fileName = "", $reportType)
     {
@@ -229,6 +229,7 @@ class ReportGenerateController extends Controller
                 $q->where('booking_status', '=', 2);
                 $q->where('company_id', $company_id);
                 $q->whereDate('check_in', '<', $request->date);
+                $q->whereYear('check_in', date("Y"));
             })
             ->withSum(['transactions' => function ($q) use ($request) {
                 $q->whereDate('date', $request->date);
