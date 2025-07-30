@@ -5,6 +5,7 @@ use App\Http\Requests\Booking\BookingRequest;
 use App\Http\Requests\Booking\DocumentRequest;
 use App\Jobs\EmailSender;
 use App\Jobs\StoreBookedRoomsJob;
+use App\Jobs\StoreBookedRoomsJobForDirectCheckIn;
 use App\Jobs\WhatsappSender;
 use App\Models\BookedRoom;
 use App\Models\Booking;
@@ -1175,7 +1176,7 @@ class BookingController extends Controller
                             "booking_status"        => BookedRoom::CHECKED_OUT,
                             "room_status"           => BookedRoom::CHECKED_OUT,
                             "is_dirty"              => 1,
-                            "actual_check_out_time"  => date('H:i'),
+                            "actual_check_out_time" => date('H:i'),
                         ]
                     );
 
@@ -1287,10 +1288,10 @@ class BookingController extends Controller
 
             BookedRoom::where(["booking_id" => $booking_id, "room_id" => $room_id])->update(
                 [
-                    "booking_status" => BookedRoom::CHECKED_OUT,
-                    "room_status"    => BookedRoom::CHECKED_OUT,
-                    "is_dirty"       => 1,
-                    "actual_check_out_time"  => date('H:i'),
+                    "booking_status"        => BookedRoom::CHECKED_OUT,
+                    "room_status"           => BookedRoom::CHECKED_OUT,
+                    "is_dirty"              => 1,
+                    "actual_check_out_time" => date('H:i'),
                 ]
             );
 
@@ -2101,14 +2102,13 @@ class BookingController extends Controller
             'total_days'            => $request->json["total_days"],
             'user_id'               => $request->json["user_id"],
             'sub_total'             => $request->json["total_price"], // use for sub_total like 12320
-            'total_price'           => $request->json["total"], // use for sub_total like 12000
+            'total_price'           => $request->json["total"],       // use for sub_total like 12000
             'balance'               => $balance,
 
             'remaining_price'       => $remaining_price,
             'grand_remaining_price' => $grand_remaining_price,
             'discount'              => $request->json["discount"],
         ];
-
 
         Logger::channel("custom")->info(lightDump(["bookingPayload" => $bookingPayload]));
 
@@ -3097,6 +3097,68 @@ class BookingController extends Controller
                 'message' => 'Failed to delete booking',
                 'error'   => $e->getMessage(),
             ], 500);
+        }
+    }
+
+    public function direchCheckIn(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $request['customer_id'] = $this->customerStore($request->only(Customer::customerAttributes()));
+
+            $data                          = [];
+            $data                          = $request->only(Booking::bookingAttributes());
+            $data['booking_date']          = date("Y-m-d");
+            $data['payment_status']        = $request->all_room_Total_amount == $request->remaining_price ? '0' : '1';
+            $data['remaining_price']       = (float) $request->total_price - (float) $request->advance_price;
+            $data['grand_remaining_price'] = (int) $request->total_price - (float) $request->advance_price;
+            $data['reservation_no']        = $this->getReservationNumber($data);
+            $data['verified']              = Booking::VERIFICATION_REQUIRED;
+            $data['booking_type']          = $request->booking_type ?? "room";
+
+            $data['discount']    = $request->room_discount ?? 0;
+            $data['total_extra'] = $request->room_extra_amount ?? 0;
+
+            if ($request->filled('api_json_reference_number')) {
+                $data['widget_confirmation_number'] = $request->api_json_reference_number;
+            }
+
+            if ($request->filled("payment_reference_id")) {
+                $data['payment_reference_id'] = $request->payment_reference_id;
+                $data['payment_response']     = json_encode($request->payment_response);
+            }
+
+            $booking = Booking::create($data);
+
+            if ($booking) {
+
+                (new Booking)->processFinancials($booking, $request);
+
+                $data = [
+                    'selectedRooms'     => $request->input('selectedRooms'),
+                    'room_discount'     => $request->input('room_discount'),
+                    'room_extra_amount' => $request->input('room_extra_amount'),
+                    'booking_id'        => $booking->id,
+                    'customer_id'       => $request['customer_id'],
+                    'company_id'        => $request->company_id ?? 3,
+                    'booking_status'    => BookedRoom::CHECKED_IN,
+                ];
+
+                StoreBookedRoomsJobForDirectCheckIn::dispatch($data);
+            }
+
+            DB::commit();
+
+            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request);
+
+            sleep(2);
+
+            return response()->json(['data' => $booking->id, 'booking_reservation_number' => $this->getReservationNumber($data), 'status' => true]);
+
+            // all good
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error
         }
     }
 }

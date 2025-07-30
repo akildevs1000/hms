@@ -107,6 +107,7 @@
 
    Route::post('individual-booking', [BookingController::class, 'individualBooking']);
    Route::post('group-booking', [BookingController::class, 'groupBooking']);
+   Route::post('direct-checkin', [BookingController::class, 'direchCheckIn']);
    Route::post('hall-booking', [BookingController::class, 'hallBooking']);
    Route::post('verify-customer', [VerificationController::class, 'verifyBooking']);
 

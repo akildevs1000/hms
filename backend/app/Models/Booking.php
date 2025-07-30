@@ -1,8 +1,11 @@
 <?php
-
 namespace App\Models;
 
+use App\Http\Controllers\AgentsController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TaxableController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Payment;
@@ -18,19 +21,17 @@ class Booking extends Model
 {
     use HasFactory;
 
-    const VERIFICATION_SLEEP = 0;
-    const VERIFICATION_REQUIRED = 1;
+    const VERIFICATION_SLEEP     = 0;
+    const VERIFICATION_REQUIRED  = 1;
     const VERIFICATION_COMPLETED = 2;
 
-    const AVAILABLE = 0;
-    const BOOKED = 1;
-    const CHECKED_IN = 2;
+    const AVAILABLE   = 0;
+    const BOOKED      = 1;
+    const CHECKED_IN  = 2;
     const CHECKED_OUT = 3;
 
     const ROOM = "room";
     const HALL = "hall";
-
-
 
     protected $guarded = [];
     protected $appends = [
@@ -58,9 +59,9 @@ class Booking extends Model
 
     protected $casts = [
         // 'booking_date' => 'datetime:Y-m-d',
-        'check_in_date' => 'datetime:d-M-y H:i',
+        'check_in_date'  => 'datetime:d-M-y H:i',
         'check_out_date' => 'datetime:d-M-y H:i',
-        'created_at' => 'datetime:Y-m-d H:i',
+        'created_at'     => 'datetime:Y-m-d H:i',
     ];
 
     public function room()
@@ -141,7 +142,6 @@ class Booking extends Model
 
         return (new BookingController())->getRoomStatusColorCode($status);
 
-
         // return match ($status) {
         //     '0' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
         //     '1' => 'linear-gradient(135deg, #f48665 0, #d68e41 100%)',
@@ -157,7 +157,6 @@ class Booking extends Model
         $status = Room::find($this->room_id)->status ?? '0';
 
         return (new BookingController())->getRoomStatusColorCode($status);
-
 
         // return match ($status) {
         //     '0' => 'linear-gradient(135deg, #23bdb8 0, #65a986 100%)',
@@ -184,7 +183,6 @@ class Booking extends Model
 
     // public function SetCheckInAttribute($value)
     // {
-
 
     //     // $this->attributes['check_in'] = $value . ' ' . date('H:i:s');
     //     if (session('isCheckInSes')) {
@@ -247,7 +245,7 @@ class Booking extends Model
 
     public function getDocumentAttribute($value)
     {
-        if (!$value) {
+        if (! $value) {
             return null;
         }
         return asset('storage/documents/booking/' . $value);
@@ -256,22 +254,22 @@ class Booking extends Model
     public function scopeFilter($query, $filter)
     {
         $query->when($filter ?? false, fn($query, $search) =>
-        $query->where(
-            fn($query) => $query
-                ->orWhere('id', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                ->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                ->orWhere('reference_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                ->orWhere('type', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                ->orWhereHas(
-                    'customer',
-                    fn($query) =>
-                    $query->Where('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                        ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                        ->orWhere('title', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                        ->orWhere('whatsapp', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                        ->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
-                )
-        ));
+            $query->where(
+                fn($query) => $query
+                    ->orWhere('id', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                    ->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                    ->orWhere('reference_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                    ->orWhere('type', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                    ->orWhereHas(
+                        'customer',
+                        fn($query) =>
+                        $query->Where('first_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                            ->orWhere('last_name', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                            ->orWhere('title', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                            ->orWhere('whatsapp', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                            ->orWhere('contact_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                    )
+            ));
     }
 
     public function payments()
@@ -385,35 +383,26 @@ class Booking extends Model
         $amount = $this->total_with_posting;
 
         $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
-        $text = ucwords($formatter->format($amount));
+        $text      = ucwords($formatter->format($amount));
         return $text . " Only";
     }
-
 
     public function getInvoiceNumberAttribute()
     {
         $count = self::where('company_id', $this->company_id)
             ->where('id', '<=', $this->id)
-            ->where(function ($query) {
-                $query->whereHas('customer', function ($q) {
-                    $q->where(function ($q2) {
-                        $q2->whereNotNull('gst_number')
-                            ->orWhereHas('source', function ($q3) {
-                                $q3->whereNotNull('gst');
-                            });
+            ->whereHas('customer', function ($q) {
+                $q->whereNotNull('gst_number')
+                    ->orWhereHas('source', function ($q2) {
+                        $q2->whereNotNull('gst');
                     });
-                });
-            })
-            ->count();
+            })->count() ?? 1;
 
         $number = str_pad(1000 + $count, 8, '0', STR_PAD_LEFT);
 
-        // Determine prefix
         $prefix = 'INV-';
-        if (
-            $this->customer?->gst_number !== null ||
-            $this->customer?->source?->gst !== null
-        ) {
+
+        if ($this->customer?->source?->gst != null || $this->customer->gst_number != null) {
             $prefix = 'GST-';
         }
 
@@ -427,4 +416,126 @@ class Booking extends Model
     //         $builder->orderBy('id', 'desc');
     //     });
     // }
+
+    public function processFinancials($booked, $request)
+    {
+        // 1. Create booking transaction
+        $this->createTransaction($booked, $request);
+
+        // 2. Handle advance payment if exists
+        if ($this->hasAdvancePayment($request)) {
+            $this->createAdvanceTransaction($booked, $request);
+        }
+
+        // 3. Handle payments & agents
+        if ((float) $booked->advance_price == 0) {
+            $this->handleNoAdvancePayments($booked, $request);
+        } else {
+            $this->handleAdvancePayments($booked, $request);
+        }
+
+        // 4. GST Handling
+        if ($request->gst_number) {
+            (new TaxableController())->storeTaxableInvoice($booked);
+        }
+    }
+
+    private function createTransaction($booked, $request)
+    {
+        $transactionData = [
+            'booking_id'        => $booked->id,
+            'customer_id'       => $booked->customer_id ?? '',
+            'date'              => now(),
+            'company_id'        => $request->company_id ?? '',
+            'desc'              => 'rooms booking amount',
+            'reference_number'  => $request->reference_number,
+            'payment_method_id' => 7,
+            'user_id'           => $request->user_id,
+        ];
+
+        (new TransactionController())->store($transactionData, $request->total_price, 'debit');
+    }
+
+    private function hasAdvancePayment($request)
+    {
+        return $request->advance_price && $request->advance_price > 0;
+    }
+
+    private function createAdvanceTransaction($booked, $request)
+    {
+        $data = [
+            'booking_id'        => $booked->id,
+            'customer_id'       => $booked->customer_id ?? '',
+            'date'              => now(),
+            'company_id'        => $request->company_id ?? '',
+            'desc'              => 'payment',
+            'reference_number'  => $request->reference_number,
+            'payment_method_id' => $booked->payment_mode_id,
+            'user_id'           => $request->user_id,
+        ];
+
+        (new TransactionController())->store($data, $request->advance_price, 'credit');
+    }
+
+    private function handleNoAdvancePayments($booked, $request)
+    {
+        $this->createPayment($booked, $request, $booked->remaining_price, 'room', 'city ledger', true);
+
+        if ($this->shouldCreateAgent($booked)) {
+            $this->createAgentRecord($booked, $request, $booked->total_price, 0);
+        }
+    }
+
+    private function handleAdvancePayments($booked, $request)
+    {
+        // Advance payment
+        if ($request->total_price >= $request->advance_price) {
+            $this->createPayment($booked, $request, $booked->advance_price, 'room', 'advance payment', false, $booked->payment_mode_id);
+        }
+
+        // Pending payment
+        $this->createPayment($booked, $request, $booked->remaining_price, 'room', 'pending payment', true);
+
+        // Agent record
+        $this->createAgentRecord($booked, $request, $booked->total_price, $booked->advance_price);
+    }
+
+    private function shouldCreateAgent($booked)
+    {
+        return ($booked->paid_by && $booked->paid_by == 2) || ($booked->type != 'Walking' && $booked->type != 'Complimentary');
+    }
+
+    private function createPayment($booked, $request, $amount, $type, $description, $isCityLedger = false, $paymentMode = 7)
+    {
+        $data = [
+            'booking_id'     => $booked->id,
+            'payment_mode'   => $paymentMode,
+            'description'    => $description,
+            'amount'         => $amount,
+            'type'           => $type,
+            'room'           => $booked->rooms,
+            'company_id'     => $request->company_id,
+            'is_city_ledger' => $isCityLedger ? 1 : 0,
+        ];
+
+        (new PaymentController())->store($data);
+    }
+
+    private function createAgentRecord($booked, $request, $amount, $paidAmount)
+    {
+        $data = [
+            'booking_id'        => $booked->id,
+            'customer_id'       => $booked->customer_id ?? '',
+            'type'              => $booked->type ?? 'Customer',
+            'source'            => $booked->source,
+            'reference_no'      => $booked->reference_no ?? '',
+            'amount'            => $amount,
+            'agent_paid_amount' => $paidAmount,
+            'booking_date'      => date('Y-m-d', strtotime($booked->created_at)),
+            'company_id'        => $request->company_id ?? '',
+            'is_paid'           => $booked->paid_by == 1 ? 2 : 0,
+        ];
+
+        (new AgentsController())->store($data);
+    }
 }
