@@ -73,10 +73,10 @@ class AuditReport extends Command
                             'company' => Company::find($company_id),
                         ];
 
-                        info(lightDump($data));
+                        // info(lightDump($data));
 
-                        Mail::to($email = "francisgill1000@gmail.com")->queue(new AuditReportMail($data));
-                        // Mail::to($email)->send(new AuditReportMail($data));
+                        Mail::to($email)->queue(new AuditReportMail($data));
+                        // Mail::to($email = "francisgill1000@gmail.com")->queue(new AuditReportMail($data));
                     }
 
 
