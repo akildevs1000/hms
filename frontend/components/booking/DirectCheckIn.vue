@@ -492,7 +492,7 @@ export default {
       this.loading = true;
 
       this.$axios
-        .post("/group-booking", payload)
+        .post("/direct-checkin", payload)
         .then(({ data }) => {
           this.loading = false;
           if (!data.status) {
@@ -501,7 +501,14 @@ export default {
           } else {
             this.selectedRooms = [];
             this.priceListTableView = [];
-            this.storeCheckIn(data);
+            // this.storeCheckIn(data);
+            this.$swal("Success!", "Checked In Successfull", "success").then(
+              () => {
+                this.loading = false;
+                this.closeDialog();
+                this.$emit(`close-dialog`);
+              }
+            );
             this.dialog = false;
           }
         })
