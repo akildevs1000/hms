@@ -5,8 +5,10 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;   // <-- add
 
-class AuditReportMail extends Mailable
+
+class AuditReportMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
     protected $data;
