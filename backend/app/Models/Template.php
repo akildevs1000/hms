@@ -51,7 +51,7 @@ class Template extends Model
         7  => ['[title]', '[full_name]', '[reservation]'],
         8  => ['[title]', '[full_name]'],
         9  => ['[title]', '[full_name]', '[festival]'],
-        10 => ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]', '[room_no]', '[reservation]'],
+        10 => ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]', '[room_no]', '[reservation_no]'],
     ];
 
     const DEFAULT_MESSAGES = [

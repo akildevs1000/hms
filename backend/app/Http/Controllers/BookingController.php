@@ -2601,7 +2601,7 @@ class BookingController extends Controller
 
             DB::commit();
 
-            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request);
+            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request,$booking_reservation_number);
 
             return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
 
@@ -3057,7 +3057,7 @@ class BookingController extends Controller
                 "to_date"     => date('d-M-y H:i', strtotime($request->check_out)),
                 "room_type"   => $request->room_type,
                 "room_no"     => $request->room_no,
-                "reservation" => $reservation,
+                "reservation_no" => $reservation,
                 "company_id"  => $request->company_id,
             ],
         ];
@@ -3154,7 +3154,7 @@ class BookingController extends Controller
 
             DB::commit();
 
-            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request, $this->getReservationNumber($data));
+            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request);
 
             sleep(2);
 
