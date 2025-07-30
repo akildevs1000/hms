@@ -3051,13 +3051,17 @@ class BookingController extends Controller
             "email"      => $request->email,
 
             "fields"     => [
-                "title"     => ucfirst($request->title) ?? 'Mr',
-                "full_name" => ucfirst($request->first_name) . " " . ucfirst($request->last_name) ?? 'Guest',
-                "from_date" => date('d-M-y H:i', strtotime($request->check_in)),
-                "to_date"   => date('d-M-y H:i', strtotime($request->check_out)),
-                // 'room_type' => "castle",
+                "title"      => ucfirst($request->title) ?? 'Mr',
+                "full_name"  => ucfirst($request->first_name) . " " . ucfirst($request->last_name) ?? 'Guest',
+                "from_date"  => date('d-M-y H:i', strtotime($request->check_in)),
+                "to_date"    => date('d-M-y H:i', strtotime($request->check_out)),
+                // 'room_type'  => "castle",
+                "company_id" => $request->company_id,
             ],
         ];
+
+        info(lightDump($payload));
+        
 
         if ($payload["whatsapp"]) {
             WhatsappSender::dispatch([

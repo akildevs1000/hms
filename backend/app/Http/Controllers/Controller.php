@@ -315,7 +315,7 @@ class Controller extends BaseController
 
     function prepareMessage(array $fields, string $type, $command): ?string
     {
-        $templates = Template::whereActionId(["action_id" => $command])->whereCompanyId($fields["company_id"] ?? 0)->orderBy("id", "desc")->get();
+        $templates = Template::whereActionId($command)->whereCompanyId($fields["company_id"] ?? 0)->orderBy("id", "desc")->get();
 
         if (!count($templates)) {
             return 'Template not found.';
