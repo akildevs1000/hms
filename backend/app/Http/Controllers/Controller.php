@@ -1,9 +1,6 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Events\MessageSent;
-use App\Mail\ActionMail;
 use App\Mail\ActionMarkdownMail;
 use App\Models\Booking;
 use App\Models\Expense;
@@ -32,7 +29,7 @@ class Controller extends BaseController
                 return $q->where('company_id', $request->company_id);
             });
 
-            $model->when(!$request->company_id, function ($q) use ($request) {
+            $model->when(! $request->company_id, function ($q) use ($request) {
                 return $q->where('company_id', 0);
             });
         }
@@ -108,7 +105,7 @@ class Controller extends BaseController
 
     public function getNumFormat($Num = null)
     {
-        if (!$Num) {
+        if (! $Num) {
             return "---";
         }
 
@@ -198,9 +195,8 @@ class Controller extends BaseController
 
         $found = Template::where([
             "action_id" => $action,
-            "medium" => "email"
+            "medium"    => "email",
         ])->first();
-
 
         if ($found) {
             $subject = $found->name;
@@ -231,37 +227,37 @@ class Controller extends BaseController
 
         $clientId = WhatsappClient::where("company_id", $company_id)->value("accounts")[0]["clientId"] ?? false;
 
-        if (!$clientId) {
+        if (! $clientId) {
             Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
                 'recipient' => "971554501483",
-                'text' => "Whatsapp Account not found",
-                'clientId' => $clientId,
+                'text'      => "Whatsapp Account not found",
+                'clientId'  => $clientId,
             ]);
             return;
         }
 
-        if (!$fields['whatsapp']) {
+        if (! $fields['whatsapp']) {
             Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
                 'recipient' => "971554501483",
-                'text' => "Whatsapp number not found",
-                'clientId' => $clientId,
+                'text'      => "Whatsapp number not found",
+                'clientId'  => $clientId,
             ]);
             return;
-        };
+        }
 
         $found = Template::where([
             "action_id" => $action,
-            "medium" => "whatsapp"
+            "medium"    => "whatsapp",
         ])->first();
 
-        if (!$found) {
+        if (! $found) {
             // Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
             //     'recipient' => "971554501483",
             //     'text' => "Template not found against $action action. Whatsapp client id : $clientId",
             //     'clientId' => $clientId,
             // ]);
             return;
-        };
+        }
 
         $room_type = $fields['room_type'] ?? '';
 
@@ -274,7 +270,7 @@ class Controller extends BaseController
                 $fields['full_name'],
                 date('d-M-y', strtotime($fields['check_in'])),
                 date('d-M-y', strtotime($fields['check_out'])),
-                $room_type
+                $room_type,
             ],
             $found->body
         );
@@ -285,11 +281,11 @@ class Controller extends BaseController
 
         $response = Http::withoutVerifying()->post('https://wa.mytime2cloud.com/send-message', [
             'recipient' => "971554501483",
-            'text' => trim($body), // Trim extra spaces
-            'clientId' => $clientId,
+            'text'      => trim($body), // Trim extra spaces
+            'clientId'  => $clientId,
         ]);
 
-        return !$response->successful() ? false : true;
+        return ! $response->successful() ? false : true;
     }
 
     public function sendSignal($id)
@@ -299,8 +295,8 @@ class Controller extends BaseController
                 ->withHeaders([
                     'X-Access-Key' => env("PUSHER_APP_KEY"),
                 ])->post(env("SOCKET_SERVER_URL"), [
-                    'id' => $id,
-                ]);
+                'id' => $id,
+            ]);
 
             if ($response->successful()) {
                 return $response->json();
@@ -313,23 +309,30 @@ class Controller extends BaseController
         }
     }
 
-    function prepareMessage(array $fields, string $type, $command): ?string
+    public function prepareMessage(array $fields, string $type, $command): ?string
     {
         $templates = Template::whereActionId($command)->whereCompanyId($fields["company_id"] ?? 0)->orderBy("id", "desc")->get();
 
-        if (!count($templates)) {
+        if (! count($templates)) {
             return 'Template not found.';
         }
 
         $template = collect($templates)->firstWhere('medium', $type);
 
-        if (!$template) {
+        if (! $template) {
             return null;
         }
 
         $messageBody = $template->body ?? Template::DEFAULT_MESSAGES[$command];
+
+        return $this->trimMessage($fields, $command, $messageBody);
+
+    }
+
+    public function trimMessage($fields, $command, $messageBody)
+    {
         $replacedMessage = str_replace(Template::TAGS[$command], $fields, $messageBody);
-        $finalMessage = preg_replace('/<p>(.*?)<\/p>/s', "$1\n", $replacedMessage);
+        $finalMessage    = preg_replace('/<p>(.*?)<\/p>/s', "$1\n", $replacedMessage);
 
         return trim(strip_tags($finalMessage));
     }

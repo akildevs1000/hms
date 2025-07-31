@@ -115,7 +115,7 @@ class TemplateController extends Controller
             "to_date"        => date('d-M-y H:i'),
             "room_type"      => "Castle",
             "room_no"        => rand(200, 210),
-            "reservation_no" => rand(9999, 9999),
+            "reservation_no" => rand(100, 9999),
             "company_id"     => $data["company_id"],
         ];
 
@@ -123,31 +123,23 @@ class TemplateController extends Controller
             return false;
         }
 
+        $payload = [
+            'recipient'  => $request->recipient,
+            'text'       => (new Controller)->trimMessage($fields, $data["action_id"], $data["body"]),
+            "company_id" => $data["company_id"],
+        ];
+
         if ($data["medium"] == "whatsapp") {
 
-            $whatsappPayload = [
-                'recipient'  => $request->recipient,
-                'text'       => (new Controller)->prepareMessage($fields, "whatsapp", $data["action_id"]),
-                "company_id" => $data["company_id"],
-            ];
-
-            info(["whatsappPayload" => $whatsappPayload]);
-
-            WhatsappSender::dispatch($whatsappPayload);
+            WhatsappSender::dispatch($payload);
         }
 
         if ($data["medium"] == "email") {
 
-            $emailPayload = [
-                'recipient'  => $request->recipient,
-                'text'       => (new Controller)->prepareMessage($fields, "email", $data["action_id"]),
-                "company_id" => $data["company_id"],
-            ];
-
-            info(["emailPayload" => $emailPayload]);
-
-            EmailSender::dispatch($emailPayload);
+            EmailSender::dispatch($payload);
         }
+
+        info($payload);
 
         return true;
     }
