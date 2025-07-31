@@ -3062,7 +3062,7 @@ class BookingController extends Controller
             ],
         ];
 
-        info(["request" => $request->all(), "notification" => lightDump($payload)]);
+        // info(["request" => $request->all(), "notification" => lightDump($payload)]);
 
         if ($payload["whatsapp"]) {
             WhatsappSender::dispatch([

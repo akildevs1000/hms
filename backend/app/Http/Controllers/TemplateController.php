@@ -1,16 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Mail\ActionMarkdownMail;
-use App\Models\BookedRoom;
-use App\Models\Booking;
-use App\Models\Customer;
-use App\Models\Room;
+use App\Jobs\EmailSender;
+use App\Jobs\WhatsappSender;
 use App\Models\Template;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 
 class TemplateController extends Controller
 {
@@ -50,7 +44,7 @@ class TemplateController extends Controller
         return Template::orderByDesc("name")
             ->where([
                 "company_id" => request("company_id", 0),
-                "medium" => request("medium", "email")
+                "medium"     => request("medium", "email"),
             ])
             ->get();
     }
@@ -64,7 +58,7 @@ class TemplateController extends Controller
     {
         return Template::orderByDesc("id")->where([
             "company_id" => request("company_id", 0),
-            "medium" => request("medium", "email")
+            "medium"     => request("medium", "email"),
         ])->paginate(100);
     }
 
@@ -108,5 +102,53 @@ class TemplateController extends Controller
         $template->delete();
 
         return response()->noContent();
+    }
+
+    public function sendMessage(Request $request, Template $template)
+    {
+        $data = $request->validate($template::validateFields);
+
+        $fields = [
+            "title"          => "Mr",
+            "full_name"      => "Test User",
+            "from_date"      => date('d-M-y H:i'),
+            "to_date"        => date('d-M-y H:i'),
+            "room_type"      => "Castle",
+            "room_no"        => rand(200, 210),
+            "reservation_no" => rand(9999, 9999),
+            "company_id"     => $data["company_id"],
+        ];
+
+        if (! $request->recipient) {
+            return false;
+        }
+
+        if ($data["medium"] == "whatsapp") {
+
+            $whatsappPayload = [
+                'recipient'  => $request->recipient,
+                'text'       => (new Controller)->prepareMessage($fields, "whatsapp", $data["action_id"]),
+                "company_id" => $data["company_id"],
+            ];
+
+            info(["whatsappPayload" => $whatsappPayload]);
+
+            WhatsappSender::dispatch($whatsappPayload);
+        }
+
+        if ($data["medium"] == "email") {
+
+            $emailPayload = [
+                'recipient'  => $request->recipient,
+                'text'       => (new Controller)->prepareMessage($fields, "email", $data["action_id"]),
+                "company_id" => $data["company_id"],
+            ];
+
+            info(["emailPayload" => $emailPayload]);
+
+            EmailSender::dispatch($emailPayload);
+        }
+
+        return true;
     }
 }
