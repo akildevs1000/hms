@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ChartController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\DeviceController;
 use App\Http\Controllers\InvoiceRecalWithoutFoodController;
 use App\Http\Controllers\RecalculateTaxController;
@@ -34,13 +33,8 @@ use Illuminate\Support\Facades\Storage;
 
 Route::get('/checkroomstatus', function (Request $request) {
 
-
-
-
-
-
     $device_room_number = $request->room_number;
-    $status = $request->status;
+    $status             = $request->status;
 
     // if ($request->status == 1) {
     //     $status = 0;
@@ -48,10 +42,9 @@ Route::get('/checkroomstatus', function (Request $request) {
     //     $status = 1;
     // }
     $notificationMessage = "";
-    $device = Device::with("company")->where("serial_number", $device_room_number)->first();
+    $device              = Device::with("company")->where("serial_number", $device_room_number)->first();
     if ($device) {
         $deviceTimezone = $device->utc_time_zone;
-
 
         $timeZone = 'Asia/Dubai';
 
@@ -62,11 +55,8 @@ Route::get('/checkroomstatus', function (Request $request) {
         $dateTime = new DateTime(date("Y-m-d H:i:s"));
         $dateTime->setTimezone(new DateTimeZone($timeZone));
 
-
         $company_id = $device->company_id;
-        $todayDate = $dateTime->format('Y-m-d'); //date("Y-m-d");
-
-
+        $todayDate  = $dateTime->format('Y-m-d'); //date("Y-m-d");
 
         $model = BookedRoom::query();
         // $bookingStatusId = $model
@@ -83,44 +73,36 @@ Route::get('/checkroomstatus', function (Request $request) {
                 ->whereDate('check_in', '<=', $todayDate)
                 ->WhereDate('check_out', '>', $todayDate)
                 ->where('company_id', $company_id)
-                ->where('room_id',  $device->room_id)
+                ->where('room_id', $device->room_id)
                 ->first();
         } else {
-            $data =  $model
+            $data = $model
                 ->whereDate('check_in', '<=', $todayDate)
                 ->whereDate('check_out', '>=', $todayDate)
                 ->where('company_id', $company_id)
-                ->where('room_id',  $device->room_id)
+                ->where('room_id', $device->room_id)
                 ->first();
         }
-
 
         return $data;
     }
 
     return false;
 
-
-
-
-
-    $json = json_decode('[{"employeeID":157,"logDate":"2024-12-19T07:46:00.000Z","terminalID":"OX-9662210080053","createdDate":"2024-12-19T07:46:00.000Z","functionNo":"in","depNo":null}]');
+    $json            = json_decode('[{"employeeID":157,"logDate":"2024-12-19T07:46:00.000Z","terminalID":"OX-9662210080053","createdDate":"2024-12-19T07:46:00.000Z","functionNo":"in","depNo":null}]');
     return $response = Http::timeout(300)
         ->withoutVerifying()
         ->withHeaders([
-            'Content-Type' => 'application/json',
+            'Content-Type'  => 'application/json',
             'Authorization' => ' Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyTmFtZSI6ImF0dGVuZGFuY2V1c2VyIiwibG9naW5Tb3VyY2UiOiJIUiIsImVtcE5vIjoiMCIsImV4cCI6MTczNDY4NTA4MCwiaXNzIjoiSFJTeXN0ZW0iLCJhdWQiOiJIUlN5c3RlbSJ9.4TLwmakzdiL7plcntIZjHOBdeJ5HhBnsx1hseULYsvo',
 
         ])
         ->post("https://aquhrsys.alqasimia.ac.ae/HRENDPointAtt/api/InsertAccessLog", "{}");
 
-
     return Company::with("timezone")->get();
 
     $todayDate = "2024-12-07";
-    $model = BookedRoom::query();
-
-
+    $model     = BookedRoom::query();
 
     $bookingStatusId = $model
         ->whereDate('check_in', '<=', $todayDate)
@@ -128,10 +110,9 @@ Route::get('/checkroomstatus', function (Request $request) {
         ->where('company_id', 1)
         ->where('room_id', 203)
 
-
         ->pluck("booking_status")->first();
 
-    if (!$bookingStatusId) {
+    if (! $bookingStatusId) {
         $bookingStatusId = 0;
     }
     return $bookingStatusId;
@@ -152,7 +133,7 @@ Route::get('/test', function (Request $request) {
 
     // return  $payment =  Payment::whereDate('created_at', $date)
     $payment = DB::table('payments')
-        // ->whereDate('created_at', $date)
+    // ->whereDate('created_at', $date)
         ->get(['id', 'created_at']);
 
     foreach ($payment as $key => $value) {
@@ -175,9 +156,9 @@ Route::get('/test', function (Request $request) {
         // return $pdfFiles;
 
         $data = [
-            'file' => $pdfFiles,
-            'date' => date('Y-M-d H:i'),
-            'body' => 'Night Audit Report',
+            'file'    => $pdfFiles,
+            'date'    => date('Y-M-d H:i'),
+            'body'    => 'Night Audit Report',
             'company' => Company::find($company_id),
         ];
 
@@ -199,7 +180,7 @@ Route::post('/upload', function (Request $request) {
     $file = $request->file->getClientOriginalName();
     $request->file->move(public_path('media/employee/file/'), $file);
     return $product_image = url('media/employee/file/' . $file);
-    $data['file'] = $file;
+    $data['file']         = $file;
 });
 
 Route::get('/test_attachment', function () {
@@ -232,18 +213,18 @@ Route::get('/my_test', function (Request $request) {
     $final_arr = [
         'breakfast' => [
             'adults' => array_sum(array_column(array_column($arr, 'breakfast'), 'adult')),
-            'child' => array_sum(array_column(array_column($arr, 'breakfast'), 'child')),
-            'baby' => array_sum(array_column(array_column($arr, 'breakfast'), 'baby')),
+            'child'  => array_sum(array_column(array_column($arr, 'breakfast'), 'child')),
+            'baby'   => array_sum(array_column(array_column($arr, 'breakfast'), 'baby')),
         ],
-        'lunch' => [
+        'lunch'     => [
             'adults' => array_sum(array_column(array_column($arr, 'lunch'), 'adult')),
-            'child' => array_sum(array_column(array_column($arr, 'lunch'), 'child')),
-            'baby' => array_sum(array_column(array_column($arr, 'lunch'), 'baby')),
+            'child'  => array_sum(array_column(array_column($arr, 'lunch'), 'child')),
+            'baby'   => array_sum(array_column(array_column($arr, 'lunch'), 'baby')),
         ],
-        'dinner' => [
+        'dinner'    => [
             'adults' => array_sum(array_column(array_column($arr, 'dinner'), 'adult')),
-            'child' => array_sum(array_column(array_column($arr, 'dinner'), 'child')),
-            'baby' => array_sum(array_column(array_column($arr, 'dinner'), 'baby')),
+            'child'  => array_sum(array_column(array_column($arr, 'dinner'), 'child')),
+            'baby'   => array_sum(array_column(array_column($arr, 'dinner'), 'baby')),
         ],
     ];
 
@@ -292,7 +273,6 @@ Route::post('whatsapp-test', [WhatsappController::class, 'sentNotificationTest']
 Route::get('chart-test', [ChartController::class, 'index']);
 Route::get('callView', [ChartController::class, 'callView']);
 
-
 Route::get('check_auth/{password}', function ($password) {
 
     return env("APP_URL");
@@ -300,4 +280,8 @@ Route::get('check_auth/{password}', function ($password) {
         return "Access granted";
     }
     return "not found";
+});
+
+Route::get('voucher-html', function () {
+    return (new Booking)->voucher();
 });

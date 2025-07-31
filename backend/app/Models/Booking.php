@@ -10,6 +10,7 @@ use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\Room;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -538,4 +539,50 @@ class Booking extends Model
 
         (new AgentsController())->store($data);
     }
+
+    public function voucher($data = null)
+    {
+        if (! $data) {
+            $data = [
+                "reservation_no" => rand(1000, 9999),
+                "booked_date"    => date("d M Y"),
+
+                'check_in'       => date('d-M-y H:i'),
+                'check_out'      => date('d-M-y H:i'),
+
+                'guests'         => '3 Guests',
+                'primary_guest'  => 'Mr Ariff Mohamed',
+                'email'          => 'ariffakil@gmail.com',
+                'phone'          => '917708004000',
+                'room_type'      => 'Castle',
+                'room_no'        => '201',
+                'adults'         => 3,
+                'total_price'    => '11,798',
+
+                "nights"         => 1,
+            ];
+        }
+
+        $company = Company::with(["user:id,company_id,email", "contact"])->whereId(request("company_id"))->first();
+
+        // Define filename
+        $fileName = 'voucher_' . request("company_id") . '_' . $data['reservation_no'] . '.pdf';
+
+        // Full path to save in public directory
+        $filePath = public_path('vouchers/' . $fileName);
+
+        // Ensure directory exists
+        if (! file_exists(public_path('vouchers'))) {
+            mkdir(public_path('vouchers'), 0775, true);
+        }
+
+        // Generate and save PDF
+        Pdf::loadView('booking.voucher-html', compact("data", "company"))
+            ->setPaper('a4', 'portrait')
+            ->save($filePath);
+
+        // Return public URL
+        return asset('vouchers/' . $fileName);
+    }
+
 }

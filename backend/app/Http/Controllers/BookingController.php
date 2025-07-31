@@ -1875,7 +1875,6 @@ class BookingController extends Controller
         $food_price_per_room       = $food_plan_price; //($food_plan_price * ($no_of_adult + ($no_of_child / 2)));
         $singleDayAdditionalAmount = $food_price_per_room + $singleDayExtraAmount + (($bed_amount + $early_check_in + $late_check_out) / count($room_orders));
 
-
         $arr = [];
 
         foreach ($room_orders as $room_order) {
@@ -1926,7 +1925,7 @@ class BookingController extends Controller
             $orderRooms['created_at'] = date("Y-m-d H:i:s");
             $orderRooms['updated_at'] = date("Y-m-d H:i:s");
 
-            //calculate inv room price-------START-----------------------------------------------
+                                                                            //calculate inv room price-------START-----------------------------------------------
             $orderRooms['single_day_extra_amount'] = $singleDayExtraAmount; //new
             $orderRooms['single_day_discount']     = $singleDayDiscount;    //new
 
@@ -1944,7 +1943,6 @@ class BookingController extends Controller
                  + $orderRooms['early_check_in']
                  + $orderRooms['late_check_out']
                  + $orderRooms['single_day_extra_amount'];
-
 
             $miscellaneous_without_extra_discount = $miscellaneous_total_with_tax - $orderRooms['single_day_discount'];
 
@@ -1971,7 +1969,6 @@ class BookingController extends Controller
 
             $arr[] = $orderRooms;
         }
-
 
         $booking_total_price = $request->json["new_total"];
         OrderRoom::insert($arr);
@@ -2022,7 +2019,6 @@ class BookingController extends Controller
         $remaining_price       = abs($request->old["booking"]["remaining_price"] + $difference_amount);
         $grand_remaining_price = abs($request->old["booking"]["grand_remaining_price"] + $difference_amount);
 
-
         $bookingPayload = [
             'total_days'            => $request->json["total_days"],
             'user_id'               => $request->json["user_id"],
@@ -2033,7 +2029,7 @@ class BookingController extends Controller
             'grand_remaining_price' => $grand_remaining_price,
             'discount'              => $request->json["discount"],
             'check_in'              => $check_in,
-            'check_out'              => $check_out,
+            'check_out'             => $check_out,
         ];
 
         Booking::where("id", $request->old["booking_id"])
@@ -2524,7 +2520,7 @@ class BookingController extends Controller
 
             DB::commit();
 
-            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request,$booking_reservation_number);
+            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request, $booking_reservation_number);
 
             return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
 
@@ -2966,33 +2962,80 @@ class BookingController extends Controller
 
     public function processNotification($action, $heading, $request, $reservation = null)
     {
+        $check_in  = date('d-M-y H:i', strtotime($request->check_in));
+        $check_out = date('d-M-y H:i', strtotime($request->check_out));
+
+        $title = ucfirst($request->title) ?? 'Mr';
+
+        $full_name = ucfirst($request->first_name) . " " . ucfirst($request->last_name) ?? 'Guest';
+
+        $email    = $request->email ?? "---";
+        $whatsapp = $request->whatsapp ?? "---";
+
+        // $payment_mode = PaymentMode::whereId($request->payment_mode_id)->value("name") ?? "---";
+
+        $total_price = number_format($request->total_price) ?? "---";
+        $no_of_adult = number_format($request->no_of_adult) ?? "---";
+
+        $room_type = $request->room_type ?? "---";
+        $room_no   = $request->room_no ?? "---";
+
+        $nights = $request->total_days ?? 1;
+
+        $company_id = $request->company_id;
+
+        $fileName = 'voucher_' . $company_id . '_' . $reservation . '.pdf';
+
         $payload = [
             "command"    => $action,
             "heading"    => $heading,
-            "company_id" => $request->company_id,
-            "whatsapp"   => $request->whatsapp,
-            "email"      => $request->email,
+            "company_id" => $company_id,
+            "whatsapp"   => $whatsapp,
+            "email"      => $email,
 
             "fields"     => [
-                "title"       => ucfirst($request->title) ?? 'Mr',
-                "full_name"   => ucfirst($request->first_name) . " " . ucfirst($request->last_name) ?? 'Guest',
-                "from_date"   => date('d-M-y H:i', strtotime($request->check_in)),
-                "to_date"     => date('d-M-y H:i', strtotime($request->check_out)),
-                "room_type"   => $request->room_type,
-                "room_no"     => $request->room_no,
+                "title"          => $title,
+                "full_name"      => $full_name,
+                "from_date"      => $check_in,
+                "to_date"        => $check_out,
+                "room_type"      => $room_type,
+                "room_no"        => $room_no,
                 "reservation_no" => $reservation,
-                "booking_price" => number_format($request->total_price),
-                "company_id"  => $request->company_id,
+                "booking_price"  => $total_price,
+                "pdf_null"       => asset('vouchers/' . $fileName),
+                "company_id"  => $company_id,
             ],
         ];
 
-        info(["request" => $request->all(), "notification" => lightDump($payload)]);
+        info(["request" => $payload]);
+
+
+        $pdfPayload = [
+            "reservation_no" => $reservation,
+            "booked_date"    => date("d M Y"),
+            'check_in'       => $check_in,
+            'check_out'      => $check_out,
+            'guests'         => "$no_of_adult Guests",
+            'primary_guest'  => "$title $full_name",
+            'email'          => $email,
+            'phone'          => $whatsapp,
+            'room_type'      => $room_type,
+            'room_no'        => $room_no,
+            'adults'         => $no_of_adult,
+            'total_price'    => $total_price,
+            "nights"         => $nights,
+        ];
+
+        $pdfUrl = (new Booking)->voucher($pdfPayload);
+
+
+        info(["request" => $pdfPayload]);
 
         if ($payload["whatsapp"]) {
             WhatsappSender::dispatch([
                 'recipient'  => $payload["whatsapp"],
                 'text'       => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
-                'company_id' => $payload["company_id"],
+                'company_id' => $company_id,
             ]);
         }
 
@@ -3000,7 +3043,7 @@ class BookingController extends Controller
             EmailSender::dispatch([
                 'recipient'  => $payload["email"],
                 'text'       => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
-                'company_id' => $payload["company_id"],
+                'company_id' => $company_id,
                 "heading"    => $heading,
             ]);
         }
