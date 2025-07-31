@@ -194,6 +194,7 @@ export default {
     },
 
     async sendTestMessage() {
+      this.errorResponse = null;
       this.loading = true;
       try {
         await this.$axios.post(`${this.endpoint}/send-message`, this.payload);
