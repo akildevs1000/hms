@@ -9,9 +9,8 @@
 
     <v-card>
       <v-toolbar flat class="grey lighten-3" dense>
-        Edit {{ model }} <v-spacer></v-spacer
-        ><AssetsButtonClose @close="close" /></v-toolbar
-      >
+        Edit {{ model }} <v-spacer></v-spacer><AssetsButtonClose @close="close"
+      /></v-toolbar>
 
       <v-card-text class="py-5">
         <v-container>
@@ -50,7 +49,32 @@
             <v-col cols="12" v-if="errorResponse">
               <span class="red--text">{{ errorResponse }}</span>
             </v-col>
-            <v-col cols="12" class="text-right">
+            <v-col cols="6">
+              <v-row>
+                <v-col>
+                  <div>Recipient</div>
+                  <v-text-field
+                    outlined
+                    hide-details
+                    v-model="payload.recipient"
+                  ></v-text-field
+                ></v-col>
+                <v-col>
+                   <div class="white--text">.</div>
+                  <v-btn
+                    :loading="loading"
+                    small
+                    color="blue"
+                    class="white--text"
+                    dark
+                    @click="sendTestMessage"
+                  >
+                    Send Test Message
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col cols="6" class="text-right">
               <v-btn small color="grey" class="white--text" dark @click="close">
                 Close
               </v-btn>
@@ -129,13 +153,13 @@ export default {
         body: "",
         action_id: 0,
         company_id: 0,
+        recipient: null,
       },
       dialog: false,
       loading: false,
       successResponse: null,
       errorResponse: null,
-      templateTypes:[],
-
+      templateTypes: [],
     };
   },
   async created() {
@@ -163,6 +187,17 @@ export default {
         );
         this.close();
         this.$emit("response", "Record has been inserted");
+      } catch (error) {
+        this.errorResponse = error?.response?.data?.message || "Unknown error";
+        this.loading = false;
+      }
+    },
+
+    async sendTestMessage() {
+      this.loading = true;
+      try {
+        await this.$axios.post(`${this.endpoint}/send-message`, this.payload);
+        this.loading = false;
       } catch (error) {
         this.errorResponse = error?.response?.data?.message || "Unknown error";
         this.loading = false;

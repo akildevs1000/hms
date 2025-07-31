@@ -7,7 +7,7 @@
       :loading="loading"
       :options.sync="options"
       :footer-props="{
-        itemsPerPageOptions: [3, 5, 15],
+        itemsPerPageOptions: [15, 30, 100],
       }"
       class="elevation-1 mt-1 pa-3"
     >
