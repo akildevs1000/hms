@@ -53,4 +53,5 @@ include 'record.php';
 include 'external_urls.php';
 
 include 'whatsapp_clients.php';
+include 'smtp.php';
 
