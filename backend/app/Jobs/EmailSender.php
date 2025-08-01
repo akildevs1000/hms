@@ -1,13 +1,12 @@
 <?php
-
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class EmailSender implements ShouldQueue
 {
@@ -22,18 +21,20 @@ class EmailSender implements ShouldQueue
 
     public function handle()
     {
-        $recipient = $this->request['recipient'] ?? null;
+        $recipient   = $this->request['recipient'] ?? null;
         $messageBody = $this->request['text'] ?? null;
-        $heading = $this->request['heading'] ?? null;
-
-
-        echo "\n" . json_encode($this->request, JSON_PRETTY_PRINT);
-
+        $heading     = $this->request['heading'] ?? null;
+        $mediaUrl    = $this->request['mediaUrl'] ?? null;
 
         if ($recipient && $messageBody) {
-            Mail::raw($messageBody, function ($message) use ($recipient, $heading) {
+            echo "\n" . lightDump($this->request) . "\n";
+            Mail::raw($messageBody, function ($message) use ($recipient, $heading, $mediaUrl) {
                 $message->to($recipient)
                     ->subject($heading ?? 'Happy Birthday!');
+
+                if ($mediaUrl) {
+                    $message->attach($mediaUrl);
+                }
             });
         }
     }

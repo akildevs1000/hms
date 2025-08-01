@@ -3016,7 +3016,7 @@ class BookingController extends Controller
                 "mediaUrl"   => $mediaUrl,
             ];
             WhatsappSender::dispatch($whatsappPayload);
-            info(lightDump(["whatsappPayload" => $whatsappPayload]));
+            // info(lightDump(["whatsappPayload" => $whatsappPayload]));
 
         }
 
@@ -3028,10 +3028,11 @@ class BookingController extends Controller
                 'company_id' => $company_id,
                 "heading"    => $heading,
                 "mediaUrl"   => $mediaUrl,
+                // "mediaUrl" => "https://backend.myhotel2cloud.com/vouchers/voucher_3_427.pdf",
             ];
 
             EmailSender::dispatch($emailPayload);
-            info(lightDump(["emailPayload" => $emailPayload]));
+            // info(lightDump(["emailPayload" => $emailPayload]));
         }
     }
 
