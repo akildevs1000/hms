@@ -3,10 +3,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Booking\BookingRequest;
 use App\Http\Requests\Booking\DocumentRequest;
-use App\Jobs\EmailSender;
 use App\Jobs\StoreBookedRoomsJob;
 use App\Jobs\StoreBookedRoomsJobForDirectCheckIn;
 use App\Jobs\WhatsappSender;
+use App\Mail\EmailDispatcherWithAttachment;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
@@ -35,6 +35,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as Logger;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
@@ -2465,7 +2466,7 @@ class BookingController extends Controller
 
     public function groupBooking(Request $request)
     {
-    
+
         DB::beginTransaction();
         try {
             $request['customer_id'] = $this->customerStore($request->only(Customer::customerAttributes()));
@@ -2957,7 +2958,7 @@ class BookingController extends Controller
         // $payment_mode = PaymentMode::whereId($request->payment_mode_id)->value("name") ?? "---";
 
         $total_price = number_format($request->total_price) ?? "---";
-        $no_of_adult = array_sum(array_column($request->selectedRooms,"no_of_adult")) ?? 1;
+        $no_of_adult = array_sum(array_column($request->selectedRooms, "no_of_adult")) ?? 1;
 
         $room_type = $request->room_type ?? "---";
         $room_no   = $request->room_no ?? "---";
@@ -3016,8 +3017,6 @@ class BookingController extends Controller
                 "mediaUrl"   => $mediaUrl,
             ];
             WhatsappSender::dispatch($whatsappPayload);
-            // info(lightDump(["whatsappPayload" => $whatsappPayload]));
-
         }
 
         if ($payload["email"]) {
@@ -3031,8 +3030,7 @@ class BookingController extends Controller
                 // "mediaUrl" => "https://backend.myhotel2cloud.com/vouchers/voucher_3_427.pdf",
             ];
 
-            EmailSender::dispatch($emailPayload);
-            // info(lightDump(["emailPayload" => $emailPayload]));
+            Mail::to($payload["email"])->queue(new EmailDispatcherWithAttachment($emailPayload));
         }
     }
 
