@@ -2984,8 +2984,6 @@ class BookingController extends Controller
 
         $company_id = $request->company_id;
 
-        $fileName = 'voucher_' . $company_id . '_' . $reservation . '.pdf';
-
         $payload = [
             "command"    => $action,
             "heading"    => $heading,
@@ -3002,13 +3000,9 @@ class BookingController extends Controller
                 "room_no"        => $room_no,
                 "reservation_no" => $reservation,
                 "booking_price"  => $total_price,
-                "pdf_null"       => asset('vouchers/' . $fileName),
-                "company_id"  => $company_id,
+                "company_id"     => $company_id,
             ],
         ];
-
-        info(["request" => $payload]);
-
 
         $pdfPayload = [
             "reservation_no" => $reservation,
@@ -3020,32 +3014,39 @@ class BookingController extends Controller
             'email'          => $email,
             'phone'          => $whatsapp,
             'room_type'      => $room_type,
-            'room_no'        => $room_no,
+            // 'room_no'        => $room_no,
             'adults'         => $no_of_adult,
             'total_price'    => $total_price,
             "nights"         => $nights,
         ];
 
-        $pdfUrl = (new Booking)->voucher($pdfPayload);
-
-
-        info(["request" => $pdfPayload]);
+        $mediaUrl = (new Booking)->voucher($pdfPayload);
 
         if ($payload["whatsapp"]) {
-            WhatsappSender::dispatch([
+
+            $whatsappPayload = [
                 'recipient'  => $payload["whatsapp"],
                 'text'       => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
                 'company_id' => $company_id,
-            ]);
+                "mediaUrl"   => $mediaUrl,
+            ];
+            WhatsappSender::dispatch($whatsappPayload);
+            info(lightDump(["whatsappPayload" => $whatsappPayload]));
+
         }
 
         if ($payload["email"]) {
-            EmailSender::dispatch([
+
+            $emailPayload = [
                 'recipient'  => $payload["email"],
                 'text'       => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
                 'company_id' => $company_id,
                 "heading"    => $heading,
-            ]);
+                "mediaUrl"   => $mediaUrl,
+            ];
+
+            EmailSender::dispatch($emailPayload);
+            info(lightDump(["emailPayload" => $emailPayload]));
         }
     }
 

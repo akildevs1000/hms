@@ -116,7 +116,6 @@
             <div class="section">
                 <div class="section-title"></div>
                 <p class="row"><span class="label">Room Type:</span> {{$data["room_type"]}}</p>
-                <p class="row"><span class="label">Room Number:</span> {{$data["room_no"]}}</p>
                 {{-- <p class="row"><span class="label">Includes:</span> {{$data["room_no"]}}</p> --}}
                 {{-- <p class="row small">• Complimentary Tea & Coffee during Hi-Tea (4:30 PM – 5:30 PM)</p>
                 <p class="row small">• Evening Turndown Delight – Signature hot chocolate served during evening</p> --}}
