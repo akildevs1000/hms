@@ -30,6 +30,7 @@ use App\Models\TaxSlabs;
 use App\Models\Template;
 use App\Models\Transaction;
 use App\Models\Weekend;
+use App\Services\MailConfigService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Exception;
@@ -2967,6 +2968,8 @@ class BookingController extends Controller
         $nights = $request->total_days ?? 1;
 
         $company_id = $request->company_id;
+
+        (new MailConfigService)->setMailConfigForCompany($company_id);
 
         $payload = [
             "command"    => $action,
