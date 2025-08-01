@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Booking\BookingRequest;
 use App\Http\Requests\Booking\DocumentRequest;
+use App\Jobs\EmailSender;
 use App\Jobs\StoreBookedRoomsJob;
 use App\Jobs\StoreBookedRoomsJobForDirectCheckIn;
 use App\Jobs\WhatsappSender;
@@ -2965,9 +2966,6 @@ class BookingController extends Controller
 
         $nights = $request->total_days ?? 1;
 
-
-
-
         $company_id = $request->company_id;
 
         $payload = [
@@ -3030,7 +3028,9 @@ class BookingController extends Controller
                 // "mediaUrl" => "https://backend.myhotel2cloud.com/vouchers/voucher_3_427.pdf",
             ];
 
-            Mail::to($payload["email"])->queue(new EmailDispatcherWithAttachment($emailPayload));
+            // Mail::to($payload["email"])->queue(new EmailDispatcherWithAttachment($emailPayload));
+            EmailSender::dispatch($emailPayload);
+
         }
     }
 
