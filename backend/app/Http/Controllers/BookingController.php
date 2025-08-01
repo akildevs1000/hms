@@ -2504,7 +2504,7 @@ class BookingController extends Controller
 
             DB::commit();
 
-            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CREATE", $request, $booking_reservation_number);
+            $this->processNotification(Template::BOOKING_CREATE, "BOOKING CONFIRMED", $request, $booking_reservation_number);
 
             return response()->json(['data' => $booking->id, 'booking_reservation_number' => $booking_reservation_number, 'status' => true]);
 
