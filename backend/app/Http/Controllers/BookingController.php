@@ -2465,25 +2465,7 @@ class BookingController extends Controller
 
     public function groupBooking(Request $request)
     {
-        // $diff_in_seconds = strtotime($request->check_in) - strtotime(date('Y-m-d'));
-        // // if ($diff_in_seconds < 0) {
-        // //     return response()->json(['data' => 'Booking Date is invalid', 'status' => false]);
-        // // }
-
-        // $booking = null;
-
-        // //verify is booking  availalbe with date and room number
-
-        // $bookedRoomsCount = BookedRoom::whereDate('check_in', '<=', $request->check_in)
-        //     ->WhereDate('check_out', '>=', $request->check_out)
-        //     ->where('booking_status', '!=', 0)
-        //     ->where('room_id', $request->selectedRooms[0]['room_id'])
-        //     ->count();
-
-        // if ($bookedRoomsCount > 0) {
-        //     return response()->json(['error' => 'Room is not availalbe on this Date']); // return a user-friendly error
-        // }
-
+    
         DB::beginTransaction();
         try {
             $request['customer_id'] = $this->customerStore($request->only(Customer::customerAttributes()));
@@ -2975,12 +2957,15 @@ class BookingController extends Controller
         // $payment_mode = PaymentMode::whereId($request->payment_mode_id)->value("name") ?? "---";
 
         $total_price = number_format($request->total_price) ?? "---";
-        $no_of_adult = number_format($request->no_of_adult) ?? "---";
+        $no_of_adult = array_sum(array_column($request->selectedRooms,"no_of_adult")) ?? 1;
 
         $room_type = $request->room_type ?? "---";
         $room_no   = $request->room_no ?? "---";
 
         $nights = $request->total_days ?? 1;
+
+
+
 
         $company_id = $request->company_id;
 
