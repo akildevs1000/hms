@@ -71,7 +71,7 @@ class TransactionController extends Controller
         return [
             'sumDebit' => $transactionModel->sum('debit'),
             'sumCredit' => $transactionModel->sum('credit'),
-            'balance' => (float) $transactionModel->sum('debit') - (float) $transactionModel->sum('credit'),
+            'balance' => number_format((float) $transactionModel->sum('debit') - (float) $transactionModel->sum('credit'),2),
             'tot_posting' => $transactionModel->whereIsPosting(1)->sum('debit'),
         ];
     }

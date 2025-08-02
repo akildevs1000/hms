@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Customer\StoreRequest;
@@ -10,7 +9,6 @@ use App\Models\Customer;
 use App\Models\IdCardType;
 use App\Models\Payment;
 use App\Models\Posting;
-use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,14 +38,14 @@ class CustomerController extends Controller
 
         if ($request->filled('sortBy')) {
             $sortDesc = $request->sortDesc == 'true' ? 'DESC' : 'ASC';
-            $sortBy = $request->sortBy;
+            $sortBy   = $request->sortBy;
 
             if (strpos($sortBy, '.') === -1 || strpos($sortBy, '.') == '') {
                 $model->orderBy($sortBy, $sortDesc);
             } else {
                 if ($sortBy == 'id_card_type.name') {
                     $model->orderBy(IdCardType::select('name')
-                        ->whereRaw('id_card_types.id = CAST(customers.id_card_type_id AS bigint)'), $sortDesc);
+                            ->whereRaw('id_card_types.id = CAST(customers.id_card_type_id AS bigint)'), $sortDesc);
                 }
             }
         } else {
@@ -62,14 +60,14 @@ class CustomerController extends Controller
         try {
 
             $customer = Customer::whereContactNo($request->contact_no)->first();
-            $id = "";
+            $id       = "";
 
             if ($customer) {
                 $id = $customer->id;
                 $customer->update($request->validated());
             } else {
                 $record = Customer::create($request->validated());
-                $id = $record->id;
+                $id     = $record->id;
             }
             return $this->response('Customer successfully added.', $id, true);
         } catch (\Throwable $th) {
@@ -83,18 +81,18 @@ class CustomerController extends Controller
             $customer = Customer::create($request->validated());
             if ($customer) {
                 if ($request->hasFile('document')) {
-                    $file = $request->file('document');
-                    $ext = $file->getClientOriginalExtension();
+                    $file     = $request->file('document');
+                    $ext      = $file->getClientOriginalExtension();
                     $fileName = time() . '.' . $ext;
-                    $path = $file->storeAs('public/documents/booking', $fileName);
+                    $path     = $file->storeAs('public/documents/booking', $fileName);
                     Storage::copy($path, 'public/documents/customer/' . $fileName);
                     $customer->document = $fileName;
                 }
                 if ($request->hasFile('image')) {
-                    $file = $request->file('image');
-                    $ext = $file->getClientOriginalExtension();
-                    $fileName = time() . '.' . $ext;
-                    $path = $file->storeAs('public/documents/customer/photo', $fileName);
+                    $file            = $request->file('image');
+                    $ext             = $file->getClientOriginalExtension();
+                    $fileName        = time() . '.' . $ext;
+                    $path            = $file->storeAs('public/documents/customer/photo', $fileName);
                     $customer->image = $fileName;
                 }
                 $customer->save();
@@ -111,21 +109,21 @@ class CustomerController extends Controller
         try {
             // return $request->hasFile('image');
             $customer = Customer::find($request->id);
-            $updated = Customer::find($request->id)->update($request->validated());
+            $updated  = Customer::find($request->id)->update($request->validated());
             if ($updated) {
                 if ($request->hasFile('document')) {
-                    $file = $request->file('document');
-                    $ext = $file->getClientOriginalExtension();
+                    $file     = $request->file('document');
+                    $ext      = $file->getClientOriginalExtension();
                     $fileName = time() . '.' . $ext;
-                    $path = $file->storeAs('public/documents/booking', $fileName);
+                    $path     = $file->storeAs('public/documents/booking', $fileName);
                     Storage::copy($path, 'public/documents/customer/' . $fileName);
                     $customer->document = $fileName;
                 }
                 if ($request->hasFile('image')) {
-                    $file = $request->file('image');
-                    $ext = $file->getClientOriginalExtension();
-                    $fileName = time() . '.' . $ext;
-                    $path = $file->storeAs('public/documents/customer/photo', $fileName);
+                    $file            = $request->file('image');
+                    $ext             = $file->getClientOriginalExtension();
+                    $fileName        = time() . '.' . $ext;
+                    $path            = $file->storeAs('public/documents/customer/photo', $fileName);
                     $customer->image = $fileName;
                 }
                 $customer->save();
@@ -201,19 +199,25 @@ class CustomerController extends Controller
     public function viewBookingCustomerBill($id)
     {
         $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'hallBooking.food', 'hallBooking.extraAmounts')
-            ->with(["orderRooms" => fn($q) => $q->with("foodplan")])->first();
-        $postings = Posting::with('room')->whereBookingId($id)->get();
-        // $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
-        $transaction = Transaction::with(['paymentMode', 'user'])->whereBookingId($id);
-        $transactions = $transaction->clone()->orderBy('id', 'asc')->get();
-        $totalTransactionAmount = $transaction->clone()->orderBy('id', 'desc')->first();
+            ->with(["orderRooms" => fn($q) => $q->with("foodplan")])
+            ->withSum("transactions", "credit")
+            ->withSum("transactions", "debit")
+            ->with("transactions.user:id,name,email")
+            ->first();
+        $postings           = Posting::with('room')->whereBookingId($id)->get();
+        $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
+
+        $totalTransactionAmount = collect($booking->transactions)->last();
 
         $transactionSummary = (new TransactionController)->getTransactionSummaryByBookingId($id);
 
+        $booking->paid_amounts = $booking->transactions_sum_credit;
+        $booking->balance      = $totalTransactionAmount->balance ?? 0;
+
         return response()->json([
             'booking' => $booking,
-            // 'totalPostingAmount' => $totalPostingAmount,
-            'transaction' => $transactions,
+            'totalPostingAmount' => $totalPostingAmount,
+            'transaction' => $booking->transactions,
             'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0,
             'transactionSummary' => $transactionSummary,
             'postings' => $postings,
@@ -225,9 +229,9 @@ class CustomerController extends Controller
         $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType'])
             ->withCount("order_rooms")
             ->find($id);
-        $res = $customer->bookings->toArray();
-        $bookingIds = array_column($res, 'id');
-        $revenue = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
+        $res         = $customer->bookings->toArray();
+        $bookingIds  = array_column($res, 'id');
+        $revenue     = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
         $city_ledger = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 1)->sum('amount');
         return response()->json(['data' => $customer, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
     }
@@ -235,10 +239,10 @@ class CustomerController extends Controller
     public function getSourceTransactions($id)
     {
         $customerIds = Customer::where("source_id", $id)->pluck("id");
-        $bookings = Booking::with('cityLedgerPayments', 'withOutCityLedgerPayments', "bookedRooms")->whereIn("customer_id", $customerIds)->get()->toArray();
-        $bookingIds = array_column($bookings, 'id');
-        $total_days = array_sum(array_column($bookings, 'total_days'));
-        $revenue = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
+        $bookings    = Booking::with('cityLedgerPayments', 'withOutCityLedgerPayments', "bookedRooms")->whereIn("customer_id", $customerIds)->get()->toArray();
+        $bookingIds  = array_column($bookings, 'id');
+        $total_days  = array_sum(array_column($bookings, 'total_days'));
+        $revenue     = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 0)->sum('amount');
         $city_ledger = Payment::whereIn('booking_id', $bookingIds)->where('is_city_ledger', 1)->sum('amount');
         return response()->json(['bookings' => $bookings, 'total_days' => $total_days, 'revenue' => $revenue, 'city_ledger' => $city_ledger, 'status' => true]);
     }
@@ -250,14 +254,13 @@ class CustomerController extends Controller
         $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType', "company"])
             ->withCount("order_rooms")
             ->find($id);
-        $res = $customer->bookings->toArray();
+        $res        = $customer->bookings->toArray();
         $bookingIds = array_column($res, 'id');
 
         $payments = Payment::with("booking")->whereIn('booking_id', $bookingIds)
-            // ->where('is_city_ledger', 0)
+        // ->where('is_city_ledger', 0)
             ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
             ->whereMonth('date', "<=", date("m", strtotime($request->to_date)));
-
 
         $openBalancePayment = Payment::with("booking")
             ->whereIn('booking_id', $bookingIds)
@@ -273,31 +276,30 @@ class CustomerController extends Controller
 
         $arr = [
             "isOpeningBalance" => true,
-            "date" => "---",
-            "transaction" => "***Openning Balance***",
-            "description" => "---",
-            "amount" => 0,
-            "payment" => 0,
-            "balance" => $openBalancePayment,
+            "date"             => "---",
+            "transaction"      => "***Openning Balance***",
+            "description"      => "---",
+            "amount"           => 0,
+            "payment"          => 0,
+            "balance"          => $openBalancePayment,
         ];
-
 
         array_unshift($paymentData, $arr);
 
         return response()->json([
-            'customer' => $customer,
-            'company' => $customer->company,
-            'statementSum' => $payments->sum('amount'),
+            'customer'      => $customer,
+            'company'       => $customer->company,
+            'statementSum'  => $payments->sum('amount'),
             'statementList' => $paymentData,
-            'status' => true
+            'status'        => true,
         ]);
     }
 
     public function getSourceStatement(Request $request, $id)
     {
         $statement_type = $request->statement_type;
-        $customer_id = $request->customer_id ?? 0;
-        $company_id = $request->company_id ?? 0;
+        $customer_id    = $request->customer_id ?? 0;
+        $company_id     = $request->company_id ?? 0;
 
         $model = Customer::query();
 
@@ -307,16 +309,15 @@ class CustomerController extends Controller
             $model->where('id', $customer_id);
         }
 
-        $customerIds =  $model->pluck("id");
+        $customerIds = $model->pluck("id");
 
-        $res = Booking::with('cityLedgerPayments', 'withOutCityLedgerPayments', "bookedRooms")->whereIn("customer_id", $customerIds)->get()->toArray();
+        $res        = Booking::with('cityLedgerPayments', 'withOutCityLedgerPayments', "bookedRooms")->whereIn("customer_id", $customerIds)->get()->toArray();
         $bookingIds = array_column($res, 'id');
 
         $payments = Payment::with("booking")->whereIn('booking_id', $bookingIds)
-            // ->where('is_city_ledger', 0)
+        // ->where('is_city_ledger', 0)
             ->whereDate('date', ">=", $request->from_date)
             ->whereDate('date', "<=", $request->to_date);
-
 
         $openBalancePayment = Payment::with("booking")
             ->whereIn('booking_id', $bookingIds)
@@ -332,22 +333,21 @@ class CustomerController extends Controller
 
         $arr = [
             "isOpeningBalance" => true,
-            "date" => "---",
-            "transaction" => "***Openning Balance***",
-            "description" => "---",
-            "amount" => 0,
-            "payment" => 0,
-            "balance" => $openBalancePayment,
+            "date"             => "---",
+            "transaction"      => "***Openning Balance***",
+            "description"      => "---",
+            "amount"           => 0,
+            "payment"          => 0,
+            "balance"          => $openBalancePayment,
         ];
-
 
         array_unshift($paymentData, $arr);
 
         return response()->json([
-            'company' => Company::find($company_id),
-            'statementSum' => $payments->sum('amount'),
+            'company'       => Company::find($company_id),
+            'statementSum'  => $payments->sum('amount'),
             'statementList' => $paymentData,
-            'status' => true
+            'status'        => true,
         ]);
     }
 
@@ -355,18 +355,17 @@ class CustomerController extends Controller
     {
         // Parse the date range
         $fromDate = Carbon::parse($request->from_date);
-        $toDate = Carbon::parse($request->to_date);
+        $toDate   = Carbon::parse($request->to_date);
 
         $payments = Payment::whereIn('booking_id', Booking::whereCustomerId($id)->pluck('id'))
             ->where('is_city_ledger', 0)
             ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
             ->whereMonth('date', "<=", date("m", strtotime($request->to_date)));
 
-
         if (env("APP_ENV") == "local") {
             $payments->select(
-                DB::raw('strftime("%m", date) as month'),  // Extract the month (SQLite compatible)
-                DB::raw('strftime("%Y", date) as year'),   // Extract the year (SQLite compatible)
+                DB::raw('strftime("%m", date) as month'), // Extract the month (SQLite compatible)
+                DB::raw('strftime("%Y", date) as year'),  // Extract the year (SQLite compatible)
                 DB::raw('SUM(amount) as total_revenue')
             );
         } else {
@@ -386,7 +385,6 @@ class CustomerController extends Controller
         for ($date = $fromDate; $date <= $toDate; $date->addMonth()) {
             $monthRevenue = $data->firstWhere('month', $date->month);
 
-
             $statements[] = [
                 "label" => $date->format('M y'),
                 "value" => $monthRevenue ? (float) $monthRevenue->total_revenue : 0,
@@ -395,7 +393,6 @@ class CustomerController extends Controller
 
         return response()->json($statements);
     }
-
 
     public function show($id)
     {
@@ -414,7 +411,7 @@ class CustomerController extends Controller
         $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType', "company"])
             ->withCount("order_rooms")
             ->find($id);
-        $res = $customer->bookings->toArray();
+        $res        = $customer->bookings->toArray();
         $bookingIds = array_column($res, 'id');
 
         $payments = Payment::with("booking")
@@ -422,25 +419,23 @@ class CustomerController extends Controller
             ->whereMonth('date', ">=", date("m", strtotime($from_date)))
             ->whereMonth('date', "<=", date("m", strtotime($to_date)));
 
-
         if ($statement_type !== "All") {
             $payments->where('is_city_ledger', 1);
         }
 
-
         $first = date('Y-m-d', strtotime($from_date));
-        $last = date('Y-m-t', strtotime($to_date));
+        $last  = date('Y-m-t', strtotime($to_date));
 
         return Pdf::loadView('statement.index', [
-            'customer' => $customer,
-            'company' => $customer->company,
-            'statementSum' => $payments->sum('amount'),
+            'customer'      => $customer,
+            'company'       => $customer->company,
+            'statementSum'  => $payments->sum('amount'),
             'statementList' => $payments->get(),
 
-            'from' => date('M d, Y', strtotime($first)),
-            'to' => date('M d, Y', strtotime($last)),
+            'from'          => date('M d, Y', strtotime($first)),
+            'to'            => date('M d, Y', strtotime($last)),
         ])
-            // ->setPaper('a4', 'landscape')
+        // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
     }
@@ -450,7 +445,7 @@ class CustomerController extends Controller
         $customer = Customer::with(['bookings' => ['cityLedgerPayments', 'withOutCityLedgerPayments'], 'idCardType', "company"])
             ->withCount("order_rooms")
             ->find($id);
-        $res = $customer->bookings->toArray();
+        $res        = $customer->bookings->toArray();
         $bookingIds = array_column($res, 'id');
 
         $payments = Payment::with("booking")
@@ -458,25 +453,23 @@ class CustomerController extends Controller
             ->whereMonth('date', ">=", date("m", strtotime($from_date)))
             ->whereMonth('date', "<=", date("m", strtotime($to_date)));
 
-
         if ($statement_type !== "All") {
             $payments->where('is_city_ledger', 1);
         }
 
-
         $first = date('Y-m-d', strtotime($from_date));
-        $last = date('Y-m-t', strtotime($to_date));
+        $last  = date('Y-m-t', strtotime($to_date));
 
         return Pdf::loadView('statement.index', [
-            'customer' => $customer,
-            'company' => $customer->company,
-            'statementSum' => $payments->sum('amount'),
+            'customer'      => $customer,
+            'company'       => $customer->company,
+            'statementSum'  => $payments->sum('amount'),
             'statementList' => $payments->get(),
 
-            'from' => date('M d, Y', strtotime($first)),
-            'to' => date('M d, Y', strtotime($last)),
+            'from'          => date('M d, Y', strtotime($first)),
+            'to'            => date('M d, Y', strtotime($last)),
         ])
-            // ->setPaper('a4', 'landscape')
+        // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->download();
     }

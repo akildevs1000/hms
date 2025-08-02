@@ -362,7 +362,7 @@ class Booking extends Model
 
     public function transactions()
     {
-        return $this->hasMany(Transaction::class);
+        return $this->hasMany(Transaction::class)->orderBy("id", "asc");
     }
 
     public function customers()

@@ -2001,7 +2001,9 @@ class BookingController extends Controller
 
         $debit = $booking_total_price - $request->old['booking_total_price'];
 
-        $balance = $booking_total_price - $credit;
+        $totalPostingAmount = Posting::whereBookingId($request->old["booking_id"])->sum('amount_with_tax') ?? 0;
+
+        $balance = ($totalPostingAmount + $booking_total_price) - $credit;
 
         $arr = [
             "desc"        => "room change new price ($booking_total_price)",
@@ -2016,11 +2018,8 @@ class BookingController extends Controller
 
         Transaction::create($arr);
 
-        $difference_amount = $request->json["new_total"] - $request->old["order_rooms_sum_grand_total"];
-
-        $balance               = abs($request->old["booking"]["balance"] + $difference_amount);
-        $remaining_price       = abs($request->old["booking"]["remaining_price"] + $difference_amount);
-        $grand_remaining_price = abs($request->old["booking"]["grand_remaining_price"] + $difference_amount);
+        $remaining_price       = $balance;
+        $grand_remaining_price = $balance;
 
         $bookingPayload = [
             'total_days'            => $request->json["total_days"],
