@@ -1,8 +1,7 @@
 <?php
-
 namespace App\Jobs;
 
-use App\Models\Company;
+use App\Services\MailConfigService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -23,39 +22,32 @@ class EmailSender implements ShouldQueue
 
     public function handle()
     {
-        $companyId = $this->request['company_id'] ?? null;
-
-        if ($companyId) {
-            $company = Company::find($companyId);
-
-            if ($company) {
-                // 🧹 (Optional) Clear previous mail config to avoid reuse across jobs
-                app()['config']->offsetUnset('mail.mailers.smtp');
-
-                // ✅ Dynamically apply the new config for this job
-                config([
-                    'mail.default' => 'smtp',
-                    'mail.mailers.smtp.host' => $company->smtp_host,
-                    'mail.mailers.smtp.port' => $company->smtp_port,
-                    'mail.mailers.smtp.username' => $company->smtp_username,
-                    'mail.mailers.smtp.password' => $company->smtp_password,
-                    'mail.mailers.smtp.encryption' => $company->smtp_encryption,
-                    'mail.from.address' => $company->from_email,
-                    'mail.from.name' => $company->from_name,
-                ]);
-            }
-        }
+        (new MailConfigService)->setMailConfigForCompany($this->request['company_id'] ?? 0);
 
         $recipient   = $this->request['recipient'] ?? null;
         $messageBody = $this->request['text'] ?? null;
-        $heading     = $this->request['heading'] ?? 'Notification';
+        $heading     = $this->request['heading'] ?? null;
         $mediaUrl    = $this->request['mediaUrl'] ?? null;
 
-        if ($recipient && $messageBody) {
-            // echo "\n" . lightDump(["Sending email to", $recipient]) . "\n";
 
+        $config = [
+            'default'      => config('mail.default'),
+            'host'         => config('mail.mailers.smtp.host'),
+            'port'         => config('mail.mailers.smtp.port'),
+            'username'     => config('mail.mailers.smtp.username'),
+            'password'     => config('mail.mailers.smtp.password'),
+            'encryption'   => config('mail.mailers.smtp.encryption'),
+            'from_address' => config('mail.from.address'),
+            'from_name'    => config('mail.from.name'),
+        ];
+
+        echo "\n" . (lightDump(["SMTP Settings Info:", $config])) . "\n";
+
+        if ($recipient && $messageBody) {
+            echo "\n" . lightDump($this->request) . "\n";
             Mail::raw($messageBody, function ($message) use ($recipient, $heading, $mediaUrl) {
-                $message->to($recipient)->subject($heading);
+                $message->to($recipient)
+                    ->subject($heading ?? 'Happy Birthday!');
 
                 if ($mediaUrl) {
                     $message->attach($mediaUrl);
