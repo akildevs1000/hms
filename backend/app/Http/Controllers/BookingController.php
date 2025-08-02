@@ -2947,6 +2947,7 @@ class BookingController extends Controller
 
     public function processNotification($action, $heading, $request, $reservation = null)
     {
+        
         $check_in  = date('d-M-y H:i', strtotime($request->check_in));
         $check_out = date('d-M-y H:i', strtotime($request->check_out));
 
@@ -2960,7 +2961,10 @@ class BookingController extends Controller
         // $payment_mode = PaymentMode::whereId($request->payment_mode_id)->value("name") ?? "---";
 
         $total_price = number_format($request->total_price) ?? "---";
-        $no_of_adult = array_sum(array_column($request->selectedRooms, "no_of_adult")) ?? 1;
+        $no_of_adult = array_sum(array_column($request->selectedRooms ?? [], "no_of_adult")) ?? 1;
+        
+        
+        
 
         $room_type = $request->room_type ?? "---";
         $room_no   = $request->room_no ?? "---";
@@ -3007,7 +3011,11 @@ class BookingController extends Controller
             "nights"         => $nights,
         ];
 
-        $mediaUrl = (new Booking)->voucher($pdfPayload);
+        $mediaUrl = null;
+
+        if($action == Template::BOOKING_CREATE) {
+           $mediaUrl = (new Booking)->voucher($pdfPayload);
+        }
 
         if ($payload["whatsapp"]) {
 
