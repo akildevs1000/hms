@@ -8,7 +8,6 @@ use App\Models\Company;
 use App\Models\Customer;
 use App\Models\IdCardType;
 use App\Models\Payment;
-use App\Models\Posting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -202,25 +201,25 @@ class CustomerController extends Controller
             ->with(["orderRooms" => fn($q) => $q->with("foodplan")])
             ->withSum("transactions", "credit")
             ->withSum("transactions", "debit")
+            ->withSum("postings", "amount_with_tax")
             ->with("transactions.user:id,name,email")
+            ->with("postings.room")
             ->first();
-        $postings           = Posting::with('room')->whereBookingId($id)->get();
-        $totalPostingAmount = Posting::whereBookingId($id)->sum('amount_with_tax');
 
-        $totalTransactionAmount = collect($booking->transactions)->last();
-
-        $transactionSummary = (new TransactionController)->getTransactionSummaryByBookingId($id);
-
-        $booking->paid_amounts = $booking->transactions_sum_credit;
-        $booking->balance      = $totalTransactionAmount->balance ?? 0;
+        $transactionSummary = [
+            'sumDebit'    => $booking->transactions_sum_debit ?? 0,
+            'sumCredit'   => $booking->transactions_sum_credit ?? 0,
+            'balance'     => number_format((float) $booking->transactions_sum_debit - (float) $booking->transactions_sum_credit, 2),
+            'tot_posting' => $booking->postings_sum_amount_with_tax ?? 0,
+        ];
 
         return response()->json([
-            'booking' => $booking,
-            'totalPostingAmount' => $totalPostingAmount,
-            'transaction' => $booking->transactions,
-            'totalTransactionAmount' => $totalTransactionAmount->balance ?? 0,
-            'transactionSummary' => $transactionSummary,
-            'postings' => $postings,
+            'booking'                => $booking,
+            'totalPostingAmount'     => $booking->postings_sum_amount_with_tax ?? 0,
+            'transaction'            => $booking->transactions,
+            'totalTransactionAmount' => $booking->balance ?? 0,
+            'transactionSummary'     => $transactionSummary,
+            'postings'               => $booking->postings,
         ]);
     }
 
