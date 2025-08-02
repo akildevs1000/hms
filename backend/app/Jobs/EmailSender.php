@@ -26,6 +26,20 @@ class EmailSender implements ShouldQueue
         $heading     = $this->request['heading'] ?? null;
         $mediaUrl    = $this->request['mediaUrl'] ?? null;
 
+
+        $config = [
+            'default'      => config('mail.default'),
+            'host'         => config('mail.mailers.smtp.host'),
+            'port'         => config('mail.mailers.smtp.port'),
+            'username'     => config('mail.mailers.smtp.username'),
+            'password'     => config('mail.mailers.smtp.password'),
+            'encryption'   => config('mail.mailers.smtp.encryption'),
+            'from_address' => config('mail.from.address'),
+            'from_name'    => config('mail.from.name'),
+        ];
+
+        echo "\n" . (lightDump(["SMTP Settings Info:", $config])) . "\n";
+
         if ($recipient && $messageBody) {
             echo "\n" . lightDump($this->request) . "\n";
             Mail::raw($messageBody, function ($message) use ($recipient, $heading, $mediaUrl) {
