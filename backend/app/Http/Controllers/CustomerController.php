@@ -199,6 +199,7 @@ class CustomerController extends Controller
     {
         $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'hallBooking.food', 'hallBooking.extraAmounts')
             ->with(["orderRooms" => fn($q) => $q->with("foodplan")])
+        // ->withSum("orderRooms", "total")
             ->withSum("transactions", "credit")
             ->withSum("transactions", "debit")
             ->withSum("postings", "amount_with_tax")
@@ -206,16 +207,23 @@ class CustomerController extends Controller
             ->with("postings.room")
             ->first();
 
+        $debit      = $booking->transactions_sum_debit ?? 0;
+        $credit     = $booking->transactions_sum_credit ?? 0;
+        $postingSum = $booking->postings_sum_amount_with_tax ?? 0;
+
         $transactionSummary = [
-            'sumDebit'    => $booking->transactions_sum_debit ?? 0,
-            'sumCredit'   => $booking->transactions_sum_credit ?? 0,
-            'balance'     => number_format((float) $booking->transactions_sum_debit - (float) $booking->transactions_sum_credit, 2),
-            'tot_posting' => $booking->postings_sum_amount_with_tax ?? 0,
+            'sumDebit'    => $debit ?? 0,
+            'sumCredit'   => $credit ?? 0,
+            'balance'     => number_format((float) $debit - (float) $credit, 2),
+            'tot_posting' => $postingSum,
         ];
 
+        $booking->sub_total = $booking->total_price;
+
         return response()->json([
+
             'booking'                => $booking,
-            'totalPostingAmount'     => $booking->postings_sum_amount_with_tax ?? 0,
+            'totalPostingAmount'     => $postingSum,
             'transaction'            => $booking->transactions,
             'totalTransactionAmount' => $booking->balance ?? 0,
             'transactionSummary'     => $transactionSummary,
