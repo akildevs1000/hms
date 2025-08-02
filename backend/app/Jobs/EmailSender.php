@@ -1,6 +1,7 @@
 <?php
 namespace App\Jobs;
 
+use App\Services\MailConfigService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,6 +22,8 @@ class EmailSender implements ShouldQueue
 
     public function handle()
     {
+        (new MailConfigService)->setMailConfigForCompany($this->request['company_id'] ?? 0);
+
         $recipient   = $this->request['recipient'] ?? null;
         $messageBody = $this->request['text'] ?? null;
         $heading     = $this->request['heading'] ?? null;

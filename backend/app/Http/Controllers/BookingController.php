@@ -2972,8 +2972,6 @@ class BookingController extends Controller
 
         $company_id = $request->company_id;
 
-        (new MailConfigService)->setMailConfigForCompany($company_id);
-
         $payload = [
             "command"    => $action,
             "heading"    => $heading,
