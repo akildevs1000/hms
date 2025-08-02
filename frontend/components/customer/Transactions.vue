@@ -1,6 +1,6 @@
 <template>
   <span>
-    <AssetsTable
+    <AssetsTable :height="700"
       :headers="[
         {
           text: 'Staff',
