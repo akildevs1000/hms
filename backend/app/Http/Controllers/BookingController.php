@@ -7,7 +7,6 @@ use App\Jobs\EmailSender;
 use App\Jobs\StoreBookedRoomsJob;
 use App\Jobs\StoreBookedRoomsJobForDirectCheckIn;
 use App\Jobs\WhatsappSender;
-use App\Mail\EmailDispatcherWithAttachment;
 use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\CancelRoom;
@@ -30,14 +29,12 @@ use App\Models\TaxSlabs;
 use App\Models\Template;
 use App\Models\Transaction;
 use App\Models\Weekend;
-use App\Services\MailConfigService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as Logger;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
@@ -1502,7 +1499,7 @@ class BookingController extends Controller
 
     public function events_list(Request $request)
     {
-        $date_from = date('Y-m-d', strtotime('-7 days', strtotime($request->startDateString)));
+        $date_from = date('Y-m-d', strtotime($request->startDateString . ' -7 day'));
 
         $date_to = $request->endDateString;
 
