@@ -218,7 +218,7 @@ class CustomerController extends Controller
             'tot_posting' => $postingSum,
         ];
 
-        $booking->sub_total = $booking->total_price;
+        $booking->sub_total = $booking->total_price + $booking->discount;
 
         return response()->json([
 
