@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="ViewBookingDialog" :max-width="isGroup ? 1100 : 1000">
+  <v-dialog v-model="ViewBookingDialog" :max-width="isGroup ? 1200 : 1000">
     <AssetsIconClose
-      :left="isGroup ? 1090 : 990"
+      :left="isGroup ? 1190 : 990"
       @click="ViewBookingDialog = false"
     />
     <template v-if="!noLabel" v-slot:activator="{ on, attrs }">
