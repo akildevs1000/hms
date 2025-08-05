@@ -739,12 +739,19 @@ class BookingController extends Controller
 
             // session(['isCheckoutSes' => true]);
 
+            $company_id = $request->company_id;
             $booking_id = $request->booking_id;
             $room_id    = $request->room_id;
             $booking    = Booking::find($booking_id);
 
+             $title         = null;
+             $full_name     = null;
+             $whatsapp      = null;
+             $email         = null;
+
+
             if ($request->filled('guest')) {
-                $validatedData = $request->validate([
+                 $validatedData = $request->validate([
                     'guest.title'       => 'required|string|max:10',
                     'guest.first_name'  => 'required|string|max:50',
                     'guest.last_name'   => 'required|string|max:50',
@@ -762,7 +769,16 @@ class BookingController extends Controller
                 if ($validatedData) {
                     $guest                = $validatedData["guest"];
                     $guest["customer_id"] = $booking->customer_id;
-                    $subCustomer          = SubCustomer::create($guest);
+
+                    $title      = $guest["title"] ?? "";
+                    $first_name = $guest["first_name"] ?? "";
+                    $last_name  = $guest["last_name"] ?? "";
+                    $full_name  = trim($first_name . " " . $last_name);
+
+                    $whatsapp = $guest["whatsapp"] ?? "";
+                    $email    = $guest["email"] ?? "";
+
+                    $subCustomer = SubCustomer::create($guest);
 
                     SubCustomerRoomHistory::create([
                         "room_id"         => $room_id,
@@ -777,6 +793,7 @@ class BookingController extends Controller
                 }
             } else {
                 $customer = $request->customer;
+
                 $arr      = [];
 
                 if ($customer) {
@@ -790,6 +807,10 @@ class BookingController extends Controller
 
                     if ($customer['contact_no']) {
                         $arr["contact_no"] = $customer['contact_no'];
+                    }
+
+                    if ($customer['whatsapp']) {
+                        $arr["whatsapp"] = $customer['whatsapp'];
                     }
 
                     if ($customer['email']) {
@@ -873,10 +894,16 @@ class BookingController extends Controller
                     }
 
                     Customer::where("id", $customer["id"])->update($arr);
+
+                    $title      = $arr["title"] ?? "";
+                    $first_name = $arr["first_name"] ?? "";
+                    $last_name  = $arr["last_name"] ?? "";
+                    $full_name  = trim($first_name . " " . $last_name);
+                    $whatsapp = $arr["whatsapp"];
+                    $email = $arr["email"];
                 }
             }
 
-            //    return  $request->all();
 
             if ($request->discount > 0) {
                 $this->updateTransaction($booking, $request, 'discount', 'debit', -abs($request->discount));
@@ -949,7 +976,45 @@ class BookingController extends Controller
                     "actual_check_out_time" => "---",
                 ]);
 
-            $this->processNotification(Template::WHEN_CUSTOMER_ARRIVED, "WHEN CUSTOMER ARRIVED", $request);
+            $payload = [
+                "command"    => Template::WHEN_CUSTOMER_ARRIVED,
+                "heading"    => "WHEN CUSTOMER ARRIVED",
+                "company_id" => $company_id,
+                "whatsapp"   => $whatsapp,
+                "email"      => $email,
+
+                "fields"     => [
+                    "title"      => $title,
+                    "full_name"  => $full_name,
+                    "company_id" => $company_id,
+                ],
+            ];
+
+            if ($payload["whatsapp"]) {
+
+                $whatsappPayload = [
+                    'recipient'  => $payload["whatsapp"],
+                    'text'       => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
+                    'company_id' => $company_id,
+                ];
+
+                WhatsappSender::dispatch($whatsappPayload);
+            }
+
+            if ($payload["email"]) {
+
+                 $emailPayload = [
+                    'recipient'  => $payload["email"],
+                    'text'       => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
+                    'company_id' => $company_id,
+                    "heading"    => $payload["heading"],
+                ];
+
+                // Mail::to($payload["email"])->queue(new EmailDispatcherWithAttachment($emailPayload));
+                EmailSender::dispatch($emailPayload);
+
+            }
+
 
             return response()
                 ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
@@ -2943,7 +3008,7 @@ class BookingController extends Controller
 
     public function processNotification($action, $heading, $request, $reservation = null)
     {
-        
+
         $check_in  = date('d-M-y H:i', strtotime($request->check_in));
         $check_out = date('d-M-y H:i', strtotime($request->check_out));
 
@@ -2958,9 +3023,6 @@ class BookingController extends Controller
 
         $total_price = number_format($request->total_price) ?? "---";
         $no_of_adult = array_sum(array_column($request->selectedRooms ?? [], "no_of_adult")) ?? 1;
-        
-        
-        
 
         $room_type = $request->room_type ?? "---";
         $room_no   = $request->room_no ?? "---";
@@ -2968,6 +3030,28 @@ class BookingController extends Controller
         $nights = $request->total_days ?? 1;
 
         $company_id = $request->company_id;
+
+        $mediaUrl = null;
+
+        if ($action == Template::BOOKING_CREATE) {
+
+            $pdfPayload = [
+                "reservation_no" => $reservation,
+                "booked_date"    => date("d M Y"),
+                'check_in'       => $check_in,
+                'check_out'      => $check_out,
+                'guests'         => "$no_of_adult Guests",
+                'primary_guest'  => "$title $full_name",
+                'email'          => $email,
+                'phone'          => $whatsapp,
+                'room_type'      => $room_type,
+                // 'room_no'        => $room_no,
+                'adults'         => $no_of_adult,
+                'total_price'    => $total_price,
+                "nights"         => $nights,
+            ];
+            $mediaUrl = (new Booking)->voucher($pdfPayload);
+        }
 
         $payload = [
             "command"    => $action,
@@ -2988,28 +3072,6 @@ class BookingController extends Controller
                 "company_id"     => $company_id,
             ],
         ];
-
-        $mediaUrl = null;
-
-        if ($action == Template::BOOKING_CREATE) {
-            
-            $pdfPayload = [
-                "reservation_no" => $reservation,
-                "booked_date"    => date("d M Y"),
-                'check_in'       => $check_in,
-                'check_out'      => $check_out,
-                'guests'         => "$no_of_adult Guests",
-                'primary_guest'  => "$title $full_name",
-                'email'          => $email,
-                'phone'          => $whatsapp,
-                'room_type'      => $room_type,
-                // 'room_no'        => $room_no,
-                'adults'         => $no_of_adult,
-                'total_price'    => $total_price,
-                "nights"         => $nights,
-            ];
-            $mediaUrl = (new Booking)->voucher($pdfPayload);
-        }
 
         if ($payload["whatsapp"]) {
 
