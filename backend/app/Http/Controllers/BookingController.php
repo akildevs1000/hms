@@ -2989,26 +2989,26 @@ class BookingController extends Controller
             ],
         ];
 
-        $pdfPayload = [
-            "reservation_no" => $reservation,
-            "booked_date"    => date("d M Y"),
-            'check_in'       => $check_in,
-            'check_out'      => $check_out,
-            'guests'         => "$no_of_adult Guests",
-            'primary_guest'  => "$title $full_name",
-            'email'          => $email,
-            'phone'          => $whatsapp,
-            'room_type'      => $room_type,
-            // 'room_no'        => $room_no,
-            'adults'         => $no_of_adult,
-            'total_price'    => $total_price,
-            "nights"         => $nights,
-        ];
-
         $mediaUrl = null;
 
-        if($action == Template::BOOKING_CREATE) {
-           $mediaUrl = (new Booking)->voucher($pdfPayload);
+        if ($action == Template::BOOKING_CREATE) {
+            
+            $pdfPayload = [
+                "reservation_no" => $reservation,
+                "booked_date"    => date("d M Y"),
+                'check_in'       => $check_in,
+                'check_out'      => $check_out,
+                'guests'         => "$no_of_adult Guests",
+                'primary_guest'  => "$title $full_name",
+                'email'          => $email,
+                'phone'          => $whatsapp,
+                'room_type'      => $room_type,
+                // 'room_no'        => $room_no,
+                'adults'         => $no_of_adult,
+                'total_price'    => $total_price,
+                "nights"         => $nights,
+            ];
+            $mediaUrl = (new Booking)->voucher($pdfPayload);
         }
 
         if ($payload["whatsapp"]) {
