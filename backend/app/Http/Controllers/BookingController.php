@@ -735,6 +735,8 @@ class BookingController extends Controller
 
     public function check_in_room(Request $request)
     {
+        DB::beginTransaction();
+
         try {
 
             // session(['isCheckoutSes' => true]);
@@ -744,14 +746,13 @@ class BookingController extends Controller
             $room_id    = $request->room_id;
             $booking    = Booking::find($booking_id);
 
-             $title         = null;
-             $full_name     = null;
-             $whatsapp      = null;
-             $email         = null;
-
+            $title     = null;
+            $full_name = null;
+            $whatsapp  = null;
+            $email     = null;
 
             if ($request->filled('guest')) {
-                 $validatedData = $request->validate([
+                $validatedData = $request->validate([
                     'guest.title'       => 'required|string|max:10',
                     'guest.first_name'  => 'required|string|max:50',
                     'guest.last_name'   => 'required|string|max:50',
@@ -794,7 +795,7 @@ class BookingController extends Controller
             } else {
                 $customer = $request->customer;
 
-                $arr      = [];
+                $arr = [];
 
                 if ($customer) {
                     if ($customer['first_name']) {
@@ -899,11 +900,10 @@ class BookingController extends Controller
                     $first_name = $arr["first_name"] ?? "";
                     $last_name  = $arr["last_name"] ?? "";
                     $full_name  = trim($first_name . " " . $last_name);
-                    $whatsapp = $arr["whatsapp"];
-                    $email = $arr["email"];
+                    $whatsapp   = $arr["whatsapp"];
+                    $email      = $arr["email"];
                 }
             }
-
 
             if ($request->discount > 0) {
                 $this->updateTransaction($booking, $request, 'discount', 'debit', -abs($request->discount));
@@ -1003,7 +1003,7 @@ class BookingController extends Controller
 
             if ($payload["email"]) {
 
-                 $emailPayload = [
+                $emailPayload = [
                     'recipient'  => $payload["email"],
                     'text'       => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
                     'company_id' => $company_id,
@@ -1014,12 +1014,14 @@ class BookingController extends Controller
                 EmailSender::dispatch($emailPayload);
 
             }
-
+            DB::commit();
 
             return response()
-                ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
+                ->json(['bookingId' => $booking_id, 'message' => 'Checked In Successfully', 'status' => true]);
         } catch (\Throwable $th) {
-            throw $th;
+            DB::rollBack();
+            return response()->json(['message' => 'Checkin failed', 'status' => false], 500);
+
         }
     }
 
@@ -1257,14 +1259,22 @@ class BookingController extends Controller
 
     public function check_out_room(Request $request)
     {
+        DB::beginTransaction();
+
         try {
 
             // session(['isCheckoutSes' => true]);
 
+            $company_id = $request->company_id;
             $booking_id = $request->booking_id;
             $room_id    = $request->room_id;
             $booking    = Booking::find($booking_id);
             $customer   = Customer::find($booking->customer_id);
+
+            $whatsapp  = $customer->whatsapp;
+            $email     = $customer->email;
+            $title     = $customer->title;
+            $full_name = $customer->full_name;
 
             if (! $request->isPaymentBeforeSubmitted) {
 
@@ -1293,6 +1303,12 @@ class BookingController extends Controller
                 }
 
                 $trans->store($transactionData, $request->full_payment ?? 0, 'credit');
+
+                if ($booking->balance < 0) {
+
+                    return response()
+                        ->json(['bookingId' => $booking_id, 'message' => 'Cannot Submit Because balance is less than full payment.', 'status' => false]);
+                }
 
                 if ($booking->balance > 0) {
                     $booking->payment_status        = 0;
@@ -1360,12 +1376,52 @@ class BookingController extends Controller
                 ]
             );
 
-            $this->processNotification(Template::AFTER_CHECKOUT, "AFTER CHECKOUT", $request);
+            $payload = [
+                "command"    => Template::AFTER_CHECKOUT,
+                "heading"    => "AFTER CHECKOUT",
+                "company_id" => $company_id,
+                "whatsapp"   => $whatsapp,
+                "email"      => $email,
+
+                "fields"     => [
+                    "title"      => $title,
+                    "full_name"  => $full_name,
+                    "company_id" => $company_id,
+                ],
+            ];
+
+            if ($payload["whatsapp"]) {
+
+                $whatsappPayload = [
+                    'recipient'  => $payload["whatsapp"],
+                    'text'       => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
+                    'company_id' => $company_id,
+                ];
+
+                WhatsappSender::dispatch($whatsappPayload);
+            }
+
+            if ($payload["email"]) {
+
+                $emailPayload = [
+                    'recipient'  => $payload["email"],
+                    'text'       => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
+                    'company_id' => $company_id,
+                    "heading"    => $payload["heading"],
+                ];
+
+                EmailSender::dispatch($emailPayload);
+
+            }
+
+            DB::commit();
 
             return response()
-                ->json(['bookingId' => $booking_id, 'message' => 'Successfully Paid', 'status' => true]);
+                ->json(['bookingId' => $booking_id, 'message' => 'Successfully Checked Out', 'status' => true]);
         } catch (\Throwable $th) {
-            throw $th;
+
+            DB::rollBack();
+            return response()->json(['message' => 'Checkout failed', 'status' => false], 500);
         }
     }
 
