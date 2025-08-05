@@ -1259,6 +1259,7 @@ class BookingController extends Controller
 
     public function check_out_room(Request $request)
     {
+
         DB::beginTransaction();
 
         try {
@@ -1390,12 +1391,18 @@ class BookingController extends Controller
                 ],
             ];
 
+            // $mediaUrl = "https://hms-backend.test/api/invoice/$booking_id";
+
+            $mediaUrl = "https://backend.myhotel2cloud.com/api/invoice/$booking_id";
+            
+
             if ($payload["whatsapp"]) {
 
                 $whatsappPayload = [
                     'recipient'  => $payload["whatsapp"],
                     'text'       => (new Controller)->prepareMessage($payload['fields'], "whatsapp", $payload["command"]),
                     'company_id' => $company_id,
+                    "mediaUrl"   => $mediaUrl,
                 ];
 
                 WhatsappSender::dispatch($whatsappPayload);
@@ -1408,6 +1415,7 @@ class BookingController extends Controller
                     'text'       => (new Controller)->prepareMessage($payload['fields'], "email", $payload["command"]),
                     'company_id' => $company_id,
                     "heading"    => $payload["heading"],
+                    "mediaUrl"   => $mediaUrl,
                 ];
 
                 EmailSender::dispatch($emailPayload);
@@ -1418,10 +1426,10 @@ class BookingController extends Controller
 
             return response()
                 ->json(['bookingId' => $booking_id, 'message' => 'Successfully Checked Out', 'status' => true]);
-        } catch (\Throwable $th) {
+        } catch (\Exception $e) {
 
             DB::rollBack();
-            return response()->json(['message' => 'Checkout failed', 'status' => false], 500);
+            return response()->json(['message' => $e->getMessage(), 'status' => false], 500);
         }
     }
 
