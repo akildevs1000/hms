@@ -566,7 +566,7 @@ class Booking extends Model
         $company = Company::with(["user:id,company_id,email", "contact"])->whereId(request("company_id"))->first();
 
         // Define filename
-        $fileName = 'voucher_' . request("company_id") . '_' . $data['reservation_no'] . '.pdf';
+        $fileName = $data['reservation_no'] . '.pdf';
 
         // Full path to save in public directory
         $filePath = public_path('vouchers/' . $fileName);
