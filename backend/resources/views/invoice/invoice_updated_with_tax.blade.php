@@ -216,7 +216,7 @@
                                                         {{ number_format($room_cgst, 2) }}
                                                     </td>
                                                     <td class="tm_text_right">
-                                                        {{ number_format(($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst), 2) }}
+                                                        {{ number_format($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst, 2) }}
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -287,7 +287,7 @@
                                                     {{ number_format($subtotal_cgst, 2) }}
                                                 </td>
                                                 <td class="  tm_text_right">
-                                                     {{ number_format(($subtotal_total), 2) }}
+                                                    {{ number_format($subtotal_total, 2) }}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -330,7 +330,7 @@
                                                     class="tm_width_3 tm_primary_color tm_bold tm_text_right tm_border_none tm_pt0">
                                                     {{ $company->currency ? $company->currency : '' }}
 
-                                                     {{ number_format(($subtotal_total), 2) }}
+                                                    {{ number_format($subtotal_total, 2) }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -340,7 +340,7 @@
                                                 <td
                                                     class="tm_width_3 tm_primary_color tm_text_right tm_border_none tm_pt0">
                                                     {{ $company->currency ? $company->currency : '' }}
-                                                    {{ number_format(($booking->paid_amounts), 2) }}
+                                                    {{ number_format($booking->paid_amounts, 2) }}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -350,8 +350,8 @@
                                                 </td>
                                                 <td
                                                     class="tm_width_3 tm_border_top_0 tm_bold   tm_primary_color tm_text_right tm_gray_bg tm_radius_0_6_6_0">
-                                                     
-                                                    {{ $company->currency ? $company->currency : '' }}{{ number_format(($subtotal_total - $booking->paid_amounts), 2) }}
+
+                                                    {{ $company->currency ? $company->currency : '' }}{{ number_format($subtotal_total - $booking->paid_amounts, 2) }}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -359,7 +359,7 @@
                                 </div>
                             </div>
                             <div class="tm_text_right">
-                                <br>Amount: <?php echo (new App\Http\Controllers\GRCController())->amountToText($subtotal_total); ?> Only
+                                <br>Amount: <?php echo new App\Http\Controllers\GRCController()->amountToText($subtotal_total); ?> Only
                             </div>
                         </div>
                         <div class="tm_note tm_text_center tm_font_style_normal"><br>
@@ -389,17 +389,17 @@
                     </span>
                     <span class="tm_btn_text">Print</span>
                 </a>
-                <button id="tm_download_btn" class="tm_invoice_btn tm_color2">
+                <button id="tm_edit_btn" class="tm_invoice_btn tm_color2">
                     <span class="tm_btn_icon">
+                        <!-- Optional: Replace with a pencil/edit icon if you want -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
-                            <path
-                                d="M320 336h76c55 0 100-21.21 100-75.6s-53-73.47-96-75.6C391.11 99.74 329 48 256 48c-69 0-113.44 45.79-128 91.2-60 5.7-112 35.88-112 98.4S70 336 136 336h56M192 400.1l64 63.9 64-63.9M256 224v224.03"
-                                fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="32" />
+                            <path d="M320 336h76..." fill="none" stroke="currentColor" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="32" />
                         </svg>
                     </span>
-                    <span class="tm_btn_text">Download</span>
+                    <span class="tm_btn_text">Edit</span>
                 </button>
+
             </div>
         </div>
     </div>
@@ -454,6 +454,16 @@
                 return styles;
             }
         });
+
+        let isEditable = false;
+
+        $('#tm_edit_btn').on('click', function() {
+            isEditable = !isEditable;
+            $('body').attr('contenteditable', isEditable);
+            $('.tm_btn_text').text(isEditable ? 'Disable Edit' : 'Edit');
+        });
+
+
 
 
         // $('#tm_download_btn').on('click', function() {
