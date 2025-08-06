@@ -35,6 +35,10 @@ class GRCController extends Controller
 
         $currentCount = $previousCount + $startFrom + 1;
 
+        if ($currentCount == 1011 && $booking->company_id == 11) {
+            $currentCount = 1026; // Reset to 1000 for company_id 11
+        }
+
         $invoice = str_pad($prefix . $currentCount, 4, '0', STR_PAD_LEFT);
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
