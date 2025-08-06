@@ -29,6 +29,7 @@ use App\Models\TaxSlabs;
 use App\Models\Template;
 use App\Models\Transaction;
 use App\Models\Weekend;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Exception;
@@ -36,6 +37,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Support\Facades\Storage;
+use NumberFormatter;
 
 class BookingController extends Controller
 {
@@ -1391,9 +1393,9 @@ class BookingController extends Controller
                 ],
             ];
 
-            // $mediaUrl = "https://hms-backend.test/api/invoice/$booking_id";
+            $mediaUrl = "https://hms-backend.test/api/invoice_pdf/$booking_id";
 
-            $mediaUrl = "https://backend.myhotel2cloud.com/api/invoice/$booking_id";
+            $mediaUrl = "https://backend.myhotel2cloud.com/api/invoice_pdf/$booking_id";
             
 
             if ($payload["whatsapp"]) {
@@ -3167,8 +3169,6 @@ class BookingController extends Controller
 
     public function deleteBooking($id)
     {
-        return false;
-
         DB::beginTransaction();
         try {
             Booking::where('id', $id)->delete();
@@ -3178,6 +3178,9 @@ class BookingController extends Controller
             BookedRoom::without(['postings', 'booking'])->where('booking_id', $id)->delete();
             Posting::where('booking_id', $id)->delete();
             DB::commit();
+             return response()->json([
+                'message' => 'Deleted booking successfully',
+            ], 500);
             return response()->noContent();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -3248,5 +3251,115 @@ class BookingController extends Controller
             DB::rollback();
             return response()->json(['error' => 'An error occurred. Please try again.' . $e->getMessage()]); // return a user-friendly error
         }
+    }
+
+     public function invoice($id)
+    {
+        $booking = Booking::with([
+            'orderRooms',
+            'customer:id,first_name,last_name,contact_no,city,state,zip_code,country,gst_number',
+            'company:id,user_id,name,location,mol_id',
+            'company.user:id,email',
+            'company.contact',
+            'transactions',
+            'transactions.paymentMode',
+            'bookedRooms',
+        ])->find($id);
+
+        $company  = $booking->company;
+        $customer = $booking->customer;
+
+        $company->location = explode("\n", $company->location);
+
+        $prefix = "INV-";
+
+        if ($booking->gst_number || $booking?->customer?->source?->gst) {
+            $prefix = 'GST-';
+        }
+
+        $previousCount = Booking::where('company_id', $booking->company_id)
+            ->where('created_at', '<', $booking->created_at)
+            ->count();
+
+        $startFrom = 1000;
+
+        $currentCount = $previousCount + $startFrom + 1;
+
+        $invoice = str_pad($prefix . $currentCount, 4, '0', STR_PAD_LEFT);
+
+        $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
+
+        $orderRooms   = $booking->orderRooms;
+        $transactions = $booking->transactions;
+        $bookedRooms  = $booking->bookedRooms;
+
+        $first_check_in_time  = $bookedRooms[0]["actual_check_in_time"] ?? "00:00";
+        $first_check_out_time = $bookedRooms[0]["actual_check_out_time"] ?? "00:00";
+
+        $first_check_in_date  = date('d M Y', strtotime($booking->check_in));
+        $first_check_out_date = date('d M Y', strtotime($booking->check_out));
+
+        $booking_date = date('d M Y', strtotime($booking->booking_date));
+
+        $total_rooms = count($booking->bookedRooms ?? []) ?? 1;
+
+        $roomTypes = array_unique(array_column($booking->bookedRooms->toArray(), 'room_type'));
+
+        $room_types = implode(',', $roomTypes);
+
+        $currency   = $company->currency ?? '₹';
+        $company_id = $booking->company_id ?? 0;
+
+        $booking = [
+            "first_check_in_time"  => $first_check_in_time,
+            "first_check_out_time" => $first_check_out_time,
+            "first_check_in_date"  => $first_check_in_date,
+            "first_check_out_date" => $first_check_out_date,
+            "total_rooms"          => $total_rooms,
+            "room_types"           => $room_types,
+            "paid_amounts"         => $booking->paid_amounts ?? 0,
+            "balance"              => $booking->balance ?? 0,
+            "reservation_no"       => $booking->reservation_no ?? 0,
+            "total_price"          => $booking->total_price ?? 0,
+            "amtLetter"            => $this->amountToText($booking->total_price ?? 0),
+        ];
+
+        return Pdf::loadView("invoice.invoice_pdf", compact("company", "invoice", "customer", "booking", "orderRooms", "currency", "company_id"))
+            ->setPaper('a4', 'portrait')
+            ->stream();
+
+        $paymentMode = $transactions->toArray();
+        $paymentMode = end($paymentMode);
+
+        // $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
+        $amtLatter = $this->amountToText($booking->total_price ?? 0);
+
+        $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
+            return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
+        });
+
+        $roomsDiscount = $booking->bookedRooms->sum(function ($room) {
+            return $room->room_discount;
+        });
+
+        $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-31'));
+
+        $bladeName = 'invoice.invoice_pdf';
+
+        $result = compact("invoice", "first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes");
+
+        // return view($bladeName, $result);
+
+        return Pdf::loadView($bladeName, $result)
+        // ->setPaper('a4', 'landscape')
+            ->setPaper('a4', 'portrait')
+            ->stream();
+    }
+
+    public function amountToText($amount)
+    {
+        $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
+        $text      = ucwords($formatter->format($amount));
+        return $text . " Only";
     }
 }

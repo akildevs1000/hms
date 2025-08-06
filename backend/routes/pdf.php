@@ -1,6 +1,7 @@
  <?php
 
-  use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CustomerController;
   use App\Http\Controllers\GRCController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ReportController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ReportController;
   // Route::get('report', [CustomerController::class, 'index']);
 
   Route::get('invoice/{id}/{inv?}', [GRCController::class, 'index'])->name('pdf.invoice');
+  Route::get('invoice_pdf/{id}', [BookingController::class, 'invoice']);
   Route::get('invoice-test/{id}/{inv?}', [GRCController::class, 'index_test']);
 
   Route::get('checkin_report_print', [ReportController::class, 'CHeckInReport']);
