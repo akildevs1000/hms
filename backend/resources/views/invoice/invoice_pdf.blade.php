@@ -115,7 +115,7 @@
                 <tr>
                     <td>
                         @if (env('APP_ENV') == 'production')
-                            <img src="{{ urldecode($booking->company->logo) }}" height="100px" width="100"
+                            <img src="{{ urldecode($company->logo) }}" height="100px" width="100"
                                 style="margin-left: 50px;margin-top: 0px">
                         @else
                             <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
