@@ -3258,7 +3258,7 @@ class BookingController extends Controller
         $booking = Booking::with([
             'orderRooms',
             'customer:id,first_name,last_name,contact_no,city,state,zip_code,country,gst_number',
-            'company:id,user_id,name,location,mol_id',
+            'company:id,user_id,name,location,mol_id,logo',
             'company.user:id,email',
             'company.contact',
             'transactions',
@@ -3325,33 +3325,6 @@ class BookingController extends Controller
         ];
 
         return Pdf::loadView("invoice.invoice_pdf", compact("company", "invoice", "customer", "booking", "orderRooms", "currency", "company_id"))
-            ->setPaper('a4', 'portrait')
-            ->stream();
-
-        $paymentMode = $transactions->toArray();
-        $paymentMode = end($paymentMode);
-
-        // $amtLatter = $this->amountToText($transactions->sum('debit') ?? 0);
-        $amtLatter = $this->amountToText($booking->total_price ?? 0);
-
-        $numberOfCustomers = $booking->bookedRooms->sum(function ($room) {
-            return $room->no_of_adult + $room->no_of_child + $room->no_of_baby;
-        });
-
-        $roomsDiscount = $booking->bookedRooms->sum(function ($room) {
-            return $room->room_discount;
-        });
-
-        $is_old_bill = strtotime($booking->created_at) - strtotime(date('2023-08-31'));
-
-        $bladeName = 'invoice.invoice_pdf';
-
-        $result = compact("invoice", "first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes");
-
-        // return view($bladeName, $result);
-
-        return Pdf::loadView($bladeName, $result)
-        // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
     }
