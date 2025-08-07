@@ -1396,7 +1396,6 @@ class BookingController extends Controller
             $mediaUrl = "https://hms-backend.test/api/invoice_pdf/$booking_id";
 
             $mediaUrl = "https://backend.myhotel2cloud.com/api/invoice_pdf/$booking_id";
-            
 
             if ($payload["whatsapp"]) {
 
@@ -2229,8 +2228,13 @@ class BookingController extends Controller
 
         $model->where('room_category_type', null);
 
-        $model->whereHas('bookedRooms', function ($q) use ($request) {
-            $q->where('company_id', $request->company_id);
+        // Use a nested group to combine whereHas and orWhereHas
+        $model->where(function ($query) use ($request) {
+            $query->whereHas('bookedRooms', function ($q) use ($request) {
+                $q->where('company_id', $request->company_id);
+            })->orWhereHas('cancelRooms', function ($q) use ($request) {
+                $q->where('company_id', $request->company_id);
+            });
         });
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
@@ -3178,7 +3182,8 @@ class BookingController extends Controller
             BookedRoom::without(['postings', 'booking'])->where('booking_id', $id)->delete();
             Posting::where('booking_id', $id)->delete();
             DB::commit();
-             return response()->json([
+
+            return response()->json([
                 'message' => 'Deleted booking successfully',
             ], 500);
             return response()->noContent();
@@ -3253,7 +3258,7 @@ class BookingController extends Controller
         }
     }
 
-     public function invoice($id)
+    public function invoice($id)
     {
         $booking = Booking::with([
             'orderRooms',
