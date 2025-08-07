@@ -2232,9 +2232,12 @@ class BookingController extends Controller
         $model->where(function ($query) use ($request) {
             $query->whereHas('bookedRooms', function ($q) use ($request) {
                 $q->where('company_id', $request->company_id);
-            })->orWhereHas('cancelRooms', function ($q) use ($request) {
-                $q->where('company_id', $request->company_id);
             });
+
+            // Uncomment the following line if you want to include canceled rooms in the query
+            // ->orWhereHas('cancelRooms', function ($q) use ($request) {
+            //     $q->where('company_id', $request->company_id);
+            // });
         });
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
