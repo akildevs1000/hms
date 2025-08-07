@@ -87,6 +87,11 @@ class Booking extends Model
         return $this->hasMany(BookedRoom::class);
     }
 
+     public function cancelRooms()
+    {
+        return $this->hasMany(CancelRoom::class);
+    }
+
     public function orderRooms()
     {
         return $this->hasMany(OrderRoom::class);
