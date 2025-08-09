@@ -412,9 +412,6 @@
         <template v-slot:item.is_active="{ item }">
           {{ item.is_active == 1 ? "Active" : "In-Active" }}
         </template>
-        <template v-slot:item.enable_whatsapp_otp="{ item }">
-          {{ item.enable_whatsapp_otp == 1 ? "Active" : "In-Active" }}
-        </template>
 
         <template v-slot:item.actions="{ item }">
           <v-menu
@@ -481,14 +478,6 @@ export default {
         { text: "Name", value: "name", key: "name", filterable: true },
         { text: "Pin", value: "pin", key: "pin", filterable: true },
         { text: "Mobile", value: "mobile", key: "mobile", filterable: true },
-        {
-          text: "OTP",
-          value: "enable_whatsapp_otp",
-          key: "enable_whatsapp_otp",
-          key: "status",
-          filterable: true,
-          filterSpecial: true,
-        },
         {
           text: "Status",
           value: "is_active",

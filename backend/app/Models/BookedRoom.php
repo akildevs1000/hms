@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Http\Controllers\BookingController;
@@ -12,11 +11,11 @@ class BookedRoom extends Model
 
     protected $guarded = [];
 
-    const AVAILABLE = 0;
-    const BOOKED = 1;
-    const CHECKED_IN = 2;
+    const AVAILABLE   = 0;
+    const BOOKED      = 1;
+    const CHECKED_IN  = 2;
     const CHECKED_OUT = 3;
-    const DIRTY_ROOM = 4;
+    const DIRTY_ROOM  = 4;
 
     const ROOM_STATUS = [0 => "Available", 1 => "Booked", 2 => "Checked In", 3 => "Checked Out", 4 => "Checked", 5 => "Dirty"];
 
@@ -32,7 +31,10 @@ class BookedRoom extends Model
         'checkin_datetime_only',
 
         'checkout_date_only',
-        'checkout_datetime_only'
+        'checkout_datetime_only',
+
+        'checkin_datetime_only_display',
+        'checkout_datetime_only_display',
     ];
 
     protected $casts = [
@@ -148,9 +150,8 @@ class BookedRoom extends Model
     {
         $model = Booking::find($this->booking_id);
 
-
-        if (!$model) {
-            return  "green";
+        if (! $model) {
+            return "green";
         }
         if ($model->booking_status == 1 && $model->advance_price == 0) {
             (int) $status = 6;
@@ -158,13 +159,13 @@ class BookedRoom extends Model
             (int) $status = 7;
         } else if (($model->booking_status > 3 || $model->booking_status == 0) && $model->balance > 0) {
             if ($this->booking_status == 3) {
-                (int)  $status = $this->booking_status;
+                (int) $status = $this->booking_status;
             } else {
                 (int) $status = 8;
             }
         } else {
             if ($model->booking_status == 3) {
-                (int)  $status = $this->booking_status;
+                (int) $status = $this->booking_status;
                 // echo $status;
             } else {
                 (int) $status = $model->booking_status ?? 0;
@@ -221,6 +222,25 @@ class BookedRoom extends Model
     public function GetCheckOutDateTimeOnlyAttribute()
     {
         return date('Y-m-d 11:00', strtotime($this->check_out));
+    }
+
+    public function GetCheckInDateTimeOnlyDisplayAttribute()
+    {
+        $date = date('d-M-y', strtotime($this->check_in));
+
+        $time = $this->actual_check_in_time;
+
+        return $date . " " . $time;
+
+    }
+
+    public function GetCheckOutDateTimeOnlyDisplayAttribute()
+    {
+        $date = date('d-M-y', strtotime($this->check_out));
+
+        $time = $this->actual_check_out_time;
+
+        return $date . " " . $time;
     }
 
     public function GetResourceIdAttribute()
