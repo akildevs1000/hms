@@ -1,5 +1,24 @@
 <template>
   <v-container fluid>
+    <v-dialog v-model="dialog" max-width="500px" persistent>
+      <v-card>
+        <v-toolbar dense flat>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="dialog = false" aria-label="Close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-card-text class="d-flex justify-center">
+          <v-img
+            :src="selectedImage"
+            max-width="480"
+            max-height="400"
+            contain
+          ></v-img>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-data-table
       dense
       :headers="headers"
@@ -28,7 +47,7 @@
 
       <template v-slot:item.attachments="{ item }">
         <div style="display: flex; gap: 8px; flex-wrap: wrap" class="pa-5">
-          <v-img 
+          <v-img
             v-for="(attachment, index) in item.attachments"
             :key="index"
             :src="attachment"
@@ -42,25 +61,6 @@
           />
         </div>
         <!-- Image preview dialog -->
-        <v-dialog v-model="dialog" max-width="500px" persistent>
-          <v-card>
-            <v-toolbar dense flat>
-              <v-spacer></v-spacer>
-              <v-btn icon @click="dialog = false" aria-label="Close">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-toolbar>
-
-            <v-card-text class="d-flex justify-center">
-              <v-img
-                :src="selectedImage"
-                max-width="480"
-                max-height="400"
-                contain
-              ></v-img>
-            </v-card-text>
-          </v-card>
-        </v-dialog>
       </template>
       <template v-slot:item.voice_note="{ item }">
         <v-container class="pa-1">
