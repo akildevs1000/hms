@@ -16,7 +16,11 @@
       </v-snackbar>
     </div>
 
-    <v-dialog v-model="newItemDialog" max-width="60%">
+    <v-dialog
+      v-model="newItemDialog"
+      max-width="60%"
+      :key="editedItem?.id || 1"
+    >
       <v-card>
         <v-card-title dense class="primary white--text background">
           <span v-if="viewMode">View Item Info </span>

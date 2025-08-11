@@ -26,7 +26,8 @@ class HotelFoodTimings extends Model
 
     public function getImageAttribute()
     {
-        return asset('storage/hotel/timings/' . $this->company_id . '/' . $this->id . '.jpg');
+        //public hotel
+        return asset('hotel/timings/' . $this->company_id . '/' . $this->id . '.jpg');
     }
     // public function categoy()
     // {

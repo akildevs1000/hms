@@ -522,6 +522,14 @@ export default {
           menu: "dashboard",
         },
         {
+          topMenu: "dashboard",
+          icon: "mdi mdi-food",
+          module: "automation",
+          title: "Orders",
+          to: "/hotel_checkin/orders/food",
+          menu: "dashboard",
+        },
+        {
           topMenu: "setting",
           icon: "mdi mdi-account-details",
           module: "company",

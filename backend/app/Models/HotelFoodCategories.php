@@ -23,9 +23,16 @@ class HotelFoodCategories extends Model
     ];
 
     protected $appends = ['image'];
-
+    public function items()
+    {
+        return $this->hasMany(HotelFoodItems::class, 'category_id');
+    }
     public function getImageAttribute()
     {
-        return asset('storage/hotel/categories/' . $this->company_id . '/' . $this->id . '.jpg');
+        //public hotel
+        //return asset('hotel/categories/' . $this->company_id . '/' . $this->id . '.jpg');
+
+        $path = 'hotel/categories/' . $this->company_id . '/' . $this->id . '.jpg';
+        return file_exists(public_path($path)) ? asset($path) : asset(('noimage.png'));
     }
 }

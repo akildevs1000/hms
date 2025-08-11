@@ -227,7 +227,7 @@
               small
               dense
               v-else-if="item.status == 1"
-              color="primary"
+              color="warning"
               class="ma-2 white--text"
               @click="changeStatusToDelivered(item)"
             >

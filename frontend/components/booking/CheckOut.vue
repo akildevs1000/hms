@@ -885,9 +885,8 @@ export default {
       this.allDataLoaded = false;
     },
     submitPayment() {
-
       this.$swal("Success!", "Payment has been done", "success");
-      
+
       return;
       let after_discount =
         parseFloat(this.tempBalance) - parseFloat(this.discount);
@@ -941,7 +940,6 @@ export default {
     },
 
     store_check_out() {
-      
       // if (!this.isPaymentBeforeSubmitted) {
       //   this.submitPayment();
       // }
@@ -995,10 +993,7 @@ export default {
     redirect_to_invoice(id) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute(
-        "href",
-        `https://backend.myhotel2cloud.com/api/invoice/${id}`
-      );
+      element.setAttribute("href", `${process.env.BACKEND_URL}invoice/${id}`);
       document.body.appendChild(element);
       element.click();
     },

@@ -1,6 +1,6 @@
 export default ({ $axios, store }, inject) => {
   // Override baseURL dynamically
-  $axios.setBaseURL('https://backend.myhotel2cloud.com/api/');
+  $axios.setBaseURL(process.env.BACKEND_URL);
 
   $axios.onRequest(async (config) => {
     let user = store.state.auth.user;

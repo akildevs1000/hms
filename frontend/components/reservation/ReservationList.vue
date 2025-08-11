@@ -15,9 +15,19 @@
       </v-col> -->
 
       <v-col xs="12" sm="12" md="3" cols="12" class="mt-0">
-        <v-autocomplete class="form-control" @change="getDataFromApi(`reservation_list_dash`)" v-model="status"
-          :items="reservationStatusList" item-text="name" item-value="id" placeholder="Display List" solo hide-details
-          flat dense></v-autocomplete>
+        <v-autocomplete
+          class="form-control"
+          @change="getDataFromApi(`reservation_list_dash`)"
+          v-model="status"
+          :items="reservationStatusList"
+          item-text="name"
+          item-value="id"
+          placeholder="Display List"
+          solo
+          hide-details
+          flat
+          dense
+        ></v-autocomplete>
       </v-col>
     </v-row>
     <v-card class="mb-5 rounded-md mt-3" elevation="0">
@@ -26,8 +36,16 @@
 
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn dense class="ma-0 px-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
-              @click="getDataFromApi()">
+            <v-btn
+              dense
+              class="ma-0 px-0"
+              x-small
+              :ripple="false"
+              text
+              v-bind="attrs"
+              v-on="on"
+              @click="getDataFromApi()"
+            >
               <v-icon color="white" class="ml-2" dark>mdi mdi-reload</v-icon>
             </v-btn>
           </template>
@@ -35,7 +53,14 @@
         </v-tooltip>
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="toggleFilter">
+            <v-btn
+              x-small
+              :ripple="false"
+              text
+              v-bind="attrs"
+              v-on="on"
+              @click="toggleFilter"
+            >
               <v-icon dark white>mdi-filter</v-icon>
             </v-btn>
           </template>
@@ -43,68 +68,171 @@
         </v-tooltip>
       </v-toolbar>
 
-
-      <v-data-table dense :headers="headers_table" :items="data" :loading="loading" :options.sync="options"
-        :footer-options="{ itemsPerPageOptions: [10, 20, 50, 100, 500, 1000] }" :server-items-length="totalTableRowsCount"
-        @page-change="updateIndex">
-
+      <v-data-table
+        dense
+        :headers="headers_table"
+        :items="data"
+        :loading="loading"
+        :options.sync="options"
+        :footer-options="{ itemsPerPageOptions: [10, 20, 50, 100, 500, 1000] }"
+        :server-items-length="totalTableRowsCount"
+        @page-change="updateIndex"
+      >
         <template v-slot:header="{ props: { headers } }">
           <tr v-if="isFilter">
             <td v-for="header in headers" :key="header.text">
-              <v-text-field clearable :hide-details="true" v-if="header.filterable && !header.filterSpecial"
-                v-model="filters[header.key]" :id="header.value" @input="applyFilters(header.key, $event)" outlined dense
-                autocomplete="off"></v-text-field>
+              <v-text-field
+                clearable
+                :hide-details="true"
+                v-if="header.filterable && !header.filterSpecial"
+                v-model="filters[header.key]"
+                :id="header.value"
+                @input="applyFilters(header.key, $event)"
+                outlined
+                dense
+                autocomplete="off"
+              ></v-text-field>
 
-
-              <v-menu v-if="header.filterSpecial && header.value == 'check_in'" ref="from_menu_filter"
-                v-model="from_menu_filter" :close-on-content-click="false" transition="scale-transition" offset-y
-                min-width="auto">
+              <v-menu
+                v-if="header.filterSpecial && header.value == 'check_in'"
+                ref="from_menu_filter"
+                v-model="from_menu_filter"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field :hide-details="true" clearable @click:clear="filters[header.value] = ''; applyFilters()"
-                    outlined dense v-model="filters[header.value]" readonly v-bind="attrs" v-on="on"
-                    placeholder="Select Date"></v-text-field>
+                  <v-text-field
+                    :hide-details="true"
+                    clearable
+                    @click:clear="
+                      filters[header.value] = '';
+                      applyFilters();
+                    "
+                    outlined
+                    dense
+                    v-model="filters[header.value]"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    placeholder="Select Date"
+                  ></v-text-field>
                 </template>
-                <v-date-picker style="height: 400px" v-model="filters[header.value]" no-title scrollable
-                  @input="applyFilters()">
+                <v-date-picker
+                  style="height: 400px"
+                  v-model="filters[header.value]"
+                  no-title
+                  scrollable
+                  @input="applyFilters()"
+                >
                   <v-spacer></v-spacer>
 
-                  <v-btn text color="primary"
-                    @click="filters[header.value] = ''; from_menu_filter = false; applyFilters()">
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="
+                      filters[header.value] = '';
+                      from_menu_filter = false;
+                      applyFilters();
+                    "
+                  >
                     Clear
                   </v-btn>
                 </v-date-picker>
               </v-menu>
-              <v-menu v-if="header.filterSpecial && header.value == 'check_out'" ref="to_menu_filter"
-                v-model="to_menu_filter" :close-on-content-click="false" transition="scale-transition" offset-y
-                min-width="auto">
+              <v-menu
+                v-if="header.filterSpecial && header.value == 'check_out'"
+                ref="to_menu_filter"
+                v-model="to_menu_filter"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field :hide-details="true" clearable @click:clear="filters[header.value] = ''; applyFilters()"
-                    outlined dense v-model="filters[header.value]" readonly v-bind="attrs" v-on="on"
-                    placeholder="Select Date"></v-text-field>
+                  <v-text-field
+                    :hide-details="true"
+                    clearable
+                    @click:clear="
+                      filters[header.value] = '';
+                      applyFilters();
+                    "
+                    outlined
+                    dense
+                    v-model="filters[header.value]"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    placeholder="Select Date"
+                  ></v-text-field>
                 </template>
-                <v-date-picker style="height: 400px" v-model="filters[header.value]" no-title scrollable
-                  @input="applyFilters()">
+                <v-date-picker
+                  style="height: 400px"
+                  v-model="filters[header.value]"
+                  no-title
+                  scrollable
+                  @input="applyFilters()"
+                >
                   <v-spacer></v-spacer>
 
-                  <v-btn text color="primary" @click="filters[header.value] = ''; to_menu_filter = false; applyFilters()">
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="
+                      filters[header.value] = '';
+                      to_menu_filter = false;
+                      applyFilters();
+                    "
+                  >
                     Clear
                   </v-btn>
                 </v-date-picker>
               </v-menu>
-              <v-menu v-if="header.filterSpecial && header.value == 'booking_date'" ref="to_menu_filter1"
-                v-model="to_menu_filter1" :close-on-content-click="false" transition="scale-transition" offset-y
-                min-width="auto">
+              <v-menu
+                v-if="header.filterSpecial && header.value == 'booking_date'"
+                ref="to_menu_filter1"
+                v-model="to_menu_filter1"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              >
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field :hide-details="true" clearable @click:clear="filters[header.value] = ''; applyFilters()"
-                    outlined dense v-model="filters[header.value]" readonly v-bind="attrs" v-on="on"
-                    placeholder="Select Date"></v-text-field>
+                  <v-text-field
+                    :hide-details="true"
+                    clearable
+                    @click:clear="
+                      filters[header.value] = '';
+                      applyFilters();
+                    "
+                    outlined
+                    dense
+                    v-model="filters[header.value]"
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                    placeholder="Select Date"
+                  ></v-text-field>
                 </template>
-                <v-date-picker style="height: 400px" v-model="filters[header.value]" no-title scrollable
-                  @input="applyFilters()">
+                <v-date-picker
+                  style="height: 400px"
+                  v-model="filters[header.value]"
+                  no-title
+                  scrollable
+                  @input="applyFilters()"
+                >
                   <v-spacer></v-spacer>
 
-                  <v-btn text color="primary"
-                    @click="filters[header.value] = ''; to_menu_filter1 = false; applyFilters()">
+                  <v-btn
+                    text
+                    color="primary"
+                    @click="
+                      filters[header.value] = '';
+                      to_menu_filter1 = false;
+                      applyFilters();
+                    "
+                  >
                     Clear
                   </v-btn>
                 </v-date-picker>
@@ -113,10 +241,14 @@
           </tr>
         </template>
 
-
-        <template v-slot:item.sno="{ item, index }"> {{
-          currentPage ? ((currentPage - 1) * perPage) + (cumulativeIndex + itemIndex(item)) : ''
-        }}</template>
+        <template v-slot:item.sno="{ item, index }">
+          {{
+            currentPage
+              ? (currentPage - 1) * perPage +
+                (cumulativeIndex + itemIndex(item))
+              : ""
+          }}</template
+        >
         <template v-slot:item.reservation_no="{ item }">
           <b>{{ item.reservation_no }}</b>
         </template>
@@ -146,7 +278,6 @@
         </template>
       </v-data-table>
 
-
       <!-- <table>
         <tr>
           <th style="font-size: 13px" v-for="(item, index) in headers" :key="index">
@@ -175,7 +306,7 @@
           </td>
 
           <td>{{ item.total_price || 0 }}</td>
-          
+
       <td>{{ item.source || "---" }}</td>
       <td>{{ convert_date_format(item.booking_date) }}</td>
       </tr>
@@ -228,15 +359,75 @@ export default {
       { id: 3, name: "Departure For Today" },
     ],
     headers_table: [
-      { text: "Rev. No", value: "reservation_no", sortable: true, filterable: true, aling: "left", key: 'reservation_no' },
-      { text: "Customer", value: "customer.name", sortable: true, filterable: true, align: "left", key: "customer_name" },
-      { text: "Rooms", value: "rooms", sortable: true, filterable: true, align: "left", key: "rooms" },
-      { text: "Arrival  Date", value: "check_in", filterable: true, sortable: true, align: "left", width: "160px", key: "check_in", filterSpecial: true, },
-      { text: "Departure  Date", value: "check_out", filterable: true, sortable: true, align: "left", width: "160px", key: "check_out", filterSpecial: true, },
-      { text: "Total", value: "total_price", filterable: true, sortable: true, align: "right", key: "total_price" },
-      { text: "Booking Date", value: "booking_date", filterable: true, sortable: true, align: "left", key: "booking_date", filterSpecial: true, },
-      { text: "Source", value: "source", filterable: true, sortable: true, align: "left", key: "source" },
-
+      {
+        text: "Rev. No",
+        value: "reservation_no",
+        sortable: true,
+        filterable: true,
+        aling: "left",
+        key: "reservation_no",
+      },
+      {
+        text: "Customer",
+        value: "customer.name",
+        sortable: true,
+        filterable: true,
+        align: "left",
+        key: "customer_name",
+      },
+      {
+        text: "Rooms",
+        value: "rooms",
+        sortable: true,
+        filterable: true,
+        align: "left",
+        key: "rooms",
+      },
+      {
+        text: "Arrival  Date",
+        value: "check_in",
+        filterable: true,
+        sortable: true,
+        align: "left",
+        width: "160px",
+        key: "check_in",
+        filterSpecial: true,
+      },
+      {
+        text: "Departure  Date",
+        value: "check_out",
+        filterable: true,
+        sortable: true,
+        align: "left",
+        width: "160px",
+        key: "check_out",
+        filterSpecial: true,
+      },
+      {
+        text: "Total",
+        value: "total_price",
+        filterable: true,
+        sortable: true,
+        align: "right",
+        key: "total_price",
+      },
+      {
+        text: "Booking Date",
+        value: "booking_date",
+        filterable: true,
+        sortable: true,
+        align: "left",
+        key: "booking_date",
+        filterSpecial: true,
+      },
+      {
+        text: "Source",
+        value: "source",
+        filterable: true,
+        sortable: true,
+        align: "left",
+        key: "source",
+      },
     ],
     headers: [
       { text: "&nbsp Rev. No" },
@@ -267,10 +458,9 @@ export default {
         this.getDataFromApi();
       },
       deep: true,
-    }
+    },
   },
   created() {
-
     // this.loading = true;
     this.getDataFromApi();
   },
@@ -290,7 +480,7 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      let url = "https://backend.myhotel2cloud.com/api/invoice/" + id;
+      let url = process.env.BACKEND_URL + "invoice/" + id;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
@@ -334,8 +524,6 @@ export default {
     updateIndex(page) {
       this.currentPage = page;
       this.cumulativeIndex = (page - 1) * this.perPage;
-
-
     },
     itemIndex(item) {
       return this.data.indexOf(item);
@@ -377,13 +565,15 @@ export default {
     },
 
     formatAmount(amount) {
-      return amount.toString().replace(/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/g, "$1,");
+      return amount
+        .toString()
+        .replace(/(\d+?)(?=(\d\d)+(\d)(?!\d))(\.\d+)?/g, "$1,");
     },
   },
 };
 </script>
 
-<style scoped >
+<style scoped>
 .no-bg {
   background-color: white !important;
 }
@@ -477,7 +667,7 @@ select:focus {
 .table-header-text {
   font-size: 12px;
 }
-</style>  
+</style>
 
 <style scoped>
 table {

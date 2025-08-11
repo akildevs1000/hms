@@ -262,7 +262,7 @@ export default {
       }
     },
     openExternalWinodw(id) {
-      let url = `https://backend.myhotel2cloud.com/api/quotation-hall/${id}`;
+      let url = `${process.env.BACKEND_URL}quotation-hall/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
@@ -270,7 +270,7 @@ export default {
       element.click();
     },
     openExternalWinodwForInvoice(id) {
-      let url = `https://backend.myhotel2cloud.com/api/invoice-hall/${id}`;
+      let url = `${process.env.BACKEND_URL}invoice-hall/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

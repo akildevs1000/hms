@@ -33,7 +33,11 @@ class HotelFoodItems extends Model
 
     public function getItemPictureAttribute()
     {
-        return asset('storage/hotel/food_menu/' . $this->company_id . '' . '/' . $this->id . '.jpg');
+        //public hotel
+        // return asset('hotel/food_menu/' . $this->company_id . '' . '/' . $this->id . '.jpg');
+
+        $path = 'hotel/food_menu/' . $this->company_id . '/' . $this->id . '.jpg';
+        return file_exists(public_path($path)) ? asset($path) : asset(('noimage.png'));
     }
 
     public function category()

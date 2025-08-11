@@ -405,7 +405,7 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      let url = "https://backend.myhotel2cloud.com/api/invoice";
+      let url = process.env.BACKEND_URL + "invoice";
       // url = "https://hms-backend.test/api/invoice";
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
@@ -495,7 +495,7 @@ export default {
 
       // http://192.168.2.210:8000/api/up_coming_reservation_list?page=1&per_page=30&company_id=2&search=&from=&to=&source=
 
-      let url = `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}&from=${from}&to=${to}&search${search}&source${newSource}&r_type=${model}&guest_mode=${guest_mode}`;
+      let url = `${process.env.BACKEND_URL}${type}?company_id=${comId}&from=${from}&to=${to}&search${search}&source${newSource}&r_type=${model}&guest_mode=${guest_mode}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

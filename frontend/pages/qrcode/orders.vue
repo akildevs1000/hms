@@ -37,7 +37,7 @@
           </v-col>
           <v-col cols="3" class="">
             <div v-if="items.status == 0">Placed Order</div>
-            <div v-else-if="items.status == 1" style="color: ##93ab6d">
+            <div v-else-if="items.status == 1" style="color: #93ab6d">
               Preparing
             </div>
             <div v-else-if="items.status == 2" style="color: green">Served</div>
@@ -87,8 +87,8 @@
         <!-- <v-card-actions class="mt-5 text-center">
            <v-btn @click="cartItemDialog = false" dark filled color="red"
               >Close</v-btn
-            >  
-        <v-spacer></v-spacer>  
+            >
+        <v-spacer></v-spacer>
           <p></p
         ></v-card-actions> -->
       </v-card-text>

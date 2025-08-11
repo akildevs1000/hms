@@ -1,21 +1,42 @@
 <template>
   <span>
     <AssetsTable
-      height="150"
+      height="300"
       :headers="[
         {
-          text: `Date`,
-          value: `posting_date`,
-          align: `center`,
-        },
-        {
-          text: `Room Type`,
-          value: `room_type`,
-          align: `center`,
+          text: `#`,
+          value: `sno`,
+          align: `left`,
         },
         {
           text: `Room`,
           value: `room`,
+          align: `center`,
+        },
+        {
+          text: `Date & Time`,
+          value: `posting_date`,
+          align: `center`,
+        },
+        // {
+        //   text: `Room Type`,
+        //   value: `room_type`,
+        //   align: `center`,
+        // },
+
+        {
+          text: `Name`,
+          value: `name`,
+          align: `left`,
+        },
+        {
+          text: `Qty`,
+          value: `qty`,
+          align: `center`,
+        },
+        {
+          text: `Price`,
+          value: `price`,
           align: `center`,
         },
         {
@@ -41,17 +62,21 @@
           align: `right`,
         },
 
-        {
-          text: ``,
-          value: `action`,
-          align: `center`,
-          width: `10px`,
-        },
+        // {
+        //   text: ``,
+        //   value: `action`,
+        //   align: `center`,
+        //   width: `10px`,
+        // },
       ]"
       :items="items"
     >
+      <template #sno="{ item }">
+        {{ items.indexOf(item) + 1 }}
+      </template>
+
       <template #posting_date="{ item }">
-        {{ $dateFormat.dmy(item.posting_date) || "---" }}
+        {{ $dateFormat.format4(item.posting_date) || "---" }}
       </template>
 
       <template #room_type="{ item }">
@@ -63,8 +88,17 @@
       <template #room="{ item }">
         {{ (item.room && item.room.room_no) || "---" }}
       </template>
-      <template #amount="{ item }">
+      <template #name="{ item }">
+        {{ item.item }}
+      </template>
+      <template #qty="{ item }">
+        {{ item.qty }}
+      </template>
+      <template #price="{ item }">
         {{ $utils.currency_format(item.single_amt) || "---" }}
+      </template>
+      <template #amount="{ item }">
+        {{ $utils.currency_format(item.amount) || "---" }}
       </template>
       <template #sgst="{ item }">
         {{ $utils.currency_format(item.sgst) || "---" }}
@@ -84,6 +118,11 @@
         />
       </template>
     </AssetsTable>
+    <v-row
+      ><v-col class="text-right bold pa-5" style="font-size: 20px">
+        Total : {{ totalPostingAmount }}
+      </v-col></v-row
+    >
     <v-card v-if="room_no > 0" outlined class="mt-5">
       <v-container>
         <v-row>
@@ -113,7 +152,7 @@
               </v-col>
               <v-col cols="4">
                 <v-text-field
-                readonly
+                  readonly
                   v-model="old_balance"
                   label="Balance"
                   outlined
@@ -133,7 +172,7 @@
               </v-col>
               <v-col cols="4">
                 <v-text-field
-                readonly
+                  readonly
                   v-model="payment.after_discount_balance"
                   label="After Discount"
                   outlined
@@ -168,7 +207,14 @@
 </template>
 <script>
 export default {
-  props: ["postings", "full_name", "room_no", "otherPayload", "old_balance"],
+  props: [
+    "postings",
+    "full_name",
+    "room_no",
+    "otherPayload",
+    "old_balance",
+    "totalPostingAmount",
+  ],
   data: () => ({
     payment: {
       paid: 0,
@@ -210,7 +256,8 @@ export default {
         parseFloat(this.old_balance) - parseFloat(discount);
     },
     setNewBalance({ after_discount_balance, paid }) {
-      this.payment.balance = parseFloat(after_discount_balance) - parseFloat(paid);
+      this.payment.balance =
+        parseFloat(after_discount_balance) - parseFloat(paid);
     },
     async submit() {
       try {

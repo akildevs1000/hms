@@ -270,7 +270,7 @@
                 style="width: 100px; height: auto"
               />
               <a style="padding-left: 20px" :href="item.qrURL" target="_blank"
-                >Link</a
+                >Test Link</a
               >
             </template>
             <template v-slot:item.online_available="{ item }">
@@ -470,7 +470,7 @@ export default {
   methods: {
     updateQRCode() {
       this.data.forEach(async (e) => {
-        let url = `https://customer.myhotel2cloud.com/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
+        let url = `${process.env.CUSTOMER_APP_URL}?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
 
         e.qrURL = url;
         e.qrImage = await this.$qrcode.generate(url, {

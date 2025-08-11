@@ -513,10 +513,14 @@
       <v-spacer></v-spacer>
 
       <AssetsIcon icon="printer-outline" @click="process_file('daily')" />
-      <AssetsIcon icon="download-outline" @click="process_file('daily_download_pdf')" />
-      <AssetsIcon icon="file-outline" @click="process_file('daily_download_csv')" />
-
-
+      <AssetsIcon
+        icon="download-outline"
+        @click="process_file('daily_download_pdf')"
+      />
+      <AssetsIcon
+        icon="file-outline"
+        @click="process_file('daily_download_csv')"
+      />
 
       <!-- <v-tooltip top color="primary">
         <template v-slot:activator="{ on, attrs }">
@@ -1273,7 +1277,7 @@ export default {
       }, 300);
     },
     pdfDownload() {
-      let path = "https://backend.myhotel2cloud.com/api/pdf";
+      let path = process.env.BACKEND_URL + "pdf";
       let pdf = document.createElement("a");
       pdf.setAttribute("href", path);
       pdf.setAttribute("target", "_blank");
@@ -1290,7 +1294,7 @@ export default {
       let status = this.getStatus(this.payload.status);
 
       let company_id = this.$auth.user.company.id;
-      let path = "https://backend.myhotel2cloud.com/api/" + type;
+      let path = process.env.BACKEND_URL + "" + type;
 
       let qs = `${path}?company_id=${company_id}&status=${status}&department_id=${data.department_id}&employee_id=${data.employee_id}&report_type=${data.report_type}`;
 

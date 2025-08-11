@@ -391,14 +391,14 @@ export default {
       }, 300);
     },
     pdfDownload() {
-      let path = "https://backend.myhotel2cloud.com/api/pdf";
+      let path = process.env.BACKEND_URL + "pdf";
       let pdf = document.createElement("a");
       pdf.setAttribute("href", path);
       pdf.setAttribute("target", "_blank");
       pdf.click();
     },
     generateReport(url) {
-      let path = "https://backend.myhotel2cloud.com/api/" + url;
+      let path = process.env.BACKEND_URL + "" + url;
       let report = document.createElement("a");
       if (this.payload.report_type == "Daily") {
         let status = this.payload.status;
@@ -425,7 +425,7 @@ export default {
         const { page, itemsPerPage } = this.options;
         report.setAttribute(
           "href",
-          "https://backend.myhotel2cloud.com/api" +
+          process.env.BACKEND_URL +
             `/daily_${url}?page=${page}&per_page=${itemsPerPage}&company_id=${company_id}&status=${status}&daily_date=${data.daily_date}&department_id=${data.department_id}&employee_id=${data.employee_id}`
         );
         report.setAttribute("target", "_blank");

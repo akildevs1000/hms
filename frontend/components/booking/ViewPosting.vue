@@ -19,7 +19,7 @@
             icon="printer-outline"
             @click="
               $utils.open_external_link(
-                `https://backend.myhotel2cloud.com/api/posting-download/${evenIid}`
+                `${process.env.BACKEND_URL}posting-download/${evenIid}`
               )
             "
           />

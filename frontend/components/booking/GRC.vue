@@ -169,10 +169,7 @@
             v-if="data?.customer?.sign == 'https://hms-backend.test/sign/1'"
             :src="`https://backend.myhotel2cloud.com/sign/sign-1724149220.png`"
           ></v-img>
-          <v-img
-            v-else
-            :src="data?.customer?.sign"
-          ></v-img>
+          <v-img v-else :src="data?.customer?.sign"></v-img>
         </v-avatar>
       </v-col>
     </v-row>
@@ -258,7 +255,7 @@ export default {
       let id = this.bookingId;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `https://backend.myhotel2cloud.com/api/${url}/${id}`);
+      element.setAttribute("href", `${process.env.BACKEND_URL}${url}/${id}`);
       document.body.appendChild(element);
       element.click();
     },

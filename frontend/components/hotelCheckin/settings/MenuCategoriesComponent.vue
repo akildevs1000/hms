@@ -16,7 +16,7 @@
       </v-snackbar>
     </div>
 
-    <v-dialog v-model="newItemDialog" max-width="20%">
+    <v-dialog v-model="newItemDialog" max-width="600px">
       <v-card>
         <v-card-title dense class="primary white--text background">
           <span v-if="viewMode">View Category Info </span>
@@ -30,37 +30,79 @@
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col md="12" cols="12">
-                <v-text-field
-                  label="Category Name"
-                  :disabled="viewMode"
-                  v-model="editedItem.name"
-                  outlined
-                  dense
-                  small
-                  :hide-details="true"
-                  placeholder="Name"
-                ></v-text-field>
-                <span dense v-if="errors && errors.name" class="error--text">{{
-                  errors.name[0]
-                }}</span>
+              <v-col cols="6">
+                <v-row>
+                  <v-col md="12" cols="12">
+                    <v-text-field
+                      label="Category Name"
+                      :disabled="viewMode"
+                      v-model="editedItem.name"
+                      outlined
+                      dense
+                      small
+                      :hide-details="true"
+                      placeholder="Name"
+                    ></v-text-field>
+                    <span
+                      dense
+                      v-if="errors && errors.name"
+                      class="error--text"
+                      >{{ errors.name[0] }}</span
+                    >
+                  </v-col>
+                  <v-col md="12" cols="12">
+                    <v-textarea
+                      label="Category Description"
+                      :disabled="viewMode"
+                      v-model="editedItem.description"
+                      outlined
+                      dense
+                      small
+                      :hide-details="true"
+                      placeholder="Category Description"
+                    ></v-textarea>
+                    <span
+                      dense
+                      v-if="errors && errors.description"
+                      class="error--text"
+                      >{{ errors.description[0] }}</span
+                    >
+                  </v-col>
+                </v-row>
               </v-col>
-              <v-col md="12" cols="12">
-                <v-textarea
-                  label="Category Description"
-                  :disabled="viewMode"
-                  v-model="editedItem.description"
-                  outlined
-                  dense
+              <v-col cols="6">
+                <v-img
+                  style="
+                    width: 100%;
+                    height: 200px;
+                    border: 1px solid #5fafa3;
+                    border-radius: 10%;
+                    margin: 0 auto;
+                  "
+                  :src="previewImage || '/noimage.png'"
+                ></v-img>
+                <br />
+                <v-btn
+                  v-if="!viewMode"
                   small
-                  :hide-details="true"
-                  placeholder="Category Description"
-                ></v-textarea>
+                  class="form-control primary"
+                  @click="onpick_attachment"
+                  >{{ !upload.name ? "Upload" : "Change" }} Menu Image
+                  <v-icon right dark>mdi-cloud-upload</v-icon>
+                </v-btn>
+                <input
+                  required
+                  type="file"
+                  @change="attachment"
+                  style="display: none"
+                  accept="image/*"
+                  ref="attachment_input"
+                />
+
                 <span
-                  dense
-                  v-if="errors && errors.description"
-                  class="error--text"
-                  >{{ errors.description[0] }}</span
+                  v-if="errors && errors.profile_picture"
+                  class="error--text mt-2"
+                  >{{ errors.profile_picture[0] }}</span
                 >
               </v-col>
             </v-row>
@@ -354,15 +396,24 @@ export default {
         text: "Name",
         value: "name",
         align: "left",
-        sortable: true,
+        sortable: false,
         filterable: true,
       },
       {
         text: "Description",
         value: "description",
         align: "left",
-        sortable: true,
+        sortable: false,
         key: "description",
+        filterable: true,
+        filterSpecial: false,
+      },
+      {
+        text: "Total Items",
+        value: "items_count",
+        align: "left",
+        sortable: false,
+        key: "items_count",
         filterable: true,
         filterSpecial: false,
       },
@@ -370,7 +421,7 @@ export default {
         text: "Display Order",
         value: "display_order",
         align: "left",
-        sortable: true,
+        sortable: false,
         key: "display_order",
         filterable: true,
         filterSpecial: false,
@@ -379,14 +430,19 @@ export default {
     ],
 
     endpoint: "hotel_food_categories",
+    upload: {
+      name: "",
+    },
+    errors: {},
 
+    previewImage: null,
+    selectedFile: "",
     newItemDialog: false,
 
     //add edit item details
     editedItem: {},
     editedItemIndex: -1,
 
-    errors: {},
     snackbar: false,
     snackbarColor: "red",
     snackbarResponse: "",
@@ -418,6 +474,36 @@ export default {
     },
   },
   methods: {
+    onpick_attachment() {
+      this.$refs.attachment_input.click();
+    },
+    attachment(e) {
+      this.upload.name = e.target.files[0] || "";
+
+      let input = this.$refs.attachment_input;
+      let file = input.files;
+
+      if (file[0] && file[0].size > 1024 * 1024) {
+        e.preventDefault();
+        this.errors["profile_picture"] = [
+          "File too big (> 1MB). Upload less than 1MB",
+        ];
+        return;
+      }
+
+      if (file && file[0]) {
+        let reader = new FileReader();
+        reader.onload = (e) => {
+          this.previewImage = e.target.result;
+          this.selectedFile = event.target.result;
+          //this.$refs.cropper.replace(this.selectedFile);
+        };
+        reader.readAsDataURL(file[0]);
+        this.$emit("input", file[0]);
+
+        // this.dialogCropping = true;
+      }
+    },
     saveOrder(event) {
       const movedItem = this.data.splice(event.oldIndex, 1)[0];
       this.data.splice(event.newIndex, 0, movedItem);
@@ -522,9 +608,18 @@ export default {
         .then(({ data }) => {
           this.editedItem = data;
           this.editedItemIndex = item.id;
+          console.log(data.image);
+
+          this.previewImage = data.image;
         });
     },
     save() {
+      let payload = new FormData();
+
+      if (this.upload.name) {
+        payload.append("image", this.upload.name);
+      }
+
       if (this.editedItemIndex != -1) {
         let options = {
           params: {
@@ -533,8 +628,14 @@ export default {
           },
         };
 
+        for (const [key, value] of Object.entries(options.params)) {
+          payload.append(key, value);
+        }
+
+        if (this.editedItemIndex != -1) payload.append("_method", "PUT");
+
         this.$axios
-          .put(`${this.endpoint}/${this.editedItemIndex}`, options.params)
+          .post(`${this.endpoint}/${this.editedItemIndex}`, payload)
           .then(({ data }) => {
             if (data.status) {
               this.getDataFromApi();
@@ -565,31 +666,33 @@ export default {
             ...this.editedItem,
           },
         };
+        for (const [key, value] of Object.entries(options.params)) {
+          payload.append(key, value);
+        }
+        if (this.editedItemIndex != -1) payload.append("_method", "POST");
 
-        this.$axios
-          .post(`${this.endpoint}`, options.params)
-          .then(({ data }) => {
-            if (data.status) {
-              this.getDataFromApi();
-              this.errors = {};
-              this.editedItem = {};
-              this.snackbar = true;
-              this.snackbarColor = "greeen";
-              this.snackbarResponse = data.message;
+        this.$axios.post(`${this.endpoint}`, payload).then(({ data }) => {
+          if (data.status) {
+            this.getDataFromApi();
+            this.errors = {};
+            this.editedItem = {};
+            this.snackbar = true;
+            this.snackbarColor = "greeen";
+            this.snackbarResponse = data.message;
 
-              this.newItemDialog = false;
+            this.newItemDialog = false;
+          } else {
+            if (data.errors) {
+              this.errors = data.errors;
             } else {
-              if (data.errors) {
-                this.errors = data.errors;
-              } else {
-                this.errors = {};
+              this.errors = {};
 
-                this.snackbar = true;
-                this.snackbarColor = "red";
-                this.snackbarResponse = data.message;
-              }
+              this.snackbar = true;
+              this.snackbarColor = "red";
+              this.snackbarResponse = data.message;
             }
-          });
+          }
+        });
       }
     },
     deleteItem(item) {

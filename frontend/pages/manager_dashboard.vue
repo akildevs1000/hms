@@ -169,7 +169,7 @@
                   `Present`,
                   `Absent`,
                   `Missing`,
-                  `Manual Entry`
+                  `Manual Entry`,
                 ]"
                 item-value="id"
                 item-text="name"
@@ -556,7 +556,7 @@
       :loading="loading"
       :options.sync="options"
       :footer-props="{
-        itemsPerPageOptions: [50, 100, 500, 1000]
+        itemsPerPageOptions: [50, 100, 500, 1000],
       }"
       class="elevation-1"
     >
@@ -689,9 +689,9 @@ export default {
     DateRange: true,
     devices: [],
     valid: true,
-    nameRules: [v => !!v || "reason is required"],
-    timeRules: [v => !!v || "time is required"],
-    deviceRules: [v => !!v || "device is required"],
+    nameRules: [(v) => !!v || "reason is required"],
+    timeRules: [(v) => !!v || "time is required"],
+    deviceRules: [(v) => !!v || "device is required"],
 
     daily_menu: false,
     daily_date: null,
@@ -703,7 +703,7 @@ export default {
       user_id: "",
       reason: "",
       date: "",
-      time: null
+      time: null,
     },
     loading: false,
     total: 0,
@@ -714,25 +714,25 @@ export default {
         text: "Name",
         align: "left",
         sortable: false,
-        value: "employee.first_name"
+        value: "employee.first_name",
       },
       {
         text: "Dept",
         align: "left",
         sortable: false,
-        value: "employee.department.name"
+        value: "employee.department.name",
       },
       {
         text: "Shift Type",
         align: "left",
         sortable: false,
-        value: "schedule.shift_type.name"
+        value: "schedule.shift_type.name",
       },
       {
         text: "Shift",
         align: "left",
         sortable: false,
-        value: "schedule"
+        value: "schedule",
       },
       { text: "Status", align: "left", sortable: false, value: "status" },
       { text: "In", align: "left", sortable: false, value: "in" },
@@ -741,35 +741,35 @@ export default {
         text: "Total Hrs",
         align: "left",
         sortable: false,
-        value: "total_hrs"
+        value: "total_hrs",
       },
       { text: "OT", align: "left", sortable: false, value: "ot" },
       {
         text: "Late coming",
         align: "left",
         sortable: false,
-        value: "late_coming"
+        value: "late_coming",
       },
       {
         text: "Early Going",
         align: "left",
         sortable: false,
-        value: "early_going"
+        value: "early_going",
       },
       {
         text: "D.In",
         align: "left",
         sortable: false,
-        value: "device_in"
+        value: "device_in",
       },
       {
         text: "D.Out",
         align: "left",
         sortable: false,
-        value: "device_out"
+        value: "device_out",
       },
 
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "Actions", value: "actions", sortable: false },
     ],
     payload: {
       from_date: null,
@@ -779,13 +779,13 @@ export default {
       report_type: "Daily",
       department_id: -1,
       status: "Select All",
-      late_early: "Select All"
+      late_early: "Select All",
     },
     log_payload: {
       user_id: null,
       device_id: "OX-8862021010011",
       date: null,
-      time: null
+      time: null,
     },
     log_list: [],
     snackbar: false,
@@ -796,7 +796,7 @@ export default {
     data: [],
     csvData: [],
     shifts: [],
-    errors: []
+    errors: [],
   }),
   custom_options: {},
   max_date: "2022-10-27",
@@ -815,7 +815,7 @@ export default {
       } else if (type == "Monthly") {
         return `Monthly ${title}`;
       }
-    }
+    },
   },
 
   watch: {
@@ -828,8 +828,8 @@ export default {
       handler() {
         this.getDataFromApi();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   created() {
     this.loading = true;
@@ -838,8 +838,8 @@ export default {
     this.custom_options = {
       params: {
         per_page: 1000,
-        company_id: this.$auth.user.company.id
-      }
+        company_id: this.$auth.user.company.id,
+      },
     };
     this.getDepartments(this.custom_options);
     this.getcustomersByDepartment();
@@ -882,8 +882,8 @@ export default {
     getDeviceList() {
       let payload = {
         params: {
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.$axios.get(`/device_list`, payload).then(({ data }) => {
         this.devices = data;
@@ -903,7 +903,7 @@ export default {
           if (this.scheduled_customers.length > 0) {
             this.scheduled_customers.unshift({
               system_user_id: "",
-              name_with_user_id: "Select All"
+              name_with_user_id: "Select All",
             });
           }
           this.loading = false;
@@ -932,7 +932,7 @@ export default {
         UserID: user_id,
         LogTime: date + " " + time + ":00",
         DeviceID: device_id,
-        company_id: this.$auth.user.company.id
+        company_id: this.$auth.user.company.id,
       };
       this.loading = true;
 
@@ -956,10 +956,10 @@ export default {
     },
     getShift(options) {
       this.$axios.get(`/shift`, options).then(({ data }) => {
-        this.shifts = data.data.map(e => ({
+        this.shifts = data.data.map((e) => ({
           name: e.name,
           on_duty_time: (e.time_table && e.time_table.on_duty_time) || "",
-          off_duty_time: (e.time_table && e.time_table.off_duty_time) || ""
+          off_duty_time: (e.time_table && e.time_table.off_duty_time) || "",
         }));
         this.time_table_dialog = true;
       });
@@ -976,12 +976,12 @@ export default {
       this.departments = [u.employee.department];
     },
     caps(str) {
-      return str.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      return str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     },
     can(per) {
       let u = this.$auth.user;
       return (
-        (u && u.permissions.some(e => e == per || per == "/")) || u.is_master
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
       );
     },
 
@@ -1033,13 +1033,13 @@ export default {
           ...this.payload,
           status,
           late_early,
-          ot: this.overtime ? 1 : 0
-        }
+          ot: this.overtime ? 1 : 0,
+        },
       };
 
       this.$axios.get(url, options).then(({ data }) => {
         this.data = data.data;
-        this.csvData = data.data.map(e => ({
+        this.csvData = data.data.map((e) => ({
           Date: e.date,
           "E.ID": e.employee_id,
           "First Name": e.employee.first_name,
@@ -1055,7 +1055,7 @@ export default {
           "Late Coming": e.late_coming,
           "Early Going": e.early_going,
           "D.In": (e.device_in && e.device_in.name) || "---",
-          "D.Out": (e.device_out && e.device_out.name) || "---"
+          "D.Out": (e.device_out && e.device_out.name) || "---",
         }));
         this.total = data.total;
         this.loading = false;
@@ -1076,7 +1076,7 @@ export default {
           DeviceID: this.editItems.device_id,
           user_id: this.editItems.UserID,
           company_id: this.$auth.user.company.id,
-          reason: this.editItems.reason
+          reason: this.editItems.reason,
         };
 
         this.$axios
@@ -1094,7 +1094,7 @@ export default {
               this.close();
             }
           })
-          .catch(e => console.log(e));
+          .catch((e) => console.log(e));
       }
     },
 
@@ -1105,8 +1105,8 @@ export default {
           per_page: 500,
           UserID: item.employee_id,
           LogTime: item.edit_date,
-          company_id: this.$auth.user.company.id
-        }
+          company_id: this.$auth.user.company.id,
+        },
       };
       this.log_details = true;
 
@@ -1127,7 +1127,7 @@ export default {
       }, 300);
     },
     pdfDownload() {
-      let path = "https://backend.myhotel2cloud.com/api/pdf";
+      let path = process.env.BACKEND_URL + "pdf";
       let pdf = document.createElement("a");
       pdf.setAttribute("href", path);
       pdf.setAttribute("target", "_blank");
@@ -1158,7 +1158,7 @@ export default {
       let data = this.payload;
       let company_id = this.$auth.user.company.id;
       let { page, itemsPerPage } = this.options;
-      let path = "https://backend.myhotel2cloud.com/api/" + type;
+      let path = process.env.BACKEND_URL + "" + type;
       let qs = `${path}?page=${page}&per_page=${itemsPerPage}&company_id=${company_id}&status=${status}&daily_date=${data.daily_date}&department_id=${data.department_id}&employee_id=${data.employee_id}`;
 
       let report = document.createElement("a");
@@ -1168,7 +1168,7 @@ export default {
 
       this.fetch_logs();
       return;
-    }
-  }
+    },
+  },
 };
 </script>

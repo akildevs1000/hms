@@ -485,7 +485,7 @@ export default {
       // }
 
       this.$utils.open_external_link(
-        `https://backend.myhotel2cloud.com/api/${endpoint}?${this.buildQueryParams(
+        `${process.env.BACKEND_URL}${endpoint}?${this.buildQueryParams(
           this.filters
         )}`
       );

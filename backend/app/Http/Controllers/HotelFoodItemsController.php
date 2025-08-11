@@ -180,16 +180,20 @@ class HotelFoodItemsController extends Controller
 
                 $file = $request->file('image');
                 $ext = $file->getClientOriginalExtension();
-                $fileName = $id . '.' . $ext;
+                $fileName = $id . '.jpg'; // . $ext;
 
-                $folder = 'public/hotel/food_menu/' . $request->company_id . '';
-                if (!Storage::disk('public')->exists($folder)) {
-                    Storage::disk('public')->makeDirectory($folder);
+                // $folder = 'public/hotel/food_menu/' . $request->company_id . '';
+                // if (!Storage::disk('public')->exists($folder)) {
+                //     Storage::disk('public')->makeDirectory($folder);
+                // }
+                // $file->storeAs($folder, $fileName);
+
+                $folder = 'hotel/food_menu/' . $request->company_id;
+                $destinationPath = public_path($folder);
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
                 }
-
-
-
-                $file->storeAs($folder, $fileName);
+                $file->move($destinationPath, $fileName);
             }
 
             $isNameExist = HotelFoodItems::where('name', $request->name)
@@ -206,9 +210,11 @@ class HotelFoodItemsController extends Controller
             $categoriesArray = explode(',', $timing_ids);
             HotelFoodItemsTimings::where('company_id', $request->company_id)->where('item_id', $id)->delete();
             foreach ($categoriesArray as  $value) {
+
+
                 HotelFoodItemsTimings::create(
                     ['company_id' => $request->company_id, 'item_id' => $id, 'category_id' => $value]
-                );
+                )->query();
             }
 
 
@@ -256,12 +262,19 @@ class HotelFoodItemsController extends Controller
 
                         $file = $request->file('image');
                         $ext = $file->getClientOriginalExtension();
-                        $fileName =  $record->id . '.' . $ext;
-                        $folder = 'public/hotel/food_menu/' . $request->company_id . '';
-                        if (!Storage::disk('public')->exists($folder)) {
-                            Storage::disk('public')->makeDirectory($folder);
+                        $fileName =  $record->id . '.jpg'; // . $ext;
+                        // $folder = 'public/hotel/food_menu/' . $request->company_id . '';
+                        // if (!Storage::disk('public')->exists($folder)) {
+                        //     Storage::disk('public')->makeDirectory($folder);
+                        // }
+                        // $file->storeAs($folder, $fileName);
+
+                        $folder = 'hotel/food_menu/' . $request->company_id;
+                        $destinationPath = public_path($folder);
+                        if (!file_exists($destinationPath)) {
+                            mkdir($destinationPath, 0755, true);
                         }
-                        $file->storeAs($folder, $fileName);
+                        $file->move($destinationPath, $fileName);
                     }
 
                     if ($record) {
@@ -284,9 +297,17 @@ class HotelFoodItemsController extends Controller
     {
         return HotelFoodItems::where('id', $id)->first();
     }
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         if (HotelFoodItems::find($id)->delete()) {
+
+            $folder = 'hotel/food_menu/' . $request->company_id;
+            $fileName =  $id . '.jpg'; // . $ext;
+            $filePath = public_path($folder . '/' . $fileName);
+
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
 
             return $this->response('Record    successfully deleted.', null, true);
         } else {

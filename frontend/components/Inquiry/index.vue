@@ -694,7 +694,7 @@ export default {
     },
     openExternalWinodw({ inquiry_type, quotation: { id } }) {
       let type = inquiry_type.toLowerCase();
-      let url = `https://backend.myhotel2cloud.com/api/quotation-${type}/${id}`;
+      let url = `${process.env.BACKEND_URL}quotation-${type}/${id}`;
       if (process.env.LOCAL_IP == "localhost") {
         url = `https://backend.test/api/quotation-${type}/${id}`;
       }
