@@ -15,7 +15,7 @@ class RoomCleaning extends Model
 
     protected $guarded = [];
 
-    protected $appends = ["last_cleaned_at "];
+    protected $appends = ["last_cleaned_at"];
 
 
     protected $casts = [
