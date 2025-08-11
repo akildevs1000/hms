@@ -1,6 +1,7 @@
 <?php
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,9 +15,19 @@ class RoomCleaning extends Model
 
     protected $guarded = [];
 
+    protected $appends = ["last_cleaned_at "];
+
+
     protected $casts = [
         'attachments' => 'array',
     ];
+
+    public function getLastCleanedAtAttribute()
+    {
+        $date = $this->created_at ? Carbon::parse($this->created_at)->format('d-M-Y') : null;
+        $endTime = $this->end_time ?? null;
+        return trim($date . ' ' . $endTime);
+    }
 
     // Convert attachment filenames to full URLs
     public function getAttachmentsAttribute($value)
