@@ -31,7 +31,7 @@ class Company extends Model
         'created_at' => 'datetime:d-M-y',
         'no_branch' => 'boolean',
     ];
-    protected $appends = ['show_member_from', 'show_expiry'];
+    protected $appends = ['show_member_from', 'show_expiry','logo_name'];
 
     public function contact()
     {
@@ -67,6 +67,11 @@ class Company extends Model
             return null;
         }
         return asset('upload/' . $value);
+    }
+
+    public function getLogoNameAttribute()
+    {
+        return explode("upload/",$this->logo)[1] ?? null;
     }
 
     public function getCreatedAtAttribute($value): string

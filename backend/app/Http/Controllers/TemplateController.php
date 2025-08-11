@@ -127,6 +127,7 @@ class TemplateController extends Controller
             'recipient'  => $request->recipient,
             'text'       => (new Controller)->trimMessage($fields, $data["action_id"], $data["body"]),
             "company_id" => $data["company_id"],
+            "mediaUrl" => "https://backend.myhotel2cloud.com/vouchers/voucher_3_427.pdf",
         ];
 
         if ($data["medium"] == "whatsapp") {

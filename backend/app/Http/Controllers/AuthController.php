@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -17,13 +16,13 @@ class AuthController extends Controller
         unset($user["assigned_permissions"]);
 
         //check user status
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => ['Your account is currently marked as inactive.'],
             ]);
         }
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -33,15 +32,56 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $user->createToken('myApp')->plainTextToken,
-            'user' => $user,
+            'user'  => $user,
         ], 200);
     }
+
+    public function housekeepingLogin(Request $request)
+    {
+        $request->validate([
+            'pin'       => 'required',
+        ]);
+
+        $user = User::with(['role'])
+            ->where('pin', $request->pin)
+            ->where('is_active', 1)
+            ->first();
+
+        if (! $user) {
+            throw ValidationException::withMessages([
+                'pin' => ['Invalid PIN or account is inactive.'],
+            ]);
+        }
+
+        if ($user->device_id === null) {
+            // First login – save device_id
+            $user->device_id = $request->device_id;
+            $user->save();
+        } elseif ($user->device_id !== $request->device_id) {
+            // Block login from unregistered device
+            throw ValidationException::withMessages([
+                'device' => ['Login from this device is not allowed.'],
+            ]);
+        }
+
+        $user->user_type = $user->company_id > 0
+        ? ($user->employee_role_id > 0 ? "employee" : "company")
+        : ($user->role_id > 0 ? "user" : "master");
+
+        unset($user["assigned_permissions"]);
+
+        return response()->json([
+            'token' => $user->createToken('myApp')->plainTextToken,
+            'user'  => $user,
+        ], 200);
+    }
+
     public function CompanyLogin(Request $request)
     {
         $model = User::query();
-        $user = $model->whereEmail($request->email)->with('company', 'employee')->first();
+        $user  = $model->whereEmail($request->email)->with('company', 'employee')->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -55,12 +95,12 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $user->createToken('myApp')->plainTextToken,
-            'user' => $model->first(),
+            'user'  => $model->first(),
         ], 200);
     }
     public function me(Request $request)
     {
-        $user = User::with(['role'])->where('email', $request->user()->email)->first();
+        $user  = User::with(['role'])->where('email', $request->user()->email)->first();
         $model = User::where('email', $user->email);
         if ($user && $user->assigned_permissions) {
             $user->permissions = $user->assigned_permissions->permission_names;
@@ -68,12 +108,12 @@ class AuthController extends Controller
             $user->permissions = [];
         }
 
-        $user->user_type = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company.timezone") : ($user->role_id > 0 ? "user" : "master");
-        $model = $model->with('role', 'company.timezone', 'employee')->first();
-        $obj = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
-        $obj->user_type = $user->user_type;
+        $user->user_type           = $user->company_id > 0 ? ($user->employee_role_id > 0 ? "employee" : "company.timezone") : ($user->role_id > 0 ? "user" : "master");
+        $model                     = $model->with('role', 'company.timezone', 'employee')->first();
+        $obj                       = (($user->is_master == 1) && $user->role_id == 0 && ($user->employee_role_id == 0)) ? $user : $model;
+        $obj->user_type            = $user->user_type;
         $obj->employee_permissions = $user->assigned_employee_permissions->permission_names ?? [];
-        $obj->permissions = $obj->employee_permissions;
+        $obj->permissions          = $obj->employee_permissions;
 
         if ($obj && $obj->assigned_permissions) {
             $obj->permissions = $obj->assigned_permissions->permission_names;
@@ -93,7 +133,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $user = User::find($request->user()->id);
+        $user              = User::find($request->user()->id);
         $user->is_verified = 0;
         $user->save();
         $request->user()->tokens()->delete();
@@ -103,8 +143,8 @@ class AuthController extends Controller
     {
         try {
             $random_number = mt_rand(100000, 999999);
-            $user = User::with('company')->find($userId);
-            $user->otp = $random_number;
+            $user          = User::with('company')->find($userId);
+            $user->otp     = $random_number;
 
             if ($user->save()) {
                 if (app()->isProduction()) {

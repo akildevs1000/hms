@@ -25,6 +25,7 @@
               <v-tab> Tax Slabs </v-tab>
 
               <v-tab> Whatsapp </v-tab>
+              <v-tab> SMTP </v-tab>
 
               <v-tab> Night Audit Email </v-tab>
               <v-tab> Verfication </v-tab>
@@ -640,6 +641,9 @@
               </v-tab-item>
               <v-tab-item>
                 <Whatsapp />
+              </v-tab-item>
+              <v-tab-item>
+                <SMTP />
               </v-tab-item>
               <v-tab-item>
                 <EmailNotifications />

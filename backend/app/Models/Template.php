@@ -51,7 +51,7 @@ class Template extends Model
         7  => ['[title]', '[full_name]', '[reservation]'],
         8  => ['[title]', '[full_name]'],
         9  => ['[title]', '[full_name]', '[festival]'],
-        10 => ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]', '[room_no]', '[reservation_no]'],
+        10 => ['[title]', '[full_name]', '[from_date]', '[to_date]', '[room_type]', '[room_no]', '[reservation_no]', '[booking_price]', '[pdf_url]'],
     ];
 
     const DEFAULT_MESSAGES = [
@@ -83,7 +83,7 @@ class Template extends Model
     const validateFields = [
         "name"       => "required|max:50",
         "salutation" => "nullable|max:100",
-        "body"       => "required|max:1000",
+        "body"       => "required|max:3000",
         "attachment" => "nullable",
         "action_id"  => "required",
         "company_id" => "required",

@@ -1,13 +1,13 @@
 <?php
-
 namespace App\Jobs;
 
+use App\Services\MailConfigService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
 
 class EmailSender implements ShouldQueue
 {
@@ -22,18 +22,36 @@ class EmailSender implements ShouldQueue
 
     public function handle()
     {
-        $recipient = $this->request['recipient'] ?? null;
+        (new MailConfigService)->setMailConfigForCompany($this->request['company_id'] ?? 0);
+
+        $recipient   = $this->request['recipient'] ?? null;
         $messageBody = $this->request['text'] ?? null;
-        $heading = $this->request['heading'] ?? null;
+        $heading     = $this->request['heading'] ?? null;
+        $mediaUrl    = $this->request['mediaUrl'] ?? null;
 
 
-        echo "\n" . json_encode($this->request, JSON_PRETTY_PRINT);
+        $config = [
+            'default'      => config('mail.default'),
+            'host'         => config('mail.mailers.smtp.host'),
+            'port'         => config('mail.mailers.smtp.port'),
+            'username'     => config('mail.mailers.smtp.username'),
+            'password'     => config('mail.mailers.smtp.password'),
+            'encryption'   => config('mail.mailers.smtp.encryption'),
+            'from_address' => config('mail.from.address'),
+            'from_name'    => config('mail.from.name'),
+        ];
 
+        echo "\n" . (lightDump(["SMTP Settings Info:", $config])) . "\n";
 
         if ($recipient && $messageBody) {
-            Mail::raw($messageBody, function ($message) use ($recipient, $heading) {
+            echo "\n" . lightDump($this->request) . "\n";
+            Mail::raw($messageBody, function ($message) use ($recipient, $heading, $mediaUrl) {
                 $message->to($recipient)
                     ->subject($heading ?? 'Happy Birthday!');
+
+                if ($mediaUrl) {
+                    $message->attach($mediaUrl);
+                }
             });
         }
     }

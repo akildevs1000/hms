@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 //use App\Http\Requests\Allowance\StoreRequest;
@@ -7,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Room\StoreRequest;
 use App\Http\Requests\Room\UpdateRequest;
 use App\Models\BookedRoom;
-use App\Models\Food;
 use App\Models\Room;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
@@ -46,11 +44,9 @@ class RoomController extends Controller
         }
         if ($request->filled('latest_status')) {
             $model->whereHas('device', function ($q) use ($request) {
-                return  $q->where('latest_status',    $request->latest_status);
+                return $q->where('latest_status', $request->latest_status);
             });
         }
-
-
 
         //  else {
         //     $model->where('status', 0);
@@ -76,7 +72,7 @@ class RoomController extends Controller
     public function search(Request $request, $key)
     {
 
-        $model = Room::query();
+        $model  = Room::query();
         $fields = [
             'room_no',
             'room_type_id',
@@ -154,21 +150,21 @@ class RoomController extends Controller
 
     public function roomList(Request $request)
     {
-        $arr = [];
+        $arr  = [];
         $data = Room::with('roomType')
             ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
-            // ->where('status', 0)
+        // ->where('status', 0)
             ->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
             // $color =  $this->get_color($d->roomType->name);
             $arr[] = [
-                'id' => $d->room_no,
-                'table_id' => $d->id,
-                'room_no' => $d->room_no,
-                'room_type' => $d->roomType->name,
+                'id'               => $d->room_no,
+                'table_id'         => $d->id,
+                'room_no'          => $d->room_no,
+                'room_type'        => $d->roomType->name,
                 // 'eventColor' => $color,
                 'eventBorderColor' => 'white',
-                'status' => $d->status,
+                'status'           => $d->status,
             ];
         }
 
@@ -177,33 +173,31 @@ class RoomController extends Controller
 
     public function roomListForCalendarOnly(Request $request)
     {
-        $arr = [];
+        $arr  = [];
         $data = Room::with('roomType')->whereHas("roomType")->whereCompanyId($request->company_id)->get();
         foreach ($data as $d) {
 
             $arr[] = [
-                'id' => $d->room_no,
-                'table_id' => $d->id,
-                'room_no' => $d->room_no,
-                'room_type' => $d->roomType->name ?? "",
+                'id'               => $d->room_no,
+                'table_id'         => $d->id,
+                'room_no'          => $d->room_no,
+                'room_type'        => $d->roomType->name ?? "",
                 // 'eventColor' => $color,
                 'eventBorderColor' => 'white',
-                'status' => $d->status,
+                'status'           => $d->status,
             ];
         }
 
         return $arr;
     }
 
-
     public function roomDropdownList(Request $request)
     {
-        $arr = [];
-        return  $data = Room::with('roomType')
-            // ->where('status', 0)
+        $arr         = [];
+        return $data = Room::with('roomType')
+        // ->where('status', 0)
             ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->whereCompanyId($request->company_id)->orderBy("room_no", "ASC")->get();
-
 
         return $arr;
     }
@@ -216,7 +210,7 @@ class RoomController extends Controller
     {
         $breakfast_adult_sum = 0;
         $breakfast_child_sum = 0;
-        $breakfast_baby_sum = 0;
+        $breakfast_baby_sum  = 0;
 
         foreach ($breakfast as $item) {
             $breakfast_adult_sum += $item['adult'];
@@ -226,7 +220,7 @@ class RoomController extends Controller
         return [
             'adult' => $breakfast_adult_sum,
             'child' => $breakfast_child_sum,
-            'baby' => $breakfast_baby_sum,
+            'baby'  => $breakfast_baby_sum,
         ];
     }
 
@@ -235,7 +229,7 @@ class RoomController extends Controller
 
         $lunch_adult_sum = 0;
         $lunch_child_sum = 0;
-        $lunch_baby_sum = 0;
+        $lunch_baby_sum  = 0;
 
         foreach ($lunch as $item) {
             $lunch_adult_sum += $item['adult'];
@@ -246,7 +240,7 @@ class RoomController extends Controller
         return [
             'adult' => $lunch_adult_sum,
             'child' => $lunch_child_sum,
-            'baby' => $lunch_baby_sum,
+            'baby'  => $lunch_baby_sum,
         ];
     }
 
@@ -255,7 +249,7 @@ class RoomController extends Controller
 
         $dinner_adult_sum = 0;
         $dinner_child_sum = 0;
-        $dinner_baby_sum = 0;
+        $dinner_baby_sum  = 0;
 
         foreach ($dinner as $item) {
             $dinner_adult_sum += $item['adult'];
@@ -266,57 +260,57 @@ class RoomController extends Controller
         return [
             'adult' => $dinner_adult_sum,
             'child' => $dinner_child_sum,
-            'baby' => $dinner_baby_sum,
+            'baby'  => $dinner_baby_sum,
         ];
     }
 
     private function getFoodForCustomers($foodForMembers)
     {
-        $room_only_price = $foodForMembers->clone()->where('meal', 'room_only_price');
-        $Break_fast_price = $foodForMembers->clone()->where('meal', 'Break_fast_price');
+        $room_only_price              = $foodForMembers->clone()->where('meal', 'room_only_price');
+        $Break_fast_price             = $foodForMembers->clone()->where('meal', 'Break_fast_price');
         $Break_fast_with_dinner_price = $foodForMembers->clone()->where('meal', 'Break_fast_with_dinner_price');
-        $Break_fast_with_lunch_price = $foodForMembers->clone()->where('meal', 'Break_fast_with_lunch_price');
-        $full_board_price = $foodForMembers->clone()->where('meal', 'full_board_price');
+        $Break_fast_with_lunch_price  = $foodForMembers->clone()->where('meal', 'Break_fast_with_lunch_price');
+        $full_board_price             = $foodForMembers->clone()->where('meal', 'full_board_price');
 
         $food = [
-            'room_only_price' => [
+            'room_only_price'              => [
                 'adult' => $room_only_price->sum('no_of_adult'),
                 'child' => $room_only_price->sum('no_of_child'),
-                'baby' => $room_only_price->sum('no_of_baby'),
+                'baby'  => $room_only_price->sum('no_of_baby'),
             ],
-            'Break_fast_price' => [
+            'Break_fast_price'             => [
                 'adult' => $Break_fast_price->sum('no_of_adult'),
                 'child' => $Break_fast_price->sum('no_of_child'),
-                'baby' => $Break_fast_price->sum('no_of_baby'),
+                'baby'  => $Break_fast_price->sum('no_of_baby'),
             ],
             'Break_fast_with_dinner_price' => [
                 'adult' => $Break_fast_with_dinner_price->sum('no_of_adult'),
                 'child' => $Break_fast_with_dinner_price->sum('no_of_child'),
-                'baby' => $Break_fast_with_dinner_price->sum('no_of_baby'),
+                'baby'  => $Break_fast_with_dinner_price->sum('no_of_baby'),
             ],
-            'Break_fast_with_lunch_price' => [
+            'Break_fast_with_lunch_price'  => [
                 'adult' => $Break_fast_with_lunch_price->sum('no_of_adult'),
                 'child' => $Break_fast_with_lunch_price->sum('no_of_child'),
-                'baby' => $Break_fast_with_lunch_price->sum('no_of_baby'),
+                'baby'  => $Break_fast_with_lunch_price->sum('no_of_baby'),
             ],
-            'full_board_price' => [
+            'full_board_price'             => [
                 'adult' => $full_board_price->sum('no_of_adult'),
                 'child' => $full_board_price->sum('no_of_child'),
-                'baby' => $full_board_price->sum('no_of_baby'),
+                'baby'  => $full_board_price->sum('no_of_baby'),
             ],
         ];
 
         return [
             'onlyBreakfast' => $this->getCustomersBreakfastOnly($food),
-            'onlyLunch' => $this->getCustomersLunchOnly($food),
-            'onlyDinner' => $this->getCustomersDinnerOnly($food),
+            'onlyLunch'     => $this->getCustomersLunchOnly($food),
+            'onlyDinner'    => $this->getCustomersDinnerOnly($food),
         ];
     }
 
     public function roomListForGridView(Request $request)
     {
-        $company_id = $request->company_id;
-        $defailtTodayDate =  date('Y-m-d');;
+        $company_id       = $request->company_id;
+        $defailtTodayDate = date('Y-m-d');
         if ($request->filled("filter_date")) {
             $todayDate = $request->filter_date;
         } else if ($request->filled("check_in")) {
@@ -353,7 +347,6 @@ class RoomController extends Controller
                 // $query->WhereDate('check_out', '>=', $todayDate);
             })
 
-
             ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
                 $q->with("customer");
                 $q->where('company_id', $company_id);
@@ -367,13 +360,12 @@ class RoomController extends Controller
             $q->whereNotNull('room_id');
             $q->where('company_id', $company_id);
 
-
             $q->where(function ($query) use ($todayDate) {
                 // Check if the check-in is before or equal to today, and check-out is after or equal to today
                 $query->whereDate('check_in', '<=', $todayDate)
                     ->whereDate('check_out', '>=', $todayDate)
                     ->where('booking_status', BookedRoom::BOOKED) // Status for dirty rooms
-                    ->where('booking_status', '!=', 0); // Exclude non-active bookings
+                    ->where('booking_status', '!=', 0);           // Exclude non-active bookings
             });
         })
             ->with(['is_cleaned', 'device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
@@ -386,7 +378,7 @@ class RoomController extends Controller
                     $query->whereDate('check_in', '<=', $todayDate)
                         ->whereDate('check_out', '>=', $todayDate)
                         ->where('booking_status', BookedRoom::BOOKED) // Status for dirty rooms
-                        ->where('booking_status', '!=', 0); // Exclude non-active bookings
+                        ->where('booking_status', '!=', 0);           // Exclude non-active bookings
                 });
 
                 $q->with("customer");
@@ -400,7 +392,7 @@ class RoomController extends Controller
         if ($defailtTodayDate == $todayDate) {
 
             $Occupied = Room::with('device', 'is_cleaned')
-                // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
                 ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                     $query->whereDate('check_in', $todayDate);
                     $query->where('company_id', $company_id);
@@ -425,7 +417,7 @@ class RoomController extends Controller
                 ->get();
         }
         $checkOutModel = BookedRoom::with('device');
-        $checkOut = $checkOutModel->clone()->whereDate('check_out', $todayDate)
+        $checkOut      = $checkOutModel->clone()->whereDate('check_out', $todayDate)
             ->whereHas('booking', function ($q) use ($company_id) {
                 $q->whereIn('booking_status', [0, 3, 4, 5]);
                 // $q->where('booking_status', '>=', 3);
@@ -443,15 +435,15 @@ class RoomController extends Controller
                         // Check if the check-in is before or equal to today, and check-out is after or equal to today
                         $query->whereDate('check_in', '<=', $todayDate)
                             ->whereDate('check_out', '>=', $todayDate)
-                            ->where('booking_status', 3) // Status for dirty rooms
-                            ->where('room_status', 3) // Status for dirty rooms
+                            ->where('booking_status', 3)        // Status for dirty rooms
+                            ->where('room_status', 3)           // Status for dirty rooms
                             ->where('booking_status', '!=', 0); // Exclude non-active bookings
                     });
             })
             ->with(['bookedRoom' => function ($q) use ($company_id) {
                 $q->where("company_id", $company_id)
                     ->where('booking_status', 3) // Only consider dirty rooms
-                    ->where('room_status', 3) // Status for dirty rooms
+                    ->where('room_status', 3)    // Status for dirty rooms
                     ->with("customer");
             }])->get();
         // }
@@ -471,7 +463,6 @@ class RoomController extends Controller
             SUM(CASE WHEN DATE(check_in) = ? THEN no_of_child ELSE 0 END) as occupied_child
         ", [$todayDate, $todayDate, $todayDate, $todayDate])
             ->first();
-
 
         $expectedAdult = $inHouseData->expected_adult ?? 0;
         $expectedChild = $inHouseData->expected_child ?? 0;
@@ -503,36 +494,36 @@ class RoomController extends Controller
             ->first();
 
         $occupiedBreakfast = $FoodOrder->occupied_breakfast ?? 0;
-        $occupiedLunch = $FoodOrder->occupied_lunch ?? 0;
-        $occupiedDinner = $FoodOrder->occupied_dinner ?? 0;
+        $occupiedLunch     = $FoodOrder->occupied_lunch ?? 0;
+        $occupiedDinner    = $FoodOrder->occupied_dinner ?? 0;
 
         $foodOrdersCount = [
             "breakfast" => $occupiedBreakfast,
-            "lunch" => $occupiedLunch,
-            "dinner" => $occupiedDinner,
-            "total" => $occupiedBreakfast + $occupiedLunch + $occupiedDinner,
+            "lunch"     => $occupiedLunch,
+            "dinner"    => $occupiedDinner,
+            "total"     => $occupiedBreakfast + $occupiedLunch + $occupiedDinner,
         ];
 
         return [
-            'allRooms' => $AvailableRooms,
-            'availableRooms' => $AvailableRooms,
+            'allRooms'               => $AvailableRooms,
+            'availableRooms'         => $AvailableRooms,
             'reservedWithoutAdvance' => $reservedWithoutAdvance,
-            'bookedRooms' => $reservedWithoutAdvance,
-            'checkIn' => $Occupied,
-            'expectCheckOut' => $expectCheckOut,
-            'continueRooms' => $continueRooms,
-            'dirtyRoomsList' => $dirtyRooms,
-            'blockedRooms' => $BlockedRooms,
-            'checkOut' => $checkOut,
-            'members' => $membersCount,
-            'foodOrdersCount' => $foodOrdersCount,
-            'status' => true,
+            'bookedRooms'            => $reservedWithoutAdvance,
+            'checkIn'                => $Occupied,
+            'expectCheckOut'         => $expectCheckOut,
+            'continueRooms'          => $continueRooms,
+            'dirtyRoomsList'         => $dirtyRooms,
+            'blockedRooms'           => $BlockedRooms,
+            'checkOut'               => $checkOut,
+            'members'                => $membersCount,
+            'foodOrdersCount'        => $foodOrdersCount,
+            'status'                 => true,
         ];
     }
 
     public function getAvailableRoomsByDate(Request $request)
     {
-        $model = BookedRoom::query();
+        $model   = BookedRoom::query();
         $roomIds = $model
             ->whereDate('check_in', '<=', $request->check_in)
             ->WhereDate('check_out', '>=', $request->check_out)
@@ -549,12 +540,12 @@ class RoomController extends Controller
 
     public function getAvailableRoomsByDateAndRoomType(Request $request)
     {
-        $checkIn = $request->check_in;
-        $checkOut = $request->check_out;
+        $checkIn    = $request->check_in;
+        $checkOut   = $request->check_out;
         $company_id = $request->company_id;
         $roomTypeId = $request->room_type_id;
 
-        $model = BookedRoom::query();
+        $model   = BookedRoom::query();
         $roomIds = $model
             ->where('company_id', $company_id)
             ->whereDate('check_in', '<=', $checkIn)
@@ -563,13 +554,12 @@ class RoomController extends Controller
             ->pluck('room_id');
 
         return Room::whereNotIn('id', $roomIds)
-            // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
+        // ->whereHas('roomType', fn($q) => $q->where('type', request("type", "room")))
             ->where('room_type_id', $roomTypeId)
             ->where('company_id', $company_id)
             ->with('device')
             ->get();
     }
-
 
     public function getAvailableRoomsForQuotation(Request $request)
     {
@@ -665,28 +655,18 @@ class RoomController extends Controller
         }
     }
 
-
-
     public function roomListForGridViewForHouseKeepingApp(Request $request)
     {
 
         $company_id = $request->company_id;
 
-        if ($request->filled("filter_date")) {
-            $todayDate = $request->filter_date;
-        } else {
-            $todayDate = date('Y-m-d');
-        }
+        $todayDate = $request->filled("filter_date") ? $request->filter_date : date('Y-m-d');
 
-        $company_id = $request->company_id;
+        $AvailableRooms = Room::with("is_cleaned", "is_neutral", "is_dirty")
+            ->withCount("room_cleaning_status")
+            ->where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
 
-        if ($request->filled("filter_date")) {
-            $todayDate = $request->filter_date;
-        } else {
-            $todayDate = date('Y-m-d');
-        }
-
-        $AvailableRooms = Room::with("is_cleaned")->where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
+        $BlockedRooms = Room::with('device', "is_cleaned", "is_neutral", "is_dirty")->withCount("room_cleaning_status")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
 
         $expectCheckOut = Room::with('device')
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
@@ -703,35 +683,19 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $continueRooms = Room::with('device')
-            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
-                $query->where('company_id', $company_id);
-                $query->whereDate('check_out', '!=', $todayDate);
-                $query->where('booking_status', 2);
-            })
-
-            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
-                $q->with("customer");
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', $todayDate);
-                $q->where("booking_status", ">", 0);
-            }])
-            ->get();
-
-        $reservedWithoutAdvance = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
+        $bookedRoom = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
             $q->whereNotNull('room_id');
             $q->where('company_id', $company_id);
-
 
             $q->where(function ($query) use ($todayDate) {
                 // Check if the check-in is before or equal to today, and check-out is after or equal to today
                 $query->whereDate('check_in', '<=', $todayDate)
                     ->whereDate('check_out', '>=', $todayDate)
                     ->where('booking_status', BookedRoom::BOOKED) // Status for dirty rooms
-                    ->where('booking_status', '!=', 0); // Exclude non-active bookings
+                    ->where('booking_status', '!=', 0);           // Exclude non-active bookings
             });
         })
-            ->with(['is_cleaned', 'device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
+            ->with(['is_cleaned', "is_neutral", "is_dirty", 'device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
 
                 $q->whereNotNull('room_id');
                 $q->where('company_id', $company_id);
@@ -741,17 +705,17 @@ class RoomController extends Controller
                     $query->whereDate('check_in', '<=', $todayDate)
                         ->whereDate('check_out', '>=', $todayDate)
                         ->where('booking_status', BookedRoom::BOOKED) // Status for dirty rooms
-                        ->where('booking_status', '!=', 0); // Exclude non-active bookings
+                        ->where('booking_status', '!=', 0);           // Exclude non-active bookings
                 });
 
                 $q->with("customer");
             }])
+            ->withCount("room_cleaning_status")
             ->get();
 
-        $BlockedRooms = Room::with('device', "is_cleaned")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
-
-        $Occupied = Room::with('device', 'is_cleaned')
-            // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+        $Occupied = Room::with('device', 'is_cleaned', "is_neutral", "is_dirty")
+            ->withCount("room_cleaning_status")
+        // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', $todayDate);
                 $query->where('company_id', $company_id);
@@ -775,19 +739,8 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $checkOutModel = BookedRoom::with('device');
-        $checkOut = $checkOutModel->clone()->whereDate('check_out', $todayDate)
-            ->whereHas('booking', function ($q) use ($company_id) {
-                $q->whereIn('booking_status', [0, 3, 4, 5]);
-                // $q->where('booking_status', '>=', 3);
-                // $q->whereDate('check_in', '<=', $request->check_in);
-                $q->where('company_id', $company_id);
-            })->get();
-
-
-
-
-        $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned"])
+        $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned", "is_neutral", "is_dirty"])
+            ->withCount("room_cleaning_status")
             ->whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
                 $q->where('company_id', $company_id)
                     ->where(function ($query) use ($todayDate) {
@@ -803,87 +756,14 @@ class RoomController extends Controller
                     ->with("customer");
             }])->get();
 
-        $inHouseData = BookedRoom::where('company_id', $company_id)
-            ->where(function ($query) use ($todayDate) {
-                $query->whereDate('check_out', $todayDate)
-                    ->orWhereDate('check_in', $todayDate);
-            })
-            ->where('booking_status', 2)
-            ->selectRaw("
-            SUM(CASE WHEN DATE(check_out) = ? THEN no_of_adult ELSE 0 END) as expected_adult,
-            SUM(CASE WHEN DATE(check_out) = ? THEN no_of_child ELSE 0 END) as expected_child,
-            SUM(CASE WHEN DATE(check_in) = ? THEN no_of_adult ELSE 0 END) as occupied_adult,
-            SUM(CASE WHEN DATE(check_in) = ? THEN no_of_child ELSE 0 END) as occupied_child
-        ", [$todayDate, $todayDate, $todayDate, $todayDate])
-            ->first();
-
-
-        $expectedAdult = $inHouseData->expected_adult ?? 0;
-        $expectedChild = $inHouseData->expected_child ?? 0;
-
-        $occupiedAdult = $inHouseData->occupied_adult ?? 0;
-        $occupiedChild = $inHouseData->occupied_child ?? 0;
-
-        $totalAdult = $expectedAdult + $occupiedAdult;
-        $totalChild = $expectedChild + $occupiedChild;
-
-        $membersCount = [
-            "adult" => $totalAdult,
-            "child" => $totalChild,
-            "total" => $totalAdult + $totalChild,
-        ];
-
-
-
-        $FoodOrder = BookedRoom::where('company_id', $company_id)
-            ->where(function ($query) use ($todayDate) {
-                $query->whereDate('check_out', $todayDate)
-                    ->orWhereDate('check_in', $todayDate);
-            })
-            ->whereIn('booking_status', [1, 2])
-            ->selectRaw("
-            SUM(CASE WHEN DATE(check_out) = ? THEN breakfast ELSE 0 END) as expected_breakfast,
-            SUM(CASE WHEN DATE(check_out) = ? THEN lunch ELSE 0 END) as expected_lunch,
-            SUM(CASE WHEN DATE(check_out) = ? THEN dinner ELSE 0 END) as expected_dinner,
-            SUM(CASE WHEN DATE(check_in) = ? THEN breakfast ELSE 0 END) as occupied_breakfast,
-            SUM(CASE WHEN DATE(check_in) = ? THEN lunch ELSE 0 END) as occupied_lunch,
-            SUM(CASE WHEN DATE(check_in) = ? THEN dinner ELSE 0 END) as occupied_dinner
-        ", [$todayDate, $todayDate, $todayDate, $todayDate, $todayDate, $todayDate])
-            ->first();
-
-        $expectedBreakfast = $FoodOrder->expected_breakfast ?? 0;
-        $expectedLunch = $FoodOrder->expected_lunch ?? 0;
-        $expectedDinner = $FoodOrder->expected_dinner ?? 0;
-
-        $occupiedBreakfast = $FoodOrder->occupied_breakfast ?? 0;
-        $occupiedLunch = $FoodOrder->occupied_lunch ?? 0;
-        $occupiedDinner = $FoodOrder->occupied_dinner ?? 0;
-
-        $totalBreakfast = $expectedBreakfast + $occupiedBreakfast;
-        $totalLunch = $expectedLunch + $occupiedLunch;
-        $totalDinner = $expectedDinner + $occupiedDinner;
-
-        $foodOrdersCount = [
-            "breakfast" => $totalBreakfast,
-            "lunch" => $totalLunch,
-            "dinner" => $totalDinner,
-            "total" => $totalBreakfast + $totalLunch + $totalDinner,
-        ];
-
         return [
-            'allRooms' => $AvailableRooms,
-            'availableRooms' => $AvailableRooms,
-            'reservedWithoutAdvance' => $reservedWithoutAdvance,
-            'bookedRooms' => $reservedWithoutAdvance,
-            'checkIn' => $Occupied,
+            'allRooms'       => $AvailableRooms,
+            'bookedRooms'    => $bookedRoom,
+            'checkIn'        => $Occupied,
             'expectCheckOut' => $expectCheckOut,
-            'continueRooms' => $continueRooms,
             'dirtyRoomsList' => $dirtyRooms,
-            'blockedRooms' => $BlockedRooms,
-            'checkOut' => $checkOut,
-            'members' => $membersCount,
-            'foodOrdersCount' => $foodOrdersCount,
-            'status' => true,
+            'blockedRooms'   => $BlockedRooms,
+            'status'         => true,
         ];
     }
 }

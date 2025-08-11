@@ -1,16 +1,15 @@
 <?php
-
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Room extends Model
 {
     const Available = 0;
-    const Blocked = 1;
+    const Blocked   = 1;
 
     use HasFactory;
 
@@ -44,7 +43,6 @@ class Room extends Model
     {
         return $this->hasOne(Device::class, 'room_id');
     }
-
 
     /**
      * Get the bookedRoom associated with the Room
@@ -107,10 +105,15 @@ class Room extends Model
         return RoomType::find($this->room_type_id)->price ?? '';
     }
 
-
     public function getNumberOfDays(Carbon $startDate, Carbon $endDate)
     {
         return $startDate->diffInDays($endDate);
+    }
+
+    public function room_cleaning_status()
+    {
+        return $this->hasMany(RoomCleaning::class)
+            ->whereDate("created_at", date("Y-m-d"));
     }
 
     public function is_cleaned()
@@ -118,6 +121,20 @@ class Room extends Model
         return $this->hasMany(RoomCleaning::class)
             ->whereDate("created_at", date("Y-m-d"))
             ->where("status", RoomCleaning::CLEANED);
+    }
+
+    public function is_neutral()
+    {
+        return $this->hasMany(RoomCleaning::class)
+            ->whereDate("created_at", date("Y-m-d"))
+            ->where("status", RoomCleaning::NEUTRAL);
+    }
+
+    public function is_dirty()
+    {
+        return $this->hasMany(RoomCleaning::class)
+            ->whereDate("created_at", date("Y-m-d"))
+            ->where("status", RoomCleaning::DIRTY);
     }
 
     // public function isBookedForPeriod(Carbon $startDate, Carbon $endDate)

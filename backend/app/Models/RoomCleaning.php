@@ -11,6 +11,9 @@ class RoomCleaning extends Model
 
     const DIRTY = "Dirty";
     const CLEANED = "Cleaned";
+    const NEUTRAL = "Neutral";
+
+    
 
     protected $guarded = [];
 

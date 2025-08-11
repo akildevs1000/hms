@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\User\StoreRequest;
@@ -14,8 +13,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
-        $sortBy = $request->input('sortBy');
-        $sortDesc = $request->input('sortDesc');
+        $sortBy       = $request->input('sortBy');
+        $sortDesc     = $request->input('sortDesc');
         $itemsPerPage = $request->input('itemsPerPage');
 
         $model = User::with(['role']);
@@ -71,20 +70,24 @@ class UserController extends Controller
 
         try {
             $fileName = '';
-            $data = $request->validated();
-            $data["password"] = Hash::make($data["password"]);
+            $data     = $request->validated();
+
+            $data["password"] = Hash::make($data["password"] ?? $data["pin"]);
+            $data["email"] = $data["email"] ?? $data["pin"] . "@housekeeping.com";
+
+
             $data["employee_role_id"] = 1;
 
             if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $ext = $file->getClientOriginalExtension();
-                $fileName = time() . '.' . $ext;
-                $path = $file->storeAs('public/user/images', $fileName);
+                $file          = $request->file('image');
+                $ext           = $file->getClientOriginalExtension();
+                $fileName      = time() . '.' . $ext;
+                $path          = $file->storeAs('public/user/images', $fileName);
                 $data["image"] = $fileName;
             }
 
             $data["image"] = $fileName ?? "";
-            $record = $model->create($data);
+            $record        = $model->create($data);
 
             if ($record) {
                 return $this->response('User successfully added.', $record, true);
@@ -99,18 +102,22 @@ class UserController extends Controller
     public function update(User $user, UpdateRequest $request)
     {
 
+
+
         try {
-            $data = $request->validated();
+           $data = $request->validated();
+
+             $data["device_id"] = $data["device_id"] ?? null;
 
             if ($request->password) {
                 $data["password"] = Hash::make($data["password"]);
             }
 
             if ($request->hasFile('image')) {
-                $file = $request->file('image');
-                $ext = $file->getClientOriginalExtension();
-                $fileName = time() . '.' . $ext;
-                $path = $file->storeAs('public/user/images', $fileName);
+                $file          = $request->file('image');
+                $ext           = $file->getClientOriginalExtension();
+                $fileName      = time() . '.' . $ext;
+                $path          = $file->storeAs('public/user/images', $fileName);
                 $data["image"] = $fileName;
             }
 
