@@ -1,124 +1,242 @@
 <template>
-  <div class="flex gap-6">
-    <!-- LEFT: Chat Window -->
-    <div class="flex-1">
-      <div v-if="activeRoom" class="mb-2 text-sm text-gray-600">
-        Hotel {{ hotelId }} · Room {{ activeRoom }}
-      </div>
+  <v-container fluid class="pa-0 agent-console">
+    <v-row no-gutters>
+      <!-- LEFT: Chats list -->
+      <v-col cols="12" md="3" class="left-col">
+        <div class="px-4 py-3 d-flex align-center justify-space-between">
+          <div class="text-subtitle-1 font-weight-medium">My chats</div>
+          <div class="caption grey--text">{{ roomList.length }}</div>
+        </div>
 
-      <div
-        v-if="activeRoom"
-        ref="list"
-        class="border rounded p-3"
-        style="height: 420px; overflow: auto"
-      >
-        <div
-          v-for="m in messages[String(activeRoom)] || []"
-          :key="m.id"
-          class="mb-2"
-          :style="bubble(m)"
-        >
-          <div class="text-xs opacity-60">
-            {{ m.sender }} · {{ time(m.ts) }}
-            <span v-if="m.role === 'reception'">
-              · <span v-if="m.seen" title="Seen by guest">✓✓</span
-              ><span v-else>✓</span>
-            </span>
+        <v-text-field
+          v-model="q"
+          dense
+          hide-details
+          outlined
+          class="mx-4 mb-3"
+          placeholder="Search guests…"
+          prepend-inner-icon="mdi-magnify"
+        />
+
+        <v-list dense two-line nav class="py-0">
+          <template v-for="r in filteredRooms">
+            <v-list-item
+              :key="r"
+              :class="{ 'active-chat': String(r) === String(activeRoom) }"
+              @click="openRoom(r)"
+            >
+              <v-list-item-avatar size="34">
+                <v-avatar color="blue lighten-5">
+                  <span class="blue--text text--darken-2">{{
+                    initials(r)
+                  }}</span>
+                </v-avatar>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title class="text-truncate"
+                  >Room {{ r }}</v-list-item-title
+                >
+                <v-list-item-subtitle class="text-truncate">
+                  {{ lastPreview(r) }}
+                </v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-chip
+                  v-if="unread[String(r)]"
+                  x-small
+                  color="red"
+                  text-color="white"
+                  label
+                >
+                  {{ unread[String(r)] }}
+                </v-chip>
+              </v-list-item-action>
+            </v-list-item>
+            <v-divider :key="'d-' + r" inset></v-divider>
+          </template>
+        </v-list>
+      </v-col>
+
+      <!-- CENTER: Conversation -->
+      <v-col cols="12" md="6" class="center-col">
+        <div class="conv-header d-flex align-center px-4">
+          <div>
+            <div class="text-subtitle-1 font-weight-medium">
+              Room {{ activeRoom || "—" }}
+            </div>
+            <div class="caption grey--text">
+              <span :class="{ 'green--text': online, 'orange--text': !online }">
+                ● {{ online ? "Connected" : "Reconnecting…" }}
+              </span>
+            </div>
+          </div>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="loadHistory(activeRoom)"
+            ><v-icon>mdi-refresh</v-icon></v-btn
+          >
+        </div>
+
+        <div ref="scroll" class="messages px-4 py-3">
+          <div
+            v-for="m in messages[String(activeRoom)] || []"
+            :key="m.id"
+            class="mb-3"
+            :class="{ mine: m.role === 'reception' }"
+          >
+            <div
+              v-if="m.type === 'system'"
+              class="caption text-center my-4 grey--text"
+            >
+              {{ m.text }}
+            </div>
+
+            <div v-else class="bubble">
+              <div class="caption grey--text text--darken-1 mb-1">
+                {{ prettySender(m.sender) }} · {{ time(m.ts) }}
+                <span v-if="m.role === 'reception'" class="ml-1">
+                  · <span v-if="m.seen" title="Seen by guest">✓✓</span
+                  ><span v-else>✓</span>
+                </span>
+              </div>
+
+              <div v-if="m.type === 'text'">{{ m.text }}</div>
+              <v-card v-else-if="m.type === 'file'" flat class="pa-3 card-msg">
+                <div class="subtitle-2 mb-1">Attachment</div>
+                <a :href="m.url" target="_blank">{{ m.filename || "file" }}</a>
+              </v-card>
+              <audio
+                v-else-if="m.type === 'audio'"
+                :src="m.url"
+                controls
+              ></audio>
+            </div>
           </div>
 
-          <div v-if="m.type === 'text'">{{ m.text }}</div>
-          <a v-else-if="m.type === 'file'" :href="m.url" target="_blank">{{
-            m.filename || "file"
-          }}</a>
-          <audio v-else-if="m.type === 'audio'" :src="m.url" controls></audio>
+          <div v-if="typingNames.length" class="caption grey--text mt-2">
+            {{ typingNames.join(", ") }} typing…
+          </div>
         </div>
 
-        <div v-if="typingNames.length" class="text-xs opacity-60 mt-2">
-          {{ typingNames.join(", ") }} typing…
+        <div class="composer px-3 py-2 d-flex align-center" v-if="activeRoom">
+          <v-text-field
+            v-model="draft"
+            placeholder="Type a message…"
+            dense
+            outlined
+            hide-details
+            class="flex-grow-1 mr-2"
+            @keydown.enter.exact.prevent="send"
+            @input="sendTyping"
+          />
+          <v-btn color="primary" @click="send">Send</v-btn>
         </div>
-      </div>
+      </v-col>
 
-      <div v-if="activeRoom" class="mt-3 flex gap-2">
-        <input
-          v-model="draft"
-          @keydown="onKey"
-          @input="sendTyping"
-          class="flex-1 border rounded px-3 py-2"
-          placeholder="Reply to room…"
-        />
-        <button class="px-3 py-2 rounded bg-blue-600 text-white" @click="send">
-          Send
-        </button>
-      </div>
-    </div>
+      <!-- RIGHT: Details / Tags -->
+      <v-col cols="12" md="3" class="right-col">
+        <div class="px-4 py-3 d-flex align-center justify-space-between">
+          <div class="text-subtitle-1 font-weight-medium">Details</div>
+        </div>
+        <v-divider></v-divider>
 
-    <!-- RIGHT: Guests / Rooms List -->
-    <aside class="w-64">
-      <div class="font-semibold mb-2">Guests</div>
-
-      <div
-        v-for="r in roomList"
-        :key="r"
-        class="flex justify-between items-center mb-2"
-      >
-        <button
-          class="px-3 py-2 rounded border w-full text-left"
-          :class="{ 'bg-blue-50': String(r) === String(activeRoom) }"
-          @click="openRoom(r)"
-        >
-          Guest {{ r }}
-        </button>
-        <span
-          v-if="unread[String(r)]"
-          class="ml-2 text-xs bg-red-600 text-white rounded px-2"
-        >
-          {{ unread[String(r)] }}
-        </span>
-      </div>
-    </aside>
-  </div>
+        <div class="px-4 py-3">
+          <div class="mb-2 font-weight-medium">Tags</div>
+          <div class="d-flex flex-wrap">
+            <v-chip
+              v-for="(t, i) in roomTags[String(activeRoom)] || []"
+              :key="i"
+              small
+              class="mr-2 mb-2"
+              color="grey lighten-3"
+              close
+              @click:close="removeTag(i)"
+              >{{ t }}</v-chip
+            >
+          </div>
+          <v-text-field
+            v-model="tagDraft"
+            label="Add tag"
+            dense
+            outlined
+            hide-details
+            class="mt-2"
+            @keydown.enter.prevent="addTag"
+          />
+          <v-btn small class="mt-1" @click="addTag">+ Add tag</v-btn>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 export default {
+  name: "AgentConsole",
   props: {
     hotelId: { type: [String, Number], required: true },
     staffName: { type: String, default: "Reception" },
   },
   data: () => ({
+    // your state
     roomList: [],
     activeRoom: null,
-    messages: {}, // { "1205": [ { id, role, ... }, ... ] }
-    unread: {}, // { "1205": 2 }
+    messages: {}, // { "1205": [...] }
+    unread: {},
     draft: "",
-    typingMap: {}, // { "1205": Set(users) }
-    unsubs: [], // wildcard + typing unsubs pushed here too
+    typingMap: {}, // { "1205": Set() }
     typingUnsubs: {}, // { "1205": fn }
-    ackUnsub: null, // current room ack unsub
-    _t: null, // typing debounce timer
-    _typingTimers: {}, // per-guest auto-clear timers for typing state
+    ackUnsub: null,
+    unsubs: [],
+    _t: null,
+    _typingTimers: {},
+
+    // ui
+    q: "",
+    online: false,
+    roomTags: {}, // { "1205": ["billing"] }
+    tagDraft: "",
   }),
   computed: {
-    wildcard() {
-      return `chat/hotel/${this.hotelId}/room/+/message`;
-    },
     me() {
       return `Reception:${this.staffName}`;
+    },
+    wildcard() {
+      return `chat/hotel/${this.hotelId}/room/+/message`;
     },
     typingNames() {
       const set = this.typingMap[String(this.activeRoom)] || new Set();
       return [...set].map(this.prettyUser);
     },
+    filteredRooms() {
+      if (!this.q) return this.roomList;
+      const s = this.q.toLowerCase();
+      return this.roomList.filter((r) => String(r).toLowerCase().includes(s));
+    },
   },
-  async mounted() {
-    // Load room list (replace with API if needed)
+  mounted() {
+    // mock list (replace with API)
     this.roomList = [1205, 1202, 1203];
     this.activeRoom = this.roomList[0];
 
-    // Subscribe to all incoming room messages (wildcard)
-    const wildcardUnsub = this.$mqtt.sub(this.wildcard, (m, topic) => {
+    // connection indicators
+    const c = this.$mqtt?.raw;
+    if (c) {
+      this.online = c.connected;
+      c.on("connect", () => {
+        this.online = true;
+      });
+      c.on("reconnect", () => {
+        this.online = false;
+      });
+      c.on("close", () => {
+        this.online = false;
+      });
+    }
+
+    // wildcard messages
+    const unsub = this.$mqtt.sub(this.wildcard, (m, topic) => {
       const segs = (topic || "").split("/");
-      const roomId = String(segs[4] || ""); // chat/hotel/{2}/room/{4}/message
+      const roomId = String(segs[4] || "");
       if (!m) return;
 
       this.upsertMessage(roomId, m);
@@ -130,43 +248,50 @@ export default {
         this.ack(roomId, m.id);
       }
     });
-    this.unsubs.push(wildcardUnsub);
+    this.unsubs.push(unsub);
 
-    // Open initial room (typing + ack)
+    // open current room streams
     this.openRoom(this.activeRoom);
   },
   beforeDestroy() {
-    // Clean all general unsubs
     this.unsubs.forEach((fn) => fn && fn());
-    this.unsubs = [];
-
-    // Per-room typing unsubs
     Object.values(this.typingUnsubs).forEach((fn) => fn && fn());
-    this.typingUnsubs = {};
-
-    // Ack unsub
     if (this.ackUnsub) this.ackUnsub();
-    this.ackUnsub = null;
-
-    // Clear typing timers
     Object.values(this._typingTimers || {}).forEach((t) => clearTimeout(t));
   },
   methods: {
     prettyUser(u) {
       const [rid, name] = String(u || "").split(":");
-      return name && rid ? `${name} ${rid}` : name || u; // "Guest 1205"
+      return name && rid ? `${name} ${rid}` : name || u; // e.g. "Guest 1205"
+    },
+    // UI helpers
+    initials(r) {
+      return "R";
+    },
+    prettySender(s) {
+      if (!s) return "";
+      if (String(s).startsWith("Reception:")) return "You";
+      const [rid, name] = String(s).split(":");
+      return name || `Guest ${rid}`;
+    },
+    time(ts) {
+      return new Date(ts).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    },
+    scrollToEnd() {
+      const el = this.$refs.scroll;
+      if (el) el.scrollTop = el.scrollHeight;
+    },
+    lastPreview(r) {
+      const list = this.messages[String(r)] || [];
+      const last = list[list.length - 1];
+      if (!last) return "—";
+      return last.type === "text" ? last.text : last.type;
     },
 
-    // Optional: load last N history items when entering a room
-    async loadHistory(roomId) {
-      try {
-        const q = `?hotelId=${this.hotelId}&roomId=${roomId}&limit=50`;
-        const rows = (await this.$axios.$get(`/api/chat/history${q}`)) || [];
-        this.$set(this.messages, String(roomId), rows);
-        this.$nextTick(this.scrollToEnd);
-      } catch (_) {}
-    },
-
+    // Data helpers (your model)
     ensureList(roomId) {
       const key = String(roomId);
       if (!this.messages[key]) this.$set(this.messages, key, []);
@@ -177,7 +302,15 @@ export default {
       const list = this.ensureList(key);
       const i = list.findIndex((x) => x.id === msg.id);
       if (i === -1) list.push(msg);
-      else this.$set(list, i, { ...list[i], ...msg }); // merge updates (e.g., seen)
+      else this.$set(list, i, { ...list[i], ...msg });
+    },
+
+    // MQTT topics
+    msgTopic(r) {
+      return `chat/hotel/${this.hotelId}/room/${String(r)}/message`;
+    },
+    ackTopic(r) {
+      return `chat/hotel/${this.hotelId}/room/${String(r)}/ack`;
     },
 
     openRoom(roomId) {
@@ -185,18 +318,15 @@ export default {
       this.activeRoom = roomId;
       this.$set(this.unread, key, 0);
 
-      // Typing subscribe (single per room)
+      // typing subscribe per room
       const tTopic = `chat/hotel/${this.hotelId}/room/${key}/typing`;
       if (this.typingUnsubs[key]) this.typingUnsubs[key]();
-
       this.typingUnsubs[key] = this.$mqtt.sub(tTopic, (t) => {
         if (!this.typingMap[key]) this.$set(this.typingMap, key, new Set());
         const set = this.typingMap[key];
-
         const timerKey = `${key}:${t?.user || ""}`;
         clearTimeout(this._typingTimers?.[timerKey]);
         this._typingTimers = this._typingTimers || {};
-
         if (t && t.typing) {
           set.add(t.user);
           this._typingTimers[timerKey] = setTimeout(() => {
@@ -205,14 +335,13 @@ export default {
           }, 3000);
         } else {
           set.delete(t && t.user);
+          this.$forceUpdate();
         }
-        this.$forceUpdate();
       });
-      this.unsubs.push(this.typingUnsubs[key]);
 
-      // ACK subscribe for active room (mark seen)
+      // ack subscribe for active room
       if (this.ackUnsub) this.ackUnsub();
-      const aTopic = `chat/hotel/${this.hotelId}/room/${key}/ack`;
+      const aTopic = this.ackTopic(key);
       this.ackUnsub = this.$mqtt.sub(aTopic, (ack) => {
         const list = this.messages[key] || [];
         list.forEach((x, idx) => {
@@ -222,40 +351,15 @@ export default {
         });
       });
 
-      // Optional history load:
+      // optional: history
       // this.loadHistory(roomId);
 
       this.$nextTick(this.scrollToEnd);
     },
 
-    msgTopic(r) {
-      return `chat/hotel/${this.hotelId}/room/${String(r)}/message`;
-    },
-    ackTopic(r) {
-      return `chat/hotel/${this.hotelId}/room/${String(r)}/ack`;
-    },
-
-    bubble(m) {
-      const mine = m.role === "reception";
-      return {
-        maxWidth: "85%",
-        marginLeft: mine ? "auto" : "0",
-        background: mine ? "#e8f5e9" : "#f5f5f5",
-        borderRadius: "14px",
-        padding: "8px 12px",
-      };
-    },
-    time(ts) {
-      return new Date(ts).toLocaleTimeString();
-    },
-    scrollToEnd() {
-      const el = this.$refs.list;
-      if (el) el.scrollTop = el.scrollHeight;
-    },
-
     send() {
       const text = this.draft.trim();
-      if (!text) return;
+      if (!text || !this.activeRoom) return;
       const r = String(this.activeRoom);
       const m = {
         id: Date.now() + "_" + Math.random().toString(36).slice(2),
@@ -272,14 +376,8 @@ export default {
       this.ack(r, m.id);
     },
 
-    onKey(e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        this.send();
-      }
-    },
-
     sendTyping() {
+      if (!this.activeRoom) return;
       const r = String(this.activeRoom);
       const tTopic = `chat/hotel/${this.hotelId}/room/${r}/typing`;
       this.$mqtt.pub(tTopic, { user: this.me, typing: true, ts: Date.now() });
@@ -301,6 +399,79 @@ export default {
         ts: Date.now(),
       });
     },
+
+    // Tags right panel
+    addTag() {
+      const k = String(this.activeRoom);
+      const t = this.tagDraft.trim();
+      if (!t) return;
+      const arr = this.roomTags[k] || [];
+      arr.push(t);
+      this.$set(this.roomTags, k, arr);
+      this.tagDraft = "";
+    },
+    removeTag(i) {
+      const k = String(this.activeRoom);
+      const arr = this.roomTags[k] || [];
+      arr.splice(i, 1);
+      this.$set(this.roomTags, k, arr);
+    },
   },
 };
 </script>
+
+<style scoped>
+.agent-console {
+  height: calc(100vh - 100px);
+  overflow: hidden;
+  background: #fafafa;
+}
+.left-col {
+  background: #fff;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.center-col {
+  background: #fff;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
+.conv-header {
+  height: 64px;
+  border-bottom: 1px solid #eee;
+}
+.messages {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: #fff;
+}
+.composer {
+  border-top: 1px solid #eee;
+  background: #fff;
+}
+.right-col {
+  background: #fff;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.bubble {
+  max-width: 78%;
+  background: #f5f5f5;
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.mine .bubble {
+  margin-left: auto;
+  background: #e3f2fd;
+}
+.active-chat {
+  background: #f2f7ff !important;
+}
+.card-msg {
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+}
+</style>
