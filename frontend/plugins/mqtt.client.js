@@ -1,71 +1,97 @@
 import Vue from "vue";
-// IMPORTANT: use the UMD build, not "mqtt"
-import mqtt from "mqtt/dist/mqtt.min.js";
+// plugins/mqtt.client.js
+// npm i mqtt
+import mqtt from "mqtt";
 
-const WS_URL = "wss://mqtt.xtremeguard.org:8084"; // e.g. ws://emqx.local:8083/mqtt
-// MQTT wildcard matcher: supports + and #
-function topicMatches(filter, topic) {
-  if (filter === topic) return true;
-  const f = filter.split("/");
+/**
+ * Simple wildcard matcher for MQTT topics
+ * Supports + (single level) and # (multi-level)
+ */
+function topicMatches(pattern, topic) {
+  if (pattern === topic) return true;
+  const p = pattern.split("/");
   const t = topic.split("/");
-  for (let i = 0; i < f.length; i++) {
-    const fi = f[i];
-    const ti = t[i];
-    if (fi === "#") return true;
-    if (fi === "+") {
-      if (ti == null) return false;
-      continue;
-    }
-    if (ti == null) return false;
-    if (fi !== ti) return false;
+
+  for (let i = 0; i < p.length; i++) {
+    const pp = p[i];
+    const tt = t[i];
+
+    if (pp === "#") return true; // match the rest
+    if (pp === "+") continue; // match this level
+    if (tt === undefined || pp !== tt) return false;
   }
-  return f[f.length - 1] === "#" || f.length === t.length;
+  return p.length === t.length;
 }
 
-export default (_ctx, inject) => {
-  if (!process.client) return;
-
-  const client = mqtt.connect(WS_URL, {
-    protocol: "wss",
-    keepalive: 60,
-    reconnectPeriod: 2000,
-    connectTimeout: 10000,
+export default (ctx, inject) => {
+  // Update this URL/options to match your broker
+  const url = "wss://mqtt.xtremeguard.org:8084"; //process.env.MQTT_URL || "wss://mqtt.xtremeguard.org:8084";
+  const opts = {
+    // clientId: 'reception-' + Math.random().toString(16).slice(2),
     clean: true,
-    clientId: "hotelchat_" + Math.random().toString(16).slice(2),
-    // username: "user", password: "pass",
-  });
+    reconnectPeriod: 2000,
+    connectTimeout: 10_000,
+    // username: process.env.MQTT_USER,
+    // password: process.env.MQTT_PASS,
+  };
 
-  const api = {
-    raw: client,
-    sub(filter, cb) {
-      client.subscribe(
-        filter,
-        { qos: 1 },
-        (err) => err && console.error("sub", filter, err)
-      );
+  const client = mqtt.connect(url, opts);
 
-      const handler = (topic, payload) => {
-        if (!topicMatches(filter, topic)) return;
-        let data = null;
+  const $mqtt = {
+    /**
+     * Publish JSON or string
+     */
+    pub(topic, payload, options) {
+      let data = payload;
+      if (typeof payload !== "string") {
         try {
-          data = JSON.parse(payload.toString());
-        } catch (_) {}
-        cb(data, topic);
-      };
-      client.on("message", handler);
-      return () => client.off("message", handler);
+          data = JSON.stringify(payload);
+        } catch {
+          data = String(payload);
+        }
+      }
+      client.publish(topic, data, options || {});
     },
-    pub(topic, msg) {
-      const payload = typeof msg === "string" ? msg : JSON.stringify(msg);
-      client.publish(topic, payload, { qos: 1 });
+
+    /**
+     * Subscribe with per-subscription message filter and cleanup.
+     * Returns () => { unsubscribe + removeListener }.
+     */
+    sub(topic, handler) {
+      const onMessage = (actualTopic, buf) => {
+        if (typeof actualTopic !== "string") return; // guard bad calls
+        if (!topicMatches(topic, actualTopic)) return;
+
+        let parsed = null;
+        const text = buf ? buf.toString() : "";
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          parsed = text;
+        }
+        handler(parsed, actualTopic);
+      };
+
+      client.on("message", onMessage);
+      client.subscribe(topic, (err) => {
+        if (err) console.error("MQTT subscribe error:", err, "topic=", topic);
+      });
+
+      return () => {
+        try {
+          client.removeListener("message", onMessage);
+        } catch {}
+        try {
+          client.unsubscribe(topic);
+        } catch {}
+      };
+    },
+
+    // expose raw client if needed (read-only usage preferred)
+    get raw() {
+      return client;
     },
   };
 
-  client.on("connect", () => console.log("[MQTT] connected"));
-  client.on("reconnect", () => console.log("[MQTT] reconnecting…"));
-  client.on("error", (e) => console.error("[MQTT] error", e));
-  client.on("close", () => console.log("[MQTT] closed"));
-
-  Vue.prototype.$mqtt = api;
-  inject("mqtt", api);
+  inject("mqtt", $mqtt);
 };

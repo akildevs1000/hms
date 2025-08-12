@@ -1,29 +1,6 @@
 <template>
   <div class="flex gap-6">
-    <div class="w-64">
-      <div class="font-semibold mb-2">Rooms</div>
-
-      <div
-        v-for="r in roomList"
-        :key="r"
-        class="flex justify-between items-center mb-2"
-      >
-        <button
-          class="px-3 py-2 rounded border w-full text-left"
-          :class="{ 'bg-blue-50': String(r) === String(activeRoom) }"
-          @click="openRoom(r)"
-        >
-          Room {{ r }}
-        </button>
-        <span
-          v-if="unread[String(r)]"
-          class="ml-2 text-xs bg-red-600 text-white rounded px-2"
-        >
-          {{ unread[String(r)] }}
-        </span>
-      </div>
-    </div>
-
+    <!-- LEFT: Chat Window -->
     <div class="flex-1">
       <div v-if="activeRoom" class="mb-2 text-sm text-gray-600">
         Hotel {{ hotelId }} · Room {{ activeRoom }}
@@ -44,9 +21,11 @@
           <div class="text-xs opacity-60">
             {{ m.sender }} · {{ time(m.ts) }}
             <span v-if="m.role === 'reception'">
-              · <span v-if="m.seen">✓✓</span><span v-else>✓</span>
+              · <span v-if="m.seen" title="Seen by guest">✓✓</span
+              ><span v-else>✓</span>
             </span>
           </div>
+
           <div v-if="m.type === 'text'">{{ m.text }}</div>
           <a v-else-if="m.type === 'file'" :href="m.url" target="_blank">{{
             m.filename || "file"
@@ -72,6 +51,31 @@
         </button>
       </div>
     </div>
+
+    <!-- RIGHT: Guests / Rooms List -->
+    <aside class="w-64">
+      <div class="font-semibold mb-2">Guests</div>
+
+      <div
+        v-for="r in roomList"
+        :key="r"
+        class="flex justify-between items-center mb-2"
+      >
+        <button
+          class="px-3 py-2 rounded border w-full text-left"
+          :class="{ 'bg-blue-50': String(r) === String(activeRoom) }"
+          @click="openRoom(r)"
+        >
+          Guest {{ r }}
+        </button>
+        <span
+          v-if="unread[String(r)]"
+          class="ml-2 text-xs bg-red-600 text-white rounded px-2"
+        >
+          {{ unread[String(r)] }}
+        </span>
+      </div>
+    </aside>
   </div>
 </template>
 
@@ -84,14 +88,15 @@ export default {
   data: () => ({
     roomList: [],
     activeRoom: null,
-    messages: {},
-    unread: {},
+    messages: {}, // { "1205": [ { id, role, ... }, ... ] }
+    unread: {}, // { "1205": 2 }
     draft: "",
-    typingMap: {}, // { "1205": Set() }
-    unsubs: [], // general unsub handlers
-    typingUnsubs: {}, // per-room typing unsub { "1205": fn }
+    typingMap: {}, // { "1205": Set(users) }
+    unsubs: [], // wildcard + typing unsubs pushed here too
+    typingUnsubs: {}, // { "1205": fn }
     ackUnsub: null, // current room ack unsub
-    _t: null, // typing timeout holder
+    _t: null, // typing debounce timer
+    _typingTimers: {}, // per-guest auto-clear timers for typing state
   }),
   computed: {
     wildcard() {
@@ -102,7 +107,7 @@ export default {
     },
     typingNames() {
       const set = this.typingMap[String(this.activeRoom)] || new Set();
-      return [...set].map(this.prettyUser); // shows "Guest 1205" instead of "1205:Guest"
+      return [...set].map(this.prettyUser);
     },
   },
   async mounted() {
@@ -131,9 +136,20 @@ export default {
     this.openRoom(this.activeRoom);
   },
   beforeDestroy() {
+    // Clean all general unsubs
     this.unsubs.forEach((fn) => fn && fn());
+    this.unsubs = [];
+
+    // Per-room typing unsubs
     Object.values(this.typingUnsubs).forEach((fn) => fn && fn());
+    this.typingUnsubs = {};
+
+    // Ack unsub
     if (this.ackUnsub) this.ackUnsub();
+    this.ackUnsub = null;
+
+    // Clear typing timers
+    Object.values(this._typingTimers || {}).forEach((t) => clearTimeout(t));
   },
   methods: {
     prettyUser(u) {
@@ -141,7 +157,7 @@ export default {
       return name && rid ? `${name} ${rid}` : name || u; // "Guest 1205"
     },
 
-    // History loader (optional)
+    // Optional: load last N history items when entering a room
     async loadHistory(roomId) {
       try {
         const q = `?hotelId=${this.hotelId}&roomId=${roomId}&limit=50`;
@@ -172,11 +188,11 @@ export default {
       // Typing subscribe (single per room)
       const tTopic = `chat/hotel/${this.hotelId}/room/${key}/typing`;
       if (this.typingUnsubs[key]) this.typingUnsubs[key]();
+
       this.typingUnsubs[key] = this.$mqtt.sub(tTopic, (t) => {
         if (!this.typingMap[key]) this.$set(this.typingMap, key, new Set());
         const set = this.typingMap[key];
 
-        // auto-clear fallback
         const timerKey = `${key}:${t?.user || ""}`;
         clearTimeout(this._typingTimers?.[timerKey]);
         this._typingTimers = this._typingTimers || {};
@@ -206,7 +222,7 @@ export default {
         });
       });
 
-      // Optional history:
+      // Optional history load:
       // this.loadHistory(roomId);
 
       this.$nextTick(this.scrollToEnd);
@@ -250,7 +266,7 @@ export default {
         ts: Date.now(),
       };
       this.$mqtt.pub(this.msgTopic(r), m);
-      this.upsertMessage(r, m); // <-- no stray '+'
+      this.upsertMessage(r, m);
       this.draft = "";
       this.$nextTick(this.scrollToEnd);
       this.ack(r, m.id);
