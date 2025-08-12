@@ -5,7 +5,7 @@
       <v-col cols="12" md="3" class="left-col">
         <div class="px-4 py-3 d-flex align-center justify-space-between">
           <div class="text-subtitle-1 font-weight-medium">My chats</div>
-          <div class="caption grey--text">{{ roomList.length }}</div>
+          <div class="caption grey--text">{{ bookingList.length }}</div>
         </div>
 
         <v-text-field
@@ -58,7 +58,7 @@
       </v-col>
 
       <!-- CENTER: Conversation -->
-      <v-col cols="12" md="6" class="center-col">
+      <v-col cols="12" md="9" class="center-col">
         <div class="conv-header d-flex align-center px-4">
           <div>
             <div class="text-subtitle-1 font-weight-medium">
@@ -131,40 +131,6 @@
           <v-btn color="primary" @click="send">Send</v-btn>
         </div>
       </v-col>
-
-      <!-- RIGHT: Details / Tags -->
-      <v-col cols="12" md="3" class="right-col">
-        <div class="px-4 py-3 d-flex align-center justify-space-between">
-          <div class="text-subtitle-1 font-weight-medium">Details</div>
-        </div>
-        <v-divider></v-divider>
-
-        <div class="px-4 py-3">
-          <div class="mb-2 font-weight-medium">Tags</div>
-          <div class="d-flex flex-wrap">
-            <v-chip
-              v-for="(t, i) in roomTags[String(activeRoom)] || []"
-              :key="i"
-              small
-              class="mr-2 mb-2"
-              color="grey lighten-3"
-              close
-              @click:close="removeTag(i)"
-              >{{ t }}</v-chip
-            >
-          </div>
-          <v-text-field
-            v-model="tagDraft"
-            label="Add tag"
-            dense
-            outlined
-            hide-details
-            class="mt-2"
-            @keydown.enter.prevent="addTag"
-          />
-          <v-btn small class="mt-1" @click="addTag">+ Add tag</v-btn>
-        </div>
-      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -178,7 +144,7 @@ export default {
   },
   data: () => ({
     // your state
-    roomList: [],
+    bookingList: [],
     activeRoom: null,
     messages: {}, // { "1205": [...] }
     unread: {},
@@ -208,15 +174,17 @@ export default {
       return [...set].map(this.prettyUser);
     },
     filteredRooms() {
-      if (!this.q) return this.roomList;
+      if (!this.q) return this.bookingList;
       const s = this.q.toLowerCase();
-      return this.roomList.filter((r) => String(r).toLowerCase().includes(s));
+      return this.bookingList.filter((r) =>
+        String(r).toLowerCase().includes(s)
+      );
     },
   },
   mounted() {
     // mock list (replace with API)
-    this.roomList = [1205, 1202, 1203];
-    this.activeRoom = this.roomList[0];
+    this.bookingList = [1205, 1202, 1203];
+    this.activeRoom = this.bookingList[0];
 
     // connection indicators
     const c = this.$mqtt?.raw;
@@ -236,16 +204,16 @@ export default {
     // wildcard messages
     const unsub = this.$mqtt.sub(this.wildcard, (m, topic) => {
       const segs = (topic || "").split("/");
-      const roomId = String(segs[4] || "");
+      const bookingId = String(segs[4] || "");
       if (!m) return;
 
-      this.upsertMessage(roomId, m);
+      this.upsertMessage(bookingId, m);
 
-      if (roomId !== String(this.activeRoom)) {
-        this.$set(this.unread, roomId, (this.unread[roomId] || 0) + 1);
+      if (bookingId !== String(this.activeRoom)) {
+        this.$set(this.unread, bookingId, (this.unread[bookingId] || 0) + 1);
       } else {
         this.$nextTick(this.scrollToEnd);
-        this.ack(roomId, m.id);
+        this.ack(bookingId, m.id);
       }
     });
     this.unsubs.push(unsub);
@@ -292,13 +260,13 @@ export default {
     },
 
     // Data helpers (your model)
-    ensureList(roomId) {
-      const key = String(roomId);
+    ensureList(bookingId) {
+      const key = String(bookingId);
       if (!this.messages[key]) this.$set(this.messages, key, []);
       return this.messages[key];
     },
-    upsertMessage(roomId, msg) {
-      const key = String(roomId);
+    upsertMessage(bookingId, msg) {
+      const key = String(bookingId);
       const list = this.ensureList(key);
       const i = list.findIndex((x) => x.id === msg.id);
       if (i === -1) list.push(msg);
@@ -313,9 +281,9 @@ export default {
       return `chat/hotel/${this.hotelId}/room/${String(r)}/ack`;
     },
 
-    openRoom(roomId) {
-      const key = String(roomId);
-      this.activeRoom = roomId;
+    openRoom(bookingId) {
+      const key = String(bookingId);
+      this.activeRoom = bookingId;
       this.$set(this.unread, key, 0);
 
       // typing subscribe per room
@@ -352,16 +320,16 @@ export default {
       });
 
       // optional: history
-      // this.loadHistory(roomId);
+      // this.loadHistory(bookingId);
 
       this.$nextTick(this.scrollToEnd);
     },
 
-    send() {
+    async send() {
       const text = this.draft.trim();
       if (!text || !this.activeRoom) return;
       const r = String(this.activeRoom);
-      const m = {
+      let m = {
         id: Date.now() + "_" + Math.random().toString(36).slice(2),
         sender: this.me,
         role: "reception",
@@ -374,6 +342,20 @@ export default {
       this.draft = "";
       this.$nextTick(this.scrollToEnd);
       this.ack(r, m.id);
+
+      //store backup
+      try {
+        m = {
+          booking_id: 1,
+          room_id: 11,
+          room_number: 101,
+
+          receiption_name: this.me,
+          ...m,
+        };
+
+        await this.$axios.post(`/chat_messages`, m);
+      } catch (e) {}
     },
 
     sendTyping() {
@@ -391,8 +373,8 @@ export default {
       }, 1200);
     },
 
-    ack(roomId, id) {
-      const r = String(roomId);
+    ack(bookingId, id) {
+      const r = String(bookingId);
       this.$mqtt.pub(this.ackTopic(r), {
         user: this.me,
         lastSeenId: id,
@@ -458,7 +440,7 @@ export default {
   overflow-y: auto;
 }
 .bubble {
-  max-width: 78%;
+  max-width: 60%;
   background: #f5f5f5;
   border-radius: 14px;
   padding: 10px 12px;
