@@ -3,6 +3,34 @@
     <v-row no-gutters>
       <!-- LEFT: Chats list -->
       <v-col cols="12" md="3" class="left-col">
+        <div style="display: none">
+          <v-data-table
+            dense
+            :headers="headers"
+            :items="bookingsListdata"
+            :loading="loading"
+            :options.sync="options"
+            :server-items-length="totalRowsCount"
+            :footer-props="{
+              itemsPerPageOptions: [10, 50, 100, 500, 1000],
+            }"
+            class="elevation-1 px-2"
+          >
+            <template v-slot:item.room="{ item }">
+              <small class="text-color">{{
+                caps(item.booking.customer.first_name)
+              }}</small></template
+            >
+            <template v-slot:item.guest="{ item }">
+              <small class="text-color">{{ item.room_no }}</small></template
+            ><template v-slot:item.checkin="{ item }">
+              <small class="text-color">{{ item.check_in }}</small></template
+            ><template v-slot:item.checkout="{ item }">
+              <small class="text-color">{{ item.check_out }}</small></template
+            >
+          </v-data-table>
+        </div>
+
         <div class="px-4 py-3 d-flex align-center justify-space-between">
           <div class="text-subtitle-1 font-weight-medium">My chats</div>
           <div class="caption grey--text">{{ bookingsList.length }}</div>
@@ -66,7 +94,7 @@
             </div>
             <div class="caption grey--text">
               <span :class="{ 'green--text': online, 'orange--text': !online }">
-                ● {{ online ? "Connected" : "Reconnecting…" }}
+                {{ online ? "" : "● Reconnecting…" }}
               </span>
             </div>
           </div>
@@ -98,10 +126,11 @@
             <div v-else class="bubble">
               <div class="caption grey--text text--darken-1 mb-1">
                 {{ prettySender(m.sender) }} · {{ time(m.ts) }}
-                <span v-if="m.role === 'reception'" class="ml-1">
+                <!-- <span>✓</span> -->
+                <!-- <span v-if="m.role === 'reception'" class="ml-1">
                   · <span v-if="m.seen" title="Seen by guest">✓✓</span
                   ><span v-else>✓</span>
-                </span>
+                </span> -->
               </div>
 
               <div v-if="m.type === 'text'">{{ m.text }}</div>
@@ -117,9 +146,9 @@
             </div>
           </div>
 
-          <div v-if="typingNames.length" class="caption grey--text mt-2">
+          <!-- <div v-if="typingNames.length" class="caption grey--text mt-2">
             {{ typingNames.join(", ") }} typing…
-          </div>
+          </div> -->
         </div>
 
         <div class="composer px-3 py-2 d-flex align-center" v-if="activeRoom">
@@ -148,6 +177,43 @@ export default {
     staffName: { type: String, default: "Reception" },
   },
   data: () => ({
+    bookingsListdata: [],
+    page: 1,
+    perPage: 0,
+    currentPage: 1,
+    cumulativeIndex: 1,
+
+    action: null,
+    headers: [
+      { text: "Room", value: "room", sortable: false, filterable: false },
+      {
+        text: "Guest",
+        value: "guest",
+        sortable: false,
+        filterable: false,
+      },
+      {
+        text: "Check_in",
+        value: "checkin",
+        sortable: false,
+        filterable: false,
+      },
+      {
+        text: "Check Out",
+        value: "checkout",
+        sortable: false,
+        filterable: false,
+      },
+    ],
+    totalRowsCount: 0,
+    pagination: {
+      current: 1,
+      total: 0,
+      per_page: 10,
+    },
+    Model: "Sources",
+    options: { page: 1 },
+    loading: false,
     messagesKey: 1,
     // your state
     bookingsList: [],
@@ -187,7 +253,16 @@ export default {
       );
     },
   },
+  watch: {
+    options: {
+      handler() {
+        this.getDataFromApi();
+      },
+      deep: true,
+    },
+  },
   async mounted() {
+    this.getDataFromApi();
     // mock list (replace with API)
     this.bookingsList = [3, 1202, 1203, 1205, 101];
     this.activeRoom = this.bookingsList[0];
@@ -211,16 +286,28 @@ export default {
     const unsub = this.$mqtt.sub(this.wildcard, (m, topic) => {
       const segs = (topic || "").split("/");
       const bookingId = String(segs[4] || "");
+      // this.scrollToEnd();
+      // this.$nextTick(this.scrollToEnd);
       if (!m) return;
+
+      console.log(bookingId);
 
       this.upsertMessage(bookingId, m);
 
       if (bookingId !== String(this.activeRoom)) {
         this.$set(this.unread, bookingId, (this.unread[bookingId] || 0) + 1);
+
+        // this.scrollToEnd();
+        // this.$nextTick(this.scrollToEnd);
       } else {
-        this.$nextTick(this.scrollToEnd);
+        // this.scrollToEnd();
+        // this.$nextTick(this.scrollToEnd);
         this.ack(bookingId, m.id);
       }
+      setTimeout(() => {
+        this.scrollToEnd();
+        this.$nextTick(this.scrollToEnd);
+      }, 1000 * 2);
     });
     this.unsubs.push(unsub);
 
@@ -228,9 +315,10 @@ export default {
     await this.openRoom(this.activeRoom);
 
     this.messagesKey++;
-
-    // this.loadHistory(this.activeRoom);
+    // this.$nextTick(this.scrollToEnd);
+    // this.scrollToEnd();
   },
+
   beforeDestroy() {
     this.unsubs.forEach((fn) => fn && fn());
     Object.values(this.typingUnsubs).forEach((fn) => fn && fn());
@@ -238,6 +326,48 @@ export default {
     Object.values(this._typingTimers || {}).forEach((t) => clearTimeout(t));
   },
   methods: {
+    caps(str) {
+      if (str == "" || str == null) {
+        return "---";
+      } else {
+        let res = str.toString();
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+    },
+    getDataFromApi() {
+      //let page = this.pagination.current;
+      this.currentPage = this.currentPage ?? 1;
+
+      let { sortBy, sortDesc, page, itemsPerPage } = this.options;
+      let sortedBy = sortBy ? sortBy[0] : "";
+      let sortedDesc = sortDesc ? sortDesc[0] : "";
+
+      this.perPage = itemsPerPage;
+      // if (!page > 0) return false;
+      this.loading = true;
+      let options = {
+        params: {
+          page: page,
+          //sortBy: sortedBy,
+          sortDesc: sortedDesc,
+          per_page: itemsPerPage,
+          pagination: true,
+
+          company_id: this.$auth.user.company.id,
+          search: this.search,
+          type: this.type,
+        },
+      };
+
+      this.$axios.get("/chat_messages_bookings", options).then(({ data }) => {
+        this.currentPage = page;
+        this.bookingsListdata = data.data;
+        this.pagination.current = data.current_page;
+        this.pagination.total = data.last_page;
+        this.loading = false;
+        this.totalRowsCount = data.total;
+      });
+    },
     prettyUser(u) {
       const [rid, name] = String(u || "").split(":");
       return name && rid ? `${name} ${rid}` : name || u; // e.g. "Guest 1205"
@@ -262,6 +392,7 @@ export default {
     },
     scrollToEnd() {
       const el = this.$refs.scroll;
+
       if (el) el.scrollTop = el.scrollHeight;
     },
     lastPreview(r) {
@@ -299,6 +430,11 @@ export default {
           (await this.$axios.get(`/chat_messages_history${q}`)) || [];
         this.messages[bookingId] = rows.data;
 
+        this.$nextTick(this.scrollToEnd);
+
+        setTimeout(() => {
+          this.$nextTick(this.scrollToEnd);
+        }, 1000 * 2);
         // this.$nextTick(this.scrollToEnd);
       } catch (_) {}
     },
@@ -338,6 +474,8 @@ export default {
             this.$set(list, idx, { ...x, seen: true });
           }
         });
+        this.scrollToEnd();
+        this.$nextTick(this.scrollToEnd);
       });
 
       // optional: history
@@ -345,7 +483,7 @@ export default {
 
       this.$nextTick(this.scrollToEnd);
 
-      await this.loadHistory(bookingId);
+      // await this.loadHistory(bookingId);
     },
 
     async send() {

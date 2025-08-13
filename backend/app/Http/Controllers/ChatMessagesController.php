@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BookedRoom;
+use App\Models\Booking;
 use App\Models\ChatMessages;
 use Illuminate\Http\Request;
 
@@ -115,5 +117,17 @@ class ChatMessagesController extends Controller
 
         return  $model = ChatMessages::where("booking_id", $request->bookingId)
             ->orderBy("ts", "asc")->get();;
+    }
+
+    public function getBookingsList(Request $request)
+    {
+        $model = BookedRoom::where("company_id", $request->company_id)
+
+
+            ->where("check_in", "!=", null)
+            ->orderBy("check_in", "desc");;
+
+
+        return $model->paginate($request->per_page ?? 10);
     }
 }

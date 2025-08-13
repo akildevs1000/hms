@@ -6,6 +6,8 @@
 
     Route::resource('chat_messages', ChatMessagesController::class);
     Route::get('chat_messages_history', [ChatMessagesController::class, 'getChatHistory']);
+    Route::get('chat_messages_bookings', [ChatMessagesController::class, 'getBookingsList']);
+
 
 
 
