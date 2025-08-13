@@ -5,7 +5,7 @@
       <v-col cols="12" md="3" class="left-col">
         <div class="px-4 py-3 d-flex align-center justify-space-between">
           <div class="text-subtitle-1 font-weight-medium">My chats</div>
-          <div class="caption grey--text">{{ roomsList.length }}</div>
+          <div class="caption grey--text">{{ bookingsList.length }}</div>
         </div>
 
         <v-text-field
@@ -80,6 +80,7 @@
           ref="scroll"
           class="messages px-4 py-3"
           style="background-color: var(--wa-bg, #e5ddd5)"
+          :key="messagesKey"
         >
           <div
             v-for="m in messages[String(activeRoom)] || []"
@@ -147,8 +148,9 @@ export default {
     staffName: { type: String, default: "Reception" },
   },
   data: () => ({
+    messagesKey: 1,
     // your state
-    roomsList: [],
+    bookingsList: [],
     activeRoom: null,
     messages: {}, // { "1205": [...] }
     unread: {},
@@ -178,15 +180,17 @@ export default {
       return [...set].map(this.prettyUser);
     },
     filteredRooms() {
-      if (!this.q) return this.roomsList;
+      if (!this.q) return this.bookingsList;
       const s = this.q.toLowerCase();
-      return this.roomsList.filter((r) => String(r).toLowerCase().includes(s));
+      return this.bookingsList.filter((r) =>
+        String(r).toLowerCase().includes(s)
+      );
     },
   },
-  mounted() {
+  async mounted() {
     // mock list (replace with API)
-    this.roomsList = [3, 1202, 1203, 1205, 101];
-    this.activeRoom = this.roomsList[0];
+    this.bookingsList = [3, 1202, 1203, 1205, 101];
+    this.activeRoom = this.bookingsList[0];
 
     // connection indicators
     const c = this.$mqtt?.raw;
@@ -221,7 +225,11 @@ export default {
     this.unsubs.push(unsub);
 
     // open current room streams
-    this.openRoom(this.activeRoom);
+    await this.openRoom(this.activeRoom);
+
+    this.messagesKey++;
+
+    // this.loadHistory(this.activeRoom);
   },
   beforeDestroy() {
     this.unsubs.forEach((fn) => fn && fn());
@@ -284,8 +292,17 @@ export default {
     ackTopic(r) {
       return `chat/hotel/${this.hotelId}/room/${String(r)}/ack`;
     },
+    async loadHistory(bookingId) {
+      try {
+        const q = `?company_id=${this.hotelId}&bookingId=${bookingId}&limit=50`;
+        const rows =
+          (await this.$axios.get(`/chat_messages_history${q}`)) || [];
+        this.messages[bookingId] = rows.data;
 
-    openRoom(bookingId) {
+        // this.$nextTick(this.scrollToEnd);
+      } catch (_) {}
+    },
+    async openRoom(bookingId) {
       const key = String(bookingId);
       this.activeRoom = bookingId;
       this.$set(this.unread, key, 0);
@@ -324,9 +341,11 @@ export default {
       });
 
       // optional: history
-      // this.loadHistory(bookingId);
+      await this.loadHistory(bookingId);
 
       this.$nextTick(this.scrollToEnd);
+
+      await this.loadHistory(bookingId);
     },
 
     async send() {
@@ -350,7 +369,7 @@ export default {
       //store backup
       try {
         m = {
-          booking_id: 1,
+          booking_id: 3,
           room_id: 11,
           room_number: 101,
 

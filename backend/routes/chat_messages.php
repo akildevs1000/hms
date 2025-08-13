@@ -5,6 +5,10 @@
 
 
     Route::resource('chat_messages', ChatMessagesController::class);
+    Route::get('chat_messages_history', [ChatMessagesController::class, 'getChatHistory']);
+
+
+
 
 
     // Route::get('get-posting-by-booking-id-and-room-id', [ChatMessagesController::class, 'getPostingByBookingIdAncRoomId']);

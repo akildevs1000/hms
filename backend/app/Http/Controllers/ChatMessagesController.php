@@ -109,4 +109,11 @@ class ChatMessagesController extends Controller
     {
         //
     }
+
+    public function getChatHistory(Request $request)
+    {
+
+        return  $model = ChatMessages::where("booking_id", $request->bookingId)
+            ->orderBy("ts", "asc")->get();;
+    }
 }
