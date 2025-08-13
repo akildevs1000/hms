@@ -5,7 +5,7 @@
       <v-col cols="12" md="3" class="left-col">
         <div class="px-4 py-3 d-flex align-center justify-space-between">
           <div class="text-subtitle-1 font-weight-medium">My chats</div>
-          <div class="caption grey--text">{{ bookingList.length }}</div>
+          <div class="caption grey--text">{{ roomsList.length }}</div>
         </div>
 
         <v-text-field
@@ -144,7 +144,7 @@ export default {
   },
   data: () => ({
     // your state
-    bookingList: [],
+    roomsList: [],
     activeRoom: null,
     messages: {}, // { "1205": [...] }
     unread: {},
@@ -174,17 +174,15 @@ export default {
       return [...set].map(this.prettyUser);
     },
     filteredRooms() {
-      if (!this.q) return this.bookingList;
+      if (!this.q) return this.roomsList;
       const s = this.q.toLowerCase();
-      return this.bookingList.filter((r) =>
-        String(r).toLowerCase().includes(s)
-      );
+      return this.roomsList.filter((r) => String(r).toLowerCase().includes(s));
     },
   },
   mounted() {
     // mock list (replace with API)
-    this.bookingList = [1205, 1202, 1203];
-    this.activeRoom = this.bookingList[0];
+    this.roomsList = [3, 1202, 1203, 1205, 101];
+    this.activeRoom = this.roomsList[0];
 
     // connection indicators
     const c = this.$mqtt?.raw;
