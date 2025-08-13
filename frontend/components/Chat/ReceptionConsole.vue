@@ -76,12 +76,16 @@
           >
         </div>
 
-        <div ref="scroll" class="messages px-4 py-3">
+        <div
+          ref="scroll"
+          class="messages px-4 py-3"
+          style="background-color: var(--wa-bg, #e5ddd5)"
+        >
           <div
             v-for="m in messages[String(activeRoom)] || []"
             :key="m.id"
-            class="mb-3"
-            :class="{ mine: m.role === 'reception' }"
+            class="mb-3 msg"
+            :class="m.role === 'reception' ? 'mine' : 'them'"
           >
             <div
               v-if="m.type === 'system'"
@@ -236,7 +240,9 @@ export default {
     },
     prettySender(s) {
       if (!s) return "";
-      if (String(s).startsWith("Reception:")) return "You";
+      if (String(s).startsWith("Reception:")) return "Me (" + s + " )";
+
+      return "Guest ( " + s + ")";
       const [rid, name] = String(s).split(":");
       return name || `Guest ${rid}`;
     },
@@ -439,7 +445,7 @@ export default {
 }
 .bubble {
   max-width: 60%;
-  background: #f5f5f5;
+  background: #dad4d4;
   border-radius: 14px;
   padding: 10px 12px;
 }
@@ -448,10 +454,59 @@ export default {
   background: #e3f2fd;
 }
 .active-chat {
-  background: #f2f7ff !important;
+  background: #609dff !important;
 }
 .card-msg {
   border: 1px solid #e6e6e6;
   border-radius: 10px;
+}
+
+/* Rows */
+.msg {
+  display: flex;
+  margin: 8px 0;
+}
+.msg.them {
+  justify-content: flex-start;
+}
+.msg.mine {
+  justify-content: flex-end;
+}
+
+/* Bubbles */
+.bubble {
+  position: relative;
+  max-width: 78%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  line-height: 1.35;
+  background: var(--wa-them, #ffffff);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+.msg.mine .bubble {
+  background: var(--wa-me, #dcf8c6);
+}
+
+/* Bubble tails */
+.msg.them .bubble:after,
+.msg.mine .bubble:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+}
+.msg.them .bubble:after {
+  left: -6px;
+  border-right-color: var(--wa-them, #ffffff);
+  border-left: 0;
+  border-bottom: 0;
+}
+.msg.mine .bubble:after {
+  right: -6px;
+  border-left-color: var(--wa-me, #dcf8c6);
+  border-right: 0;
+  border-bottom: 0;
 }
 </style>
