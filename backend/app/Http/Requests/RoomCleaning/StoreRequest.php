@@ -29,7 +29,7 @@ class StoreRequest extends FormRequest
             "start_time" => "required",
             "end_time" => "required",
             "total_time" => "required",
-            "before_attachment" => "nullable",
+            "attachments" => "nullable",
             "after_attachment" => "nullable",
             "voice_note" => "nullable",
             "cleaned_by_user_id" => "required",

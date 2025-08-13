@@ -120,7 +120,8 @@ class Room extends Model
     {
         return $this->hasMany(RoomCleaning::class)
             ->whereDate("created_at", date("Y-m-d"))
-            ->where("status", RoomCleaning::CLEANED);
+            ->where("status", RoomCleaning::CLEANED)
+            ->orderBy('created_at', 'desc');
     }
 
     public function is_neutral()

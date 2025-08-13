@@ -400,7 +400,7 @@
                     </span>
                     <span class="tm_btn_text">Download</span>
                 </button>
-                <button id="tm_edit_btn" class="tm_invoice_btn tm_color2">
+                {{-- <button id="tm_edit_btn" class="tm_invoice_btn tm_color2">
                     <span class="tm_btn_icon">
                         <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
                             <path
@@ -410,7 +410,7 @@
                         </svg>
                     </span>
                     <span class="tm_btn_text">Edit</span>
-                </button>
+                </button> --}}
 
             </div>
         </div>

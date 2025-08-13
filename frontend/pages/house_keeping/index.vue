@@ -1,5 +1,24 @@
 <template>
   <v-container fluid>
+    <v-dialog v-model="dialog" max-width="500px" persistent>
+      <v-card>
+        <v-toolbar dense flat>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="dialog = false" aria-label="Close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-card-text class="d-flex justify-center">
+          <v-img
+            :src="selectedImage"
+            max-width="480"
+            max-height="400"
+            contain
+          ></v-img>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-data-table
       dense
       :headers="headers"
@@ -26,17 +45,22 @@
         </v-container>
       </template>
 
-      <template v-slot:item.before_attachment="{ item }">
-        <ImageView
-          v-if="item.before_attachment"
-          :src="item.before_attachment"
-        />
-        <span v-else>---</span>
-      </template>
-
-      <template v-slot:item.after_attachment="{ item }">
-        <ImageView v-if="item.after_attachment" :src="item.after_attachment" />
-        <span v-else>---</span>
+      <template v-slot:item.attachments="{ item }">
+        <div style="display: flex; gap: 8px; flex-wrap: wrap" class="pa-5">
+          <v-img
+            v-for="(attachment, index) in item.attachments"
+            :key="index"
+            :src="attachment"
+            max-width="60"
+            max-height="60"
+            class="thumbnail pa-5"
+            style="cursor: pointer; border-radius: 4px"
+            @click="openDialog(attachment)"
+            contain
+            elevation="2"
+          />
+        </div>
+        <!-- Image preview dialog -->
       </template>
       <template v-slot:item.voice_note="{ item }">
         <v-container class="pa-1">
@@ -65,6 +89,8 @@ let currentDate = y + "-" + m + "-" + d;
 
 export default {
   data: () => ({
+    dialog: false,
+    selectedImage: null,
     Model: "House Keeping",
     endpoint: "room-data",
     currentDate,
@@ -86,12 +112,8 @@ export default {
         align: "center",
       },
       {
-        text: "Before Attachment",
-        value: "before_attachment",
-      },
-      {
-        text: "After Attachment",
-        value: "after_attachment",
+        text: "Attachments",
+        value: "attachments",
       },
       {
         text: "Voice Note",
@@ -133,6 +155,10 @@ export default {
     },
   },
   methods: {
+    openDialog(image) {
+      this.selectedImage = image;
+      this.dialog = true;
+    },
     getRandomId() {
       return ++this.componentKey;
     },
