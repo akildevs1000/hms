@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\MailSetting;
@@ -16,19 +15,23 @@ class MailConfigService
     {
         $settings = MailSetting::where('company_id', $companyId)->first();
 
-        if (!$settings) {
+        if (! $settings) {
             return;
         }
 
-        config([
-            'mail.default' => $settings->mailer ?? 'smtp',
-            'mail.mailers.smtp.host' => $settings->host ?? 'smtp.gmail.com',
-            'mail.mailers.smtp.port' => $settings->port ?? 587,
-            'mail.mailers.smtp.username' => $settings->username ?? '',
-            'mail.mailers.smtp.password' => $settings->password ?? '',
+        $payload = [
+            'mail.default'                 => $settings->mailer ?? 'smtp',
+            'mail.mailers.smtp.host'       => $settings->host ?? 'smtp.gmail.com',
+            'mail.mailers.smtp.port'       => $settings->port ?? 587,
+            'mail.mailers.smtp.username'   => $settings->username ?? '',
+            'mail.mailers.smtp.password'   => $settings->password ?? '',
             'mail.mailers.smtp.encryption' => $settings->encryption ?? 'tls',
-            'mail.from.address' => $settings->from_address ?? 'noreply@example.com',
-            'mail.from.name' => $settings->from_name ?? config('app.name'),
-        ]);
+            'mail.from.address'            => $settings->from_address ?? 'noreply@example.com',
+            'mail.from.name'               => $settings->from_name ?? config('app.name'),
+        ];
+
+        info(lightDump([$companyId => $payload]));
+
+        config($payload);
     }
 }
