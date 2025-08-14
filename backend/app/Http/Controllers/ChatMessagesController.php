@@ -116,6 +116,69 @@ class ChatMessagesController extends Controller
         //
     }
 
+    public function getChatUploadFile(Request $request)
+    {
+        $validate = [
+            "role" => "required",
+            "sender" => "required",
+            "booking_id" => "required",
+            "booking_room_id" => "required",
+            "company_id" => "required",
+            "room_id" => "required",
+            "room_number" => "required",
+            "ts" => "required",
+            "text" => "nullable",
+            "type" => "required",
+            "filename" => "nullable",
+            "receiption_name" => "nullable",
+
+        ];
+
+        $data = $request->validate($validate);
+
+
+
+        $data["ts"] = date("Y-m-d H:i:s", $data["ts"] / 1000);
+
+        $response =  ChatMessages::create($data);
+
+
+
+
+
+
+
+
+
+
+
+        if ($response) {
+
+
+            if ($request->hasFile('file')) {
+
+                $file = $request->file('file');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = $response->id    . "." . $ext;
+
+
+                $folder = 'hotel/chat/' . $request->company_id . "/" . $request->booking_room_id;
+                $destinationPath = public_path($folder);
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                $file->move($destinationPath, $fileName);
+
+                ChatMessages::where("id", $response->id)->update(["filename" => $fileName]);
+
+                $url =  asset($folder . "/" . $fileName);
+            }
+            return $this->response($url, null, true);
+        } else
+
+            return $this->response("Failed", null, false);
+    }
+
     public function getChatHistory(Request $request)
     {
 

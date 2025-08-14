@@ -74,59 +74,6 @@
             </template>
           </v-data-table>
         </div>
-
-        <!-- <div class="px-4 py-3 d-flex align-center justify-space-between">
-          <div class="text-subtitle-1 font-weight-medium">My chats</div>
-          <div class="caption grey--text">{{ bookingsList.length }}</div>
-        </div>
-
-        <v-text-field
-          v-model="q"
-          dense
-          hide-details
-          outlined
-          class="mx-4 mb-3"
-          placeholder="Search guests…"
-          prepend-inner-icon="mdi-magnify"
-        />
-
-        <v-list dense two-line nav class="py-0">
-          <template v-for="r in filteredRooms">
-            <v-list-item
-              :key="r"
-              :class="{ 'active-chat': String(r) === String(activeRoom) }"
-              @click="openRoom(r)"
-            >
-              <v-list-item-avatar size="34">
-                <v-avatar color="blue lighten-5">
-                  <span class="blue--text text--darken-2">{{
-                    initials(r)
-                  }}</span>
-                </v-avatar>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title class="text-truncate"
-                  >Room {{ r }}</v-list-item-title
-                >
-                <v-list-item-subtitle class="text-truncate">
-                  {{ lastPreview(r) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-chip
-                  v-if="unread[String(r)]"
-                  x-small
-                  color="red"
-                  text-color="white"
-                  label
-                >
-                  {{ unread[String(r)] }}
-                </v-chip>
-              </v-list-item-action>
-            </v-list-item>
-            <v-divider :key="'d-' + r" inset></v-divider>
-          </template>
-        </v-list> -->
       </v-col>
 
       <!-- CENTER: Conversation -->
@@ -147,13 +94,15 @@
           </div>
           <v-spacer></v-spacer>
           Receiption Name :
-          <span style="font-weight: bold">{{ staffName }}</span>
+          <span style="font-weight: bold">{{ caps(staffName) }}</span>
           <v-spacer></v-spacer>
           Guest Name :
           <span style="font-weight: bold">
             {{ activeRoomBooking?.booking.customer.title || "—" }}
-            {{ activeRoomBooking?.booking.customer.first_name || "—" }}
-            {{ activeRoomBooking?.booking.customer.last_name || "—" }}</span
+            {{ caps(activeRoomBooking?.booking.customer.first_name) || "—" }}
+            {{
+              caps(activeRoomBooking?.booking.customer.last_name) || "—"
+            }}</span
           >
           <!-- <v-btn icon @click="loadHistory(activeRoom)"
             ><v-icon>mdi-refresh</v-icon></v-btn

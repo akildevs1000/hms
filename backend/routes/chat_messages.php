@@ -9,6 +9,10 @@
     Route::get('chat_messages_bookings', [ChatMessagesController::class, 'getChatBookingsList']);
 
 
+    Route::post('chat_messages_upload_file', [ChatMessagesController::class, 'getChatUploadFile']);
+
+
+
 
 
 
