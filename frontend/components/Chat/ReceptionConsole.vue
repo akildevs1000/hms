@@ -3,7 +3,8 @@
     <v-row no-gutters class="receiption-chats">
       <!-- LEFT: Chats list -->
       <v-col cols="12" md="3" class="left-col">
-        <v-row>
+        <v-row no-gutters>
+          <v-col class="flex-grow-0 pr-2 pt-1">Search </v-col>
           <v-col>
             <v-text-field
               v-model="filterSearch"
@@ -11,10 +12,24 @@
               dense
               outlined
               hide-details
-              class="flex-grow-1 mr-2"
               clearable
+              :loading="loading"
+              @click:clear="getDataFromApi"
             />
-            <v-icon @click="getDataFromApi()">mdi-card-search-outline</v-icon>
+          </v-col>
+
+          <v-col class="flex-grow-0 pl-2" style="padding-top: 2px">
+            <v-btn
+              dense
+              small
+              class="primary"
+              color="primary"
+              :loading="loading"
+              @click="getDataFromApi"
+              :disabled="loading"
+              >Search
+              <v-icon>mdi-card-search-outline</v-icon>
+            </v-btn>
           </v-col>
         </v-row>
         <div style="display: none1">
@@ -118,8 +133,11 @@
       <v-col cols="12" md="9" class="center-col">
         <div class="conv-header d-flex align-center px-4">
           <div>
-            <div class="text-subtitle-1 font-weight-medium">
-              Room Number : {{ activeRoomBooking?.room_no || "—" }}
+            <div class="text-subtitle-1">
+              Room Number :
+              <span style="font-weight: bold">
+                {{ activeRoomBooking?.room_no || "—" }}</span
+              >
             </div>
             <div class="caption grey--text">
               <span :class="{ 'green--text': online, 'orange--text': !online }">
@@ -128,10 +146,15 @@
             </div>
           </div>
           <v-spacer></v-spacer>
-          Guest Name:
-          {{ activeRoomBooking?.booking.customer.title || "—" }}
-          {{ activeRoomBooking?.booking.customer.first_name || "—" }}
-          {{ activeRoomBooking?.booking.customer.last_name || "—" }}
+          Receiption Name :
+          <span style="font-weight: bold">{{ staffName }}</span>
+          <v-spacer></v-spacer>
+          Guest Name :
+          <span style="font-weight: bold">
+            {{ activeRoomBooking?.booking.customer.title || "—" }}
+            {{ activeRoomBooking?.booking.customer.first_name || "—" }}
+            {{ activeRoomBooking?.booking.customer.last_name || "—" }}</span
+          >
           <!-- <v-btn icon @click="loadHistory(activeRoom)"
             ><v-icon>mdi-refresh</v-icon></v-btn
           > -->
@@ -314,9 +337,9 @@ export default {
   async mounted() {
     await this.getDataFromApi();
 
-    setTimeout(() => {
-      this.$refs.messageInput.focus();
-    }, 3000);
+    // setTimeout(() => {
+    //   this.$refs.messageInput.focus();
+    // }, 3000);
   },
 
   beforeDestroy() {
@@ -496,12 +519,13 @@ export default {
     ackTopic(r) {
       return `chat/hotel/${this.hotelId}/room/${String(r)}/ack`;
     },
-    async loadHistory(bookingId) {
+    async loadHistory(bookingRoomId) {
+      if (!bookingRoomId) return false;
       try {
-        const q = `?company_id=${this.hotelId}&bookingId=${bookingId}&limit=50`;
+        const q = `?company_id=${this.hotelId}&booking_room_id=${bookingRoomId}&limit=50`;
         const rows =
           (await this.$axios.get(`/chat_messages_history${q}`)) || [];
-        this.messages[bookingId] = rows.data;
+        this.messages[bookingRoomId] = rows.data;
 
         this.$nextTick(this.scrollToEnd);
 
@@ -514,13 +538,16 @@ export default {
     openRoomRow(item) {
       this.openRoom(item.id);
     },
-    async openRoom(bookingOrderId) {
+    async openRoom(bookingRoomId) {
+      // optional: history
+      await this.loadHistory(bookingRoomId);
+
       this.activeRoomBooking = this.bookingsListdata.find(
-        (e) => e.id == bookingOrderId
+        (e) => e.id == bookingRoomId
       );
 
-      const key = String(bookingOrderId);
-      this.activeRoom = bookingOrderId;
+      const key = String(bookingRoomId);
+      this.activeRoom = bookingRoomId;
       this.$set(this.unread, key, 0);
 
       // typing subscribe per room
@@ -559,12 +586,14 @@ export default {
       });
 
       // optional: history
-      await this.loadHistory(bookingOrderId);
+      // await this.loadHistory(bookingRoomId);
 
       this.$nextTick(this.scrollToEnd);
 
       setTimeout(() => {
-        this.$refs.messageInput.focus();
+        try {
+          this.$refs.messageInput.focus();
+        } catch (e) {}
       }, 500);
 
       // await this.loadHistory(bookingId);

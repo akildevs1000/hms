@@ -303,6 +303,10 @@ export default {
           label: "Setting",
           name: "setting",
         },
+        {
+          label: "Chat",
+          name: "chat",
+        },
         // {
         //   label: "House Keeping",
         //   name: "house_keeping",
@@ -356,6 +360,14 @@ export default {
           module: "analytics",
           title: "Analytics",
           to: "/reports",
+          menu: "dashboard",
+        },
+        {
+          topMenu: "chat",
+          icon: "mdi-chart-areaspline", // Analytics - chart icon fits well
+          module: "analytics",
+          title: "Chats",
+          to: "/chat",
           menu: "dashboard",
         },
         {
