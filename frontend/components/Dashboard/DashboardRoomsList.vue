@@ -626,6 +626,22 @@
                   {{ occupied ? caps(occupied.room_type.name) : "---" }}
                 </div>
               </div>
+
+              <div
+                v-if="occupied.booked_room.checkout_guest_request"
+                :title="
+                  'Checkout Requested at ' +
+                  occupied.booked_room.checkout_guest_request
+                "
+                style="
+                  position: absolute;
+                  top: 0px;
+                  right: 0px;
+                  font-weight: bold;
+                "
+              >
+                <v-icon color="red" size="18 ">mdi-airplane-takeoff</v-icon>
+              </div>
             </v-card-text>
           </v-card>
         </div>

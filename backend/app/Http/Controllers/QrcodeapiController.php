@@ -195,6 +195,26 @@ class QrcodeapiController extends Controller
             return $this->response('Something wrong.', $th, false);
         }
     }
+    public function updateCheckoutByGuest(Request $request)
+    {
+
+
+        if ($request->booking_id && $request->room_id) {
+            $model = BookedRoom::where("company_id", $request->company_id)
+                ->where("booking_id", $request->booking_id)
+                ->where("room_id", $request->room_id);
+
+
+            $checkout_guest_request = date("Y-m-d H:i:s");
+            $data = ["checkout_guest_request" => $checkout_guest_request];
+
+            $model->update($data);
+
+            return $this->response("Checkrequest is Received.", $checkout_guest_request, true);
+        }
+
+        return $this->response("Request is invalid", null, false);
+    }
 
     public function cancelFoodOrderItem(Request $request)
     {

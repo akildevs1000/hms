@@ -43,13 +43,17 @@ class ChatMessagesController extends Controller
             "role" => "required",
             "sender" => "required",
             "booking_id" => "required",
+            "booking_room_id" => "required",
+            "company_id" => "required",
+
+
             "room_id" => "required",
             "room_number" => "required",
             "ts" => "required",
             "text" => "required",
             "type" => "required",
             "filename" => "nullable",
-            "receiption_name" => "required",
+            "receiption_name" => "nullable",
 
         ];
 
@@ -119,15 +123,30 @@ class ChatMessagesController extends Controller
             ->orderBy("ts", "asc")->get();;
     }
 
-    public function getBookingsList(Request $request)
+    public function getChatBookingsList(Request $request)
     {
-        $model = BookedRoom::where("company_id", $request->company_id)
+        $model = BookedRoom::where("company_id", $request->company_id);
 
 
-            ->where("check_in", "!=", null)
-            ->orderBy("check_in", "desc");;
+        if ($request->filled('filterSearch') && $request->filterSearch !== '') {
+            $wildCard = env('WILD_CARD', 'ILIKE');
+            $search   = '%' . $request->filterSearch . '%';
+
+            $model->where(function ($query) use ($search, $wildCard) {
+                $query->orWhere('room_no', $wildCard, $search);
+                // ->orWhereHas('customer', function ($q) use ($search, $wildCard) {
+                //     $q->orWhere('first_name', $wildCard, $search)
+                //         ->orWhere('last_name', $wildCard, $search);
+                // });
+            });
+        }
 
 
-        return $model->paginate($request->per_page ?? 10);
+
+        // ->where("check_in", "!=", null)
+        $model->orderBy("check_in", "desc")->orderBy("room_no", "asc");;
+
+
+        return $model->paginate($request->per_page ?? 25);
     }
 }

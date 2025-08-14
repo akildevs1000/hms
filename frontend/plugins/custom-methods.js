@@ -257,6 +257,35 @@ export default ({ app }, inject) => {
 
       return `${year}-${month}-${day} ${hours}:${minutes} `;
     },
+    dateWithDayShortName: (inputdate) => {
+      if (
+        inputdate == "---" ||
+        inputdate == "--" ||
+        inputdate == 0 ||
+        inputdate == ""
+      )
+        return "---";
+
+      const currentDate = new Date(inputdate); //Output Sun, Jan 01, 2023 10:20
+
+      const year = currentDate.getFullYear();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 to month because it's zero-based.
+      const day = currentDate.getDate().toString().padStart(2, "0");
+      const hours = currentDate.getHours().toString().padStart(2, "0");
+      const minutes = currentDate.getMinutes().toString().padStart(2, "0");
+      const seconds = currentDate.getSeconds().toString().padStart(2, "0");
+
+      const inputDate = new Date(inputdate);
+      const options = {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        weekday: "short",
+      };
+      const formattedDate = inputDate.toLocaleDateString("en-US", options);
+      if (year == 1970 || inputdate == 0) return "---";
+      return `${formattedDate}`;
+    },
     format4: (inputdate) => {
       if (
         inputdate == "---" ||

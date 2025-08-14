@@ -1,10 +1,25 @@
 <template>
   <v-container fluid class="pa-0 agent-console">
-    <v-row no-gutters>
+    <v-row no-gutters class="receiption-chats">
       <!-- LEFT: Chats list -->
       <v-col cols="12" md="3" class="left-col">
-        <div style="display: none">
+        <v-row>
+          <v-col>
+            <v-text-field
+              v-model="filterSearch"
+              placeholder="Filter Room Number or Guest name"
+              dense
+              outlined
+              hide-details
+              class="flex-grow-1 mr-2"
+              clearable
+            />
+            <v-icon @click="getDataFromApi()">mdi-card-search-outline</v-icon>
+          </v-col>
+        </v-row>
+        <div style="display: none1">
           <v-data-table
+            v-if="bookingsListdata"
             dense
             :headers="headers"
             :items="bookingsListdata"
@@ -12,26 +27,40 @@
             :options.sync="options"
             :server-items-length="totalRowsCount"
             :footer-props="{
-              itemsPerPageOptions: [10, 50, 100, 500, 1000],
+              itemsPerPageOptions: [25, 50, 100, 500, 1000],
             }"
-            class="elevation-1 px-2"
+            :item-class="rowClass"
+            @click:row="(item, event) => openRoomRow(item, event)"
           >
             <template v-slot:item.room="{ item }">
-              <small class="text-color">{{
-                caps(item.booking.customer.first_name)
-              }}</small></template
-            >
+              {{ item.room_no }}
+            </template>
             <template v-slot:item.guest="{ item }">
-              <small class="text-color">{{ item.room_no }}</small></template
+              {{ caps(item.booking.customer.first_name) }}</template
             ><template v-slot:item.checkin="{ item }">
-              <small class="text-color">{{ item.check_in }}</small></template
+              {{ $dateFormat.dateWithDayShortName(item.check_in) }} </template
             ><template v-slot:item.checkout="{ item }">
-              <small class="text-color">{{ item.check_out }}</small></template
-            >
+              <div v-if="item.booking_status == 2" style="color: red">---</div>
+              <div v-else>
+                {{ $dateFormat.dateWithDayShortName(item.check_out) }}
+              </div>
+            </template>
+
+            <template v-slot:item.chat="{ item }">
+              <v-chip
+                v-if="unread[String(item.id)]"
+                x-small
+                color="red"
+                text-color="white"
+                label
+              >
+                {{ unread[String(item.id)] }}
+              </v-chip>
+            </template>
           </v-data-table>
         </div>
 
-        <div class="px-4 py-3 d-flex align-center justify-space-between">
+        <!-- <div class="px-4 py-3 d-flex align-center justify-space-between">
           <div class="text-subtitle-1 font-weight-medium">My chats</div>
           <div class="caption grey--text">{{ bookingsList.length }}</div>
         </div>
@@ -82,7 +111,7 @@
             </v-list-item>
             <v-divider :key="'d-' + r" inset></v-divider>
           </template>
-        </v-list>
+        </v-list> -->
       </v-col>
 
       <!-- CENTER: Conversation -->
@@ -90,7 +119,7 @@
         <div class="conv-header d-flex align-center px-4">
           <div>
             <div class="text-subtitle-1 font-weight-medium">
-              Room {{ activeRoom || "—" }}
+              Room Number : {{ activeRoomBooking?.room_no || "—" }}
             </div>
             <div class="caption grey--text">
               <span :class="{ 'green--text': online, 'orange--text': !online }">
@@ -99,9 +128,13 @@
             </div>
           </div>
           <v-spacer></v-spacer>
-          <v-btn icon @click="loadHistory(activeRoom)"
+          Guest Name:
+          {{ activeRoomBooking?.booking.customer.title || "—" }}
+          {{ activeRoomBooking?.booking.customer.first_name || "—" }}
+          {{ activeRoomBooking?.booking.customer.last_name || "—" }}
+          <!-- <v-btn icon @click="loadHistory(activeRoom)"
             ><v-icon>mdi-refresh</v-icon></v-btn
-          >
+          > -->
         </div>
 
         <div
@@ -110,6 +143,15 @@
           style="background-color: var(--wa-bg, #e5ddd5)"
           :key="messagesKey"
         >
+          <div
+            style="text-align: center"
+            v-if="
+              !messages[String(activeRoom)] ||
+              messages[String(activeRoom)].length == 0
+            "
+          >
+            No Chat History is available
+          </div>
           <div
             v-for="m in messages[String(activeRoom)] || []"
             :key="m.id"
@@ -153,6 +195,7 @@
 
         <div class="composer px-3 py-2 d-flex align-center" v-if="activeRoom">
           <v-text-field
+            ref="messageInput"
             v-model="draft"
             placeholder="Type a message…"
             dense
@@ -160,7 +203,6 @@
             hide-details
             class="flex-grow-1 mr-2"
             @keydown.enter.exact.prevent="send"
-            @input="sendTyping"
           />
           <v-btn color="primary" @click="send">Send</v-btn>
         </div>
@@ -177,7 +219,8 @@ export default {
     staffName: { type: String, default: "Reception" },
   },
   data: () => ({
-    bookingsListdata: [],
+    filterSearch: "",
+    bookingsListdata: null,
     page: 1,
     perPage: 0,
     currentPage: 1,
@@ -204,15 +247,21 @@ export default {
         sortable: false,
         filterable: false,
       },
+      {
+        text: "Chat Unread",
+        value: "chat",
+        sortable: false,
+        filterable: false,
+      },
     ],
     totalRowsCount: 0,
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10,
+      per_page: 25,
     },
     Model: "Sources",
-    options: { page: 1 },
+    options: { page: 1, per_page: 25 },
     loading: false,
     messagesKey: 1,
     // your state
@@ -233,6 +282,7 @@ export default {
     online: false,
     roomTags: {}, // { "1205": ["billing"] }
     tagDraft: "",
+    activeRoomBooking: null,
   }),
   computed: {
     me() {
@@ -262,61 +312,11 @@ export default {
     },
   },
   async mounted() {
-    this.getDataFromApi();
-    // mock list (replace with API)
-    this.bookingsList = [3, 1202, 1203, 1205, 101];
-    this.activeRoom = this.bookingsList[0];
+    await this.getDataFromApi();
 
-    // connection indicators
-    const c = this.$mqtt?.raw;
-    if (c) {
-      this.online = c.connected;
-      c.on("connect", () => {
-        this.online = true;
-      });
-      c.on("reconnect", () => {
-        this.online = false;
-      });
-      c.on("close", () => {
-        this.online = false;
-      });
-    }
-
-    // wildcard messages
-    const unsub = this.$mqtt.sub(this.wildcard, (m, topic) => {
-      const segs = (topic || "").split("/");
-      const bookingId = String(segs[4] || "");
-      // this.scrollToEnd();
-      // this.$nextTick(this.scrollToEnd);
-      if (!m) return;
-
-      console.log(bookingId);
-
-      this.upsertMessage(bookingId, m);
-
-      if (bookingId !== String(this.activeRoom)) {
-        this.$set(this.unread, bookingId, (this.unread[bookingId] || 0) + 1);
-
-        // this.scrollToEnd();
-        // this.$nextTick(this.scrollToEnd);
-      } else {
-        // this.scrollToEnd();
-        // this.$nextTick(this.scrollToEnd);
-        this.ack(bookingId, m.id);
-      }
-      setTimeout(() => {
-        this.scrollToEnd();
-        this.$nextTick(this.scrollToEnd);
-      }, 1000 * 2);
-    });
-    this.unsubs.push(unsub);
-
-    // open current room streams
-    await this.openRoom(this.activeRoom);
-
-    this.messagesKey++;
-    // this.$nextTick(this.scrollToEnd);
-    // this.scrollToEnd();
+    setTimeout(() => {
+      this.$refs.messageInput.focus();
+    }, 3000);
   },
 
   beforeDestroy() {
@@ -334,7 +334,77 @@ export default {
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
-    getDataFromApi() {
+    rowClass(item) {
+      // add classes per row (item is the row's data)
+      const classes = [];
+      if (String(item.id) === String(this.activeRoom)) {
+        classes.push("active-chat");
+      }
+      if (item.booking_status == 2) {
+        classes.push("row-cancelled");
+      } else if (new Date(item.check_out) < new Date()) {
+        classes.push("row-overdue");
+      }
+      return classes.join(" ");
+    },
+
+    async loadBookingRoomslist() {
+      this.bookingsList = [...new Set(this.bookingsListdata.map((e) => e.id))];
+      console.log(this.bookingsList);
+      this.activeRoom = this.bookingsList[0];
+
+      // connection indicators
+      const c = this.$mqtt?.raw;
+      if (c) {
+        this.online = c.connected;
+        c.on("connect", () => {
+          this.online = true;
+        });
+        c.on("reconnect", () => {
+          this.online = false;
+        });
+        c.on("close", () => {
+          this.online = false;
+        });
+      }
+
+      // wildcard messages
+      const unsub = this.$mqtt.sub(this.wildcard, (m, topic) => {
+        const segs = (topic || "").split("/");
+        const bookingId = String(segs[4] || "");
+        // this.scrollToEnd();
+        // this.$nextTick(this.scrollToEnd);
+        if (!m) return;
+
+        // console.log(bookingId);
+
+        this.upsertMessage(bookingId, m);
+
+        if (bookingId !== String(this.activeRoom)) {
+          this.$set(this.unread, bookingId, (this.unread[bookingId] || 0) + 1);
+
+          // this.scrollToEnd();
+          // this.$nextTick(this.scrollToEnd);
+        } else {
+          // this.scrollToEnd();
+          // this.$nextTick(this.scrollToEnd);
+          this.ack(bookingId, m.id);
+        }
+        setTimeout(() => {
+          this.scrollToEnd();
+          this.$nextTick(this.scrollToEnd);
+        }, 1000 * 2);
+      });
+      this.unsubs.push(unsub);
+
+      // open current room streams
+      await this.openRoom(this.activeRoom);
+
+      this.messagesKey++;
+      // this.$nextTick(this.scrollToEnd);
+      // this.scrollToEnd();
+    },
+    async getDataFromApi() {
       //let page = this.pagination.current;
       this.currentPage = this.currentPage ?? 1;
 
@@ -356,6 +426,7 @@ export default {
           company_id: this.$auth.user.company.id,
           search: this.search,
           type: this.type,
+          filterSearch: this.filterSearch,
         },
       };
 
@@ -366,6 +437,8 @@ export default {
         this.pagination.total = data.last_page;
         this.loading = false;
         this.totalRowsCount = data.total;
+
+        this.loadBookingRoomslist();
       });
     },
     prettyUser(u) {
@@ -438,9 +511,16 @@ export default {
         // this.$nextTick(this.scrollToEnd);
       } catch (_) {}
     },
-    async openRoom(bookingId) {
-      const key = String(bookingId);
-      this.activeRoom = bookingId;
+    openRoomRow(item) {
+      this.openRoom(item.id);
+    },
+    async openRoom(bookingOrderId) {
+      this.activeRoomBooking = this.bookingsListdata.find(
+        (e) => e.id == bookingOrderId
+      );
+
+      const key = String(bookingOrderId);
+      this.activeRoom = bookingOrderId;
       this.$set(this.unread, key, 0);
 
       // typing subscribe per room
@@ -479,9 +559,13 @@ export default {
       });
 
       // optional: history
-      await this.loadHistory(bookingId);
+      await this.loadHistory(bookingOrderId);
 
       this.$nextTick(this.scrollToEnd);
+
+      setTimeout(() => {
+        this.$refs.messageInput.focus();
+      }, 500);
 
       // await this.loadHistory(bookingId);
     },
@@ -490,6 +574,9 @@ export default {
       const text = this.draft.trim();
       if (!text || !this.activeRoom) return;
       const r = String(this.activeRoom);
+
+      // console.log(this.activeRoomBooking);
+      this.activeRoomBooking;
       let m = {
         id: Date.now() + "_" + Math.random().toString(36).slice(2),
         sender: this.me,
@@ -497,6 +584,13 @@ export default {
         type: "text",
         text,
         ts: Date.now(),
+        booking_id: this.activeRoomBooking.booking_id,
+        booking_room_id: this.activeRoomBooking.id,
+
+        room_id: this.activeRoomBooking.room_id,
+        room_number: this.activeRoomBooking.room_no,
+
+        receiption_name: this.me,
       };
       this.$mqtt.pub(this.msgTopic(r), m);
       this.upsertMessage(r, m);
@@ -506,14 +600,10 @@ export default {
 
       //store backup
       try {
-        m = {
-          booking_id: 3,
-          room_id: 11,
-          room_number: 101,
+        // m = {
 
-          receiption_name: this.me,
-          ...m,
-        };
+        //   ...m,
+        // };
 
         await this.$axios.post(`/chat_messages`, m);
       } catch (e) {}
@@ -562,108 +652,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.agent-console {
-  height: calc(100vh - 100px);
-  overflow: hidden;
-  background: #fafafa;
-}
-.left-col {
-  background: #fff;
-  height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-.center-col {
-  background: #fff;
-  border-left: 1px solid #eee;
-  border-right: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px);
-}
-.conv-header {
-  height: 64px;
-  border-bottom: 1px solid #eee;
-}
-.messages {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  background: #fff;
-}
-.composer {
-  border-top: 1px solid #eee;
-  background: #fff;
-}
-.right-col {
-  background: #fff;
-  height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-.bubble {
-  max-width: 60%;
-  background: #dad4d4;
-  border-radius: 14px;
-  padding: 10px 12px;
-}
-.mine .bubble {
-  margin-left: auto;
-  background: #e3f2fd;
-}
-.active-chat {
-  background: #609dff !important;
-}
-.card-msg {
-  border: 1px solid #e6e6e6;
-  border-radius: 10px;
-}
-
-/* Rows */
-.msg {
-  display: flex;
-  margin: 8px 0;
-}
-.msg.them {
-  justify-content: flex-start;
-}
-.msg.mine {
-  justify-content: flex-end;
-}
-
-/* Bubbles */
-.bubble {
-  position: relative;
-  max-width: 78%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  line-height: 1.35;
-  background: var(--wa-them, #ffffff);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-}
-.msg.mine .bubble {
-  background: var(--wa-me, #dcf8c6);
-}
-
-/* Bubble tails */
-.msg.them .bubble:after,
-.msg.mine .bubble:after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 0;
-  height: 0;
-  border: 10px solid transparent;
-}
-.msg.them .bubble:after {
-  left: -6px;
-  border-right-color: var(--wa-them, #ffffff);
-  border-left: 0;
-  border-bottom: 0;
-}
-.msg.mine .bubble:after {
-  right: -6px;
-  border-left-color: var(--wa-me, #dcf8c6);
-  border-right: 0;
-  border-bottom: 0;
-}
-</style>

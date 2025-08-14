@@ -1,0 +1,106 @@
+.receiption-chats .agent-console {
+  height: calc(100vh - 100px);
+  overflow: hidden;
+  background: #fafafa;
+}
+.receiption-chats .left-col {
+  background: #fff;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.receiption-chats .center-col {
+  background: #fff;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+}
+.receiption-chats .conv-header {
+  height: 64px;
+  border-bottom: 1px solid #eee;
+}
+.receiption-chats .messages {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background: #fff;
+}
+.receiption-chats .composer {
+  border-top: 1px solid #eee;
+  background: #fff;
+}
+.receiption-chats .right-col {
+  background: #fff;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.receiption-chats .bubble {
+  max-width: 60%;
+  background: #dad4d4;
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.receiption-chats .mine .bubble {
+  margin-left: auto;
+  background: #e3f2fd;
+}
+.receiption-chats .active-chat {
+  background: #609dff !important;
+  color:#FFF!important;
+}.receiption-chats .active-chat td {
+
+  color:#FFF!important;
+}
+.receiption-chats .card-msg {
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+}
+
+/* Rows */
+.receiption-chats .msg {
+  display: flex;
+  margin: 8px 0;
+}
+.receiption-chats .msg.them {
+  justify-content: flex-start;
+}
+.receiption-chats .msg.mine {
+  justify-content: flex-end;
+}
+
+/* Bubbles */
+.receiption-chats .bubble {
+  position: relative;
+  max-width: 78%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  line-height: 1.35;
+  background: var(--wa-them, #ffffff);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+.receiption-chats .msg.mine .bubble {
+  background: var(--wa-me, #dcf8c6);
+}
+
+/* Bubble tails */
+.receiption-chats .msg.them .bubble:after,
+.receiption-chats .msg.mine .bubble:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  border: 10px solid transparent;
+}
+.receiption-chats .msg.them .bubble:after {
+  left: -6px;
+  border-right-color: var(--wa-them, #ffffff);
+  border-left: 0;
+  border-bottom: 0;
+}
+.receiption-chats .msg.mine .bubble:after {
+  right: -6px;
+  border-left-color: var(--wa-me, #dcf8c6);
+  border-right: 0;
+  border-bottom: 0;
+}

@@ -13,9 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('chat_messages', function (Blueprint $table) {
-            $table->integer("company_id")->nullable();
-            $table->integer("booking_room_id")->nullable();
+        Schema::table('booked_rooms', function (Blueprint $table) {
+            $table->dateTime("checkout_guest_request")->nullable();
         });
     }
 
@@ -26,9 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('chat_messages', function (Blueprint $table) {
-            $table->dropColumn("company_id");
-            $table->dropColumn("booking_room_id");
+        Schema::table('booked_rooms', function (Blueprint $table) {
+            $table->dropColumn("checkout_guest_request");
         });
     }
 };
