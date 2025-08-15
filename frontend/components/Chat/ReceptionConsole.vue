@@ -2,7 +2,7 @@
   <v-container fluid class="pa-0 agent-console">
     <v-dialog
       v-model="DialogpreviewImage"
-      width="400px"
+      width="600px"
       max-width="100%"
       style="max-width: 100% !important; margin: 0px !important"
     >
@@ -105,7 +105,7 @@
                 text-color="white"
                 label
               >
-                {{ unread[String(item.id)] }}
+                {{ unread[String(item.id)] / 2 }}
               </v-chip>
             </template>
           </v-data-table>
@@ -208,6 +208,7 @@
                 </a> -->
               </v-card>
               <audio
+                controlsList="nodownload"
                 v-else-if="m.type === 'audio'"
                 :src="m.url"
                 controls
@@ -237,7 +238,29 @@
             @click="$refs.fileInput.click()"
             >mdi-paperclip</v-icon
           >
+          <div>
+            <v-icon
+              size="20"
+              style="color: black; margin-top: 4px"
+              @click="startRec"
+              v-if="!recording"
+              :disabled="recording"
+              >mdi-microphone</v-icon
+            >
+            <span v-else :style="recording ? 'width:100px' : 'width:50px'">
+              <v-icon
+                class="flex"
+                size="20"
+                color="red"
+                @click="stopRec"
+                :disabled="!recording"
+                style="color: red; margin-top: 4px"
+                >mdi-microphone</v-icon
+              >
 
+              <span v-if="recording">{{ seconds }}s</span>
+            </span>
+          </div>
           <button class="send-btn" @click="send">Send</button>
 
           <input
@@ -267,6 +290,12 @@ export default {
     staffName: { type: String, default: "Reception" },
   },
   data: () => ({
+    mediaRecorder: null,
+    chunks: [],
+    recording: false,
+    startTs: null,
+    seconds: 0,
+    tmr: null,
     filterSearch: "",
     bookingsListdata: null,
     page: 1,
@@ -870,6 +899,138 @@ export default {
       const arr = this.roomTags[k] || [];
       arr.splice(i, 1);
       this.$set(this.roomTags, k, arr);
+    },
+
+    async startRec() {
+      // Pick best supported mime for the browser
+      const candidates = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4", // iOS Safari will end up giving m4a
+      ];
+      let mimeType = "";
+      for (const c of candidates) {
+        if (MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(c)) {
+          mimeType = c;
+          break;
+        }
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaRecorder = new MediaRecorder(
+        stream,
+        mimeType ? { mimeType } : {}
+      );
+      this.chunks = [];
+      this.mediaRecorder.ondataavailable = (e) =>
+        e.data.size && this.chunks.push(e.data);
+      this.mediaRecorder.start();
+      this.recording = true;
+      this.startTs = Date.now();
+      this.seconds = 0;
+      this.tmr = setInterval(
+        () => (this.seconds = Math.round((Date.now() - this.startTs) / 1000)),
+        200
+      );
+    },
+
+    async stopRec() {
+      if (!this.mediaRecorder) return;
+      await new Promise((res) => {
+        this.mediaRecorder.onstop = res;
+        this.mediaRecorder.stop();
+      });
+      clearInterval(this.tmr);
+
+      // Stop all mic tracks so the browser icon goes away
+      if (this.mediaRecorder.stream) {
+        this.mediaRecorder.stream.getTracks().forEach((track) => track.stop());
+      }
+      this.recording = false;
+      const r = String(this.activeRoom);
+
+      const blob = new Blob(this.chunks, {
+        type: this.mediaRecorder.mimeType || "audio/webm",
+      });
+      const durationMs = Date.now() - this.startTs;
+
+      // 1) Upload via HTTP
+      const form = new FormData();
+      // form.append("file", file);
+      form.append("sender", this.me);
+      form.append("role", "receiption");
+      form.append("type", "audio");
+      form.append("ts", Date.now());
+
+      form.append("booking_id", this.activeRoomBooking.booking_id);
+      form.append("booking_room_id", this.activeRoomBooking.id);
+      form.append("room_id", this.activeRoomBooking.room_id);
+      form.append("room_number", this.activeRoomBooking.room_no);
+      form.append("company_id", this.hotelId);
+      form.append("durationMs", durationMs.toString());
+      form.append(
+        "file",
+        blob,
+        `voice_${this.bookingRoomId}.${this.fileExt(blob.type)}`
+      );
+      const text = this.draft.trim();
+      if (!text || !this.activeRoom) return;
+      const res = await this.$axios.post("chat_messages_upload_file", form);
+      // data => { url, mime, size, durationMs }
+      const url = res && res.data.message.url;
+      const id = res.data.message.id;
+
+      if (url == "null") {
+        alert("File Upload Failed");
+
+        return false;
+      }
+      const m = {
+        id: id, //Date.now() + "_" + Math.random().toString(36).slice(2),
+        sender: this.me,
+        role: "reception",
+        type: "audio",
+        url: url,
+        text,
+        filename: "image",
+        ts: this.getSecondsInTimezone(this.timezone),
+        tsDb: Date.now(),
+        booking_id: this.activeRoomBooking.booking_id,
+        booking_room_id: this.activeRoomBooking.id,
+
+        room_id: this.activeRoomBooking.room_id,
+        room_number: this.activeRoomBooking.room_no,
+        company_id: this.hotelId,
+        audio: url,
+      };
+
+      this.$mqtt.pub(this.msgTopic(r), m);
+      this.upsertMessage(r, m);
+      this.draft = "";
+      this.$nextTick(this.scrollToEnd);
+      this.ack(r, m.id);
+
+      //store backup
+      try {
+        // m = {
+
+        //   ...m,
+        // };
+
+        await this.$axios.post(`/chat_messages`, m);
+      } catch (e) {}
+    },
+
+    fileExt(mime) {
+      if (
+        mime.includes("mp4") ||
+        mime.includes("x-m4a") ||
+        mime.includes("aac")
+      )
+        return "m4a";
+      if (mime.includes("webm")) return "webm";
+      if (mime.includes("ogg")) return "ogg";
+      return "dat";
     },
   },
 };
