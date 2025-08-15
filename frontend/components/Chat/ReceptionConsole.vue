@@ -149,8 +149,12 @@
 
               <div v-if="m.type === 'text'">{{ m.text }}</div>
               <v-card v-else-if="m.type === 'file'" flat class="pa-3 card-msg">
-                <div class="subtitle-2 mb-1">Attachment</div>
-                <a :href="m.url" target="_blank">{{ m.filename || "file" }}</a>
+                <!-- <div class="subtitle-2 mb-1">Attachment</div> -->
+                <v-icon size="18" color="blue">mdi-message-image</v-icon>
+                <a :href="m.url" target="_blank">
+                  Image
+                  <!-- {{ m.filename || "file" }} -->
+                </a>
               </v-card>
               <audio
                 v-else-if="m.type === 'audio'"
@@ -226,6 +230,8 @@ export default {
         filterable: false,
       },
     ],
+    timezone: "Asia/Kolkata",
+
     totalRowsCount: 0,
     pagination: {
       current: 1,
@@ -430,10 +436,36 @@ export default {
       return name || `Guest ${rid}`;
     },
     time(ts) {
-      return new Date(ts).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const date = new Date(ts);
+      const now = new Date();
+
+      // Check if same day
+      const isToday =
+        date.getDate() === now.getDate() &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear();
+
+      if (isToday) {
+        // Only show time
+        return date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      } else {
+        // Show date + time
+        return (
+          date.toLocaleDateString([], {
+            month: "short",
+            day: "numeric",
+            year: "numeric", // valid values: "numeric" or "2-digit"
+          }) +
+          " " +
+          date.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        );
+      }
     },
     scrollToEnd() {
       const el = this.$refs.scroll;
@@ -561,7 +593,9 @@ export default {
         role: "reception",
         type: "text",
         text,
-        ts: Date.now(),
+        ts: this.getSecondsInTimezone(this.timezone),
+        tsDb: Date.now(),
+
         booking_id: this.activeRoomBooking.booking_id,
         booking_room_id: this.activeRoomBooking.id,
 
@@ -570,6 +604,14 @@ export default {
 
         receiption_name: this.me,
       };
+
+      console.log(Date.now());
+      console.log(
+        new Date().toLocaleString("en-US", {
+          timeZone: this.timezone,
+        })
+      );
+
       this.$mqtt.pub(this.msgTopic(r), m);
       this.upsertMessage(r, m);
       this.draft = "";
@@ -586,18 +628,53 @@ export default {
         await this.$axios.post(`/chat_messages`, m);
       } catch (e) {}
     },
+    getSecondsInTimezone(timeZone) {
+      // Current UTC timestamp (ms)
+      const now = new Date();
 
+      // Format the time in the target timezone
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+
+      // Extract date/time parts
+      const parts = {};
+      formatter.formatToParts(now).forEach(({ type, value }) => {
+        parts[type] = value;
+      });
+
+      // Build a date string as if it's local time in that timezone
+      const localTimeString = `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`;
+
+      console.log(localTimeString);
+
+      // Parse that string as if it's UTC (to get correct epoch seconds for that timezone clock time)
+      return Math.floor(new Date(localTimeString).getTime());
+    },
     sendTyping() {
       if (!this.activeRoom) return;
       const r = String(this.activeRoom);
       const tTopic = `chat/hotel/${this.hotelId}/room/${r}/typing`;
-      this.$mqtt.pub(tTopic, { user: this.me, typing: true, ts: Date.now() });
+      this.$mqtt.pub(tTopic, {
+        user: this.me,
+        typing: true,
+        ts: this.getSecondsInTimezone(this.timezone),
+        tsDb: Date.now(),
+      });
       clearTimeout(this._t);
       this._t = setTimeout(() => {
         this.$mqtt.pub(tTopic, {
           user: this.me,
           typing: false,
-          ts: Date.now(),
+          ts: this.getSecondsInTimezone(this.timezone),
+          tsDb: Date.now(),
         });
       }, 1200);
     },
@@ -607,7 +684,8 @@ export default {
       this.$mqtt.pub(this.ackTopic(r), {
         user: this.me,
         lastSeenId: id,
-        ts: Date.now(),
+        ts: this.getSecondsInTimezone(this.timezone),
+        tsDb: Date.now(),
       });
     },
 

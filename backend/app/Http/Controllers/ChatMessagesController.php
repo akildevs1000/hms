@@ -50,6 +50,8 @@ class ChatMessagesController extends Controller
             "room_id" => "required",
             "room_number" => "required",
             "ts" => "required",
+            "tsDb" => "required",
+
             "text" => "required",
             "type" => "required",
             "filename" => "nullable",
@@ -60,8 +62,9 @@ class ChatMessagesController extends Controller
         $data = $request->validate($validate);
 
 
+        $data["ts"] = date("Y-m-d H:i:s", $data["tsDb"] / 1000);
+        unset($data['tsDb']);
 
-        $data["ts"] = date("Y-m-d H:i:s", $data["ts"] / 1000);
 
         $response =        ChatMessages::create($data);
         if ($response) {
