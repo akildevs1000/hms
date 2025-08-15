@@ -6,6 +6,7 @@ use App\Models\BookedRoom;
 use App\Models\Booking;
 use App\Models\ChatMessages;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class ChatMessagesController extends Controller
 {
@@ -118,7 +119,26 @@ class ChatMessagesController extends Controller
     {
         //
     }
+    public function downloadChatImage(Request $request)
+    {
 
+
+        $message = ChatMessages::find($request->id);
+
+        if (!$message) {
+            abort(404, 'Message not found.');
+        }
+
+        $path = public_path("hotel/chat/{$message->company_id}/{$message->booking_room_id}/{$message->filename}");
+
+        if (!File::exists($path)) {
+            abort(404, 'File not found.');
+        }
+
+
+
+        return  response()->download($path, $message->filename);
+    }
     public function getChatUploadFile(Request $request)
     {
         $validate = [
@@ -175,8 +195,9 @@ class ChatMessagesController extends Controller
                 ChatMessages::where("id", $response->id)->update(["filename" => $fileName]);
 
                 $url =  asset($folder . "/" . $fileName);
+                return $this->response(["url" => $url, "id" => $response->id], null, true);
             }
-            return $this->response($url, null, true);
+            return $this->response(["url" => null, "id" => $response->id], null, true);
         } else
 
             return $this->response("Failed", null, false);

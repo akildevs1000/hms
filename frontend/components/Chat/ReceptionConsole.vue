@@ -1,5 +1,41 @@
 <template>
   <v-container fluid class="pa-0 agent-console">
+    <v-dialog
+      v-model="DialogpreviewImage"
+      width="400px"
+      max-width="100%"
+      style="max-width: 100% !important; margin: 0px !important"
+    >
+      <v-card>
+        <v-card-title dense class="primary white--text background">
+          <span>
+            Image
+            <!-- Download
+            <v-icon @click="downloadImage()" outlined dark color="white">
+              mdi-download-box
+            </v-icon>
+             -->
+          </span>
+          <v-spacer> </v-spacer>
+          <v-spacer></v-spacer>
+
+          <v-icon
+            @click="DialogpreviewImage = false"
+            outlined
+            dark
+            color="white"
+          >
+            mdi mdi-close-circle
+          </v-icon>
+        </v-card-title>
+        <v-card-text style="" class="pt-2">
+          <img
+            :src="previewImageUrl"
+            style="width: 100%; border-radius: 10px; text-align: right"
+          />
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <v-row no-gutters class="receiption-chats">
       <!-- LEFT: Chats list -->
       <v-col cols="12" md="3" class="left-col">
@@ -148,13 +184,28 @@
               </div>
 
               <div v-if="m.type === 'text'">{{ m.text }}</div>
-              <v-card v-else-if="m.type === 'file'" flat class="pa-3 card-msg">
+              <v-card
+                v-else-if="m.type === 'file'"
+                flat
+                class="pa-3 card-msg"
+                style="text-align: center"
+              >
+                <img
+                  :src="m.url"
+                  @click="viewImage(m.id, m.url)"
+                  style="
+                    margin: auto;
+                    width: 100px;
+                    border-radius: 10px;
+                    text-align: right;
+                  "
+                />
                 <!-- <div class="subtitle-2 mb-1">Attachment</div> -->
-                <v-icon size="18" color="blue">mdi-message-image</v-icon>
+                <!-- <v-icon size="18" color="blue">mdi-message-image</v-icon>
                 <a :href="m.url" target="_blank">
                   Image
-                  <!-- {{ m.filename || "file" }} -->
-                </a>
+                   {{ m.filename || "file" }}
+                </a> -->
               </v-card>
               <audio
                 v-else-if="m.type === 'audio'"
@@ -180,7 +231,28 @@
             class="flex-grow-1 mr-2"
             @keydown.enter.exact.prevent="send"
           />
-          <v-btn color="primary" @click="send">Send</v-btn>
+          <v-icon
+            :color="selectedFile ? 'green' : ''"
+            left
+            @click="$refs.fileInput.click()"
+            >mdi-paperclip</v-icon
+          >
+
+          <button class="send-btn" @click="send">Send</button>
+
+          <input
+            style="display: none"
+            type="file"
+            ref="fileInput"
+            @change="handleFileSelect"
+          />
+          <div v-if="selectedFile" class="pl-3">
+            File
+            <v-icon color="red" @click="selectedFile = null"
+              >mdi-delete-circle-outline</v-icon
+            >
+          </div>
+          <!-- <v-btn color="primary" @click="send">Send</v-btn> -->
         </div>
       </v-col>
     </v-row>
@@ -261,6 +333,10 @@ export default {
     roomTags: {}, // { "1205": ["billing"] }
     tagDraft: "",
     activeRoomBooking: null,
+    selectedFile: null,
+    previewImageUrl: null,
+    DialogpreviewImage: null,
+    previewImageId: null,
   }),
   computed: {
     me() {
@@ -579,8 +655,98 @@ export default {
 
       // await this.loadHistory(bookingId);
     },
+    handleFileSelect(event) {
+      this.selectedFile = event.target.files[0] || null;
+      console.log("Selected file:", this.selectedFile?.name);
+    },
+    async sendFile() {
+      if (!this.selectedFile) {
+        //alert("Please select a file first");
+        return;
+      }
 
+      const file = this.selectedFile;
+      // const file = e.target.files && e.target.files[0];
+
+      // console.log(file);
+      const r = String(this.activeRoom);
+      if (!file) return;
+      try {
+        const form = new FormData();
+        form.append("file", file);
+        form.append("sender", this.me);
+        form.append("role", "reception");
+        form.append("type", "file");
+        form.append("ts", Date.now());
+
+        form.append("booking_id", this.activeRoomBooking.booking_id);
+        form.append("booking_room_id", this.activeRoomBooking.id);
+        form.append("room_id", this.activeRoomBooking.room_id);
+        form.append("room_number", this.activeRoomBooking.room_no);
+        form.append("company_id", this.hotelId);
+
+        const res = await this.$axios.post("/chat_messages_upload_file", form);
+
+        const url = res && res.data.message.url;
+        const id = res.data.message.id;
+
+        const m = {
+          id: id, //Date.now() + "_" + Math.random().toString(36).slice(2),
+          sender: this.me,
+          role: "reception",
+          type: "file",
+          url: url,
+          filename: "image",
+          ts: this.getSecondsInTimezone(this.timezone),
+          tsDb: Date.now(),
+          booking_id: this.activeRoomBooking.booking_id,
+          booking_room_id: this.activeRoomBooking.id,
+
+          room_id: this.activeRoomBooking.room_id,
+          room_number: this.activeRoomBooking.room_no,
+
+          company_id: this.hotelId,
+        };
+        this.$mqtt.pub(this.msgTopic(r), m);
+        this.upsertMessage(r, m);
+        this.draft = "";
+        this.$nextTick(this.scrollToEnd);
+        this.ack(r, m.id);
+
+        // this.$mqtt.pub(this.msgTopic, m);
+        // this.upsertMessage(this.activeRoomBooking.booking_id, m);
+        // this.$nextTick(this.scrollToEnd);
+        // this.ack(m.id);
+      } catch (err) {
+        console.error("Upload failed", err);
+      } finally {
+        // e.target.value = "";
+        this.$refs.fileInput.value = ""; // reset input
+      }
+
+      this.selectedFile = null; // reset after upload
+      this.$refs.fileInput.value = ""; // reset input
+
+      console.log("selectedFile", this.selectedFile);
+    },
+    viewImage(messageId, url) {
+      this.previewImageId = messageId;
+      let $url = process.env.BACKEND_URL;
+      this.previewImageUrl = url;
+
+      this.DialogpreviewImage = true;
+    },
+    downloadImage() {
+      let $url = process.env.BACKEND_URL;
+      window.open(
+        `${$url}chat_download_image?id=${this.previewImageId}`,
+        "_blank"
+      );
+    },
     async send() {
+      if (this.selectedFile) {
+        this.sendFile();
+      }
       const text = this.draft.trim();
       if (!text || !this.activeRoom) return;
       const r = String(this.activeRoom);
@@ -605,12 +771,12 @@ export default {
         receiption_name: this.me,
       };
 
-      console.log(Date.now());
-      console.log(
-        new Date().toLocaleString("en-US", {
-          timeZone: this.timezone,
-        })
-      );
+      // console.log(Date.now());
+      // console.log(
+      //   new Date().toLocaleString("en-US", {
+      //     timeZone: this.timezone,
+      //   })
+      // );
 
       this.$mqtt.pub(this.msgTopic(r), m);
       this.upsertMessage(r, m);

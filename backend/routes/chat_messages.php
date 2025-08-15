@@ -10,6 +10,8 @@
 
 
     Route::post('chat_messages_upload_file', [ChatMessagesController::class, 'getChatUploadFile']);
+    Route::get('chat_download_image', [ChatMessagesController::class, 'downloadChatImage']);
+
 
 
 
