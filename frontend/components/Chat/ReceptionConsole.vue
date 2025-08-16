@@ -741,7 +741,7 @@ export default {
         this.draft = "";
         this.$nextTick(this.scrollToEnd);
         this.ack(r, m.id);
-
+        this.sendTyping();
         // this.$mqtt.pub(this.msgTopic, m);
         // this.upsertMessage(this.activeRoomBooking.booking_id, m);
         // this.$nextTick(this.scrollToEnd);
@@ -780,7 +780,7 @@ export default {
       if (!text || !this.activeRoom) return;
       const r = String(this.activeRoom);
 
-      // console.log(this.activeRoomBooking);
+      console.log("activeRoomBooking", this.activeRoomBooking);
       this.activeRoomBooking;
       let m = {
         id: Date.now() + "_" + Math.random().toString(36).slice(2),
@@ -812,7 +812,7 @@ export default {
       this.draft = "";
       this.$nextTick(this.scrollToEnd);
       this.ack(r, m.id);
-
+      this.sendTyping();
       //store backup
       try {
         // m = {
@@ -853,7 +853,7 @@ export default {
       // Parse that string as if it's UTC (to get correct epoch seconds for that timezone clock time)
       return Math.floor(new Date(localTimeString).getTime());
     },
-    sendTyping() {
+    async sendTyping() {
       if (!this.activeRoom) return;
       const r = String(this.activeRoom);
       const tTopic = `chat/hotel/${this.hotelId}/room/${r}/typing`;
@@ -973,9 +973,11 @@ export default {
         blob,
         `voice_${this.bookingRoomId}.${this.fileExt(blob.type)}`
       );
-      const text = this.draft.trim();
-      if (!text || !this.activeRoom) return;
+      // const text = this.draft.trim();
+      if (!this.activeRoom) return;
       const res = await this.$axios.post("chat_messages_upload_file", form);
+
+      console.log("Step2", res);
       // data => { url, mime, size, durationMs }
       const url = res && res.data.message.url;
       const id = res.data.message.id;
@@ -991,8 +993,8 @@ export default {
         role: "reception",
         type: "audio",
         url: url,
-        text,
-        filename: "image",
+
+        filename: "audio",
         ts: this.getSecondsInTimezone(this.timezone),
         tsDb: Date.now(),
         booking_id: this.activeRoomBooking.booking_id,
@@ -1009,16 +1011,7 @@ export default {
       this.draft = "";
       this.$nextTick(this.scrollToEnd);
       this.ack(r, m.id);
-
-      //store backup
-      try {
-        // m = {
-
-        //   ...m,
-        // };
-
-        await this.$axios.post(`/chat_messages`, m);
-      } catch (e) {}
+      await this.sendTyping();
     },
 
     fileExt(mime) {

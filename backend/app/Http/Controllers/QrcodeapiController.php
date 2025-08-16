@@ -25,8 +25,8 @@ class QrcodeapiController extends Controller
         // Find the latest booking for the room, based on request parameters
         $bookedRoom = $model
             ->where('booking_status', 2)
-            // ->where('check_in', '<=', $date . ' ' . date('H:i:s'))
-            // ->Where('check_out', '>=', $date . ' ' . date('H:i:s'))
+            ->where('check_in', '<=', $date . ' ' . date('H:i:s'))
+            ->Where('check_out', '>=', $date . ' ' . date('H:i:s'))
             ->where('company_id', $request->company_id ?? 0)
             ->where('room_id', $request->room_id ?? 0)
             ->orderBy('created_at', 'desc') // Adjust if another date column is more appropriate
