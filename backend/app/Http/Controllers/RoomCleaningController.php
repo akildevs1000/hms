@@ -16,12 +16,15 @@ class RoomCleaningController extends Controller
 
     public function data()
     {
+        $from_date = request('from_date') ?? date("Y-m-d");
+        $to_date   = request('to_date') ?? date("Y-m-d");
+
         $query = RoomCleaning::query();
 
         $query->where('company_id', request('company_id', 0));
 
         if (request()->has('from_date') && request()->has('to_date')) {
-            $query->whereBetween('created_at', [request('from_date'), request('to_date')]);
+            $query->whereBetween('created_at', [$from_date . " 00:00:00", $to_date . " 23:59:59"]);
         }
 
         if (request()->has('date')) {
@@ -158,7 +161,23 @@ class RoomCleaningController extends Controller
                 ->update(['booking_status' => BookedRoom::AVAILABLE]);
         }
 
-        return RoomCleaning::create($validatedData);
+
+        return RoomCleaning::where("id", $request->id)->update($validatedData);
+    }
+
+    public function start(Request $request)
+    {
+        $payload = [
+            "room_id"            => $request->room_id,
+            "status"             => "Working",
+            "start_time"         => $request->start_time,
+            "cleaned_by_user_id" => $request->cleaned_by_user_id,
+            "company_id"         => $request->company_id,
+        ];
+
+        $record = RoomCleaning::create($payload);
+
+        return response()->json(["record" => $record]);
     }
 
     public function getNewEvent($company)
