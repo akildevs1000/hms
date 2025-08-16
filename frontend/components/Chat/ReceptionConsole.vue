@@ -208,6 +208,7 @@
                 </a> -->
               </v-card>
               <audio
+                style="height: 28px"
                 controlsList="nodownload"
                 v-else-if="m.type === 'audio'"
                 :src="m.url"
@@ -238,9 +239,15 @@
             @click="$refs.fileInput.click()"
             >mdi-paperclip</v-icon
           >
+          <div v-if="selectedFile">
+            <!-- File -->
+            <v-icon color="red" @click="selectedFile = null"
+              >mdi-delete-circle-outline</v-icon
+            >
+          </div>
           <div>
             <v-icon
-              size="20"
+              size="25"
               style="color: black; margin-top: 4px"
               @click="startRec"
               v-if="!recording"
@@ -250,7 +257,7 @@
             <span v-else :style="recording ? 'width:100px' : 'width:50px'">
               <v-icon
                 class="flex"
-                size="20"
+                size="25"
                 color="red"
                 @click="stopRec"
                 :disabled="!recording"
@@ -261,20 +268,18 @@
               <span v-if="recording">{{ seconds }}s</span>
             </span>
           </div>
-          <button class="send-btn" @click="send">Send</button>
+          <button style="margin-left: 5px" class="send-btn" @click="send">
+            Send
+          </button>
 
           <input
+            accept="image/*"
             style="display: none"
             type="file"
             ref="fileInput"
             @change="handleFileSelect"
           />
-          <div v-if="selectedFile" class="pl-3">
-            File
-            <v-icon color="red" @click="selectedFile = null"
-              >mdi-delete-circle-outline</v-icon
-            >
-          </div>
+
           <!-- <v-btn color="primary" @click="send">Send</v-btn> -->
         </div>
       </v-col>
@@ -741,7 +746,8 @@ export default {
         this.draft = "";
         this.$nextTick(this.scrollToEnd);
         this.ack(r, m.id);
-        this.sendTyping();
+        await this.sendTyping();
+        this.$nextTick(this.scrollToEnd);
         // this.$mqtt.pub(this.msgTopic, m);
         // this.upsertMessage(this.activeRoomBooking.booking_id, m);
         // this.$nextTick(this.scrollToEnd);
@@ -812,7 +818,7 @@ export default {
       this.draft = "";
       this.$nextTick(this.scrollToEnd);
       this.ack(r, m.id);
-      this.sendTyping();
+      await this.sendTyping();
       //store backup
       try {
         // m = {
@@ -949,6 +955,9 @@ export default {
       this.recording = false;
       const r = String(this.activeRoom);
 
+      if (!confirm("Are you sure want to send Audio record?")) {
+        return false;
+      }
       const blob = new Blob(this.chunks, {
         type: this.mediaRecorder.mimeType || "audio/webm",
       });
@@ -977,7 +986,6 @@ export default {
       if (!this.activeRoom) return;
       const res = await this.$axios.post("chat_messages_upload_file", form);
 
-      console.log("Step2", res);
       // data => { url, mime, size, durationMs }
       const url = res && res.data.message.url;
       const id = res.data.message.id;
@@ -1012,6 +1020,7 @@ export default {
       this.$nextTick(this.scrollToEnd);
       this.ack(r, m.id);
       await this.sendTyping();
+      this.$nextTick(this.scrollToEnd);
     },
 
     fileExt(mime) {

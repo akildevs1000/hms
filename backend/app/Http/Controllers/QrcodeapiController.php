@@ -200,17 +200,16 @@ class QrcodeapiController extends Controller
 
 
         if ($request->booking_id && $request->room_id) {
-            $model = BookedRoom::where("company_id", $request->company_id)
-                ->where("booking_id", $request->booking_id)
-                ->where("room_id", $request->room_id);
+            $model = BookedRoom::find($request->booking_room_id);
+            if ($model) {
+                $checkout_guest_request = date("Y-m-d H:i:s");
+                $data = ["checkout_guest_request" => $checkout_guest_request];
 
+                $results = $model->update($data);
+                if ($results)
 
-            $checkout_guest_request = date("Y-m-d H:i:s");
-            $data = ["checkout_guest_request" => $checkout_guest_request];
-
-            $model->update($data);
-
-            return $this->response("Checkrequest is Received.", $checkout_guest_request, true);
+                    return $this->response("Checkout request is Received.", $results, true);
+            }
         }
 
         return $this->response("Request is invalid", null, false);
