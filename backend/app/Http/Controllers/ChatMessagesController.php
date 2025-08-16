@@ -66,8 +66,25 @@ class ChatMessagesController extends Controller
         $data["ts"] = date("Y-m-d H:i:s", $data["tsDb"] / 1000);
         unset($data['tsDb']);
 
+        if ($data["role"] == "guest") {
+            $data["is_read_guest"] = true;
+            $data["is_read_reception"] = false;
+        } else {
+            $data["is_read_guest"] = false;
+            $data["is_read_reception"] = true;
+        }
+
 
         $response =        ChatMessages::create($data);
+
+
+        //update chat messages table
+        if ($data["role"] == "guest") {
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_guest", false)->update(["is_read_guest" => true]);
+        } else {
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_reception", false)->update(["is_read_reception" => true]);
+        }
+
         if ($response) {
             return $this->response(true, null, "Success");
         } else
@@ -167,13 +184,12 @@ class ChatMessagesController extends Controller
 
 
 
+        if ($data["role"] == "guest") {
 
-
-
-
-
-
-
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_guest", false)->update(["is_read_guest" => true]);
+        } else {
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_reception", false)->update(["is_read_reception" => true]);
+        }
 
         if ($response) {
 
@@ -205,6 +221,13 @@ class ChatMessagesController extends Controller
 
     public function getChatHistory(Request $request)
     {
+
+        if ($request->role == "guest") {
+
+            ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_guest", false)->update(["is_read_guest" => true]);
+        } else {
+            ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_reception", false)->update(["is_read_reception" => true]);
+        }
 
         return  $model = ChatMessages::where("booking_room_id", $request->booking_room_id)
             ->orderBy("ts", "asc")->get();;

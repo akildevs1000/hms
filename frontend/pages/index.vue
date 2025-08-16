@@ -857,11 +857,11 @@ export default {
       this.get_data();
     },
   },
-  // mounted() {
-  //   this.intervalObj = setInterval(() => {
-  //     this.getDataFromApi();
-  //   }, 1000 * 60);
-  // },
+  mounted() {
+    setInterval(() => {
+      if (this.$route.name === "index") this.refreshRoomList();
+    }, 1000 * 60);
+  },
   created() {
     if (!this.$auth.user.company) {
       this.$router.push(`/login`);

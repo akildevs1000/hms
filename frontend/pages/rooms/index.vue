@@ -431,6 +431,14 @@ export default {
   created() {
     this.getDataFromApi();
     this.getRoomTypesData();
+
+    // setInterval(() => {
+    //   console.log(this.$route.name);
+
+    //   if (this.$route.name === "index") {
+    //     this.reload();
+    //   }
+    // }, 1000 * 5);
   },
   methods: {
     can(per) {

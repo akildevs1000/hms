@@ -613,7 +613,7 @@ export default {
     async loadHistory(bookingRoomId) {
       if (!bookingRoomId) return false;
       try {
-        const q = `?company_id=${this.hotelId}&booking_room_id=${bookingRoomId}&limit=50`;
+        const q = `?company_id=${this.hotelId}&role=reception&booking_room_id=${bookingRoomId}&limit=50`;
         const rows =
           (await this.$axios.get(`/chat_messages_history${q}`)) || [];
         this.messages[bookingRoomId] = rows.data;
