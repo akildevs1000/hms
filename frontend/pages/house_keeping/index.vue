@@ -148,7 +148,54 @@
     <v-card>
       <v-container>
         <v-row>
-          <v-col cols="10"> Room Cleaning Info </v-col>
+          <v-col> Room Cleaning Info </v-col>
+          <v-col cols="2">
+            <v-autocomplete
+              label="Room"
+              outlined
+              dense
+              v-model="filters.room_id"
+              :items="[{ id: null, room_no: 'Select All' }, ...rooms_list]"
+              item-value="id"
+              item-text="room_no"
+              hide-details
+              @change="getDataFromApi()"
+            ></v-autocomplete>
+          </v-col>
+           <v-col cols="2">
+            <v-autocomplete
+              label="Room"
+              outlined
+              dense
+              v-model="filters.cleaned_by_user_id"
+              :items="[{ id: null, name: 'Select All' }, ...cleaners_list]"
+              item-value="id"
+              item-text="name"
+              hide-details
+              @change="getDataFromApi()"
+            ></v-autocomplete>
+          </v-col>
+          
+          <v-col cols="2">
+            <v-autocomplete
+              label="Status"
+              outlined
+              dense
+              v-model="filters.status"
+              :items="[
+                { id: null, name: 'Select All' },
+                { id: 'Cleaning In Progress', name: 'Cleaning In Progress' },
+                { id: 'Dirty', name: 'Dirty' },
+                { id: 'Cleaned', name: 'Cleaned' },
+                { id: 'Neutral', name: 'Neutral' },
+                
+              ]"
+              item-value="id"
+              item-text="name"
+              hide-details
+              @change="getDataFromApi()"
+            ></v-autocomplete>
+          </v-col>
           <v-col cols="2">
             <FilterDateRange @filter-attr="filterAttr" />
           </v-col>
@@ -274,6 +321,8 @@ export default {
     endpoint: "room-data",
     currentDate,
     filters: {
+      room_id: null,
+      status:null,
       from_date: new Date().toJSON().slice(0, 10),
       to_date: new Date().toJSON().slice(0, 10),
     },
@@ -315,6 +364,8 @@ export default {
         value: "options",
       },
     ],
+    rooms_list: [],
+    cleaners_list:[],
     componentKey: 1,
   }),
   watch: {
@@ -325,7 +376,34 @@ export default {
       deep: true,
     },
   },
+  created() {
+    this.getRoomList();
+    this.getCleanersList();
+  },
   methods: {
+    getCleanersList() {
+      let options = {
+        params: {
+          company_id: this.$auth.user.company.id,
+          user_type: "house_keeping",
+        },
+      };
+
+      this.$axios.get(`users-list`, options).then(({ data }) => {
+        this.cleaners_list = data;
+      });
+    },
+    getRoomList() {
+      let options = {
+        params: {
+          company_id: this.$auth.user.company.id,
+        },
+      };
+
+      this.$axios.get(`room_dropdown_list`, options).then(({ data }) => {
+        this.rooms_list = data;
+      });
+    },
     filterAttr(data) {
       this.filters = {
         from_date: data.from,
