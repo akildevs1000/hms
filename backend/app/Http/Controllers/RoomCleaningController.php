@@ -174,7 +174,7 @@ class RoomCleaningController extends Controller
     {
         $payload = [
             "room_id"            => $request->room_id,
-            "status"             => "Cleaning In Progress",
+            "status"             =>  RoomCleaning::CLEANING_IN_PROGRESS,
             "start_time"         => $request->start_time,
             "cleaned_by_user_id" => $request->cleaned_by_user_id,
             "company_id"         => $request->company_id,
