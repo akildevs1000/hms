@@ -164,7 +164,7 @@
           </v-col>
            <v-col cols="2">
             <v-autocomplete
-              label="Room"
+              label="Staff List"
               outlined
               dense
               v-model="filters.cleaned_by_user_id"
