@@ -70,9 +70,9 @@ class AuthController extends Controller
             $user->save();
         } elseif ($user->device_id !== $request->device_id) {
             // Block login from unregistered device
-            throw ValidationException::withMessages([
-                'device' => ['Login from this device is not allowed.'],
-            ]);
+            // throw ValidationException::withMessages([
+            //     'device' => ['Login from this device is not allowed.'],
+            // ]);
         }
 
         unset($user["assigned_permissions"]);
