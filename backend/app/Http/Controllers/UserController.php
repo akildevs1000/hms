@@ -10,6 +10,16 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function dropDown(Request $request)
+    {
+        $model = User::query();
+        $model->where('is_master', 0);
+        $model->where('company_id', $request->company_id);
+        $model->where('user_type', $request->user_type ?? "employee");
+        $model->Where('is_active', "1");
+        return $model->get();
+    }
+
     public function index(Request $request)
     {
 

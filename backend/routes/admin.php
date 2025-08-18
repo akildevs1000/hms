@@ -47,6 +47,7 @@ Route::resource('assign-permission', AssignPermissionController::class);
 
 // User
 Route::apiResource('users', UserController::class);
+Route::get('users-list', [UserController::class, 'dropDown']);
 Route::get('users/search/{key}', [UserController::class, 'search']);
 Route::post('users/delete/selected', [UserController::class, 'deleteSelected']);
 

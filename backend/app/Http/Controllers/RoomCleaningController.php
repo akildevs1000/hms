@@ -36,8 +36,15 @@ class RoomCleaningController extends Controller
         }
 
         if (request()->has('room_id')) {
-            info(request('room_id'));
             $query->where('room_id', request('room_id'));
+        }
+
+        if (request()->has('status')) {
+            $query->where('status', request('status'));
+        }
+
+        if (request()->has('cleaned_by_user_id')) {
+            $query->where('cleaned_by_user_id', request('cleaned_by_user_id'));
         }
 
         $query->orderBy("id", "desc");
