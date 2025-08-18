@@ -35,6 +35,11 @@ class RoomCleaningController extends Controller
             $query->whereIn('room_id', request('room_ids'));
         }
 
+        if (request()->has('room_id')) {
+            info(request('room_id'));
+            $query->where('room_id', request('room_id'));
+        }
+
         $query->orderBy("id", "desc");
 
         $query->with("room", "cleaned_by_user", "response_by_user");
@@ -169,7 +174,7 @@ class RoomCleaningController extends Controller
     {
         $payload = [
             "room_id"            => $request->room_id,
-            "status"             => "Working",
+            "status"             => "Cleaning In Progress",
             "start_time"         => $request->start_time,
             "cleaned_by_user_id" => $request->cleaned_by_user_id,
             "company_id"         => $request->company_id,
