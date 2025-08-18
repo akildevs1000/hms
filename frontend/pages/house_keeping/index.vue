@@ -150,7 +150,7 @@
         <v-row>
           <v-col cols="10"> Room Cleaning Info </v-col>
           <v-col cols="2">
-            <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+            <FilterDateRange @filter-attr="filterAttr" />
           </v-col>
           <v-col cols="12">
             <v-data-table
@@ -170,26 +170,18 @@
                 {{ item?.cleaned_by_user?.name }}
               </template>
               <template v-slot:item.status="{ item }">
-                <div class="py-2">
-                  <v-btn-toggle
-                    color="blue"
-                    v-model="item.status"
-                    rounded
-                    outlined
-                  >
-                    <v-btn dense x-large value="Dirty">
-                      <v-icon color="error">mdi-emoticon-sad</v-icon>
-                    </v-btn>
-                    <v-btn dense x-large value="Neutral">
-                      <v-icon color="yellow darken-3"
-                        >mdi-emoticon-neutral</v-icon
-                      >
-                    </v-btn>
-                    <v-btn dense x-large value="Cleaned">
-                      <v-icon color="success">mdi-emoticon-happy</v-icon>
-                    </v-btn>
-                  </v-btn-toggle>
-                </div>
+                <v-icon v-if="item.status == 'Dirty'" color="error"
+                  >mdi-emoticon-sad</v-icon
+                >
+                <v-icon v-else-if="item.status == 'Cleaned'" color="success"
+                  >mdi-emoticon-happy</v-icon
+                >
+                <v-icon
+                  v-else-if="item.status == 'Neutral'"
+                  color="yellow darken-3"
+                  >mdi-emoticon-neutral</v-icon
+                >
+                <v-icon v-else color="gray">mdi-emoticon-neutral</v-icon>
               </template>
               <template v-slot:item.start_date_time="{ item }">
                 {{ $dateFormat.dmy(item.created_at) }} {{ item.start_time }}
@@ -281,7 +273,10 @@ export default {
     Model: "House Keeping",
     endpoint: "room-data",
     currentDate,
-    filters: {},
+    filters: {
+      from_date: new Date().toJSON().slice(0, 10),
+      to_date: new Date().toJSON().slice(0, 10),
+    },
     options: {},
     loading: false,
     response: "",
@@ -312,7 +307,6 @@ export default {
       {
         text: "Status",
         value: "status",
-        align: "center",
       },
       {
         text: "Action",
@@ -323,11 +317,6 @@ export default {
     ],
     componentKey: 1,
   }),
-
-  async created() {
-    this.getDataFromApi();
-  },
-  mounted() {},
   watch: {
     options: {
       handler() {
@@ -357,17 +346,20 @@ export default {
       return ++this.componentKey;
     },
     async getDataFromApi() {
-      let config = {
-        params: {
-          company_id: this.$auth.user.company_id,
-          ...this.filters,
-        },
-      };
       this.loading = true;
-      let { data } = await this.$axios.get(this.endpoint, config);
-      this.loading = false;
 
-      this.data = data.data;
+      try {
+        const { data } = await this.$axios.get(this.endpoint, {
+          params: { ...this.filters },
+        });
+
+        this.data = data?.data ?? []; // safer: fallback to empty array
+      } catch (error) {
+        console.error("API Error:", error);
+        this.data = [];
+      } finally {
+        this.loading = false; // ensures loading stops even if error
+      }
     },
   },
 };
