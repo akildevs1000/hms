@@ -45,22 +45,28 @@ class AuthController extends Controller
             'property_code' => 'required',
         ]);
 
+        $company = Company::where('property_code', $request->property_code)->first();
+
+        if (! $company) {
+            throw ValidationException::withMessages([
+                'property_code' => ['Property Code does not match. Contact to your admin'],
+            ]);
+        }
+
+        // info(lightDump($company));
+
+
         $user = User::with(['role'])
             ->where('pin', $request->pin)
+            ->where('company_id', $company->id)
             ->where('is_active', 1)
             ->first();
+
+        // info(lightDump($user));
 
         if (! $user) {
             throw ValidationException::withMessages([
                 'pin' => ['Invalid PIN or account is inactive.'],
-            ]);
-        }
-
-        $property_code = Company::where('property_code', $request->property_code)->first();
-
-        if (! $property_code) {
-            throw ValidationException::withMessages([
-                'property_code' => ['Property Code does not match. Contact to your admin'],
             ]);
         }
 
