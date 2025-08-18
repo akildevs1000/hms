@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -38,8 +39,10 @@ class AuthController extends Controller
 
     public function housekeepingLogin(Request $request)
     {
+
         $request->validate([
-            'pin'       => 'required',
+            'pin'           => 'required',
+            'property_code' => 'required',
         ]);
 
         $user = User::with(['role'])
@@ -53,6 +56,14 @@ class AuthController extends Controller
             ]);
         }
 
+        $property_code = Company::where('property_code', $request->property_code)->first();
+
+        if (! $property_code) {
+            throw ValidationException::withMessages([
+                'property_code' => ['Property Code does not match. Contact to your admin'],
+            ]);
+        }
+
         if ($user->device_id === null) {
             // First login – save device_id
             $user->device_id = $request->device_id;
@@ -63,10 +74,6 @@ class AuthController extends Controller
                 'device' => ['Login from this device is not allowed.'],
             ]);
         }
-
-        $user->user_type = $user->company_id > 0
-        ? ($user->employee_role_id > 0 ? "employee" : "company")
-        : ($user->role_id > 0 ? "user" : "master");
 
         unset($user["assigned_permissions"]);
 

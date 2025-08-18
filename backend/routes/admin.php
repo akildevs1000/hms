@@ -55,6 +55,7 @@ Route::get('company/list', [CompanyController::class, 'CompanyList']);
 
 Route::apiResource('company', CompanyController::class)->except('update');
 Route::post('company/{id}/update', [CompanyController::class, 'updateCompany']);
+Route::get('company-property-code/{id}', [CompanyController::class, 'getPropertyCode']);
 Route::post('company/{id}/update_settings', [CompanyController::class, 'updateSettings']);
 Route::post('company/{id}/update-currency', [CompanyController::class, 'updateCurrency']);
 Route::post('company/{id}/update/contact', [CompanyController::class, 'updateContact']);
