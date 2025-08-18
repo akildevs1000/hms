@@ -17,7 +17,7 @@
           <v-container>
             <v-row>
               <!-- Date & Time -->
-              <v-col cols="4">
+              <v-col cols="3">
                 <v-card outlined>
                   <v-card-title class="py-1" style="font-size: 14px"
                     >Start Time</v-card-title
@@ -28,7 +28,7 @@
                 </v-card>
               </v-col>
 
-              <v-col cols="4">
+              <v-col cols="3">
                 <v-card outlined>
                   <v-card-title class="py-1" style="font-size: 14px"
                     >End Time</v-card-title
@@ -40,7 +40,7 @@
               </v-col>
 
               <!-- Total Time -->
-              <v-col cols="4">
+              <v-col cols="3">
                 <v-card outlined>
                   <v-card-title class="py-1" style="font-size: 14px"
                     >Total Time</v-card-title
@@ -52,7 +52,7 @@
               </v-col>
 
               <!-- Room Info -->
-              <v-col cols="12">
+              <v-col cols="3">
                 <v-card outlined>
                   <v-card-title class="py-1" style="font-size: 14px"
                     >Room</v-card-title
@@ -65,7 +65,7 @@
               </v-col>
 
               <!-- Cleaned By User -->
-              <v-col cols="12">
+              <v-col cols="6">
                 <v-card outlined>
                   <v-card-title class="py-1" style="font-size: 14px"
                     >Cleaned By</v-card-title
@@ -77,7 +77,7 @@
               </v-col>
 
               <!-- Voice Note -->
-              <v-col cols="12">
+              <v-col cols="6">
                 <v-card outlined>
                   <v-card-title class="py-1" style="font-size: 14px"
                     >Voice Note</v-card-title
@@ -146,7 +146,7 @@
       </v-card>
     </v-dialog>
     <v-card>
-      <v-container>
+      <v-container fluid>
         <v-row>
           <v-col> Room Cleaning Info </v-col>
           <v-col cols="2">
@@ -344,6 +344,10 @@ export default {
       {
         text: "End DateTime",
         value: "end_date_time",
+      },
+      {
+        text: "Total Duration",
+        value: "total_time",
       },
       {
         text: "Clean By",
