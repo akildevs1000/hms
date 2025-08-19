@@ -23,7 +23,7 @@ class FloorController extends Controller
      */
     public function index()
     {
-        return Floor::paginate(request("per_page", 50));
+        return Floor::where("company_id", request("company_id",0))->paginate(request("per_page", 50));
     }
 
     /**
