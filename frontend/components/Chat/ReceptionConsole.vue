@@ -175,7 +175,7 @@
 
             <div v-else class="bubble">
               <div class="caption grey--text text--darken-1 mb-1">
-                {{ prettySender(m.sender) }} · {{ time(m.ts) }}
+                {{ prettySender(m.sender) }}
                 <!-- <span>✓</span> -->
                 <!-- <span v-if="m.role === 'reception'" class="ml-1">
                   · <span v-if="m.seen" title="Seen by guest">✓✓</span
@@ -186,9 +186,9 @@
               <div v-if="m.type === 'text'">{{ m.text }}</div>
               <v-card
                 v-else-if="m.type === 'file'"
+                style="text-align: center"
                 flat
                 class="pa-3 card-msg"
-                style="text-align: center"
               >
                 <img
                   :src="m.url"
@@ -214,6 +214,20 @@
                 :src="m.url"
                 controls
               ></audio>
+              <div
+                :style="
+                  m.role === 'reception'
+                    ? 'text-align:right'
+                    : 'text-align:  left'
+                "
+              >
+                <span
+                  class="sender"
+                  style="padding-top: 5px; color: black; font-size: 10px"
+                  ><v-icon size="16">mdi-clock-outline</v-icon>
+                  {{ time(m.ts) }}</span
+                >
+              </div>
             </div>
           </div>
 
@@ -438,7 +452,7 @@ export default {
 
     async loadBookingRoomslist() {
       this.bookingsList = [...new Set(this.bookingsListdata.map((e) => e.id))];
-      console.log(this.bookingsList);
+      // console.log(this.bookingsList);
       this.activeRoom = this.bookingsList[0];
 
       // connection indicators

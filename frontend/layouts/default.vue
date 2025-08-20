@@ -33,7 +33,7 @@
       >
         <img :src="getCompanyLogo || '/no-image.PNG'" />
       </v-avatar>
-      <v-badge
+      <!-- <v-badge
         class="mt-2 mr-1"
         :color="pendingNotificationsCount > 0 ? 'red' : 'green'"
         :content="
@@ -42,7 +42,72 @@
         overlap
       >
         <v-icon @click="gotoReservationPage()"> mdi-bell-ring </v-icon>
-      </v-badge>
+      </v-badge> -->
+      <v-menu
+        style="z-index: 9999 !important"
+        bottom
+        origin="center center"
+        offset-y
+        transition="scale-transition"
+      >
+        <template
+          v-slot:activator="{ on, attrs }"
+          style="z-index: 9999 !important"
+        >
+          <v-btn icon v-bind="attrs" v-on="on">
+            <v-badge
+              :color="
+                '  ' + notificationsMenuItems.length > 0 ? 'red' : 'green'
+              "
+              :content="
+                notificationsMenuItems.length == 0
+                  ? '0'
+                  : notificationsMenuItems.length
+              "
+              style="top: 10px; left: -19px; z-index: 9999 !important"
+            >
+              <v-icon style="top: -10px; left: 10px" class="violet--text"
+                >mdi mdi-bell-ring</v-icon
+              >
+            </v-badge>
+          </v-btn>
+        </template>
+        <v-list style="z-index: 9999">
+          <v-list-item
+            style="height: 80px; padding-left: 5px"
+            :class="
+              notificationsMenuItems.length > 0 &&
+              index != notificationsMenuItems.length - 1
+                ? 'border-bottom'
+                : ''
+            "
+            v-for="(item, index) in notificationsMenuItems"
+            :key="index"
+          >
+            <v-list-item-content>
+              <v-list-item-title class="align-left text-left">
+                <v-row style="">
+                  <v-col cols="12" class="align-left text-left pr-1">
+                    <v-icon color="primary" size="16"
+                      >mdi-chat-processing-outline</v-icon
+                    >
+                    {{ item.sender }}</v-col
+                  >
+                  <v-col cols="12">
+                    <span style="font-size: 14px">
+                      <span>
+                        <div class="secondary-value">
+                          {{ item.message }}
+                        </div></span
+                      >
+                    </span>
+                  </v-col>
+                </v-row>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-menu
         nudge-bottom="50"
         nudge-left="20"
@@ -275,6 +340,7 @@ export default {
   },
   data() {
     return {
+      notificationsMenuItems: [],
       currentTime: "00:00:00",
       todayDate: "---",
       activeMenu: null, // Keep track of the active menu
@@ -710,6 +776,9 @@ export default {
 
     // Construct the final date string
     this.todayDate = `${day}-${month}-${year}, ${dayName}`;
+
+    //load mqtt chat messages
+    this.connectCheckMQTTMessages();
   },
 
   computed: {
@@ -740,6 +809,49 @@ export default {
     },
   },
   methods: {
+    connectCheckMQTTMessages() {
+      // connection indicators
+      const c = this.$mqtt?.raw;
+      if (c) {
+        this.online = c.connected;
+        c.on("connect", () => {
+          console.log("connected to mqtt server");
+
+          // this.online = true;
+        });
+        c.on("reconnect", () => {
+          // this.online = false;
+          console.log("reconnecting to mqtt server");
+        });
+        c.on("close", () => {
+          // this.online = false;
+          console.log("closed connection   mqtt server");
+        });
+      }
+      let wildcard = `chat/hotel/${this.$auth.user?.company?.id}/room/+/message`;
+
+      // wildcard messages
+      const unsub = this.$mqtt.sub(wildcard, (m, topic) => {
+        console.log("Message", m);
+
+        null;
+
+        let notification = {
+          id: m.id,
+          room: m.room_number,
+          sender: m.sender,
+          type: "Text",
+          message: m.text,
+        };
+
+        this.notificationsMenuItems.push(notification);
+
+        // const segs = (topic || "").split("/");
+        // const bookingId = String(segs[4] || "");
+
+        // if (!m) return;
+      });
+    },
     isActive(menu) {
       return this.activeMenu === menu;
     },
@@ -758,7 +870,7 @@ export default {
     },
     gotoReservationPage() {
       this.pendingNotificationsCount = 0;
-      this.$router.push("/reservation/up_coming");
+      this.$router.push("/reservation");
     },
     loadNotificationMenu() {
       let company_id = this.$auth.user?.company?.id || 0;
@@ -801,6 +913,19 @@ export default {
           }
 
           this.pendingNotificationsCount = pendingcount;
+          if (pendingcount > 0) {
+            this.notificationsMenuItems = [
+              {
+                id: 1,
+                room: "Online Bookings",
+                message: `You have ${pendingcount} new Online booking(s)!`,
+              },
+            ];
+          } else {
+            this.notificationsMenuItems = this.notificationsMenuItems.filter(
+              (item) => item.id !== 1
+            );
+          }
         } catch (Exp) {}
       });
     },
