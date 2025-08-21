@@ -257,6 +257,36 @@ export default ({ app }, inject) => {
 
       return `${year}-${month}-${day} ${hours}:${minutes} `;
     },
+    getSecondsInTimezone(time, timeZone) {
+      // Current UTC timestamp (ms)
+      const now = new Date(time);
+
+      // Format the time in the target timezone
+      const formatter = new Intl.DateTimeFormat("en-US", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+
+      // Extract date/time parts
+      const parts = {};
+      formatter.formatToParts(now).forEach(({ type, value }) => {
+        parts[type] = value;
+      });
+
+      // Build a date string as if it's local time in that timezone
+      const localTimeString = `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}:${parts.second}`;
+
+      // console.log(localTimeString);
+
+      // Parse that string as if it's UTC (to get correct epoch seconds for that timezone clock time)
+      return Math.floor(new Date(localTimeString).getTime());
+    },
     dateWithDayShortName: (inputdate) => {
       if (
         inputdate == "---" ||

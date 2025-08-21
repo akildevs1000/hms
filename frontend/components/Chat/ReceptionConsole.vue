@@ -415,7 +415,7 @@ export default {
   },
   async mounted() {
     await this.getDataFromApi();
-
+    this.getChatUnreadmessages();
     // setTimeout(() => {
     //   this.$refs.messageInput.focus();
     // }, 3000);
@@ -455,6 +455,8 @@ export default {
       // console.log(this.bookingsList);
       this.activeRoom = this.bookingsList[0];
 
+      localStorage.setItem("active_booking_room_id", this.activeRoom || "");
+
       // connection indicators
       const c = this.$mqtt?.raw;
       if (c) {
@@ -470,7 +472,7 @@ export default {
         });
       }
 
-      // wildcard messages
+      // wildcard messages - All Rooms messages listner
       const unsub = this.$mqtt.sub(this.wildcard, (m, topic) => {
         const segs = (topic || "").split("/");
         const bookingId = String(segs[4] || "");
@@ -490,6 +492,34 @@ export default {
         } else {
           // this.scrollToEnd();
           // this.$nextTick(this.scrollToEnd);
+
+          // Get existing IDs (or empty array if none)
+          let ackMessageIDs = [];
+          try {
+            ackMessageIDs =
+              JSON.parse(localStorage.getItem("ack_messages_ids")) || [];
+          } catch (e) {
+            ackMessageIDs = [];
+          }
+
+          // Add the new ID if not already stored
+          if (!ackMessageIDs.includes(m.id)) {
+            ackMessageIDs.push(m.id);
+          }
+          // console.log("ackMessageIDs", ackMessageIDs);
+
+          if (ackMessageIDs != "") {
+            // Do something with ackMessageIDs
+            localStorage.setItem(
+              "ack_messages_ids",
+              JSON.stringify(ackMessageIDs)
+            );
+          } else {
+            localStorage.setItem("ack_messages_ids", JSON.stringify([]));
+          }
+
+          // Save back to localStorage
+
           this.ack(bookingId, m.id);
         }
         setTimeout(() => {
@@ -653,6 +683,9 @@ export default {
 
       const key = String(bookingRoomId);
       this.activeRoom = bookingRoomId;
+
+      localStorage.setItem("active_booking_room_id", this.activeRoom || "");
+
       this.$set(this.unread, key, 0);
 
       // typing subscribe per room
@@ -706,6 +739,35 @@ export default {
     handleFileSelect(event) {
       this.selectedFile = event.target.files[0] || null;
       console.log("Selected file:", this.selectedFile?.name);
+    },
+    async getChatUnreadmessages() {
+      if (this.chatUnreadMessagesStatus) return false;
+
+      this.chatUnreadMessagesStatus = true;
+
+      let company_id = this.$auth.user?.company?.id || 0;
+      //console.log("company_id", company_id);
+      if (company_id == 0) {
+        return false;
+      }
+      let options = {
+        params: {
+          company_id: company_id,
+        },
+      };
+
+      await this.$axios
+        .get(`chat_get_unread_messages_group_by_bookingid`, options)
+        .then(async ({ data }) => {
+          data.forEach((item) => {
+            item.booking_room_id;
+            this.$set(
+              this.unread,
+              item.booking_room_id,
+              item.unread_count * 2 || 0
+            );
+          });
+        });
     },
     async sendFile() {
       if (!this.selectedFile) {
@@ -800,7 +862,7 @@ export default {
       if (!text || !this.activeRoom) return;
       const r = String(this.activeRoom);
 
-      console.log("activeRoomBooking", this.activeRoomBooking);
+      // console.log("activeRoomBooking", this.activeRoomBooking);
       this.activeRoomBooking;
       let m = {
         id: Date.now() + "_" + Math.random().toString(36).slice(2),

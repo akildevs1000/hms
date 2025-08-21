@@ -44,15 +44,20 @@
         <v-icon @click="gotoReservationPage()"> mdi-bell-ring </v-icon>
       </v-badge> -->
       <v-menu
-        style="z-index: 9999 !important"
+        style="z-index: 9999 !important; background-color: #fff"
         bottom
         origin="center center"
         offset-y
         transition="scale-transition"
+        v-model="notificationsMenu"
       >
         <template
           v-slot:activator="{ on, attrs }"
-          style="z-index: 9999 !important"
+          style="
+            z-index: 9999 !important;
+            background-color: #fff;
+            max-height: 600px;
+          "
         >
           <v-btn icon v-bind="attrs" v-on="on">
             <v-badge
@@ -72,9 +77,17 @@
             </v-badge>
           </v-btn>
         </template>
-        <v-list style="z-index: 9999">
+        <v-list
+          style="
+            z-index: 9999;
+            max-height: 600px;
+            background-color: white;
+            z-index: 9999;
+          "
+        >
           <v-list-item
-            style="height: 80px; padding-left: 5px"
+            @click="goToPage('/chat')"
+            style="height: 80px; padding-left: 5px; background-color: white"
             :class="
               notificationsMenuItems.length > 0 &&
               index != notificationsMenuItems.length - 1
@@ -88,18 +101,43 @@
               <v-list-item-title class="align-left text-left">
                 <v-row style="">
                   <v-col cols="12" class="align-left text-left pr-1">
-                    <v-icon color="primary" size="16"
-                      >mdi-chat-processing-outline</v-icon
+                    <span v-if="String(item.type).toLowerCase() == 'text'">
+                      <v-icon color="primary" size="16"
+                        >mdi-chat-processing-outline</v-icon
+                      >
+                    </span>
+                    <span v-else-if="String(item.type).toLowerCase() == 'file'">
+                      <v-icon size="16" color="#139c4a">mdi-image</v-icon>
+                    </span>
+                    <span
+                      v-else-if="String(item.type).toLowerCase() == 'audio'"
                     >
-                    {{ item.sender }}</v-col
-                  >
-                  <v-col cols="12">
+                      <v-icon size="16" color="error">mdi-microphone</v-icon>
+                    </span>
+
+                    <v-chip label color="primary" small>
+                      {{ item.room_number || item.room_no }}</v-chip
+                    >
+                    {{ getSenderName(item.sender) }}
+                  </v-col>
+                  <v-col cols="12" class="pt-0">
                     <span style="font-size: 14px">
                       <span>
-                        <div class="secondary-value">
+                        <!-- <div class="secondary-value">
+                          {{
+                            item.type === "text"
+                              ? item.message
+                              : item.type == "file"
+                              ? "Image"
+                              : "Audio"
+                          }}
+                        </div> -->
+                        <span v-if="item.type == 'text'">
                           {{ item.message }}
-                        </div></span
-                      >
+                        </span>
+
+                        <span>at {{ $dateFormat.hm(item.ts) }}</span>
+                      </span>
                     </span>
                   </v-col>
                 </v-row>
@@ -340,6 +378,7 @@ export default {
   },
   data() {
     return {
+      notificationsMenu: false,
       notificationsMenuItems: [],
       currentTime: "00:00:00",
       todayDate: "---",
@@ -695,6 +734,9 @@ export default {
         icon: "mdi-logout",
         label: "Logout",
       },
+      updateAckStatusDBStatus: false,
+      chatUnreadMessagesStatus: false,
+      timezone: null,
     };
   },
 
@@ -739,6 +781,7 @@ export default {
       label: "Dashboard",
       name: "dashboard",
     });
+    this.getChatUnreadmessages();
   },
 
   mounted() {
@@ -746,17 +789,17 @@ export default {
     // console.log("company auth", this.$auth);
     //console.log("company", this.$auth.user);
 
-    let timezone = "Asia/Kolkata";
+    this.timezone = "Asia/Kolkata";
 
     if (this.$auth.user.company?.timezone) {
-      timezone = this.$auth.user.company.timezone.utc_time_zone;
+      this.timezone = this.$auth.user.company.timezone.utc_time_zone;
     }
 
     setInterval(() => {
       // this.currentTime = new Date().toLocaleTimeString([], { hour12: false });
 
       this.currentTime = new Intl.DateTimeFormat("en-US", {
-        timeZone: timezone, // Specify the desired timezone
+        timeZone: this.timezone, // Specify the desired timezone
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
@@ -779,6 +822,13 @@ export default {
 
     //load mqtt chat messages
     this.connectCheckMQTTMessages();
+
+    setInterval(() => {
+      this.getChatUnreadmessages();
+    }, 1000 * 30);
+    setInterval(() => {
+      this.getChatUnreadmessagesLocalStorage();
+    }, 1000);
   },
 
   computed: {
@@ -809,6 +859,119 @@ export default {
     },
   },
   methods: {
+    async getChatUnreadmessagesLocalStorage() {
+      try {
+        // console.log(
+        //   "ack_messages_ids -----------------------------------------"
+        // );
+        // Parse stored ack message IDs safely
+        let ackMessages = [];
+        try {
+          ackMessages = localStorage.getItem("ack_messages_ids");
+
+          ackMessages =
+            JSON.parse(localStorage.getItem("ack_messages_ids")) || [];
+          // console.log("ack_messages_ids ack_messages_ids", ackMessages);
+        } catch (error) {
+          console.error(
+            "Error parsing ack_messages_ids from localStorage",
+            error
+          );
+        }
+        // console.log("ack_messages_ids After Parse ", ackMessages);
+        // console.log(
+        //   "ack_messages_ids Notifications",
+        //   this.notificationsMenuItems
+        // );
+
+        // Filter out acknowledged messages
+        this.notificationsMenuItems = this.notificationsMenuItems.filter(
+          (item) => !ackMessages.includes(item.id)
+        );
+
+        if (this.notificationsMenuItems.length == 0) {
+          ackMessages = [];
+          localStorage.setItem("ack_messages_ids", JSON.stringify(ackMessages));
+        } else {
+          localStorage.setItem("ack_messages_ids", JSON.stringify(ackMessages));
+        }
+
+        this.notificationsMenuItems.forEach((notification) => {
+          // console.log(
+          //   localStorage.getItem("active_booking_room_id"),
+          //   notification.booking_room_id
+          // );
+
+          if (
+            this.notificationsMenuItems.length > 5 &&
+            localStorage.getItem("active_booking_room_id") &&
+            !this.updateAckStatusDBStatus &&
+            localStorage.getItem("active_booking_room_id") ==
+              notification.booking_room_id
+          ) {
+            this.updateAckStatusDBStatus = true;
+            this.$axios
+              .post("chat_update_agent_read_status", {
+                company_id: this.$auth.user?.company?.id,
+                booking_room_id: localStorage.getItem("active_booking_room_id"),
+              })
+              .then(async ({ data }) => {
+                await this.getChatUnreadmessages();
+                this.updateAckStatusDBStatus = false;
+              });
+          }
+        });
+
+        // console.log(
+        //   "ack_messages_ids After Filter ",
+        //   this.notificationsMenuItems
+        // );
+      } catch (e) {
+        console.error("Error reading ack_messages_ids from localStorage", e);
+      }
+    },
+    async getChatUnreadmessages() {
+      if (this.chatUnreadMessagesStatus) return false;
+
+      this.chatUnreadMessagesStatus = true;
+
+      let company_id = this.$auth.user?.company?.id || 0;
+      //console.log("company_id", company_id);
+      if (company_id == 0) {
+        return false;
+      }
+      let options = {
+        params: {
+          company_id: company_id,
+        },
+      };
+
+      await this.$axios
+        .get(`chat_get_unread_messages`, options)
+        .then(async ({ data }) => {
+          this.notificationsMenuItems = [];
+
+          data.forEach((message) => {
+            this.notificationsMenuItems.unshift({
+              id: message.id,
+              room: message.room,
+              sender: message.sender,
+              type: message.type,
+              message: message.text,
+              booking_room_id: message.booking_room_id,
+              ts: this.$dateFormat.getSecondsInTimezone(
+                message.ts,
+                this.timezone
+              ),
+              room_number: message.room_number,
+            });
+          });
+          // this.notificationsMenuItems.sort((a, b) => b.ts - a.ts);
+
+          this.chatUnreadMessagesStatus = false;
+          this.notificationsMenu = this.notificationsMenuItems.length > 0;
+        });
+    },
     connectCheckMQTTMessages() {
       // connection indicators
       const c = this.$mqtt?.raw;
@@ -832,28 +995,41 @@ export default {
 
       // wildcard messages
       const unsub = this.$mqtt.sub(wildcard, (m, topic) => {
-        console.log("Message", m);
+        if (m.role == "guest") {
+          let notification = {
+            id: m.id,
+            room: m.room_number,
+            sender: m.sender,
+            type: "text",
+            message: m.text,
+            booking_room_id: m.booking_room_id,
+            ts: m.ts,
+            room_number: m.room_number,
+          };
 
-        null;
+          // const ackMessages = [];
+          // try {
+          //   console.log(localStorage.getItem("ack_messages_ids"));
+          // } catch (error) {}
+          // console.log(ackMessages, m.id);
 
-        let notification = {
-          id: m.id,
-          room: m.room_number,
-          sender: m.sender,
-          type: "Text",
-          message: m.text,
-        };
+          // if (!ackMessages.includes(m.id)) {
+          this.notificationsMenuItems.unshift(notification);
+          // this.notificationsMenuItems.sort((a, b) => b.ts - a.ts);
 
-        this.notificationsMenuItems.push(notification);
-
-        // const segs = (topic || "").split("/");
-        // const bookingId = String(segs[4] || "");
-
-        // if (!m) return;
+          this.notificationsMenu =
+            this.notificationsMenuItems.length > 0 ? true : false;
+          // }
+        }
       });
     },
     isActive(menu) {
       return this.activeMenu === menu;
+    },
+    getSenderName(sender) {
+      const [rid, name] = String(sender).split(":");
+
+      return name || "---";
     },
     setActive(menu) {
       // console.log(menu);
@@ -945,6 +1121,9 @@ export default {
 
     changeSideBarColor(color) {
       this.sideBarcolor = color;
+    },
+    goToPage(page) {
+      this.$router.push(page);
     },
 
     goToCompany() {

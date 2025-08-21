@@ -218,7 +218,15 @@ class ChatMessagesController extends Controller
 
             return $this->response("Failed", null, false);
     }
+    public function updateAgentReadStatus(Request $request)
+    {
 
+
+        ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_reception", false)->update(["is_read_reception" => true]);
+
+
+        return   $this->response(true, null, "Success");
+    }
     public function getChatHistory(Request $request)
     {
 
@@ -258,5 +266,48 @@ class ChatMessagesController extends Controller
 
 
         return $model->paginate($request->per_page ?? 25);
+    }
+
+    public function getChatUnreadMessagesGroupByBookingId(Request $request)
+    {
+
+        //get unread messages count grouped by booking_id and  row count
+        $model = ChatMessages::where("company_id", $request->company_id)
+            ->where("is_read_reception", false)
+            ->selectRaw('booking_room_id, COUNT(*) as unread_count')
+            ->groupBy('booking_room_id');
+
+        return $model->get();
+    }
+
+    public function updateGuestReadStatus(Request $request)
+    {
+        ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_guest", false)->update(["is_read_guest" => true]);
+
+        return $this->response(true, null, "Success");
+    }
+    public function getChatGuestUnreadMessages(Request $request)
+    {
+        $model = ChatMessages::where("company_id", $request->company_id)
+
+            ->Where("is_read_guest", false);
+        $model->where("booking_room_id", $request->booking_room_id);
+
+
+        return $model->get();
+    }
+    public function getChatReceiptionUnreadMessages(Request $request)
+    {
+        $model = ChatMessages::where("company_id", $request->company_id)
+
+            ->Where("is_read_reception", false);
+
+
+
+        // if ($request->filled('booking_room_id')) {
+        //     $model->where("booking_room_id", $request->booking_room_id);
+        // }
+
+        return $model->orderBy("ts", "DESC")->get();
     }
 }
