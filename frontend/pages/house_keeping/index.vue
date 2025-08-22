@@ -151,6 +151,23 @@
           <v-col> Room Cleaning Info </v-col>
           <v-col cols="2">
             <v-autocomplete
+              label="Type"
+              outlined
+              dense
+              v-model="filters.action_type"
+              :items="[
+                { id: null, name: 'Select All' },
+                { id: 'cleaning ', name: 'cleaning ' },
+                { id: 'checkout', name: 'checkout' },
+              ]"
+              item-value="id"
+              item-text="name"
+              hide-details
+              @change="getDataFromApi()"
+            ></v-autocomplete>
+          </v-col>
+          <v-col cols="2">
+            <v-autocomplete
               label="Room"
               outlined
               dense
@@ -162,7 +179,7 @@
               @change="getDataFromApi()"
             ></v-autocomplete>
           </v-col>
-           <v-col cols="2">
+          <v-col cols="2">
             <v-autocomplete
               label="Staff List"
               outlined
@@ -175,7 +192,7 @@
               @change="getDataFromApi()"
             ></v-autocomplete>
           </v-col>
-          
+
           <v-col cols="2">
             <v-autocomplete
               label="Status"
@@ -188,7 +205,6 @@
                 { id: 'Dirty', name: 'Dirty' },
                 { id: 'Cleaned', name: 'Cleaned' },
                 { id: 'Neutral', name: 'Neutral' },
-                
               ]"
               item-value="id"
               item-text="name"
@@ -232,6 +248,19 @@
               </template>
               <template v-slot:item.start_date_time="{ item }">
                 {{ $dateFormat.dmy(item.created_at) }} {{ item.start_time }}
+              </template>
+
+              <template v-slot:item.attachments="{ item }">
+                <v-badge v-if="item?.attachments?.length"
+                  :content="item?.attachments?.length || 0"
+                  color="primary"
+                  overlap
+                  bordered
+                  class="mt-2"
+                 
+                >
+                  <v-icon color="primary" >mdi-paperclip</v-icon>
+                </v-badge>
               </template>
 
               <template v-slot:item.end_date_time="{ item }">
@@ -322,7 +351,7 @@ export default {
     currentDate,
     filters: {
       room_id: null,
-      status:null,
+      status: null,
       from_date: new Date().toJSON().slice(0, 10),
       to_date: new Date().toJSON().slice(0, 10),
     },
@@ -332,6 +361,11 @@ export default {
     data: [],
     errors: [],
     headers: [
+      {
+        text: "Type",
+        value: "action_type",
+      },
+
       {
         text: "Room",
         value: "room_no",
@@ -350,8 +384,12 @@ export default {
         value: "total_time",
       },
       {
-        text: "Clean By",
+        text: "Action By",
         value: "cleaned_by_user",
+      },
+      {
+        text: "Attachments",
+        value: "attachments",
       },
       // {
       //   text: "Response by",
@@ -369,7 +407,7 @@ export default {
       },
     ],
     rooms_list: [],
-    cleaners_list:[],
+    cleaners_list: [],
     componentKey: 1,
   }),
   watch: {

@@ -26,6 +26,7 @@ class StoreRequest extends FormRequest
         return [
             "room_id" => "required",
             "status" => "required",
+            "action_type" => "nullable",
             "start_time" => "required",
             "end_time" => "required",
             "total_time" => "required",

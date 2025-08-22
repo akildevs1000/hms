@@ -47,6 +47,10 @@ class RoomCleaningController extends Controller
             $query->where('cleaned_by_user_id', request('cleaned_by_user_id'));
         }
 
+        if (request()->has('action_type')) {
+            $query->where('action_type', request('action_type'));
+        }
+
         $query->orderBy("id", "desc");
 
         $query->with("room", "cleaned_by_user", "response_by_user");

@@ -49,8 +49,7 @@ jobs:
           sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no "$SSH_USERNAME@$SERVER_IP" '
             # Backup existing app if it exists
             if [ -d /var/www/myhotel2cloud/frontend/.nuxt ]; then
-              CURRENT_DATE=$(date +"%Y%m%d");
-              cp -r /var/www/myhotel2cloud/frontend/.nuxt /var/www/myhotel2cloud/frontend/.nuxt-version-$CURRENT_DATE;
+              cp -r /var/www/myhotel2cloud/frontend/.nuxt /var/www/myhotel2cloud/frontend/.nuxt-backup;
             fi
 
             # Pull the latest changes
