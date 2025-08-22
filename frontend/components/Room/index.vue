@@ -53,6 +53,8 @@
                   small
                   :hide-details="true"
                   :items="floors"
+                  item-text="name"
+                  item-value="number"
                   placeholder="Select Floor"
                 ></v-autocomplete>
                 <span v-if="errors && errors.floor_no" class="error--text">{{
@@ -459,15 +461,25 @@ export default {
     snackbarColor: "red",
     snackbarResponse: "",
     viewMode: false,
-    floors: [
-      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    ],
+    floors: [],
   }),
   mounted() {
     this.reload();
     this.getRoomTypesData();
+    this.getFloors();
   },
   methods: {
+    getFloors() {
+      this.$axios
+        .get(`floor-list`, {
+          params: {
+            company_id: this.$auth.user.company.id,
+          },
+        })
+        .then(({ data }) => {
+          this.floors = data;
+        });
+    },
     updateQRCode() {
       this.data.forEach(async (e) => {
         let url = `https://customer.myhotel2cloud.com/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
