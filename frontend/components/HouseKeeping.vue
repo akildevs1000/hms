@@ -266,9 +266,11 @@
                           :hide-details="true"
                           dense
                         ></v-text-field>
-                        <span v-if="errors && errors.device_id" class="error--text">{{
-                          errors.device_id[0]
-                        }}</span>
+                        <span
+                          v-if="errors && errors.device_id"
+                          class="error--text"
+                          >{{ errors.device_id[0] }}</span
+                        >
                       </v-col>
 
                       <v-col cols="12">
@@ -499,19 +501,7 @@ export default {
         title: "Mr",
         name: "",
         last_name: "",
-        password: "",
-        password_confirmation: "",
-        email: "",
-        mobile: "",
-        is_active: 1,
-        enable_whatsapp_otp: 0,
-      },
-
-      defaultItem: {
-        role_id: 0,
-        title: "Mr",
-        name: "",
-        last_name: "",
+        property_code: null,
         password: "",
         password_confirmation: "",
         email: "",
@@ -557,8 +547,28 @@ export default {
       return this.editedIndex === -1 ? "New" : "Edit";
     },
   },
-  created() {},
+  async created() {
+    try {
+      const companyId = this.$auth?.user?.company_id;
+      if (!companyId) {
+        console.warn("No company ID found.");
+        return;
+      }
 
+      const { data } = await this.$axios.get(
+        `company-property-code/${companyId}`
+      );
+
+      if (data) {
+        this.editedItem.property_code = data;
+      } else {
+        console.warn("No property code returned from API.");
+      }
+    } catch (error) {
+      console.error("Failed to fetch property code:", error);
+    } finally {
+    }
+  },
   methods: {
     reload() {
       this.isFilter = false;
@@ -699,6 +709,10 @@ export default {
       }
       if (this.editedItem.device_id) {
         payload.append("device_id", this.editedItem.device_id);
+      }
+
+      if (this.editedItem.property_code) {
+        payload.append("property_code", this.editedItem.property_code);
       }
 
       payload.append("is_active", this.editedItem.is_active);

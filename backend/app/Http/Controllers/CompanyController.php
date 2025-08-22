@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Company\CompanyRequest;
@@ -17,14 +16,12 @@ use App\Models\CompanyDocument;
 use App\Models\Device;
 use App\Models\Role;
 use App\Models\User;
-use App\Notifications\CompanyCreationNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
-use TechTailor\RPG\Facade\RPG;
 
 class CompanyController extends Controller
 {
@@ -62,10 +59,21 @@ class CompanyController extends Controller
         $record = Company::with(['user', 'contact', 'branches', 'modules', 'trade_license'])->where('id', $id)->first();
 
         return Response::json([
-            'record' => $record,
-            'status' => true,
+            'record'  => $record,
+            'status'  => true,
             'message' => null,
         ], 200);
+    }
+
+    public function getPropertyCode($id)
+    {
+        $company = Company::find($id);
+
+        if (! $company) {
+            return null;
+        }
+
+        return $company->property_code;
     }
 
     public function store(StoreRequest $request)
@@ -79,41 +87,41 @@ class CompanyController extends Controller
 
         $data = $request->validated();
         $user = [
-            "name" => "ignore",
-            "password" => Hash::make($randPass),
-            "email" => $data['email'],
-            "is_master" => 1,
+            "name"        => "ignore",
+            "password"    => Hash::make($randPass),
+            "email"       => $data['email'],
+            "is_master"   => 1,
             "first_login" => 1,
 
         ];
 
         $company = [
-            "name" => $data['company_name'],
-            "location" => $data['location'],
-            "member_from" => $data['member_from'],
-            "expiry" => $data['expiry'],
+            "name"         => $data['company_name'],
+            "location"     => $data['location'],
+            "member_from"  => $data['member_from'],
+            "expiry"       => $data['expiry'],
             "max_employee" => $data['max_employee'],
-            "max_devices" => $data['max_devices'],
+            "max_devices"  => $data['max_devices'],
             "company_code" => Company::max('id') + 1,
 
-            "no_branch" => $request->no_branch ? 1 : 0,
+            "no_branch"    => $request->no_branch ? 1 : 0,
             "max_branches" => $request->max_branches ? 1 : 0,
-            "lat" => $request->lat,
-            "lon" => $request->lon,
+            "lat"          => $request->lat,
+            "lon"          => $request->lon,
         ];
 
         if (isset($request->logo)) {
 
-            $file = $request->file('logo');
-            $ext = $file->getClientOriginalExtension();
+            $file     = $request->file('logo');
+            $ext      = $file->getClientOriginalExtension();
             $fileName = time() . '.' . $ext;
             $request->file('logo')->move(public_path('/upload'), $fileName);
             $company['logo'] = $fileName;
         }
 
         $contact = [
-            "name" => $data['contact_name'],
-            "number" => $data['number'],
+            "name"     => $data['contact_name'],
+            "number"   => $data['number'],
             "position" => $data['position'],
             "whatsapp" => $data['whatsapp'],
         ];
@@ -123,20 +131,20 @@ class CompanyController extends Controller
         try {
             $role = Role::firstOrCreate(['name' => 'company']);
 
-            if (!$role) {
+            if (! $role) {
                 return $this->response('Role cannot add.', null, false);
             }
 
             $user["role_id"] = $role->id;
 
-            if (!$user) {
+            if (! $user) {
                 return $this->response('User cannot add.', null, false);
             }
 
             $company = Company::create($company);
 
             $user["company_id"] = $company->id;
-            $user = User::create($user);
+            $user               = User::create($user);
 
             $company->user_id = $user->id;
             $company->save();
@@ -147,7 +155,7 @@ class CompanyController extends Controller
             //     NotificationsController::toSend($user, new CompanyCreationNotification, $company);
             // }
 
-            if (!$company) {
+            if (! $company) {
                 return $this->response('Company cannot add.', null, false);
             }
 
@@ -155,7 +163,7 @@ class CompanyController extends Controller
 
             $contact = CompanyContact::create($contact);
 
-            if (!$contact) {
+            if (! $contact) {
                 return $this->response('Contact cannot add.', null, false);
             }
 
@@ -163,7 +171,7 @@ class CompanyController extends Controller
 
             DB::commit();
 
-            $record = Company::with(['user', 'contact'])->find($company->id);
+            $record       = Company::with(['user', 'contact'])->find($company->id);
             $record->pass = $randPass;
 
             return $this->response('Company Successfully created.', $record, true);
@@ -175,9 +183,9 @@ class CompanyController extends Controller
 
     public function destroy($id)
     {
-        $record = Company::find($id);
-        $user = User::find($record->user_id);
-        $contact = CompanyContact::where('company_id', $id);
+        $record       = Company::find($id);
+        $user         = User::find($record->user_id);
+        $contact      = CompanyContact::where('company_id', $id);
         $assignModule = AssignModule::where('company_id', $id);
         if ($contact->delete()) {
             $record->delete();
@@ -197,7 +205,7 @@ class CompanyController extends Controller
             'name',
             'location',
             'contact' => ['name', 'number', 'position', 'whatsapp'],
-            'user' => ['name', 'email'],
+            'user'    => ['name', 'email'],
         ];
 
         $model = $this->process_search($model, $key, $fields);
@@ -221,12 +229,12 @@ class CompanyController extends Controller
 
     public function update_log($request, $id)
     {
-        $file = $request->file('logo');
-        $ext = $file->getClientOriginalExtension();
+        $file     = $request->file('logo');
+        $ext      = $file->getClientOriginalExtension();
         $fileName = time() . '.' . $ext;
         $request->file('logo')->move(public_path('/upload'), $fileName);
         $company = Company::find($id)->update(["logo" => $fileName]);
-        if (!$company) {
+        if (! $company) {
             return $this->response('Company cannot updated.', null, false);
         }
         return $this->response('Logo successfully updated.', $company, true);
@@ -240,21 +248,21 @@ class CompanyController extends Controller
         if ($request->logo_only == 1) {
             return $this->update_log($request, $id);
         }
-        $data["no_branch"] = $request->no_branch ? 1 : 0;
+        $data["no_branch"]    = $request->no_branch ? 1 : 0;
         $data["max_branches"] = $request->max_branches;
-        $data["lat"] = $request->lat;
-        $data["lon"] = $request->lon;
+        $data["lat"]          = $request->lat;
+        $data["lon"]          = $request->lon;
 
         if (isset($request->logo)) {
-            $file = $request->file('logo');
-            $ext = $file->getClientOriginalExtension();
+            $file     = $request->file('logo');
+            $ext      = $file->getClientOriginalExtension();
             $fileName = time() . '.' . $ext;
             $request->file('logo')->move(public_path('/upload'), $fileName);
             $data['logo'] = $fileName;
         }
 
         $company = Company::find($id)->update($data);
-        if (!$company) {
+        if (! $company) {
             return $this->response('Company cannot updated.', null, false);
         }
 
@@ -262,11 +270,11 @@ class CompanyController extends Controller
     }
     public function updateSettings(Request $request, $id)
     {
-        $data["whatsapp_instance_id"] = $request->whatsapp_instance_id;
+        $data["whatsapp_instance_id"]  = $request->whatsapp_instance_id;
         $data["whatsapp_access_token"] = $request->whatsapp_access_token;
-        $company = Company::find($id)->update($data);
+        $company                       = Company::find($id)->update($data);
 
-        if (!$company) {
+        if (! $company) {
             return $this->response('Company cannot updated.', null, false);
         }
         return $this->response('Company has been updated.', null, true);
@@ -274,12 +282,11 @@ class CompanyController extends Controller
 
     public function updateCurrency(Request $request, $id)
     {
-        if (!Company::whereId($id)->update(["currency" => $request->currency])) {
+        if (! Company::whereId($id)->update(["currency" => $request->currency])) {
             return $this->response('Company cannot updated.', null, false);
         }
         return $this->response('Company has been updated.', null, true);
     }
-
 
     public function updateContact(ContactRequest $request, $id)
     {
@@ -291,7 +298,7 @@ class CompanyController extends Controller
             $request->validated()
         );
 
-        if (!$contact) {
+        if (! $contact) {
             return $this->response('Contact cannot updated.', null, false);
         }
 
@@ -301,7 +308,7 @@ class CompanyController extends Controller
     public function updateCompanyGeographic(GeographicUpdateRequest $request, $id)
     {
         $geographic = Company::find($id)->update($request->validated());
-        if (!$geographic) {
+        if (! $geographic) {
             return $this->response('Geographic Info cannot updated.', null, false);
         }
 
@@ -314,19 +321,19 @@ class CompanyController extends Controller
         $user = User::find(Company::find($id)->user_id);
 
         $arr = [
-            "password" => Hash::make($data["password"]),
+            "password"    => Hash::make($data["password"]),
             "first_login" => 0,
         ];
         if ($request->is_master) {
             $record = $user->update($arr);
-            if (!$record) {
+            if (! $record) {
                 return $this->response('User cannot update.', null, false);
             }
             return $this->response('User successfully updated.', $record, true);
         } else {
             if (Hash::check($request->current_password, $user->password)) {
                 $record = $user->update($arr);
-                if (!$record) {
+                if (! $record) {
                     return $this->response('User cannot update.', null, false);
                 }
                 return $this->response('User successfully updated.', $record, true);
@@ -342,17 +349,17 @@ class CompanyController extends Controller
     public function documentStore(Request $request)
     {
         $validated = $request->validate([
-            "name" => "required|min:3|max:20",
+            "name"        => "required|min:3|max:20",
             "description" => "nullable|min:3|max:100",
-            'document' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'company_id' => 'required',
+            'document'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'company_id'  => 'required',
         ]);
 
         try {
 
             if (isset($request->document)) {
-                $file = $request->file('document');
-                $ext = $file->getClientOriginalExtension();
+                $file     = $request->file('document');
+                $ext      = $file->getClientOriginalExtension();
                 $fileName = time() . '.' . $ext;
                 $request->file('document')->move(public_path('/company_document'), $fileName);
                 $validated['path'] = $fileName;
@@ -370,15 +377,15 @@ class CompanyController extends Controller
     public function documentUpdate(Request $request, $id)
     {
         $validated = $request->validate([
-            "name" => "required|min:3|max:20",
+            "name"        => "required|min:3|max:20",
             "description" => "nullable|min:3|max:100",
-            'document' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'document'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
         try {
             if (isset($request->document)) {
-                $file = $request->file('document');
-                $ext = $file->getClientOriginalExtension();
+                $file     = $request->file('document');
+                $ext      = $file->getClientOriginalExtension();
                 $fileName = time() . '.' . $ext;
                 $request->file('document')->move(public_path('/company_document'), $fileName);
                 $validated['path'] = $fileName;
@@ -419,7 +426,7 @@ class CompanyController extends Controller
 
         $context = stream_context_create([
             "ssl" => [
-                "verify_peer" => false,
+                "verify_peer"      => false,
                 "verify_peer_name" => false,
             ],
         ]);

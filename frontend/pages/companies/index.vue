@@ -79,7 +79,7 @@
                     </v-col>
                     <v-col>
                       <v-row>
-                        <v-col cols="4">
+                        <v-col cols="3">
                           <v-text-field
                             label="Company Name"
                             dense
@@ -94,7 +94,7 @@
                             >{{ errors.name[0] }}</span
                           >
                         </v-col>
-                        <v-col cols="4">
+                        <v-col cols="3">
                           <v-text-field
                             label="Company Email"
                             dense
@@ -109,7 +109,7 @@
                             >{{ errors.email[0] }}</span
                           >
                         </v-col>
-                        <v-col cols="4">
+                        <v-col cols="3">
                           <v-text-field
                             readonly
                             label="Company Code"
@@ -120,8 +120,7 @@
                           >
                           </v-text-field>
                         </v-col>
-
-                        <v-col cols="4">
+                        <v-col cols="3">
                           <v-text-field
                             label="Mol ID"
                             dense
@@ -136,7 +135,16 @@
                             >{{ errors.mol_id[0] }}</span
                           >
                         </v-col>
-
+                        <v-col cols="4">
+                          <v-text-field
+                            label="Property Code"
+                            dense
+                            outlined
+                            hide-details
+                            v-model="company_payload.property_code"
+                          >
+                          </v-text-field>
+                        </v-col>
                         <v-col cols="4">
                           <v-text-field
                             label="P.O Box"
@@ -841,6 +849,8 @@ export default {
       payload.append("mol_id", this.company_payload.mol_id);
       payload.append("p_o_box_no", this.company_payload.p_o_box_no);
       payload.append("currency", this.company_payload.currency);
+      payload.append("property_code", this.company_payload.property_code);
+      
 
       this.start_process(`/company/${this.id}/update`, payload, `Company`);
     },

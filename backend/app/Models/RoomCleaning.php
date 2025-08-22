@@ -12,6 +12,7 @@ class RoomCleaning extends Model
     const DIRTY   = "Dirty";
     const CLEANED = "Cleaned";
     const NEUTRAL = "Neutral";
+    const CLEANING_IN_PROGRESS = "Cleaning In Progress";
 
     protected $guarded = [];
 

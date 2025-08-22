@@ -241,6 +241,7 @@
             <v-tabs v-model="activeTab" dense flat right>
               <v-tab> Rooms </v-tab>
               <v-tab> Categories </v-tab>
+              <v-tab> Floor </v-tab>
               <v-tab-item>
                 <v-card flat>
                   <v-card-text>
@@ -357,6 +358,13 @@
                   </v-col>
                 </div>
                 <NoAccess v-else />
+              </v-tab-item>
+              <v-tab-item>
+                <v-card flat>
+                  <v-card-text>
+                    <Floor />
+                  </v-card-text>
+                </v-card>
               </v-tab-item>
             </v-tabs>
           </v-col>

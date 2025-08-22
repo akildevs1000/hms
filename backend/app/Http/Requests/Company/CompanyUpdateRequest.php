@@ -47,8 +47,8 @@ class CompanyUpdateRequest extends FormRequest
 
             'name' => ['nullable'],
             'location' => ['nullable'],
-
-
+            
+            'property_code' => ['nullable'],
         ];
     }
 

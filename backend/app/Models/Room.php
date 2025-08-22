@@ -116,6 +116,13 @@ class Room extends Model
             ->whereDate("created_at", date("Y-m-d"));
     }
 
+    public function last_cleaned()
+    {
+        return $this->hasOne(RoomCleaning::class)
+            ->whereDate("created_at", date("Y-m-d"))
+            ->latest('created_at');
+    }
+
     public function is_cleaned()
     {
         return $this->hasMany(RoomCleaning::class)

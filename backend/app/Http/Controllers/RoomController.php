@@ -662,11 +662,13 @@ class RoomController extends Controller
 
         $todayDate = $request->filled("filter_date") ? $request->filter_date : date('Y-m-d');
 
-        $AvailableRooms = Room::with("is_cleaned", "is_neutral", "is_dirty")
+        $AvailableRooms = Room::with("is_cleaned", "is_neutral", "is_dirty", "last_cleaned")
             ->withCount("room_cleaning_status")
+            ->whereNotNull("floor_no")
+            ->whereHas("room_type")
             ->where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
 
-        $BlockedRooms = Room::with('device', "is_cleaned", "is_neutral", "is_dirty")->withCount("room_cleaning_status")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
+        $BlockedRooms = Room::with('device', "is_cleaned", "is_neutral", "is_dirty", "last_cleaned")->withCount("room_cleaning_status")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
 
         $expectCheckOut = Room::with('device')
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
@@ -695,7 +697,7 @@ class RoomController extends Controller
                     ->where('booking_status', '!=', 0);           // Exclude non-active bookings
             });
         })
-            ->with(['is_cleaned', "is_neutral", "is_dirty", 'device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
+            ->with(['is_cleaned', "is_neutral", "is_dirty", "last_cleaned", 'device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
 
                 $q->whereNotNull('room_id');
                 $q->where('company_id', $company_id);
@@ -713,7 +715,7 @@ class RoomController extends Controller
             ->withCount("room_cleaning_status")
             ->get();
 
-        $Occupied = Room::with('device', 'is_cleaned', "is_neutral", "is_dirty")
+        $Occupied = Room::with('device', 'is_cleaned', "is_neutral", "is_dirty", "last_cleaned")
             ->withCount("room_cleaning_status")
         // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
@@ -739,7 +741,7 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned", "is_neutral", "is_dirty"])
+        $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned", "is_neutral", "is_dirty", "last_cleaned"])
             ->withCount("room_cleaning_status")
             ->whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
                 $q->where('company_id', $company_id)
@@ -749,6 +751,9 @@ class RoomController extends Controller
                             ->whereDate('check_out', '>=', $todayDate)
                             ->where("is_dirty", 1);
                     });
+            })
+            ->whereDoesntHave('last_cleaned', function ($q) {
+                $q->where('status', "Cleaned");
             })
             ->with(['bookedRoom' => function ($q) use ($company_id) {
                 $q->where("company_id", $company_id)
