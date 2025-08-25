@@ -1,6 +1,10 @@
 export default ({ $axios, store }, inject) => {
-  // Override baseURL dynamically
+
   $axios.setBaseURL('https://backend.myhotel2cloud.com/api/');
+
+  if (process.env.LOCAL_IP == "local") {
+    $axios.setBaseURL('https://hms-backend.test/api/');
+  }
 
   $axios.onRequest(async (config) => {
     let user = store.state.auth.user;
