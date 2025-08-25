@@ -491,7 +491,6 @@ export default {
         });
       });
     },
-
     async viewQRCode(qrURL) {
       this.dialogQRcode = true;
       await this.generateQRCode(qrURL, 500);
