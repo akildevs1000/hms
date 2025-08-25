@@ -483,6 +483,7 @@ export default {
 
     updateQRCode() {
       this.data.forEach(async (e) => {
+        //CUSTOMER_APP_URL
         let url = `${process.env.CUSTOMER_APP_URL}?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
 
         e.qrURL = url;
