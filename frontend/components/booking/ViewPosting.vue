@@ -17,11 +17,7 @@
         <div class="mb-1 text-right">
           <AssetsIcon
             icon="printer-outline"
-            @click="
-              $utils.open_external_link(
-                `${process.env.BACKEND_URL}posting-download/${evenIid}`
-              )
-            "
+            @click="$utils.open_external_link(`posting-download/${evenIid}`)"
           />
         </div>
         <AssetsTable

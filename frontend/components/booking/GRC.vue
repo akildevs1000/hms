@@ -255,7 +255,7 @@ export default {
       let id = this.bookingId;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}${url}/${id}`);
+      element.setAttribute("href", `${url}/${id}`);
       document.body.appendChild(element);
       element.click();
     },

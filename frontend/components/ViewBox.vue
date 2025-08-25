@@ -87,7 +87,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        // `${process.env.BACKEND_URL}download_customer_attachments/${this.booking_id}`
+        // `download_customer_attachments/${this.booking_id}`
         `https://hms-backend.test/api/download_customer_attachments/${this.booking_id}`
       );
       document.body.appendChild(element);
@@ -98,7 +98,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        // `${process.env.BACKEND_URL}${url}/${this.booking_id}`
+        // `${url}/${this.booking_id}`
         `https://hms-backend.test/api/${url}/${this.booking_id}`
       );
       document.body.appendChild(element);

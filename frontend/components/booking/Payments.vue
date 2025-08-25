@@ -662,7 +662,7 @@ export default {
     pdfUrl() {
       if (!this.selectedItem) return null;
       let { id } = this.selectedItem;
-      return `${process.env.BACKEND_URL}invoice/${id}`;
+      return `invoice/${id}`;
     },
     subtotal_price() {
       return this.calculateSubtotal("inv_room_listing_price", "amount");

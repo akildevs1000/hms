@@ -485,9 +485,7 @@ export default {
       // }
 
       this.$utils.open_external_link(
-        `${process.env.BACKEND_URL}${endpoint}?${this.buildQueryParams(
-          this.filters
-        )}`
+        `${endpoint}?${this.buildQueryParams(this.filters)}`
       );
     },
     buildQueryParams(params) {

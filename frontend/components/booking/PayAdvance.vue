@@ -522,7 +522,7 @@ export default {
     redirect_to_invoice(id) {
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${process.env.BACKEND_URL}invoice/${id}`);
+      element.setAttribute("href", `invoice/${id}`);
       document.body.appendChild(element);
       element.click();
     },

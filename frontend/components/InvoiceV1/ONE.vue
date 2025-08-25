@@ -154,7 +154,7 @@ export default {
     pdfUrl() {
       if (!this.selectedItem) return null;
       let { id, invoice_type } = this.selectedItem;
-      return `${process.env.BACKEND_URL}invoice-${invoice_type}-print/${id}`;
+      return `invoice-${invoice_type}-print/${id}`;
     },
   },
   mounted() {},
@@ -170,7 +170,7 @@ export default {
     openExternalWindowForInvoice(selectedItem, model = "print") {
       if (!selectedItem) return;
       let { id, invoice_type } = selectedItem;
-      let url = `${process.env.BACKEND_URL}invoice-${invoice_type}-${model}/${id}`;
+      let url = `invoice-${invoice_type}-${model}/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

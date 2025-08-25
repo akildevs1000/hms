@@ -116,7 +116,7 @@ export default {
 
     async getSourceData(config) {
       let { data } = await this.$axios.get(
-        `${process.env.BACKEND_URL}report-by-source?company_id=1`,
+        `report-by-source?company_id=1`,
         config
       );
       this.tableData = data;

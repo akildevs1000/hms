@@ -26,9 +26,9 @@ jobs:
           npm install  # Install dependencies
 
       - name: Create Build
-        #env: 
-          #BACKEND_URL: ${{ secrets.BACKEND_URL }}
-          #APP_URL: ${{ secrets.APP_URL }}
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          APP_URL: ${{ secrets.APP_URL }}
         run: |
           cd frontend  # Change to the frontend directory
           npm run build || { echo "Build failed"; exit 1; }

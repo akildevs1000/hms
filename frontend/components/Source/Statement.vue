@@ -123,7 +123,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `${process.env.BACKEND_URL}${endpoint}/${this.source_id}/${this.statement_type}/${this.months[0]}/${this.months[1]}`
+        `${endpoint}/${this.source_id}/${this.statement_type}/${this.months[0]}/${this.months[1]}`
       );
       document.body.appendChild(element);
       element.click();
