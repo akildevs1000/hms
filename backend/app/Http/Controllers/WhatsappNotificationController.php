@@ -396,7 +396,7 @@ class WhatsappNotificationController extends Controller
             'company_id' => $company_id,
             "mediaUrl"   => null,
         ];
-        return WhatsappSender::dispatch($whatsappPayload);
+        WhatsappSender::dispatch($whatsappPayload);
         // return (new WhatsappController)->sentNotification($whatsappData);
     }
 }
