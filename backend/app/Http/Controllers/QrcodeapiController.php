@@ -26,7 +26,7 @@ class QrcodeapiController extends Controller
         // $columns = \Schema::getColumnListing('customers');
         $model = BookedRoom::with([
             'customer' => function ($query) {
-                $query->select('id', 'title', 'first_name', 'last_name', 'whatsapp'); // pick only the columns you want
+                $query->select('id', 'title', 'first_name', 'last_name', 'whatsapp', "email"); // pick only the columns you want
             }
         ]);
 
