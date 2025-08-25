@@ -1,35 +1,26 @@
 <template>
-  <div v-if="can(`chat_access`)">
-    <v-card class="px-1">
-      <Chat />
-    </v-card>
-  </div>
-  <NoAccess v-else />
+  <ReceptionConsole
+    v-if="company_id"
+    :hotelId="company_id"
+    :staffName="ReceiptionName"
+  />
 </template>
 <script>
+import ReceptionConsole from "../components/Chat/ReceptionConsole.vue";
 export default {
-  data: () => ({
-    stats: [],
-  }),
-  async created() {
-    await this.getBookingStats();
+  components: { ReceptionConsole },
+
+  data() {
+    return {
+      ReceiptionName: "",
+
+      company_id: null,
+    };
   },
-  methods: {
-    async getBookingStats() {
-      let config = {
-        params: {
-          company_id: this.$auth.user.company_id,
-        },
-      };
-      let { data } = await this.$axios.get(`get-bookings-source-type`, config);
-      this.stats = data;
-    },
-    can(per) {
-      let u = this.$auth.user;
-      return (
-        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
-      );
-    },
+
+  created() {
+    this.ReceiptionName = this.$auth.user.name;
+    this.company_id = this.$auth.user.company_id;
   },
 };
 </script>

@@ -45,7 +45,7 @@
       <table>
         <tr>
           <th
-            style="font-size:13px"
+            style="font-size: 13px"
             v-for="(item, index) in headers"
             :key="index"
           >
@@ -59,7 +59,7 @@
           absolute
           color="primary"
         ></v-progress-linear>
-        <tr style="font-size:13px" v-for="(item, index) in data" :key="index">
+        <tr style="font-size: 13px" v-for="(item, index) in data" :key="index">
           <td class="ps-3">
             <b>{{ item.id }}</b>
           </td>
@@ -126,8 +126,10 @@
               >Maintenance</v-btn
             >
           </td> -->
-          <td style="width:120px">{{ convert_date_format(item.check_in) }}</td>
-          <td style="width:120px">{{ convert_date_format(item.check_out) }}</td>
+          <td style="width: 120px">{{ convert_date_format(item.check_in) }}</td>
+          <td style="width: 120px">
+            {{ convert_date_format(item.check_out) }}
+          </td>
           <td>{{ item.total_price }}</td>
           <td>{{ item.advance_price }}</td>
           <td>{{ item.remaining_price }}</td>
@@ -189,7 +191,7 @@ export default {
     pagination: {
       current: 1,
       total: 0,
-      per_page: 10
+      per_page: 10,
     },
     options: {},
     endpoint: "reservation_list",
@@ -213,11 +215,11 @@ export default {
       // { text: "Payment Status" },
       { text: "Source" },
       { text: "Booking Date" },
-      { text: "Invoice" }
+      { text: "Invoice" },
     ],
     editedIndex: -1,
     response: "",
-    errors: []
+    errors: [],
   }),
 
   computed: {},
@@ -226,7 +228,7 @@ export default {
     search() {
       this.getDataFromApi();
       console.log("ff");
-    }
+    },
   },
   created() {
     // this.loading = true;
@@ -238,13 +240,13 @@ export default {
       let user = this.$auth;
       return;
       return (
-        (user && user.permissions.some(e => e.permission == permission)) ||
+        (user && user.permissions.some((e) => e.permission == permission)) ||
         user.master
       );
     },
 
     redirect_to_invoice(id) {
-      let url = "https://backend.myhotel2cloud.com/api/invoice/" + id;
+      let url = process.env.BACKEND_URL + "invoice/" + id;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);
@@ -268,7 +270,7 @@ export default {
         return "---";
       } else {
         let res = str.toString();
-        return res.replace(/\b\w/g, c => c.toUpperCase());
+        return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
     },
     onPageChange() {
@@ -282,8 +284,8 @@ export default {
         params: {
           per_page: this.pagination.per_page,
           company_id: this.$auth.user.company.id,
-          search: this.search
-        }
+          search: this.search,
+        },
       };
 
       this.$axios.get(`${url}?  page=${page}`, options).then(({ data }) => {
@@ -302,8 +304,8 @@ export default {
       } else if (this.search.length > 2) {
         this.getDataFromApi();
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\WhatsappSender;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -12,6 +13,17 @@ class WhatsappController extends Controller
 {
     public function sentNotification($data) //working OTP
     {
+
+        WhatsappSender::dispatch([
+            'recipient' => $data["to"],
+            'text' => $data["message"],
+            'company_id' => $data["company"]["id"],
+        ]);
+
+
+
+
+        /*
         return false;
 
         try {
@@ -39,9 +51,11 @@ class WhatsappController extends Controller
         } catch (\Throwable $th) {
             Log::channel("custom")->error("BookingController: " . $th);
         }
+
+        */
     }
 
-    public function sentOTP($data)
+    public function sentOTP($data) //OLD
     {
         try {
             if ($data['instance_id']) {

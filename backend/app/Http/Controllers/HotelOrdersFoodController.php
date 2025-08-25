@@ -93,7 +93,7 @@ class HotelOrdersFoodController extends Controller
             $data["status"] = 2; //delivered
             $status = HotelOrdersFood::where("company_id", $request->company_id)->whereId($request->hotel_order_id)->where("status", 1)->update($data);
 
-            //insert into postings 
+            //insert into postings
             $posting["item"] =  $request->item["food"]["name"];
             $posting["qty"] =  $request->item["qty"];
             $posting["amount"] = $request->item["food_price"] * $request->item["qty"];
@@ -111,8 +111,13 @@ class HotelOrdersFoodController extends Controller
             $posting["room"] = $request->item["room"]["room_no"];
             $posting["user_id"] = 2;
 
-            $postRequst = Request::create('/posting', 'POST',  $posting);
-            $data = (new PostingController)->store($postRequst);
+            // $postRequst = Request::create('/posting', 'POST',  $posting);
+            // $data = (new PostingController)->store($postRequst);
+            $controller = new PostingController();
+            $request = new Request($posting);
+            $response = $controller->store($request);
+
+
 
             return $this->response('Order Details are updated succesfully', $status, true);
         } catch (\Throwable $th) {

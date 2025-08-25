@@ -73,7 +73,7 @@ export default {
 
     process(type) {
       let comId = this.$auth.user.company.id;
-      let url = `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}`;
+      let url = `${process.env.BACKEND_URL}${type}?company_id=${comId}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

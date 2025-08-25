@@ -1,73 +1,73 @@
 <template>
-   <v-dialog v-model="idPreviewPopup" width="1100">
-      <!-- <template v-slot:activator="{ on, attrs }">
+  <v-dialog v-model="idPreviewPopup" width="1100">
+    <!-- <template v-slot:activator="{ on, attrs }">
         <v-btn block small color="primary" dark v-bind="attrs" v-on="on">
           ID <v-icon right>mdi-camera-outline</v-icon>
         </v-btn>
       </template> -->
-      <v-card>
-        <v-toolbar flat class="primary" dense dark>
-          Picture and ID
-          <v-spacer></v-spacer>
-          <v-icon @click="close"> mdi-close </v-icon>
-        </v-toolbar>
-        <v-card-text>
-          <v-container v-if="isValid">
-            <v-row>
-              <v-col cols="6">
-                <v-img :src="customer.captured_photo"></v-img>
-              </v-col>
-              <v-col cols="6">
-                <v-card outlined style="min-height: 400px">
-                  <v-img :src="customer.sign"></v-img>
-                </v-card>
-              </v-col>
-              <v-col cols="6">
-                <v-img :src="customer.id_frontend_side"></v-img>
-              </v-col>
-              <v-col cols="6">
-                <v-img :src="customer.id_backend_side"></v-img>
-              </v-col>
-              <!-- <v-col cols="12">
+    <v-card>
+      <v-toolbar flat class="primary" dense dark>
+        Picture and ID
+        <v-spacer></v-spacer>
+        <v-icon @click="close"> mdi-close </v-icon>
+      </v-toolbar>
+      <v-card-text>
+        <v-container v-if="isValid">
+          <v-row>
+            <v-col cols="6">
+              <v-img :src="customer.captured_photo"></v-img>
+            </v-col>
+            <v-col cols="6">
+              <v-card outlined style="min-height: 400px">
+                <v-img :src="customer.sign"></v-img>
+              </v-card>
+            </v-col>
+            <v-col cols="6">
+              <v-img :src="customer.id_frontend_side"></v-img>
+            </v-col>
+            <v-col cols="6">
+              <v-img :src="customer.id_backend_side"></v-img>
+            </v-col>
+            <!-- <v-col cols="12">
                 {{ url }}
               </v-col> -->
+          </v-row>
+        </v-container>
+        <v-container v-else>
+          <v-card outlined>
+            <v-row style="min-height: 350px" align="center" justify="center">
+              <v-col class="text-center"> No data found </v-col>
             </v-row>
-          </v-container>
-          <v-container v-else>
-            <v-card outlined>
-              <v-row style="min-height: 350px" align="center" justify="center">
-                <v-col class="text-center"> No data found </v-col>
-              </v-row>
-            </v-card>
-          </v-container>
-          <v-container>
-            <v-row>
-              <v-col cols="6">
-                <v-btn
-                  :loading="reloadLoading"
-                  class="primary"
-                  block
-                  @click="getData(BookingId)"
-                >
-                  <v-icon>mdi-reload</v-icon>
-                </v-btn>
-              </v-col>
-              <v-col cols="6">
-                <v-btn
-                  :disabled="!isValid"
-                  :loading="confirmLoading"
-                  class="primary"
-                  block
-                  @click="confirm"
-                >
-                  Confirm
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+          </v-card>
+        </v-container>
+        <v-container>
+          <v-row>
+            <v-col cols="6">
+              <v-btn
+                :loading="reloadLoading"
+                class="primary"
+                block
+                @click="getData(BookingId)"
+              >
+                <v-icon>mdi-reload</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
+              <v-btn
+                :disabled="!isValid"
+                :loading="confirmLoading"
+                class="primary"
+                block
+                @click="confirm"
+              >
+                Confirm
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 <script>
 export default {
@@ -76,7 +76,7 @@ export default {
     return {
       reloadLoading: false,
       confirmLoading: false,
-      endpoint: "https://backend.myhotel2cloud.com/api",
+      endpoint: process.env.BACKEND_URL,
       //   endpoint: "https://hms-backend.test/api",
       idPreviewPopup: false,
       customer: null,

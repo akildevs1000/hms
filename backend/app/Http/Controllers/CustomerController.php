@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Customer\StoreRequest;
@@ -44,7 +45,7 @@ class CustomerController extends Controller
             } else {
                 if ($sortBy == 'id_card_type.name') {
                     $model->orderBy(IdCardType::select('name')
-                            ->whereRaw('id_card_types.id = CAST(customers.id_card_type_id AS bigint)'), $sortDesc);
+                        ->whereRaw('id_card_types.id = CAST(customers.id_card_type_id AS bigint)'), $sortDesc);
                 }
             }
         } else {
@@ -199,7 +200,7 @@ class CustomerController extends Controller
     {
         $booking = Booking::where('id', $id)->with('bookedRooms', 'payments', 'customer', 'hallBooking.food', 'hallBooking.extraAmounts')
             ->with(["orderRooms" => fn($q) => $q->with("foodplan")])
-        // ->withSum("orderRooms", "total")
+            // ->withSum("orderRooms", "total")
             ->withSum("transactions", "credit")
             ->withSum("transactions", "debit")
             ->withSum("postings", "amount_with_tax")
@@ -265,7 +266,7 @@ class CustomerController extends Controller
         $bookingIds = array_column($res, 'id');
 
         $payments = Payment::with("booking")->whereIn('booking_id', $bookingIds)
-        // ->where('is_city_ledger', 0)
+            // ->where('is_city_ledger', 0)
             ->whereMonth('date', ">=", date("m", strtotime($request->from_date)))
             ->whereMonth('date', "<=", date("m", strtotime($request->to_date)));
 
@@ -322,7 +323,7 @@ class CustomerController extends Controller
         $bookingIds = array_column($res, 'id');
 
         $payments = Payment::with("booking")->whereIn('booking_id', $bookingIds)
-        // ->where('is_city_ledger', 0)
+            // ->where('is_city_ledger', 0)
             ->whereDate('date', ">=", $request->from_date)
             ->whereDate('date', "<=", $request->to_date);
 
@@ -442,7 +443,7 @@ class CustomerController extends Controller
             'from'          => date('M d, Y', strtotime($first)),
             'to'            => date('M d, Y', strtotime($last)),
         ])
-        // ->setPaper('a4', 'landscape')
+            // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->stream();
     }
@@ -476,7 +477,7 @@ class CustomerController extends Controller
             'from'          => date('M d, Y', strtotime($first)),
             'to'            => date('M d, Y', strtotime($last)),
         ])
-        // ->setPaper('a4', 'landscape')
+            // ->setPaper('a4', 'landscape')
             ->setPaper('a4', 'portrait')
             ->download();
     }

@@ -1,0 +1,313 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\BookedRoom;
+use App\Models\Booking;
+use App\Models\ChatMessages;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+
+class ChatMessagesController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // return $request->all();
+
+        $validate = [
+            "role" => "required",
+            "sender" => "required",
+            "booking_id" => "required",
+            "booking_room_id" => "required",
+            "company_id" => "required",
+
+
+            "room_id" => "required",
+            "room_number" => "required",
+            "ts" => "required",
+            "tsDb" => "required",
+
+            "text" => "required",
+            "type" => "required",
+            "filename" => "nullable",
+            "receiption_name" => "nullable",
+
+        ];
+
+        $data = $request->validate($validate);
+
+
+        $data["ts"] = date("Y-m-d H:i:s", $data["tsDb"] / 1000);
+        unset($data['tsDb']);
+
+        if ($data["role"] == "guest") {
+            $data["is_read_guest"] = true;
+            $data["is_read_reception"] = false;
+        } else {
+            $data["is_read_guest"] = false;
+            $data["is_read_reception"] = true;
+        }
+
+
+        $response =        ChatMessages::create($data);
+
+
+        //update chat messages table
+        if ($data["role"] == "guest") {
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_guest", false)->update(["is_read_guest" => true]);
+        } else {
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_reception", false)->update(["is_read_reception" => true]);
+        }
+
+        if ($response) {
+            return $this->response(true, null, "Success");
+        } else
+
+            return $this->response(false, null, "Success");
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\ChatMessages  $chatMessages
+     * @return \Illuminate\Http\Response
+     */
+    public function show(ChatMessages $chatMessages)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Models\ChatMessages  $chatMessages
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(ChatMessages $chatMessages)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\ChatMessages  $chatMessages
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, ChatMessages $chatMessages)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\ChatMessages  $chatMessages
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(ChatMessages $chatMessages)
+    {
+        //
+    }
+    public function downloadChatImage(Request $request)
+    {
+
+
+        $message = ChatMessages::find($request->id);
+
+        if (!$message) {
+            abort(404, 'Message not found.');
+        }
+
+        $path = public_path("hotel/chat/{$message->company_id}/{$message->booking_room_id}/{$message->filename}");
+
+        if (!File::exists($path)) {
+            abort(404, 'File not found.');
+        }
+
+
+
+        return  response()->download($path, $message->filename);
+    }
+    public function getChatUploadFile(Request $request)
+    {
+        $validate = [
+            "role" => "required",
+            "sender" => "required",
+            "booking_id" => "required",
+            "booking_room_id" => "required",
+            "company_id" => "required",
+            "room_id" => "required",
+            "room_number" => "required",
+            "ts" => "required",
+            "text" => "nullable",
+            "type" => "required",
+            "filename" => "nullable",
+            "receiption_name" => "nullable",
+
+        ];
+
+        $data = $request->validate($validate);
+
+
+
+        $data["ts"] = date("Y-m-d H:i:s", $data["ts"] / 1000);
+
+        $response =  ChatMessages::create($data);
+
+
+
+        if ($data["role"] == "guest") {
+
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_guest", false)->update(["is_read_guest" => true]);
+        } else {
+            ChatMessages::where("booking_room_id", $data["booking_room_id"])->where("is_read_reception", false)->update(["is_read_reception" => true]);
+        }
+
+        if ($response) {
+
+
+            if ($request->hasFile('file')) {
+
+                $file = $request->file('file');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = $response->id    . "." . $ext;
+
+
+                $folder = 'hotel/chat/' . $request->company_id . "/" . $request->booking_room_id;
+                $destinationPath = public_path($folder);
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                $file->move($destinationPath, $fileName);
+
+                ChatMessages::where("id", $response->id)->update(["filename" => $fileName]);
+
+                $url =  asset($folder . "/" . $fileName);
+                return $this->response(["url" => $url, "id" => $response->id], null, true);
+            }
+            return $this->response(["url" => null, "id" => $response->id], null, true);
+        } else
+
+            return $this->response("Failed", null, false);
+    }
+    public function updateAgentReadStatus(Request $request)
+    {
+
+
+        ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_reception", false)->update(["is_read_reception" => true]);
+
+
+        return   $this->response(true, null, "Success");
+    }
+    public function getChatHistory(Request $request)
+    {
+
+        if ($request->role == "guest") {
+
+            ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_guest", false)->update(["is_read_guest" => true]);
+        } else {
+            ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_reception", false)->update(["is_read_reception" => true]);
+        }
+
+        return  $model = ChatMessages::where("booking_room_id", $request->booking_room_id)
+            ->orderBy("ts", "asc")->get();;
+    }
+
+    public function getChatBookingsList(Request $request)
+    {
+        $model = BookedRoom::where("company_id", $request->company_id);
+
+
+        if ($request->filled('filterSearch') && $request->filterSearch !== '') {
+            $wildCard = env('WILD_CARD', 'ILIKE');
+            $search   = '%' . $request->filterSearch . '%';
+
+            $model->where(function ($query) use ($search, $wildCard) {
+                $query->orWhere('room_no', $wildCard, $search);
+                // ->orWhereHas('customer', function ($q) use ($search, $wildCard) {
+                //     $q->orWhere('first_name', $wildCard, $search)
+                //         ->orWhere('last_name', $wildCard, $search);
+                // });
+            });
+        }
+
+
+
+        // ->where("check_in", "!=", null)
+        $model->orderBy("check_in", "desc")->orderBy("room_no", "asc");;
+
+
+        return $model->paginate($request->per_page ?? 25);
+    }
+
+    public function getChatUnreadMessagesGroupByBookingId(Request $request)
+    {
+
+        //get unread messages count grouped by booking_id and  row count
+        $model = ChatMessages::where("company_id", $request->company_id)
+            ->where("is_read_reception", false)
+            ->selectRaw('booking_room_id, COUNT(*) as unread_count')
+            ->groupBy('booking_room_id');
+
+        return $model->get();
+    }
+
+    public function updateGuestReadStatus(Request $request)
+    {
+        ChatMessages::where("booking_room_id", $request->booking_room_id)->where("is_read_guest", false)->update(["is_read_guest" => true]);
+
+        return $this->response(true, null, "Success");
+    }
+    public function getChatGuestUnreadMessages(Request $request)
+    {
+        $model = ChatMessages::where("company_id", $request->company_id)
+
+            ->Where("is_read_guest", false);
+        $model->where("booking_room_id", $request->booking_room_id);
+
+
+        return $model->get();
+    }
+    public function getChatReceiptionUnreadMessages(Request $request)
+    {
+        $model = ChatMessages::where("company_id", $request->company_id)
+
+            ->Where("is_read_reception", false);
+
+
+
+        // if ($request->filled('booking_room_id')) {
+        //     $model->where("booking_room_id", $request->booking_room_id);
+        // }
+
+        return $model->orderBy("ts", "DESC")->get();
+    }
+}

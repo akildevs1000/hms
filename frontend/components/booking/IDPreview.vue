@@ -79,7 +79,7 @@ export default {
       validCode: false,
       reloadLoading: false,
       confirmLoading: false,
-      endpoint: "https://backend.myhotel2cloud.com/api",
+      endpoint: process.env.BACKEND_URL,
       //   endpoint: "https://hms-backend.test/api",
 
       dialog: false,
@@ -154,14 +154,14 @@ export default {
       this.dialog = false;
     },
     close() {
-        this.customer = {
-          captured_photo: null,
-          sign: null,
-          id_frontend_side: null,
-          id_backend_side: null,
-        };
-        this.reloadLoading = false;
-        this.validCode = false;
+      this.customer = {
+        captured_photo: null,
+        sign: null,
+        id_frontend_side: null,
+        id_backend_side: null,
+      };
+      this.reloadLoading = false;
+      this.validCode = false;
 
       this.$emit(`getCustomerDocs`, null);
       this.confirmLoading = false;

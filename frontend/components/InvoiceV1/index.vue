@@ -36,7 +36,7 @@
         </template>
 
         <v-list width="120" dense>
-          <v-list-item 
+          <v-list-item
             @click="openExternalWinodwForInvoice(item.id, item.invoice_type)"
           >
             <v-list-item-title>
@@ -130,7 +130,7 @@ export default {
   },
   methods: {
     openExternalWinodwForInvoice(id, type) {
-      let url = `https://backend.myhotel2cloud.com/api/invoice-${type}/${id}`;
+      let url = `${process.env.BACKEND_URL}invoice-${type}/${id}`;
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
       element.setAttribute("href", url);

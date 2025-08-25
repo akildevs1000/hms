@@ -907,6 +907,7 @@
                         :old_balance="setInitialBalance"
                         :full_name="booking.title"
                         :postings="postings"
+                        :totalPostingAmount="totalPostingAmount"
                         :room_no="
                           !customerScreen ? roomData && roomData.room_no : 0
                         "
@@ -1201,6 +1202,7 @@ export default {
         this.bookedRooms = booking.booked_rooms;
         this.orderRooms = booking.order_rooms;
         this.postings = data.postings;
+        // this.totalPostingAmount = data.totalPostingAmount;
         //end booking
         this.loading = false;
         this.showImage = data.booking.customer.image;

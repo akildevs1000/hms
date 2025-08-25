@@ -108,7 +108,7 @@
 
     <div>
       <v-row class="ml-3">
-        <h3>Room - Food Orders</h3>
+        <h3>Room - Food Orders(Postings)</h3>
       </v-row>
       <v-row>
         <div class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase">
@@ -132,7 +132,7 @@
               </div>
               <div class="card-content">
                 <h6 class="card-title text-capitalize">New</h6>
-                <span class="data-1"> {{ statistics.new }}</span>
+                <span class="data-1"> {{ statistics.new || 0 }}</span>
               </div>
             </div>
           </div>
@@ -145,7 +145,7 @@
               </div>
               <div class="card-content">
                 <h6 class="card-title text-capitalize">Preparing</h6>
-                <span class="data-1"> {{ statistics.preparing }}</span>
+                <span class="data-1"> {{ statistics.preparing || 0 }}</span>
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@
               </div>
               <div class="card-content">
                 <h6 class="card-title text-capitalize">Completed</h6>
-                <span class="data-1"> {{ statistics.completed }}</span>
+                <span class="data-1"> {{ statistics.completed || 0 }}</span>
               </div>
             </div>
           </div>
@@ -171,7 +171,7 @@
               </div>
               <div class="card-content">
                 <h6 class="card-title text-capitalize">Cancelled</h6>
-                <span class="data-1"> {{ statistics.cancelled }}</span>
+                <span class="data-1"> {{ statistics.cancelled || 0 }}</span>
               </div>
             </div>
           </div>
@@ -259,7 +259,7 @@
             @change="applyFilters()"
           ></v-autocomplete>
         </v-col>
-        <v-col cols="4" class="ma-3">
+        <v-col class="ma-3">
           <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
         </v-col>
       </v-row>
@@ -511,11 +511,11 @@
                 small
                 dense
                 v-else-if="item.status == 1"
-                color="primary"
+                color="warning"
                 class="ma-2 white--text"
                 @click="changeStatusToDelivered(item)"
               >
-                Change to Ready<v-icon right dark>
+                Change to Delivered<v-icon right dark>
                   mdi mdi-noodles
                 </v-icon></v-btn
               >
@@ -1103,3 +1103,4 @@ export default {
   },
 };
 </script>
+<style scoped src="@/assets/stylishbox.css"></style>

@@ -261,3 +261,4 @@ export default {
   },
 };
 </script>
+<style src="@/assets/css/receiptionStyles.css"></style>

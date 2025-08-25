@@ -2,6 +2,7 @@
   <v-row>
     <v-col :cols="filterType == 5 ? '6' : ''">
       <v-autocomplete
+        style="max-width: 200px"
         v-model="filterType"
         :items="[
           {

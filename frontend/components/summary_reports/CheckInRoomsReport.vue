@@ -7,8 +7,8 @@
           @click="process_file('checkin_report_print')"
         />
       </div>
-      </div>
-      <AssetsTable :headers="headers" :items="items" />
+    </div>
+    <AssetsTable :headers="headers" :items="items" />
   </span>
 </template>
 <script>
@@ -69,8 +69,7 @@ export default {
     process(type) {
       let comId = this.$auth.user.company.id;
       let date = new Date().toJSON().slice(0, 10);
-      let url =
-        `https://backend.myhotel2cloud.com/api/${type}?company_id=${comId}&date=${date}`;
+      let url = `${process.env.BACKEND_URL}${type}?company_id=${comId}&date=${date}`;
       console.log(url);
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

@@ -8,6 +8,7 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\WhatsappController;
 use App\Mail\AuditReportMail;
 use App\Mail\ReportNotificationMail;
+use App\Mail\SimpleMail;
 use App\Models\Agent;
 use App\Models\BookedRoom;
 use App\Models\Booking;
@@ -133,7 +134,7 @@ Route::get('/test', function (Request $request) {
 
     // return  $payment =  Payment::whereDate('created_at', $date)
     $payment = DB::table('payments')
-    // ->whereDate('created_at', $date)
+        // ->whereDate('created_at', $date)
         ->get(['id', 'created_at']);
 
     foreach ($payment as $key => $value) {
@@ -185,8 +186,15 @@ Route::post('/upload', function (Request $request) {
 
 Route::get('/test_attachment', function () {
 
-    $models = ReportNotification::get();
 
+
+    $subject = "Test";
+    $body = "Test";
+    Mail::to("venuakil2@gmail.com")->send(new SimpleMail($subject, $body));
+    // Mail::to("venuakil2@gmail.com")->queue(new SimpleMail($subject, $body));
+
+
+    return "";
     foreach ($models as $model) {
 
         return $model;

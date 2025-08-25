@@ -10,13 +10,15 @@ use App\Http\Requests\HotelFoodCategories\UpdateRequest;
 use App\Models\HotelFoodCategories;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Storage;
 
 class HotelFoodCategoriesController extends Controller
 {
     public function index(Request $request)
     {
         $model = HotelFoodCategories::query();
+
+        $model = $model->withCount('items');
 
 
         $model = $model->where('company_id', $request->company_id);
@@ -70,50 +72,106 @@ class HotelFoodCategoriesController extends Controller
 
     public function update(UpdateRequest $request, $id)
     {
-        try {
+        // try {
 
-            $data = $request->validated();
 
-            if ($data) {
 
-                $isRoomExist = HotelFoodCategories::where('name', $request->name)
-                    ->where('company_id', $request->company_id)
-                    ->first();
+        $data =    $request->validated();
 
-                if ($isRoomExist) {
-                    if ($isRoomExist->id != $id) {
-                        return $this->response($request->name . ' Category Details are already Exist', null, false);
-                    }
+
+
+        if ($data) {
+
+            $isRoomExist = HotelFoodCategories::where('name', $request->name)
+                ->where('company_id', $request->company_id)
+                ->first();
+
+            if ($isRoomExist) {
+                if ($isRoomExist->id != $id) {
+                    return $this->response($request->name . ' Category Details are already Exist', null, false);
                 }
-                $status = HotelFoodCategories::whereId($id)->update($data);
-                if ($status) {
-                    return $this->response('Category Details are updated succesfully', $status, true);
-                } else {
-                    return $this->response('Category Details are not Updated', $status, false);
-                }
-            } else {
-                return $this->response('Error Occured', $data, false);
             }
-        } catch (\Throwable $th) {
-            return $this->response('Something wrong.', $th, false);
+            $status = HotelFoodCategories::whereId($id)->update($data);
+
+
+
+            if ($request->hasFile('image')) {
+
+                $file = $request->file('image');
+                $ext = $file->getClientOriginalExtension();
+                $fileName = $id . '.jpg';
+
+                // $folder = 'public/hotel/categories/' . $request->company_id . '';
+
+
+                // if (!Storage::disk('public')->exists($folder)) {
+                //     Storage::disk('public')->makeDirectory($folder);
+                // }
+
+                // $file->storeAs($folder, $fileName);
+
+                $folder = 'hotel/categories/' . $request->company_id;
+                $destinationPath = public_path($folder);
+                if (!file_exists($destinationPath)) {
+                    mkdir($destinationPath, 0755, true);
+                }
+                $file->move($destinationPath, $fileName);
+            }
+
+
+
+
+            if ($status) {
+                return $this->response('Category Details are updated succesfully', $status, true);
+            } else {
+                return $this->response('Category Details are not Updated', $status, false);
+            }
+        } else {
+            return $this->response('Error Occured', $data, false);
         }
+        // } catch (\Throwable $th) {
+        //     return $this->response('Something wrong.' . $th, $th, false);
+        // }
     }
 
 
 
     public function store(StoreRequest $request)
     {
+
+        return $request->all();
         try {
             $data = $request->validated();
 
             if ($data) {
 
-                $verifyIsRoom = HotelFoodCategories::where('company_id', $request->company_id)->where('name', $request->name)->count();
-                if ($verifyIsRoom == 0) {
+                $verifyIsExist = HotelFoodCategories::where('company_id', $request->company_id)->where('name', $request->name)->count();
+                if ($verifyIsExist == 0) {
 
                     $record = HotelFoodCategories::create($data);
 
                     if ($record) {
+
+                        if ($request->hasFile('image')) {
+
+                            $file = $request->file('image');
+                            $ext = $file->getClientOriginalExtension();
+                            $fileName = $record->id . '.jpg';
+
+                            $folder = 'hotel/categories/' . $request->company_id;
+                            $destinationPath = public_path($folder);
+                            if (!file_exists($destinationPath)) {
+                                mkdir($destinationPath, 0755, true);
+                            }
+                            $file->move($destinationPath, $fileName);
+                        }
+
+
+
+
+
+
+
                         return $this->response('Category details are successfully created', $record, true);
                     } else {
                         return $this->response('Category details not created', $record, false);
@@ -133,9 +191,17 @@ class HotelFoodCategoriesController extends Controller
     {
         return HotelFoodCategories::where('id', $id)->first();
     }
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         if (HotelFoodCategories::find($id)->delete()) {
+
+            $folder = 'hotel/categories/' . $request->company_id;
+            $fileName =  $id . '.jpg'; // . $ext;
+            $filePath = public_path($folder . '/' . $fileName);
+
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
 
             return $this->response('Record    successfully deleted.', null, true);
         } else {

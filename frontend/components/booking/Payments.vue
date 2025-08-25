@@ -662,7 +662,7 @@ export default {
     pdfUrl() {
       if (!this.selectedItem) return null;
       let { id } = this.selectedItem;
-      return `https://backend.myhotel2cloud.com/api/invoice/${id}`;
+      return `${process.env.BACKEND_URL}invoice/${id}`;
     },
     subtotal_price() {
       return this.calculateSubtotal("inv_room_listing_price", "amount");
@@ -746,7 +746,7 @@ export default {
     },
 
     redirect_to_invoice(id, model = "print") {
-      let url = "https://backend.myhotel2cloud.com/api/invoice";
+      let url = process.env.BACKEND_URL + "invoice";
       // url = "https://hms-backend.test/api/invoice";
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");

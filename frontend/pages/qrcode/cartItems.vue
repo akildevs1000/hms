@@ -96,8 +96,8 @@
         <!-- <v-card-actions class="mt-5 text-center">
            <v-btn @click="cartItemDialog = false" dark filled color="red"
               >Close</v-btn
-            >  
-        <v-spacer></v-spacer>  
+            >
+        <v-spacer></v-spacer>
           <p></p
         ></v-card-actions> -->
 
@@ -183,7 +183,7 @@ export default {
             this.snackbar = true;
             this.snackbarMessage = data.message;
           } else {
-            //localStorage.setItem("QRCodeCartItems", JSON.stringify([]));
+            localStorage.setItem("QRCodeCartItems", JSON.stringify([]));
             //this.$store.commit("hotelQRCodeCartItems", []);
             this.$router.push("/qrcode/orders");
           }

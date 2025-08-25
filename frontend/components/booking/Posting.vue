@@ -59,7 +59,7 @@
                 ``,
               ]"
             />
-            
+
             <tbody>
               <tr v-for="(posting, index) in postings" :key="index">
                 <td>{{ index + 1 }}</td>
@@ -313,7 +313,7 @@ export default {
                 this.postingDialog = false;
                 this.snackbar = data.status;
                 this.response = data.message;
-                this.$swal("Sucees", "Postings has beed added", "success").then(
+                this.$swal("Sucees", "Postings has been added", "success").then(
                   (e) => {
                     this.$emit("close-dialog", data);
                   }

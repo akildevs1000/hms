@@ -3,17 +3,21 @@
     <v-row class="mt-0 mb-0">
       <v-col cols="6">
         <h3>Payments</h3>
-
       </v-col>
       <v-col cols="6">
         <v-spacer></v-spacer>
-
       </v-col>
     </v-row>
     <v-row>
-      <div class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase" v-for="(user, index) in  paymentReportsByUser "
-        :key="index">
-        <div class="card px-2" :style="{ backgroundColor: colors[index] || '#3366CC' }">
+      <div
+        class="col-xl-2 my-0 py-0 col-lg-2 text-uppercase"
+        v-for="(user, index) in paymentReportsByUser"
+        :key="index"
+      >
+        <div
+          class="card px-2"
+          :style="{ backgroundColor: colors[index] || '#3366CC' }"
+        >
           <div class="card-statistic-3">
             <div class="card-icon card-icon-large">
               <i class="fas fa-ddoor-open"></i>
@@ -60,7 +64,6 @@
           column="date_range" @selected-dates="handleDatesFilter" />
       </v-col> -->
 
-
       <!-- <v-col md="3" v-if="filterType == 5">
         <div class="ml-4">From</div>
         <v-col cols="12" sm="12" md="12">
@@ -89,27 +92,48 @@
       </v-col> -->
       <v-col xs="12" sm="12" md="4" cols="12">
         <CustomFilter @filter-attr="filterAttr" :defaultFilterType="1" />
-
       </v-col>
       <v-col md="3" v-if="userList.length > 0">
         <div class="ml-4">Users</div>
         <v-col cols="12" sm="12" md="12">
-          <v-autocomplete @change="getPaymentReportsByUser()" v-model="user_id" :items="userList" item-text="name"
-            item-value="id" outlined dense placeholder="User List" :hide-details="true" flat></v-autocomplete>
+          <v-autocomplete
+            @change="getPaymentReportsByUser()"
+            v-model="user_id"
+            :items="userList"
+            item-text="name"
+            item-value="id"
+            outlined
+            dense
+            placeholder="User List"
+            :hide-details="true"
+            flat
+          ></v-autocomplete>
         </v-col>
       </v-col>
     </v-row>
 
     <v-row class="mt-0 mt-0">
       <v-col md="12">
-        <v-card class="mb-5 rounded-md mt-3" elevation="0" v-for="( user, index ) in  paymentReportsByUser " :key="index">
+        <v-card
+          class="mb-5 rounded-md mt-3"
+          elevation="0"
+          v-for="(user, index) in paymentReportsByUser"
+          :key="index"
+        >
           <v-toolbar class="rounded-md" color="grey lighten-3" dense flat>
             <label class="white--text">{{ user.name }}</label>
             <v-spacer></v-spacer>
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn class="ma-0" x-small :ripple="false" text v-bind="attrs" v-on="on"
-                  @click="process('income_report_print')">
+                <v-btn
+                  class="ma-0"
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('income_report_print')"
+                >
                   <v-icon class="">mdi-printer-outline</v-icon>
                 </v-btn>
               </template>
@@ -118,7 +142,14 @@
 
             <v-tooltip top color="primary">
               <template v-slot:activator="{ on, attrs }">
-                <v-btn x-small :ripple="false" text v-bind="attrs" v-on="on" @click="process('income_report_download')">
+                <v-btn
+                  x-small
+                  :ripple="false"
+                  text
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="process('income_report_download')"
+                >
                   <v-icon class="">mdi-download-outline</v-icon>
                 </v-btn>
               </template>
@@ -127,17 +158,26 @@
           </v-toolbar>
           <table>
             <tr>
-              <th v-for="( item, index ) in  Header " :key="index">
+              <th v-for="(item, index) in Header" :key="index">
                 <span v-html="item.text"></span>
               </th>
             </tr>
-            <v-progress-linear v-if="loading" :active="loading" :indeterminate="loading" absolute
-              color="primary"></v-progress-linear>
+            <v-progress-linear
+              v-if="loading"
+              :active="loading"
+              :indeterminate="loading"
+              absolute
+              color="primary"
+            ></v-progress-linear>
 
-            <tr v-for="( trans, index ) in  user.transactions " :key="index">
+            <tr v-for="(trans, index) in user.transactions" :key="index">
               <td>{{ ++index }}</td>
               <td>
-                <span class="blue--text" @click="goToRevView(trans)" style="cursor: pointer">
+                <span
+                  class="blue--text"
+                  @click="goToRevView(trans)"
+                  style="cursor: pointer"
+                >
                   {{
                     (trans && trans.booking && trans.booking.reservation_no) ||
                     "---"
@@ -152,37 +192,55 @@
               <td>{{ trans.time }}</td>
               <td>{{ trans.credit }}</td>
               <td>{{ trans.debit }}</td>
-              <td v-for=" i  in  7 " :key="i" class="text-right">
-                <span v-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
-                  'Cash' && i == 1
-                  ">
+              <td v-for="i in 7" :key="i" class="text-right">
+                <span
+                  v-if="
+                    (trans && trans.payment_mode && trans.payment_mode.name) ==
+                      'Cash' && i == 1
+                  "
+                >
                   {{ trans.credit }}
                 </span>
-                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
-                  'Card' && i == 2
-                  ">
+                <span
+                  v-else-if="
+                    (trans && trans.payment_mode && trans.payment_mode.name) ==
+                      'Card' && i == 2
+                  "
+                >
                   {{ trans.credit }}
                 </span>
-                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
-                  'Online' && i == 3
-                  ">
+                <span
+                  v-else-if="
+                    (trans && trans.payment_mode && trans.payment_mode.name) ==
+                      'Online' && i == 3
+                  "
+                >
                   {{ trans.credit }}
                 </span>
-                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
-                  'Bank' && i == 4
-                  ">
+                <span
+                  v-else-if="
+                    (trans && trans.payment_mode && trans.payment_mode.name) ==
+                      'Bank' && i == 4
+                  "
+                >
                   {{ trans.credit }}
                 </span>
 
-                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
-                  'UPI' && i == 5
-                  ">
+                <span
+                  v-else-if="
+                    (trans && trans.payment_mode && trans.payment_mode.name) ==
+                      'UPI' && i == 5
+                  "
+                >
                   {{ trans.credit }}
                 </span>
 
-                <span v-else-if="(trans && trans.payment_mode && trans.payment_mode.name) ==
-                  'City Ledger' && i == 7
-                  ">
+                <span
+                  v-else-if="
+                    (trans && trans.payment_mode && trans.payment_mode.name) ==
+                      'City Ledger' && i == 7
+                  "
+                >
                   {{ trans.debit }}
                 </span>
 
@@ -208,7 +266,7 @@
 </template>
 
 <script>
-import CustomFilter from '../../../components/filter/CustomFilter.vue';
+import CustomFilter from "../../../components/filter/CustomFilter.vue";
 
 export default {
   data: () => ({
@@ -292,8 +350,7 @@ export default {
     this.loading = true;
     if (this.$auth.user.user_type != "employee") {
       this.get_users();
-    }
-    else {
+    } else {
       this.user_id = this.$auth.user.id;
     }
     this.getPaymentReportsByUser();
@@ -307,8 +364,16 @@ export default {
     week() {
       const today = new Date();
       const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
-      const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
-      const endOfWeek = new Date(today.getFullYear(), today.getMonth(), startOfWeek.getDate() + 6);
+      const startOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() - dayOfWeek
+      );
+      const endOfWeek = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        startOfWeek.getDate() + 6
+      );
       return [
         startOfWeek.toISOString().slice(0, 10),
         endOfWeek.toISOString().slice(0, 10),
@@ -317,13 +382,29 @@ export default {
   },
   methods: {
     getUserTotal(user) {
-      return this.getPriceFormat(parseFloat(user.cash_sum) + parseFloat(user.card_sum) + parseFloat(user.online_sum) + parseFloat(user.bank_sum) + parseFloat(user.UPI_sum) + parseFloat(user.cheque_sum) + parseFloat(user.City_ledger_sum));
+      return this.getPriceFormat(
+        parseFloat(user.cash_sum) +
+          parseFloat(user.card_sum) +
+          parseFloat(user.online_sum) +
+          parseFloat(user.bank_sum) +
+          parseFloat(user.UPI_sum) +
+          parseFloat(user.cheque_sum) +
+          parseFloat(user.City_ledger_sum)
+      );
     },
     formatDate(date) {
       var day = date.getDate();
       var month = date.getMonth() + 1; // Months are zero-based
       var year = date.getFullYear();
-      return year + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+      return (
+        year +
+        "-" +
+        (month < 10 ? "0" : "") +
+        month +
+        "-" +
+        (day < 10 ? "0" : "") +
+        day
+      );
     },
     filterAttr(data) {
       this.from_date = data.from;
@@ -333,8 +414,7 @@ export default {
       if (this.from_date && this.to_date) {
         if (this.$auth.user.user_type != "employee") {
           this.get_users();
-        }
-        else {
+        } else {
           this.user_id = this.$auth.user.id;
         }
         this.getPaymentReportsByUser();
@@ -346,26 +426,29 @@ export default {
       if (this.from_date && this.to_date) {
         if (this.$auth.user.user_type != "employee") {
           this.get_users();
-        }
-        else {
+        } else {
           this.user_id = this.$auth.user.id;
         }
         this.getPaymentReportsByUser();
       }
     },
     getPriceFormat(price) {
-      return this.$auth.user.company.currency + " " + parseFloat(price).toLocaleString('en-IN', {
-        maximumFractionDigits: 2,
-      });
+      return (
+        this.$auth.user.company.currency +
+        " " +
+        parseFloat(price).toLocaleString("en-IN", {
+          maximumFractionDigits: 2,
+        })
+      );
     },
     formatDateTime(dateString) {
       const date = new Date(dateString);
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
       return `${year}-${month}-${day} ${hours}:${minutes}`;
     },
     onPageChange() {
@@ -373,13 +456,14 @@ export default {
     },
     can(per) {
       let u = this.$auth.user;
-      return ((u && u.permissions.some(e => e == per || per == "/")) || u.is_master);
+      return (
+        (u && u.permissions.some((e) => e == per || per == "/")) || u.is_master
+      );
     },
     caps(str) {
       if (str == "" || str == null) {
         return "---";
-      }
-      else {
+      } else {
         let res = str.toString();
         return res.replace(/\b\w/g, (c) => c.toUpperCase());
       }
@@ -387,8 +471,7 @@ export default {
     convert_decimal(n) {
       if (n === +n && n !== (n | 0)) {
         return n.toFixed(2);
-      }
-      else {
+      } else {
         return n + ".00";
       }
     },
@@ -416,15 +499,15 @@ export default {
       const day = currentDate.getDate();
       const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
       const year = currentDate.getFullYear();
-      const last = new Date(year, month, 0).getDate().toString().padStart(2, "0");
+      const last = new Date(year, month, 0)
+        .getDate()
+        .toString()
+        .padStart(2, "0");
       let firstDay = `${year}-${month}-0${1}`;
       let lastDayFirst = last > 9 ? `${last}` : `0${last}`;
-      console.log('date' + last);
+      console.log("date" + last);
       let lastDay = `${year}-${month}-${lastDayFirst}`;
-      return [
-        firstDay,
-        lastDay
-      ];
+      return [firstDay, lastDay];
     },
     commonMethod() {
       // alert('ff');
@@ -465,7 +548,9 @@ export default {
       let comId = this.$auth.user.company.id; //company id
       let from = this.from_date;
       let to = this.to_date;
-      let url = "https://backend.myhotel2cloud.com/api/" +
+      let url =
+        process.env.BACKEND_URL +
+        "" +
         `${type}?company_id=${comId}&from=${from}&to=${to}`;
       console.log(url);
       let element = document.createElement("a");
@@ -508,6 +593,6 @@ export default {
       });
     },
   },
-  components: { CustomFilter }
+  components: { CustomFilter },
 };
 </script>

@@ -265,4 +265,27 @@ class PostingController extends Controller
             ->where("room_id", request("room_id", 0))
             ->get();
     }
+    public function getPostingByBookingIdAncRoomIdDate()
+    {
+        // Get the last posting based on bill_no
+        $model = Posting::orderBy('id', 'desc')
+            ->where("booking_id", request("booking_id", 0))
+            ->where("room_id", request("room_id", 0));
+        $model = $model->orderBy('posting_date', "desc");
+        $orders = $model->get();
+        $groupedOrders = [];
+
+        foreach ($orders as $order) {
+            $datetime = date("Y-m-d H:i:s", strtotime($order->posting_date));
+
+
+            if (!isset($groupedOrders[$datetime])) {
+                $groupedOrders[$datetime] = [];
+            }
+
+            $groupedOrders[$datetime][] = $order;
+        }
+
+        return $groupedOrders;
+    }
 }

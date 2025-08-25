@@ -458,7 +458,7 @@ html {
     margin: initial !important;
   }
 }
- 
+
 @media (min-height: 600px) and (min-width: 2000px) {
   .login-body {
     margin-top: 0% !important;

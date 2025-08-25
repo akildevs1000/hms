@@ -857,11 +857,11 @@ export default {
       this.get_data();
     },
   },
-  // mounted() {
-  //   this.intervalObj = setInterval(() => {
-  //     this.getDataFromApi();
-  //   }, 1000 * 60);
-  // },
+  mounted() {
+    setInterval(() => {
+      if (this.$route.name === "index") this.refreshRoomList();
+    }, 1000 * 60);
+  },
   created() {
     if (!this.$auth.user.company) {
       this.$router.push(`/login`);
@@ -871,20 +871,20 @@ export default {
 
     console.log("company loading.............");
 
-    console.log(
-      "this.$auth.user_verified_mobileotp",
-      this.$auth.user_verified_mobileotp
-    );
+    // console.log(
+    //   "this.$auth.user_verified_mobileotp",
+    //   this.$auth.user_verified_mobileotp
+    // );
 
-    {
-      if (this.$auth.user_verified_mobileotp == true) {
-      } else {
-        this.$auth.logout();
-        this.$router.push(`/login`);
+    // {
+    //   if (this.$auth.user_verified_mobileotp == true) {
+    //   } else {
+    //     this.$auth.logout();
+    //     this.$router.push(`/login`);
 
-        return false;
-      }
-    }
+    //     return false;
+    //   }
+    // }
 
     this.filterDate = new Date(
       Date.now() - new Date().getTimezoneOffset() * 60000

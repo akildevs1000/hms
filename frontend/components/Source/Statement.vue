@@ -4,7 +4,6 @@
       <v-col cols="3">
         <AssetsPickerDateRange @months="CustomFilter" />
         <!-- <FilterDateRange  /> -->
-
       </v-col>
       <v-col cols="3">
         <v-autocomplete
@@ -124,7 +123,7 @@ export default {
       element.setAttribute("target", "_blank");
       element.setAttribute(
         "href",
-        `https://backend.myhotel2cloud.com/api/${endpoint}/${this.source_id}/${this.statement_type}/${this.months[0]}/${this.months[1]}`
+        `${process.env.BACKEND_URL}${endpoint}/${this.source_id}/${this.statement_type}/${this.months[0]}/${this.months[1]}`
       );
       document.body.appendChild(element);
       element.click();
