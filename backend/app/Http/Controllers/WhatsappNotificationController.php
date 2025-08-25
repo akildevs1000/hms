@@ -378,7 +378,7 @@ class WhatsappNotificationController extends Controller
             // Mail::to($data['email'])->send(new SimpleMail($subject, $body));
 
 
-            $emailPayload = [
+            return    $emailPayload = [
                 'recipient'  => $data['email'],
                 'text'       => $body,
                 'company_id' => $company_id,
