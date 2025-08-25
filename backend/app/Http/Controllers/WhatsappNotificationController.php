@@ -387,7 +387,7 @@ class WhatsappNotificationController extends Controller
 
             ];
 
-            EmailSender::dispatch($emailPayload);
+            return  EmailSender::dispatch($emailPayload);
         }
 
         $whatsappPayload = [
