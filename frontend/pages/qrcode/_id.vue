@@ -118,7 +118,7 @@
       />
     </v-col> -->
       <!-- {{ this.whatsapp_otp }}-{{ this.customer_otp }} -->
-      <!-- 
+      <!--
       <v-col cols="12" sm="12" md="12" lg="12" class="text-center">
       Validating your Booking information. Please wait...
       <img src="../../static/loading.gif" width="200px" />
@@ -133,7 +133,7 @@
               Sent a Whatsapp OTP to registered Mobile Number:
               {{ maskNumber(whatsapp_number) }}
             </p>
-            
+
             <v-text-field
               ref="name"
               outlined

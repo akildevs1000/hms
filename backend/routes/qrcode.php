@@ -23,3 +23,4 @@ Route::post('/hotel_orders_checkout_request', [QrcodeapiController::class, "upda
 
 
 Route::get('get_checkin_customer_data_test', [QrcodeapiController::class, 'getCheckInCustomerDetailsTest']);
+Route::post('chat_verify_whatsapp_otp', [QrcodeapiController::class, 'chatVerifyWhatsAppOTP']);

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SimpleMail;
 use App\Models\Company;
+use Illuminate\Support\Facades\Mail;
 
 class WhatsappNotificationController extends Controller
 {
@@ -346,27 +348,33 @@ class WhatsappNotificationController extends Controller
 
         $instance_id = $company["whatsapp_instance_id"];
         $comName     = $company["company_code"];
+        $room_number     = $data["room_number"];
 
-        $msg .= "$comName\n";
+
+
+
+        $msg .= "Dear  *$customerName*, \n";
+        $msg .= "*$otp* \n";
+        $msg .= "Your OTP  To Access Hotel Menu. \nRoom Number $room_number. \nDo not Share with anyone, if you did not Initiated. \n";
         $msg .= "\n";
-        $msg .= "Dear  $customerName, \n";
-
-        $msg .= "\n";
-        $msg .= "Your OTP  To Access Menu. Do not Share with anyone if you did not Initiated. \n";
-        $msg .= "\n";
-        $msg .= "$otp \n";
+        $msg .= "*$comName*\n";
 
 
-        $data = [
-            'to'           =>   $data['mobile'],
+
+        $whatsappData = [
+            'to'           => $data['mobile'],
             'message'      => $msg,
             'company'      => $company ?? false,
-            'instance_id'  => $instance_id,
-            'access_token' => $access_token,
-            'type'         => 'Login',
-            'userName'        => $data['name'] ?? "",
-        ];
 
-        return (new WhatsappController)->sentNotification($data);
+        ];
+        if ($data['email'] != '') {
+            $subject = $comName . " : OTP for Hotel Menu Access - Room Number :$room_number ";
+            $body = "Dear  $customerName ,<br/><br/>OTP is:  $otp <br/><br/> ";
+            $body .= "Use OTP  To Access Hotel Menu. \nRoom Number $room_number. \nDo not Share with anyone, if you did not Initiated. \n";
+            $body .= " <br/><br/>Thank you.<br/>$comName";
+
+            Mail::to($data['email'])->send(new SimpleMail($subject, $body));
+        }
+        return (new WhatsappController)->sentNotification($whatsappData);
     }
 }

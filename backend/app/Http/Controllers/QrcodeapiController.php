@@ -8,6 +8,7 @@ use App\Models\HotelFoodItems;
 use App\Models\HotelFoodTimings;
 use App\Models\HotelOrdersFood;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class QrcodeapiController extends Controller
 {
@@ -20,7 +21,14 @@ class QrcodeapiController extends Controller
         }
 
         // Initialize the model with relationships
-        $model = BookedRoom::with(['customer']);
+        // $model = BookedRoom::with(['customer']);
+
+        // $columns = \Schema::getColumnListing('customers');
+        $model = BookedRoom::with([
+            'customer' => function ($query) {
+                $query->select('id', 'title', 'first_name', 'last_name', 'whatsapp'); // pick only the columns you want
+            }
+        ]);
 
         // Find the latest booking for the room, based on request parameters
         $bookedRoom = $model
@@ -43,17 +51,22 @@ class QrcodeapiController extends Controller
             $bookedRoom->update(['whatsapp_otp' => $otp]);
 
             $dataOtp = [
+                'email' => $bookedRoom->customer['email'],
+                'room_number' => $bookedRoom->room_no,
+
+
                 'mobile' => $bookedRoom->customer['whatsapp'],
                 'otp' => $otp,
-                'name' => $bookedRoom->customer['title']
+                'name' => $bookedRoom->customer['first_name'] . ' ' . $bookedRoom->customer['last_name']
             ];
 
             // Send OTP notification if in production environment
-            if (env('APP_ENV') == 'production') {
-                (new WhatsappNotificationController)->hotelMenuOTP($dataOtp, $request->company_id);
-            }
+
+            (new WhatsappNotificationController)->hotelMenuOTP($dataOtp, $request->company_id);
         }
 
+
+        $bookedRoom["whatsapp_otp"] = null;
         // Return response with booking details
         return $this->response('Success', $bookedRoom, true);
     }
@@ -252,6 +265,20 @@ class QrcodeapiController extends Controller
 
             $response = $controller->store($request);
         }
+    }
+
+    public function chatVerifyWhatsAppOTP(Request $request)
+    {
+        $model = BookedRoom::where("id", $request->booking_room_id)->first();
+        if ($model) {
+            // Verify the OTP
+            if ($request->otp == $model->whatsapp_otp) {
+                return $this->response("OTP verified successfully.", null, true);
+            } else {
+                return $this->response("Invalid OTP.", null, false);
+            }
+        }
+        return $this->response("Booking not found.", null, false);
     }
     // public function getCheckInCustomerDetails(Request $request)
     // {
