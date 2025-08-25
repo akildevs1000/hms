@@ -46,7 +46,7 @@ class QrcodeapiController extends Controller
         }
 
         // Generate and send OTP if requested
-        if ($request->filled('otp') && $request->otp === "1") {
+        if ($request->filled('otp') && $request->otp == "1") {
             $otp = rand(1000, 9999);
             $bookedRoom->update(['whatsapp_otp' => $otp]);
 

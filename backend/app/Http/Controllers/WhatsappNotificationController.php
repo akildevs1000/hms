@@ -338,8 +338,8 @@ class WhatsappNotificationController extends Controller
         $company = Company::whereId($company_id)->get()->first();
 
 
-        $instance_id  = "";
-        $access_token = $company["whatsapp_access_token"];
+        // $instance_id  = "";
+        // $access_token = $company["whatsapp_access_token"];
         $comName      = "";
         $msg          = "";
         $customerName = $data['name'];
