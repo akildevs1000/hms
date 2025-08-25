@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\EmailSender;
+use App\Jobs\WhatsappSender;
 use App\Mail\SimpleMail;
 use App\Models\Company;
 use Illuminate\Support\Facades\Mail;
@@ -373,8 +375,28 @@ class WhatsappNotificationController extends Controller
             $body .= "Use OTP  To Access Hotel Menu. \nRoom Number $room_number. \nDo not Share with anyone, if you did not Initiated. \n";
             $body .= " <br/><br/>Thank you.<br/>$comName";
 
-            Mail::to($data['email'])->send(new SimpleMail($subject, $body));
+            // Mail::to($data['email'])->send(new SimpleMail($subject, $body));
+
+
+            $emailPayload = [
+                'recipient'  => $data['email'],
+                'text'       => $body,
+                'company_id' => $company_id,
+                "heading"    => $subject,
+                "mediaUrl"   => null,
+
+            ];
+
+            EmailSender::dispatch($emailPayload);
         }
-        return (new WhatsappController)->sentNotification($whatsappData);
+
+        $whatsappPayload = [
+            'recipient'  => $data['mobile'],
+            'text'       => $msg,
+            'company_id' => $company_id,
+            "mediaUrl"   => null,
+        ];
+        WhatsappSender::dispatch($whatsappPayload);
+        // return (new WhatsappController)->sentNotification($whatsappData);
     }
 }
