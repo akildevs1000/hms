@@ -62,7 +62,7 @@ class QrcodeapiController extends Controller
 
             // Send OTP notification if in production environment
 
-            return (new WhatsappNotificationController)->hotelMenuOTP($dataOtp, $request->company_id);
+            (new WhatsappNotificationController)->hotelMenuOTP($dataOtp, $request->company_id);
         }
 
 
