@@ -139,7 +139,7 @@ class HotelFoodCategoriesController extends Controller
     public function store(StoreRequest $request)
     {
 
-        return $request->all();
+
         try {
             $data = $request->validated();
 
