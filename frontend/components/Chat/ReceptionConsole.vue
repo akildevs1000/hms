@@ -223,7 +223,7 @@
               >
                 <span
                   class="sender"
-                  style="padding-top: 5px; color: black; font-size: 10px"
+                  style="padding-top: 5px; color: #838383; font-size: 10px"
                 >
                   <!-- <v-icon size="16">mdi-clock-outline</v-icon> -->
 

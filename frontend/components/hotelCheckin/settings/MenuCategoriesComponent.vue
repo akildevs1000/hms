@@ -541,6 +541,7 @@ export default {
       this.editedItem = {};
       this.editedItemIndex = -1;
       this.viewMode = false;
+      this.previewImage = null;
       this.newItemDialog = true;
     },
     // updateIndex(page) {
