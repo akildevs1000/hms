@@ -224,7 +224,9 @@
                 <span
                   class="sender"
                   style="padding-top: 5px; color: black; font-size: 10px"
-                  ><v-icon size="16">mdi-clock-outline</v-icon>
+                >
+                  <!-- <v-icon size="16">mdi-clock-outline</v-icon> -->
+
                   {{ time(m.ts) }}</span
                 >
               </div>

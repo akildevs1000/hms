@@ -1,9 +1,8 @@
 export default ({ $axios, store }, inject) => {
+  $axios.setBaseURL("https://backend.myhotel2cloud.com/api/");
 
-  $axios.setBaseURL('https://backend.myhotel2cloud.com/api/');
-
-  if (process.env.LOCAL_IP == "local") {
-    $axios.setBaseURL('https://hms-backend.test/api/');
+  if (process.env.ENVIRONMENT == "development") {
+    $axios.setBaseURL("http://127.0.0.1:8000/api/");
   }
 
   $axios.onRequest(async (config) => {

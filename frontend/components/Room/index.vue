@@ -484,7 +484,12 @@ export default {
     updateQRCode() {
       this.data.forEach(async (e) => {
         //CUSTOMER_APP_URL
-        let url = `https://customer.myhotel2cloud.com/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
+
+        if (process.env.ENVIRONMENT == "development") {
+          var url = `http://localhost:3005/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
+        } else {
+          var url = `https://customer.myhotel2cloud.com/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
+        }
 
         e.qrURL = url;
         e.qrImage = await this.$qrcode.generate(url, {
