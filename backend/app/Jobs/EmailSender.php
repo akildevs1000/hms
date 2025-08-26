@@ -32,9 +32,9 @@ class EmailSender implements ShouldQueue
 
         if ($recipient && $messageBody) {
 
-            Mail::send([], [], function ($message) use ($recipient, $heading, $mediaUrl, $messageBody) {
+            Mail::raw($messageBody, function ($message) use ($recipient, $heading, $mediaUrl, $messageBody) {
 
-                $message->setBody($messageBody, 'text/html');
+                //$message->setBody($messageBody, 'text/html');
                 $message->to($recipient)
                     ->subject($heading ?? 'Happy Birthday!');
 
