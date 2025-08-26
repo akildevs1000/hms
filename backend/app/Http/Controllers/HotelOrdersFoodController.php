@@ -88,41 +88,41 @@ class HotelOrdersFoodController extends Controller
 
 
         //return $request->all();
-        try {
-            $company_food_tax = Company::whereId($request->company_id)->pluck('food_tax')->first();
-            $data["status"] = 2; //delivered
-            $status = HotelOrdersFood::where("company_id", $request->company_id)->whereId($request->hotel_order_id)->where("status", 1)->update($data);
+        //try {
+        $company_food_tax = Company::whereId($request->company_id)->pluck('food_tax')->first();
+        $data["status"] = 2; //delivered
+        $status = HotelOrdersFood::where("company_id", $request->company_id)->whereId($request->hotel_order_id)->where("status", 1)->update($data);
 
-            //insert into postings
-            $posting["item"] =  $request->item["food"]["name"];
-            $posting["qty"] =  $request->item["qty"];
-            $posting["amount"] = $request->item["food_price"] * $request->item["qty"];
-            $posting["bill_no"] = $request->item["id"];
-            $posting["amount_with_tax"] = $request->item["food_total"];
-            $posting["tax"] = $request->item["food_sgst"] + $request->item["food_cgst"];
-            $posting["sgst"] = $request->item["food_sgst"];
-            $posting["cgst"] = $request->item["food_cgst"];
-            $posting["tax_type"] = $company_food_tax;
-            $posting["single_amt"] = $request->item["food_price"];
-            $posting["booked_room_id"] = $request->item["booking_rooms_id"];
-            $posting["company_id"] = $request->company_id;
-            $posting["booking_id"] = $request->item["booking_id"];
-            $posting["room_id"] = $request->item["room_id"];
-            $posting["room"] = $request->item["room"]["room_no"];
-            $posting["user_id"] = 2;
+        //insert into postings
+        $posting["item"] =  $request->item["food"]["name"];
+        $posting["qty"] =  $request->item["qty"];
+        $posting["amount"] = $request->item["food_price"] * $request->item["qty"];
+        $posting["bill_no"] = $request->item["id"];
+        $posting["amount_with_tax"] = $request->item["food_total"];
+        $posting["tax"] = $request->item["food_sgst"] + $request->item["food_cgst"];
+        $posting["sgst"] = $request->item["food_sgst"];
+        $posting["cgst"] = $request->item["food_cgst"];
+        $posting["tax_type"] = $company_food_tax;
+        $posting["single_amt"] = $request->item["food_price"];
+        $posting["booked_room_id"] = $request->item["booking_rooms_id"];
+        $posting["company_id"] = $request->company_id;
+        $posting["booking_id"] = $request->item["booking_id"];
+        $posting["room_id"] = $request->item["room_id"];
+        $posting["room"] = $request->item["room"]["room_no"];
+        $posting["user_id"] = 2;
 
-            // $postRequst = Request::create('/posting', 'POST',  $posting);
-            // $data = (new PostingController)->store($postRequst);
-            $controller = new PostingController();
-            $request = new Request($posting);
-            $response = $controller->store($request);
+        // $postRequst = Request::create('/posting', 'POST',  $posting);
+        // $data = (new PostingController)->store($postRequst);
+        $controller = new PostingController();
+        $request = new Request($posting);
+        $response = $controller->store($request);
 
 
 
-            return $this->response('Order Details are updated succesfully', $status, true);
-        } catch (\Throwable $th) {
-            return $this->response('Something wrong.', $th, false);
-        }
+        return $this->response('Order Details are updated succesfully', $status, true);
+        // } catch (\Throwable $th) {
+        //     return $this->response('Something wrong.', $th, false);
+        // }
     }
 
     public function updateHotelOrderToCancel(Request $request)
