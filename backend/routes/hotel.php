@@ -22,6 +22,7 @@ Route::get('/get_food_items_by_search', [HotelFoodItemsController::class, "getFo
 Route::get('/get_hotel_menu_categories_list_by_timingId', [HotelFoodItemsController::class, "getFoodCategoryByTimingId"]);
 
 
+Route::get('guest_hotel_food_orders_notifications', [HotelOrdersFoodController::class, 'getGuestRoomFoodOrdersNotifications']);
 
 
 Route::apiResource('/hotel_food_timings', HotelFoodTimingsController::class);

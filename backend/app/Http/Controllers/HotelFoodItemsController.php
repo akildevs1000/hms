@@ -10,6 +10,7 @@ use App\Models\HotelFoodCategories;
 use App\Models\HotelFoodItems;
 use App\Models\HotelFoodItemsCategories;
 use App\Models\HotelFoodItemsTimings;
+use App\Models\HotelOrdersFood;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 

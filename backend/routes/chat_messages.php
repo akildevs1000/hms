@@ -13,6 +13,11 @@
     Route::get('chat_download_image', [ChatMessagesController::class, 'downloadChatImage']);
 
     Route::get('chat_get_unread_messages', [ChatMessagesController::class, 'getChatReceiptionUnreadMessages']);
+
+
+
+
+
     Route::get('chat_get_guest_unread_messages', [ChatMessagesController::class, 'getChatGuestUnreadMessages']);
 
     Route::post('chat_update_agent_read_status', [ChatMessagesController::class, 'updateAgentReadStatus']);

@@ -86,7 +86,11 @@
           "
         >
           <v-list-item
-            @click="goToPage('/chat')"
+            @click="
+              item.type == 'food'
+                ? goToPage('/hotel_checkin/orders/food')
+                : goToPage('/chat')
+            "
             style="height: 80px; padding-left: 5px; background-color: white"
             :class="
               notificationsMenuItems.length > 0 &&
@@ -105,6 +109,9 @@
                       <v-icon color="primary" size="16"
                         >mdi-chat-processing-outline</v-icon
                       >
+                    </span>
+                    <span v-else-if="String(item.type).toLowerCase() == 'food'">
+                      <v-icon size="16" color="blue">mdi-food</v-icon>
                     </span>
                     <span v-else-if="String(item.type).toLowerCase() == 'file'">
                       <v-icon size="16" color="#139c4a">mdi-image</v-icon>
@@ -132,7 +139,7 @@
                               : "Audio"
                           }}
                         </div> -->
-                        <span v-if="item.type == 'text'">
+                        <span v-if="item.type == 'text' || item.type == 'food'">
                           {{ item.message }}
                         </span>
 
@@ -755,12 +762,7 @@ export default {
     //   }
     // }
     this.title = "MyHotel2Cloud"; // this.$auth.user?.company?.company_code;
-    setTimeout(() => {
-      this.loadNotificationMenu();
-    }, 1000 * 60);
-    setInterval(() => {
-      this.loadNotificationMenu();
-    }, 1000 * 60);
+
     let user = this.$auth.user;
     let permissions = user.permissions;
 
@@ -823,12 +825,22 @@ export default {
     //load mqtt chat messages
     this.connectCheckMQTTMessages();
 
-    setInterval(() => {
-      this.getChatUnreadmessages();
+    setInterval(async () => {
+      await this.getChatUnreadmessages();
     }, 1000 * 30);
-    setInterval(() => {
-      this.getChatUnreadmessagesLocalStorage();
+    setInterval(async () => {
+      await this.getChatUnreadmessagesLocalStorage();
     }, 1000);
+
+    // setTimeout(() => {
+    //   this.loadNotificationMenu();
+    // }, 1000 * 60);
+    setInterval(async () => {
+      await this.loadNotificationMenu();
+      await this.getGuestFoodOrdersmessages();
+    }, 1000 * 60);
+
+    this.getGuestFoodOrdersmessages();
   },
 
   computed: {
@@ -897,28 +909,27 @@ export default {
         }
 
         this.notificationsMenuItems.forEach((notification) => {
-          // console.log(
-          //   localStorage.getItem("active_booking_room_id"),
-          //   notification.booking_room_id
-          // );
-
-          if (
-            this.notificationsMenuItems.length > 5 &&
-            localStorage.getItem("active_booking_room_id") &&
-            !this.updateAckStatusDBStatus &&
-            localStorage.getItem("active_booking_room_id") ==
-              notification.booking_room_id
-          ) {
-            this.updateAckStatusDBStatus = true;
-            this.$axios
-              .post("chat_update_agent_read_status", {
-                company_id: this.$auth.user?.company?.id,
-                booking_room_id: localStorage.getItem("active_booking_room_id"),
-              })
-              .then(async ({ data }) => {
-                await this.getChatUnreadmessages();
-                this.updateAckStatusDBStatus = false;
-              });
+          if (notification.type != "food") {
+            if (
+              this.notificationsMenuItems.length > 5 &&
+              localStorage.getItem("active_booking_room_id") &&
+              !this.updateAckStatusDBStatus &&
+              localStorage.getItem("active_booking_room_id") ==
+                notification.booking_room_id
+            ) {
+              this.updateAckStatusDBStatus = true;
+              this.$axios
+                .post("chat_update_agent_read_status", {
+                  company_id: this.$auth.user?.company?.id,
+                  booking_room_id: localStorage.getItem(
+                    "active_booking_room_id"
+                  ),
+                })
+                .then(async ({ data }) => {
+                  await this.getChatUnreadmessages();
+                  this.updateAckStatusDBStatus = false;
+                });
+            }
           }
         });
 
@@ -929,6 +940,46 @@ export default {
       } catch (e) {
         console.error("Error reading ack_messages_ids from localStorage", e);
       }
+    },
+    async getGuestFoodOrdersmessages() {
+      let company_id = this.$auth.user?.company?.id || 0;
+      //console.log("company_id", company_id);
+      if (company_id == 0) {
+        return false;
+      }
+      let options = {
+        params: {
+          company_id: company_id,
+        },
+      };
+
+      await this.$axios
+        .get(`guest_hotel_food_orders_notifications`, options)
+        .then(async ({ data }) => {
+          this.notificationsMenuItems = this.notificationsMenuItems.filter(
+            (item) => item.type != "food"
+          );
+          data.forEach((message) => {
+            let data = {
+              id: message.id,
+              room: message.room.room_no,
+              sender: ":Food Order",
+              type: "food",
+              message: message.food.name + " x " + message.qty,
+              booking_room_id: message.booking_rooms_id,
+              ts: this.$dateFormat.getSecondsInTimezone(
+                message.request_datetime,
+                this.timezone
+              ),
+              room_number: message.room.room_no,
+            };
+            // console.log("data", data);
+
+            this.notificationsMenuItems.unshift(data);
+          });
+          this.chatUnreadMessagesStatus = false;
+          this.notificationsMenu = this.notificationsMenuItems.length > 0;
+        });
     },
     async getChatUnreadmessages() {
       if (this.chatUnreadMessagesStatus) return false;
@@ -949,7 +1000,9 @@ export default {
       await this.$axios
         .get(`chat_get_unread_messages`, options)
         .then(async ({ data }) => {
-          this.notificationsMenuItems = [];
+          this.notificationsMenuItems = this.notificationsMenuItems.filter(
+            (item) => item.type == "food"
+          );
 
           data.forEach((message) => {
             this.notificationsMenuItems.unshift({
@@ -1048,7 +1101,7 @@ export default {
       this.pendingNotificationsCount = 0;
       this.$router.push("/reservation");
     },
-    loadNotificationMenu() {
+    async loadNotificationMenu() {
       let company_id = this.$auth.user?.company?.id || 0;
       //console.log("company_id", company_id);
       if (company_id == 0) {

@@ -83,6 +83,17 @@ class HotelOrdersFoodController extends Controller
             return $this->response('Something wrong.', $th, false);
         }
     }
+    public function getGuestRoomFoodOrdersNotifications(Request $request)
+    {
+        $model = HotelOrdersFood::with(["room", "food", "booking"]);
+        $model = $model->where('company_id', $request->company_id);
+        $model = $model->where('status', 0);
+        $model = $model->orderby('created_at', "asc");
+
+
+
+        return $model->get();
+    }
     public function updateHotelOrderToDelivered(Request $request)
     {
 
