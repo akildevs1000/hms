@@ -93,6 +93,7 @@ class HotelOrdersFoodController extends Controller
         $data["status"] = 2; //delivered
         $data["delivery_datetime"] = date("Y-m-d H:i:s"); //delivered
 
+
         $status = HotelOrdersFood::where("company_id", $request->company_id)->whereId($request->hotel_order_id)->where("status", 1)->update($data);
 
         //insert into postings

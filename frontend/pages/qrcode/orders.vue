@@ -55,6 +55,7 @@
             >
           </v-col>
         </v-row>
+
         <!-- <v-row>
           <v-col cols="4" style="color: red; font-size: 12px"> </v-col>
           <v-col cols="4" style="font-weight: bold; text-align: center"
