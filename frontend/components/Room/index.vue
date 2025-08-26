@@ -497,9 +497,11 @@ export default {
         });
       });
     },
-    async viewQRCode(qrURL) {
+    async viewQRCode(item) {
+      // console.log("qrURL", item.qrURL);
+
       this.dialogQRcode = true;
-      await this.generateQRCode(qrURL, 500);
+      await this.generateQRCode(item.qrURL, 500);
     },
 
     async generateQRCode(url, width) {
@@ -507,7 +509,7 @@ export default {
         this.qrCodeImage = await this.$qrcode.generate(url, {
           width: width,
         });
-        console.log(this.qrCodeImage);
+        // console.log("qrCodeImage", this.qrCodeImage);
         if (this.qrCodeImage) return this.qrCodeImage;
       } catch (error) {
         console.error("Error generating QR code:", error);
