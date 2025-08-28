@@ -141,7 +141,7 @@
           <v-col cols="4">
             <v-autocomplete
               label="Adult"
-              :items="[1, 2, 3]"
+              :items="no_of_adult"
               dense
               outlined
               v-model="temp.no_of_adult"
@@ -152,7 +152,7 @@
           <v-col cols="4">
             <v-autocomplete
               label="Child"
-              :items="[0, 1, 2, 3]"
+              :items="no_of_child"
               dense
               outlined
               v-model="temp.no_of_child"
@@ -227,6 +227,8 @@ export default {
   props: ["label", "reservation"],
   data() {
     return {
+      no_of_adult: [],
+      no_of_child: [],
       Model: "Reservation",
       additional_charges: {},
       is_early_check_in: false,
@@ -322,6 +324,8 @@ export default {
     await this.get_food_plans();
 
     await this.get_additional_charges();
+
+    await this.fetchCounts();
   },
   computed: {
     formattedCheckinDate() {
@@ -344,6 +348,22 @@ export default {
     },
   },
   methods: {
+    async fetchCounts() {
+      try {
+        const [adultsArray, childrenArray] = await Promise.all([
+          this.$axios.$get("/no_of_adult"),
+          this.$axios.$get("/no_of_child"),
+        ]);
+
+        // Assign full arrays
+        this.no_of_adult = adultsArray || [];
+        this.no_of_child = childrenArray || [];
+      } catch (error) {
+        console.error("Failed to fetch counts:", error);
+        this.no_of_adult = [];
+        this.no_of_child = [];
+      }
+    },
     close() {
       this.temp = {
         food_plan_price: 0,

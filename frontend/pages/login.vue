@@ -213,7 +213,8 @@ export default {
     passwordRules: [(v) => !!v || "Password is required"],
   }),
   created() {
-    console.log("Login Created");
+    
+    console.log("🚀 ~ created method in login  ->  this.$backendUrl:", this.$backendUrl)
 
     try {
       const userType = this.$auth.user?.user_type;

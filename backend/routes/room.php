@@ -1,61 +1,64 @@
- <?php
+<?php
 
-  use App\Http\Controllers\BookingController;
-  use App\Http\Controllers\RoomController;
-  use App\Http\Controllers\RoomTypeController;
-  use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\RoomController;
+use App\Http\Controllers\RoomTypeController;
+use Illuminate\Support\Facades\Route;
 
-  Route::apiResource('/room', RoomController::class);
-  Route::get('room-list', [RoomController::class, 'dropDown']);
-  Route::get('room', [RoomController::class, 'index']);
+Route::apiResource('/room', RoomController::class);
+Route::get('room-list', [RoomController::class, 'dropDown']);
+Route::get('room', [RoomController::class, 'index']);
+Route::get('no_of_adult', function () {
+    return [1, 2, 3, 4, 5, 6];
+});
+Route::get('no_of_child', function () {
+    return [0,1, 2, 3];
+});
 
-  Route::get('room/search/{key}', [RoomController::class, 'search']);
+Route::get('room/search/{key}', [RoomController::class, 'search']);
 
-  Route::get('/get_room/{id}', [RoomController::class, 'getRoom']);
+Route::get('/get_room/{id}', [RoomController::class, 'getRoom']);
 
-  Route::get('room_type', [RoomTypeController::class, 'index']);
-  Route::get('room_type_for_hall', [RoomTypeController::class, 'roomTypeForHall']);
+Route::get('room_type', [RoomTypeController::class, 'index']);
+Route::get('room_type_for_hall', [RoomTypeController::class, 'roomTypeForHall']);
 
-  Route::get('get_data_by_select', [RoomTypeController::class, 'getDataBySelect']);
-  Route::get('get_data_by_select_with_tax', [RoomTypeController::class, 'getDataBySelectWithTax']);
-  Route::get('get_hall_pricing_list', [RoomTypeController::class, 'get_hall_pricing_list']);
-  Route::get('get_room_current_price', [RoomTypeController::class, 'getRoomCurrentPrice']);
+Route::get('get_data_by_select', [RoomTypeController::class, 'getDataBySelect']);
+Route::get('get_data_by_select_with_tax', [RoomTypeController::class, 'getDataBySelectWithTax']);
+Route::get('get_hall_pricing_list', [RoomTypeController::class, 'get_hall_pricing_list']);
+Route::get('get_room_current_price', [RoomTypeController::class, 'getRoomCurrentPrice']);
 
-  Route::get('get_id_cards', [RoomController::class, 'get_id_cards']);
+Route::get('get_id_cards', [RoomController::class, 'get_id_cards']);
 
-  Route::get('room_list', [RoomController::class, 'roomList']);
-  Route::get('room_list_for_calendar_only', [RoomController::class, 'roomListForCalendarOnly']);
+Route::get('room_list', [RoomController::class, 'roomList']);
+Route::get('room_list_for_calendar_only', [RoomController::class, 'roomListForCalendarOnly']);
 
-  Route::get('room_dropdown_list', [RoomController::class, 'roomDropdownList']);
+Route::get('room_dropdown_list', [RoomController::class, 'roomDropdownList']);
 
+Route::get('room_list_menu', [RoomController::class, 'roomListForMenu']);
+Route::get('get_available_rooms_by_date', [RoomController::class, 'getAvailableRoomsByDate']);
+Route::get('get_available_rooms_by_date_and_room_type', [RoomController::class, 'getAvailableRoomsByDateAndRoomType']);
+Route::get('get_available_rooms_for_quotation', [RoomController::class, 'getAvailableRoomsForQuotation']);
 
+Route::get('get_available_rooms_for_modify', [RoomController::class, 'getAvailableRoomsForModify']);
 
+Route::get('get_food_prices', [RoomController::class, 'getFoodPrices']);
 
-  Route::get('room_list_menu', [RoomController::class, 'roomListForMenu']);
-  Route::get('get_available_rooms_by_date', [RoomController::class, 'getAvailableRoomsByDate']);
-  Route::get('get_available_rooms_by_date_and_room_type', [RoomController::class, 'getAvailableRoomsByDateAndRoomType']);
-  Route::get('get_available_rooms_for_quotation', [RoomController::class, 'getAvailableRoomsForQuotation']);
-  
-  Route::get('get_available_rooms_for_modify', [RoomController::class, 'getAvailableRoomsForModify']);
+Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);
+Route::get('room_list_grid_for_house_keeping', [RoomController::class, 'roomListForGridViewForHouseKeepingApp']);
 
-  Route::get('get_food_prices', [RoomController::class, 'getFoodPrices']);
+Route::get('get_room_price_by_meal_plan', [RoomController::class, 'get_room_price_by_meal_plan']);
 
-  Route::get('room_list_grid', [RoomController::class, 'roomListForGridView']);
-  Route::get('room_list_grid_for_house_keeping', [RoomController::class, 'roomListForGridViewForHouseKeepingApp']);
+Route::post('generate_bill', [BookingController::class, 'generateBill']);
+Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);
 
-  Route::get('get_room_price_by_meal_plan', [RoomController::class, 'get_room_price_by_meal_plan']);
+Route::get('get_room_price_by_meal_plan', [RoomController::class, 'get_room_price_by_meal_plan']);
 
-  Route::post('generate_bill', [BookingController::class, 'generateBill']);
-  Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);
+Route::post('generate_bill', [BookingController::class, 'generateBill']);
+Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);
+Route::put('update_room_price/{id}', [RoomTypeController::class, 'updatePrice']);
+Route::post('set_room_status/{status}', [RoomController::class, 'setRoomStatus']);
 
-  Route::get('get_room_price_by_meal_plan', [RoomController::class, 'get_room_price_by_meal_plan']);
-
-  Route::post('generate_bill', [BookingController::class, 'generateBill']);
-  Route::get('get_price_list', [RoomTypeController::class, 'getPriceList']);
-  Route::put('update_room_price/{id}', [RoomTypeController::class, 'updatePrice']);
-  Route::post('set_room_status/{status}', [RoomController::class, 'setRoomStatus']);
-
-  //created room
-  Route::resource('room_types', RoomTypeController::class);
-  Route::get('get_room_type_list', [RoomTypeController::class, 'getRoomType']);
-  Route::get('get-notifications-count', [BookingController::class, 'getNotificationCount']);
+//created room
+Route::resource('room_types', RoomTypeController::class);
+Route::get('get_room_type_list', [RoomTypeController::class, 'getRoomType']);
+Route::get('get-notifications-count', [BookingController::class, 'getNotificationCount']);
