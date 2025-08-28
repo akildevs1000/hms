@@ -405,7 +405,9 @@ export default {
     },
 
     redirect_to_invoice(id) {
-      let url = process.env.BACKEND_URL + "invoice";
+      // let url = process.env.BACKEND_URL + "invoice";
+      let url = "https://backend.myhotel2cloud.com/api/invoice";
+      
       // url = "https://hms-backend.test/api/invoice";
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
