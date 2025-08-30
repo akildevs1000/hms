@@ -16,6 +16,8 @@ Route::get('hotel_food_generate_otp', [QrcodeapiController::class, 'generateHote
 Route::get('/hotel_orders_customer_menu', [QrcodeapiController::class, "getCustomerMenu"]);
 Route::post('/hotel_orders_add_food_items', [QrcodeapiController::class, "addFoodOrderItems"]);
 Route::get('/hotel_orders_get_food_items', [QrcodeapiController::class, "getFoodOrderItems"]);
+Route::get('/hotel_food_order_history', [QrcodeapiController::class, "getFoodOrderHistory"]);
+
 Route::post('/hotel_orders_cancel_food_item', [QrcodeapiController::class, "cancelFoodOrderItem"]);
 
 Route::post('/hotel_orders_checkout_request', [QrcodeapiController::class, "updateCheckoutByGuest"]);
