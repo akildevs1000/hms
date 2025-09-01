@@ -208,6 +208,38 @@ class QrcodeapiController extends Controller
             return $this->response('Something wrong.', $th, false);
         }
     }
+
+
+    public function getFoodOrderHistory(Request $request)
+    {
+        try {
+            $model = HotelOrdersFood::with(["room", "food", "booking"]);
+
+
+            $model->where('company_id', $request->company_id)
+                ->where('room_id', $request->room_id)
+                ->where('booking_id', $request->booking_id);
+
+            $model = $model->orderBy('request_datetime', "desc");
+            return $orders = $model->get()->toArray();
+            $groupedOrders = [];
+
+            foreach ($orders as $order) {
+                $datetime = $order->request_datetime;
+
+                if (!isset($groupedOrders[$datetime])) {
+                    $groupedOrders[$datetime] = [];
+                }
+
+                $groupedOrders[$datetime][] = $order;
+            }
+
+            return $groupedOrders;
+        } catch (\Throwable $th) {
+            return $this->response('Something wrong.', $th, false);
+        }
+    }
+
     public function updateCheckoutByGuest(Request $request)
     {
 
