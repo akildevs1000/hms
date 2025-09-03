@@ -7,6 +7,7 @@ use App\Http\Requests\Room\StoreRequest;
 use App\Http\Requests\Room\UpdateRequest;
 use App\Models\BookedRoom;
 use App\Models\Room;
+use App\Models\RoomCleaning;
 use App\Models\RoomType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -662,62 +663,11 @@ class RoomController extends Controller
 
         $todayDate = $request->filled("filter_date") ? $request->filter_date : date('Y-m-d');
 
-        $AvailableRooms = Room::with("is_cleaned", "is_neutral", "is_dirty", "last_cleaned")
-            ->withCount("room_cleaning_status")
-            ->whereNotNull("floor_no")
-            ->whereHas("room_type")
-            ->where('company_id', $company_id)->whereNot("status", Room::Blocked)->get();
-
         $BlockedRooms = Room::with('device', "is_cleaned", "is_neutral", "is_dirty", "last_cleaned")->withCount("room_cleaning_status")->where("status", Room::Blocked)->where('company_id', $company_id)->get();
-
-        $expectCheckOut = Room::with('device')
-            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
-                $query->where('company_id', $company_id);
-                $query->whereDate('check_out', '=', $todayDate);
-                $query->where('booking_status', 2);
-            })
-
-            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
-                $q->with("customer");
-                $q->where('company_id', $company_id);
-                $q->whereDate('check_out', '=', $todayDate);
-                $q->where('booking_status', 2);
-            }])
-            ->get();
-
-        $bookedRoom = Room::whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
-            $q->whereNotNull('room_id');
-            $q->where('company_id', $company_id);
-
-            $q->where(function ($query) use ($todayDate) {
-                // Check if the check-in is before or equal to today, and check-out is after or equal to today
-                $query->whereDate('check_in', '<=', $todayDate)
-                    ->whereDate('check_out', '>=', $todayDate)
-                    ->where('booking_status', BookedRoom::BOOKED) // Status for dirty rooms
-                    ->where('booking_status', '!=', 0);           // Exclude non-active bookings
-            });
-        })
-            ->with(['is_cleaned', "is_neutral", "is_dirty", "last_cleaned", 'device', 'bookedRoom' => function ($q) use ($company_id, $todayDate) {
-
-                $q->whereNotNull('room_id');
-                $q->where('company_id', $company_id);
-
-                $q->where(function ($query) use ($todayDate) {
-                    // Check if the check-in is before or equal to today, and check-out is after or equal to today
-                    $query->whereDate('check_in', '<=', $todayDate)
-                        ->whereDate('check_out', '>=', $todayDate)
-                        ->where('booking_status', BookedRoom::BOOKED) // Status for dirty rooms
-                        ->where('booking_status', '!=', 0);           // Exclude non-active bookings
-                });
-
-                $q->with("customer");
-            }])
-            ->withCount("room_cleaning_status")
-            ->get();
 
         $Occupied = Room::with('device', 'is_cleaned', "is_neutral", "is_dirty", "last_cleaned")
             ->withCount("room_cleaning_status")
-        // ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
                 $query->whereDate('check_in', $todayDate);
                 $query->where('company_id', $company_id);
@@ -741,8 +691,25 @@ class RoomController extends Controller
             }])
             ->get();
 
-        $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned", "is_neutral", "is_dirty", "last_cleaned"])
+        $expectCheckOut = Room::with('device', 'is_cleaned', "is_neutral", "is_dirty", "last_cleaned")
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->whereHas('bookedRoom', function ($query) use ($company_id, $todayDate) {
+                $query->where('company_id', $company_id);
+                $query->whereDate('check_out', '=', $todayDate);
+                $query->where('booking_status', 2);
+            })
+
+            ->with(['bookedRoom' => function ($q) use ($company_id, $todayDate) {
+                $q->with("customer");
+                $q->where('company_id', $company_id);
+                $q->whereDate('check_out', '=', $todayDate);
+                $q->where('booking_status', 2);
+            }])
+            ->get();
+
+        $dirtyRooms = Room::with(['device', 'bookedRoom', "is_cleaned", "is_neutral", "is_dirty", "last_cleaned", "last_cleaned"])
             ->withCount("room_cleaning_status")
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
             ->whereHas('bookedRoom', function ($q) use ($company_id, $todayDate) {
                 $q->where('company_id', $company_id)
                     ->where(function ($query) use ($todayDate) {
@@ -761,14 +728,31 @@ class RoomController extends Controller
                     ->with("customer");
             }])->get();
 
+        $Occupied = [ ...$Occupied, ...$expectCheckOut];
+
+        $idsToBeIgnored = [
+             ...collect($Occupied)->pluck("id")->toArray(),
+            ...collect($dirtyRooms)->pluck("id")->toArray(),
+            ...collect($BlockedRooms)->pluck("id")->toArray(),
+        ];
+
+        $AvailableRooms = Room::with("is_cleaned", "is_neutral", "is_dirty", "last_cleaned")
+            ->withCount("room_cleaning_status")
+            ->whereHas('roomType', fn ($q) => $q->where('type', request("type", "room")))
+            ->where('company_id', $company_id)
+            ->whereNotIn("id", $idsToBeIgnored)
+            ->get();
+
+        $engagedRoomsCount = RoomCleaning::whereDate("created_at", $todayDate)->where('company_id', $company_id)->distinct("room_id")->count();
+
         return [
-            'allRooms'       => $AvailableRooms,
-            'bookedRooms'    => $bookedRoom,
-            'checkIn'        => $Occupied,
-            'expectCheckOut' => $expectCheckOut,
-            'dirtyRoomsList' => $dirtyRooms,
-            'blockedRooms'   => $BlockedRooms,
-            'status'         => true,
+            'totalRoomsCount' => $AvailableRooms->count() + $dirtyRooms->count() + $BlockedRooms->count() + count($Occupied),
+            'engagedRoomsCount' => $engagedRoomsCount,
+            'vacantRooms'     => $AvailableRooms,
+            'Occupied'        => $Occupied,
+            'dirtyRoomsList'  => $dirtyRooms,
+            'blockedRooms'    => $BlockedRooms,
+            'status'          => true,
         ];
     }
 }
