@@ -121,7 +121,9 @@
                   <AssetsTextLabel color="text-color" label="Pay" />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item @click="redirect_to_invoice(item)">
+              <v-list-item
+                @click="redirect_to_invoice(item.id)"
+              >
                 <v-list-item-title style="cursor: pointer">
                   <v-icon x-small color="primary" class="mr-2">
                     mdi-cash-multiple
@@ -397,17 +399,13 @@ export default {
       });
     },
 
-    redirect_to_invoice(item) {
+    redirect_to_invoice(id) {
 
-    console.log("🚀 ~ created method in login  ->  this.$backendUrl:", this.$backendUrl)
-
-      let url = `${this.$backendUrl}get_taxable_invoice`;
-
-      let indexId = this.indexId(item);
+      let endpoint = `${this.$backendUrl}get_taxable_invoice/${id}`;
 
       let element = document.createElement("a");
       element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${url}/${item.id}/${indexId}`);
+      element.setAttribute("href", endpoint);
       document.body.appendChild(element);
       element.click();
     },
