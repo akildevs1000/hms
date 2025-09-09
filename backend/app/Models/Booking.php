@@ -263,6 +263,7 @@ class Booking extends Model
             $query->where(
                 fn($query) => $query
                     ->orWhere('id', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                    ->orWhere('invoice_number', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                     ->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                     ->orWhere('reference_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                     ->orWhere('type', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
