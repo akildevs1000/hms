@@ -1,12 +1,8 @@
 <?php
-
 namespace App\Console;
 
-use App\Mail\ReportNotificationMail;
-use App\Models\ReportNotification;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Mail;
 
 class Kernel extends ConsoleKernel
 {
@@ -32,6 +28,10 @@ class Kernel extends ConsoleKernel
             //->hourly()
             ->appendOutputTo(storage_path("logs/pdf.log"))
             ->emailOutputOnFailure(env("ADMIN_MAIL_RECEIVERS"));
+
+        $schedule->command('bookings:assign-invoices')
+            ->everyMinute()
+            ->withoutOverlapping();
 
     }
 

@@ -212,9 +212,14 @@ class TaxableController extends Controller
 
         $model->where(function ($query) {
             $query->whereNotNull('gst_number')
-                ->orWhereHas('customer.source', function ($q2) {
-                    $q2->whereNotNull('gst');
+                ->orWhereHas('customer', function ($q2) {
+                    $q2->whereNotNull('gst_number');
+                    $q2->orWhereHas('source', function ($q2) {
+                        $q2->whereNotNull('gst');
+                    });
                 });
+
+            ;
         });
 
         $model->where('room_category_type', null);
@@ -225,10 +230,6 @@ class TaxableController extends Controller
                 $q->where('company_id', $request->company_id);
             });
         });
-
-        if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
-            $model->where('source', env("WILD_CARD") ?? 'ILIKE', '%' . $request->source . '%');
-        }
 
         if ($request->isSelectAll != -1) {
             if ($request->guest_mode == 'Arrival' && ($request->filled('from') && $request->from) && ($request->filled('to') && $request->to)) {
