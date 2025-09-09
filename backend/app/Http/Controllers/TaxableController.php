@@ -257,7 +257,7 @@ class TaxableController extends Controller
             ->paginate($request->per_page ?? 20);
     }
 
-    public function getInvoice($id, $invoice)
+    public function getInvoice($id)
     {
         $booking = Booking::with([
             'orderRooms',
@@ -271,6 +271,7 @@ class TaxableController extends Controller
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
 
+        $invoice   =    "GST- " . $booking->invoice_number;
         $orderRooms   = $booking->orderRooms;
         $company      = $booking->company;
         $transactions = $booking->transactions;
