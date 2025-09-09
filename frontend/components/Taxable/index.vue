@@ -37,7 +37,7 @@
         :server-items-length="totalRowsCount"
       >
         <template v-slot:item.sno="{ item, index }">
-          <AssetsTextLabel :label="indexId(item)" />
+          <AssetsTextLabel :label="`GST-${item.invoice_number}`" />
         </template>
         <template v-slot:item.res_number="{ item }">
           <span
@@ -199,7 +199,7 @@ export default {
         sortable: false,
         key: "employee_id",
         filterable: true,
-        value: "sno",
+        value: "invoice_number",
       },
       {
         text: "Rev. No",
@@ -345,13 +345,6 @@ export default {
   },
 
   methods: {
-    indexId(item) {
-      let indexIdNumber = this.currentPage
-        ? (this.currentPage - 1) * this.perPage +
-          (this.cumulativeIndex + this.itemIndex(item))
-        : 0;
-      return `GST-${indexIdNumber + 1000}`;
-    },
     can(per) {
       let u = this.$auth.user;
       return (
