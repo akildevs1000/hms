@@ -3,6 +3,7 @@ namespace App\Console\Commands;
 
 use App\Models\Booking;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class AssignInvoiceNumbers extends Command
 {
@@ -13,35 +14,28 @@ class AssignInvoiceNumbers extends Command
     {
         $start = (int) $this->argument('start');
 
-        $this->info("Assigning invoice numbers starting from {$start} for each company...");
+        Log::channel('invoice')->info("Assigning invoice numbers starting from {$start} for each company...");
 
-        // Get all companies that have bookings
         $companyIds = Booking::distinct()->pluck('company_id');
 
         foreach ($companyIds as $companyId) {
-            // Start counter from the last assigned invoice or the given start number
             $lastInvoice = Booking::where('company_id', $companyId)->max('invoice_number');
             $counter     = $lastInvoice ? $lastInvoice + 1 : $start;
 
-            $this->info("Processing company_id: {$companyId} (starting at {$counter})");
+            Log::channel('invoice')->info("Processing company_id: {$companyId} (starting at {$counter})");
 
-            $processedCount = 0; // Track number of bookings processed
-
-            // Booking::where('company_id', $companyId)->update(['invoice_number' => null]);
+            $processedCount = 0;
 
             Booking::where('company_id', $companyId)
-                ->whereNull('invoice_number') // skip already assigned
-
+                ->whereNull('invoice_number')
                 ->where(function ($query) {
                     $query->whereNotNull('gst_number')
                         ->orWhereHas('customer', function ($q2) {
-                            $q2->whereNotNull('gst_number');
-                            $q2->orWhereHas('source', function ($q2) {
-                                $q2->whereNotNull('gst');
-                            });
+                            $q2->whereNotNull('gst_number')
+                               ->orWhereHas('source', function ($q3) {
+                                   $q3->whereNotNull('gst');
+                               });
                         });
-
-                    ;
                 })
                 ->orderBy('created_at', 'asc')
                 ->chunk(100, function ($bookings) use (&$counter, &$processedCount) {
@@ -52,7 +46,7 @@ class AssignInvoiceNumbers extends Command
                     }
                 });
 
-            $this->info("✅ Company {$companyId}: {$processedCount} bookings processed");
+            Log::channel('invoice')->info("✅ Company {$companyId}: {$processedCount} bookings processed");
         }
     }
 }
