@@ -36,7 +36,7 @@
         class="elevation-0"
         :server-items-length="totalRowsCount"
       >
-        <template v-slot:item.sno="{ item, index }">
+        <template v-slot:item.invoice_number="{ item, index }">
           <AssetsTextLabel :label="`GST-${item.invoice_number}`" />
         </template>
         <template v-slot:item.res_number="{ item }">
