@@ -7,16 +7,16 @@ use Illuminate\Support\Facades\Log;
 
 class AssignInvoiceNumbers extends Command
 {
-    protected $signature   = 'bookings:assign-invoices {start=1001}';
+    protected $signature   = 'bookings:assign-invoices';
     protected $description = 'Assign sequential invoice numbers for each company, ordered by created_at';
 
     public function handle()
     {
-        $start = (int) $this->argument('start');
+        $start = 1001;
 
         $this->recordLog("Assigning invoice numbers starting from {$start} for each company...");
 
-        $companyIds = Booking::whereCompanyId(11)->distinct()->pluck('company_id');
+        $companyIds = Booking::distinct()->pluck('company_id');
 
         foreach ($companyIds as $companyId) {
 
