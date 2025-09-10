@@ -18,6 +18,7 @@ class Module extends Model
         ["module" => "Invoice"],
         ["module" => "Quotation"],
         ["module" => "Inquiry"],
+        ["module" => "GstInvoice"],
 
         
         // "Invoice" => "Invoice",
