@@ -14,17 +14,18 @@ class AssignInvoiceNumbers extends Command
 
     public function handle()
     {
-        $json = TransactionNumberSeries::whereCompanyId(11)->value("json") ?? [];
-
-        $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == Module::Invoice)->first();
-
-        $start = $singleObject->starting_number ?? 1001;
-
-        $this->recordLog("Assigning invoice numbers starting from {$start} for each company...");
 
         $companyIds = Booking::distinct()->pluck('company_id');
 
         foreach ($companyIds as $companyId) {
+
+            $json = TransactionNumberSeries::whereCompanyId($companyId)->value("json") ?? [];
+
+            $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == Module::Invoice)->first();
+
+            $start = $singleObject->starting_number ?? 1001;
+
+            $this->recordLog("Assigning invoice numbers starting from {$start} for each company...");
 
             // Booking::where('company_id', $companyId)->update(["invoice_number" => null,"taxable_invoice_number" => null]);
 
