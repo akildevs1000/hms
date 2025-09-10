@@ -128,14 +128,6 @@
                   <AssetsTextLabel color="text-color" label="Pay" />
                 </v-list-item-title>
               </v-list-item>
-              <v-list-item @click="redirect_to_invoice(item.id)">
-                <v-list-item-title style="cursor: pointer">
-                  <v-icon x-small color="primary" class="mr-2">
-                    mdi-cash-multiple
-                  </v-icon>
-                  <AssetsTextLabel color="text-color" label="Invoice" />
-                </v-list-item-title>
-              </v-list-item>
               <!-- <v-list-item @click="deleteItem(item.id)">
                 <v-list-item-title style="cursor: pointer">
                   <v-icon x-small color="black" class="mr-2">
@@ -402,18 +394,6 @@ export default {
 
         this.sources = [{ id: -1, name: "Select All" }].concat(data);
       });
-    },
-
-    redirect_to_invoice(id) {
-      // let url = process.env.BACKEND_URL + "invoice";
-      let url = "https://backend.myhotel2cloud.com/api/invoice";
-      
-      // url = "https://hms-backend.test/api/invoice";
-      let element = document.createElement("a");
-      element.setAttribute("target", "_blank");
-      element.setAttribute("href", `${url}/${id}`);
-      document.body.appendChild(element);
-      element.click();
     },
 
     async deleteItem(id) {

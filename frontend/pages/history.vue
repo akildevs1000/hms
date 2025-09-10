@@ -9,73 +9,55 @@
     </v-card>
 
     <v-card class="mt-7">
-      <v-row>
-        <v-col class="pl-5">
-          <div class="">
-            <AssetsIcon
-              icon="printer-outline"
-              @click="process('reservation_report_print', endpoint)"
-            />
-            &nbsp;
-            <AssetsIcon
-              icon="download-outline"
-              @click="process('reservation_report_download', endpoint)"
-            />
-          </div>
-        </v-col>
-        <v-col cols="2"></v-col>
-        <v-col cols="7" class="text-right">
-          <div style="display: flex; align-items: right" class="pr-2">
-            <v-btn
-              :color="currentTabId === 1 ? 'primary' : ''"
-              text
-              @click="setCurrentTab(1)"
-            >
-              In House
-            </v-btn>
-            <v-btn
-              :color="currentTabId === 2 ? 'primary' : ''"
-              text
-              @click="setCurrentTab(2)"
-            >
-              Checkout
-            </v-btn>
-            <v-btn
-              :color="currentTabId === 3 ? 'primary' : ''"
-              text
-              @click="setCurrentTab(3)"
-            >
-              Reservation
-            </v-btn>
-            <v-btn
-              :color="currentTabId === 4 ? 'primary' : ''"
-              text
-              @click="setCurrentTab(4)"
-            >
-              All Guest
-            </v-btn>
+      <div
+        style="display: flex; align-items: right; justify-content: end"
+        class="pa-5"
+      >
+        <v-btn
+          :color="currentTabId === 1 ? 'primary' : ''"
+          text
+          @click="setCurrentTab(1)"
+        >
+          In House
+        </v-btn>
+        <v-btn
+          :color="currentTabId === 2 ? 'primary' : ''"
+          text
+          @click="setCurrentTab(2)"
+        >
+          Checkout
+        </v-btn>
+        <v-btn
+          :color="currentTabId === 3 ? 'primary' : ''"
+          text
+          @click="setCurrentTab(3)"
+        >
+          Reservation
+        </v-btn>
+        <v-btn
+          :color="currentTabId === 4 ? 'primary' : ''"
+          text
+          @click="setCurrentTab(4)"
+        >
+          All Guest
+        </v-btn>
 
-            <div>
-              <v-text-field
-                label="Search..."
-                dense
-                outlined
-                flat
-                append-icon="mdi-magnify"
-                @input="searchIt"
-                v-model="search"
-                hide-details
-                style="max-width: 200px"
-              ></v-text-field>
-            </div>
-            &nbsp;
-            <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
-          </div>
-        </v-col>
-      </v-row>
-    </v-card>
-
-    <v-card class="mt-7">
+        <div>
+          <v-text-field
+            label="Search..."
+            dense
+            outlined
+            flat
+            append-icon="mdi-magnify"
+            @input="searchIt"
+            v-model="search"
+            hide-details
+            style="max-width: 200px"
+          ></v-text-field>
+        </div>
+        &nbsp;
+        <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+      </div>
       <ReservationAllList
         v-if="currentTabId == 1"
         :filter="filter"
@@ -109,6 +91,7 @@
         @response="handleResponse"
       />
     </v-card>
+
 
     <v-card class="mt-5 px-2">
       <v-row>

@@ -1,30 +1,33 @@
 <template>
   <v-card class="mt-7">
-       <div style="display: flex; align-items: right;justify-content: end;" class="pa-5">
-        <div>
-          <v-text-field
-            label="Search..."
-            dense
-            outlined
-            flat
-            append-icon="mdi-magnify"
-            @input="searchIt"
-            v-model="search"
-            hide-details
-            style="max-width: 200px"
-          ></v-text-field>
-        </div>
-        &nbsp;
-        <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+    <div
+      style="display: flex; align-items: right; justify-content: end"
+      class="pa-5"
+    >
+      <div>
+        <v-text-field
+          label="Search..."
+          dense
+          outlined
+          flat
+          append-icon="mdi-magnify"
+          @input="searchIt"
+          v-model="search"
+          hide-details
+          style="max-width: 200px"
+        ></v-text-field>
       </div>
-      <Taxable
-        :filter="filter"
-        :TabId="currentTabId"
-        :endpoint="'get_taxable_invoices'"
-        :Model="'All Guest'"
-        @response="handleResponse"
-      />
-    </v-card>
+      &nbsp;
+      <FilterDateRange :defaultDates="true" @filter-attr="filterAttr" />
+    </div>
+    <Taxable
+      :filter="filter"
+      :TabId="currentTabId"
+      :endpoint="'get_taxable_invoices'"
+      :Model="'All Guest'"
+      @response="handleResponse"
+    />
+  </v-card>
 </template>
 
 <script>
