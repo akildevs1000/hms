@@ -2,7 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Module;
 use App\Models\Taxable;
+use App\Models\TransactionNumberSeries;
 use Illuminate\Http\Request;
 
 class TaxableController extends Controller
@@ -273,14 +275,20 @@ class TaxableController extends Controller
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
 
         $invoiceNumber = $booking->taxable_invoice_number ? $booking->taxable_invoice_number : $booking->invoice_number;
-        
-        $prefix = $booking->taxable_invoice_number ? "GST-" : "INV-";
 
-        $invoice      = $prefix . $invoiceNumber;
+        $comapny_id   = $booking->comapny_id;
         $orderRooms   = $booking->orderRooms;
         $company      = $booking->company;
         $transactions = $booking->transactions;
         $bookedRooms  = $booking->bookedRooms;
+
+        $json = TransactionNumberSeries::whereCompanyId($comapny_id)->value("json") ?? [];
+
+        $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == Module::Invoice)->first();
+
+        $prefix = $singleObject->prefix ?? "Inv-";
+
+        $invoice = $prefix . $invoiceNumber;
 
         $first_check_in_time  = $bookedRooms[0]["actual_check_in_time"] ?? "00:00";
         $first_check_out_time = $bookedRooms[0]["actual_check_out_time"] ?? "00:00";
