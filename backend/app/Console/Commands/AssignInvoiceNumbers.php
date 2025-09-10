@@ -2,6 +2,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Booking;
+use App\Models\Module;
+use App\Models\TransactionNumberSeries;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
@@ -12,7 +14,11 @@ class AssignInvoiceNumbers extends Command
 
     public function handle()
     {
-        $start = 1001;
+        $json = TransactionNumberSeries::whereCompanyId(11)->value("json") ?? [];
+
+        $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == Module::Invoice)->first();
+
+        $start = $singleObject->starting_number ?? 1001;
 
         $this->recordLog("Assigning invoice numbers starting from {$start} for each company...");
 

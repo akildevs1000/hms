@@ -10,6 +10,21 @@ class Module extends Model
 {
     use HasFactory;
 
+    const Invoice = "Invoice";
+    const Quotation = "Quotation";
+    const Inquiry = "Inquiry";
+
+    const MODULES = [
+        ["module" => "Invoice"],
+        ["module" => "Quotation"],
+        ["module" => "Inquiry"],
+
+        
+        // "Invoice" => "Invoice",
+        // "Quotation" => "Quotation",
+        // "Inquiry" => "Inquiry",
+    ];
+
     protected $guarded = [];
 
     public function companies(){
