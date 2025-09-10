@@ -128,16 +128,6 @@ export default {
   },
 
   methods: {
-    async getDefaultData() {
-      try {
-        const { data } = await this.$axios.get(`/get_modules`);
-        if (data) {
-          this.modules = this.prepareModules(data);
-        }
-      } catch (error) {
-        //   this.showSnackbar("Could not load SMTP config.", "error");
-      }
-    },
     async getTransactionNumberSeriesData() {
       try {
         const { data } = await this.$axios.get(
@@ -145,28 +135,51 @@ export default {
         );
 
         if (!data.json.length) {
-          await this.getDefaultData();
           return;
         }
-        this.modules = this.prepareModules(data.json);
+        await this.prepareModules(data.json);
       } catch (error) {
         //   this.showSnackbar("Could not load SMTP config.", "error");
       }
     },
 
-    prepareModules(data) {
-      return data.map((item) => ({
-        ...item,
-        prefix: `${
-          item.prefix ||
-          item.module.slice(1, 1).toUpperCase() + item.module.slice(0, 3) + "-"
-        }`,
-        starting_number: `${item.starting_number || 1001}`,
-        preview: `${
-          item.prefix ||
-          item.module.slice(1, 1).toUpperCase() + item.module.slice(0, 3) + "-"
-        }${item.starting_number || 1001}`,
-      }));
+    async prepareModules(data) {
+      this.modules = await this.$axios.$get(`/get_modules`);
+
+      let d2 = [];
+
+      this.modules.forEach((item1) => {
+        let found = false;
+
+        data.forEach((item2) => {
+          if (item1.module === item2.module) {
+            found = true;
+            d2.push({
+              module: item1.module,
+              prefix: `${
+                item1.prefix ||
+                item1.module[0].toUpperCase() + item1.module.slice(0, 3) + "-"
+              }`,
+              starting_number: `${item1.starting_number || 1001}`,
+              preview: `${
+                item1.prefix ||
+                item1.module[0].toUpperCase() + item1.module.slice(0, 3) + "-"
+              }${item1.starting_number || 1001}`,
+            });
+          }
+        });
+
+        if (!found) {
+          d2.push({
+            module: item1.module,
+            prefix: `${item1.module.slice(0, 3)}-`,
+            starting_number: "1001",
+            preview: `${item1.module.slice(0, 3)}-1001`,
+          });
+        }
+      });
+
+      this.modules = d2;
     },
     setItemPreview(item) {
       item.preview = `${item.prefix}${item.starting_number}`;
