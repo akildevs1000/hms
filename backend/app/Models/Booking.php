@@ -36,7 +36,6 @@ class Booking extends Model
 
     protected $guarded = [];
     protected $appends = [
-        'taxable_invoice_number',
         'resourceId',
         'title',
         'background',
@@ -392,20 +391,6 @@ class Booking extends Model
         $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
         $text      = ucwords($formatter->format($amount));
         return $text . " Only";
-    }
-
-    public function getTaxableInvoiceNumberAttribute()
-    {
-
-        $count = self::where('company_id', $this->company_id)
-            ->whereNotNull('gst_number')
-            ->whereHas('customer.source', function ($q) {
-                $q->whereNotNull('gst');
-            })->count() ?? 1;
-
-        $number = str_pad(1000 + $count, 8, '0', STR_PAD_LEFT);
-
-        return 'GST-' . $number;
     }
 
     // protected static function boot()

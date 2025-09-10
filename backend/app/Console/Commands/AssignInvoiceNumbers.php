@@ -14,39 +14,54 @@ class AssignInvoiceNumbers extends Command
     {
         $start = (int) $this->argument('start');
 
-        Log::channel('invoice')->info("Assigning invoice numbers starting from {$start} for each company...");
+        $this->recordLog("Assigning invoice numbers starting from {$start} for each company...");
 
-        $companyIds = Booking::distinct()->pluck('company_id');
+        $companyIds = Booking::whereCompanyId(11)->distinct()->pluck('company_id');
 
         foreach ($companyIds as $companyId) {
+
+            // Booking::where('company_id', $companyId)->update(["invoice_number" => null,"taxable_invoice_number" => null]);
+
             $lastInvoice = Booking::where('company_id', $companyId)->max('invoice_number');
             $counter     = $lastInvoice ? $lastInvoice + 1 : $start;
 
-            Log::channel('invoice')->info("Processing company_id: {$companyId} (starting at {$counter})");
+            $lastTaxableInvoice = Booking::where('company_id', $companyId)->max('taxable_invoice_number');
+            $taxableCounter     = $lastTaxableInvoice ? $lastTaxableInvoice + 1 : $start;
+
+            $this->recordLog("Processing company_id: {$companyId} (starting at {$counter})");
+            $this->recordLog("Processing company_id: {$companyId} (starting Taxable at {$taxableCounter})");
 
             $processedCount = 0;
 
             Booking::where('company_id', $companyId)
                 ->whereNull('invoice_number')
-                ->where(function ($query) {
-                    $query->whereNotNull('gst_number')
-                        ->orWhereHas('customer', function ($q2) {
-                            $q2->whereNotNull('gst_number')
-                               ->orWhereHas('source', function ($q3) {
-                                   $q3->whereNotNull('gst');
-                               });
-                        });
-                })
+                ->with("customer:id,gst_number,source_id")
+                ->with("customer.source:id,gst")
                 ->orderBy('created_at', 'asc')
-                ->chunk(100, function ($bookings) use (&$counter, &$processedCount) {
+                ->chunk(100, function ($bookings) use (&$counter, &$taxableCounter, &$processedCount) {
                     foreach ($bookings as $booking) {
+
                         $booking->invoice_number = $counter++;
+
+                        if ($booking->gst_number || $booking?->customer?->gst_number || $booking?->customer?->source?->gst) {
+                            $booking->taxable_invoice_number = $taxableCounter++;
+                        }
+
+                        $this->recordLog("Assigned Invoice #{$booking->invoice_number}" . ($booking->taxable_invoice_number ? " & Taxable Invoice #{$booking->taxable_invoice_number}" : "") . " to Booking ID {$booking->id}");
+
                         $booking->save();
                         $processedCount++;
+
                     }
                 });
 
-            Log::channel('invoice')->info("✅ Company {$companyId}: {$processedCount} bookings processed");
+            $this->recordLog("✅ Company {$companyId}: {$processedCount} bookings processed");
         }
+    }
+
+    public function recordLog($msg = "Default Log Message"): void
+    {
+        $this->info($msg);
+        Log::channel('invoice')->info($msg);
     }
 }

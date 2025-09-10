@@ -207,20 +207,21 @@ class TaxableController extends Controller
 
     public function getInvoices(Request $request)
     {
-
         $model = Booking::query()->filter(request('search'));
 
-        $model->where(function ($query) {
-            $query->whereNotNull('gst_number')
-                ->orWhereHas('customer', function ($q2) {
-                    $q2->whereNotNull('gst_number');
-                    $q2->orWhereHas('source', function ($q2) {
-                        $q2->whereNotNull('gst');
+        if (request("is_all_invoices") == "false") {
+            $model->where(function ($query) {
+                $query->whereNotNull('gst_number')
+                    ->orWhereHas('customer', function ($q2) {
+                        $q2->whereNotNull('gst_number');
+                        $q2->orWhereHas('source', function ($q2) {
+                            $q2->whereNotNull('gst');
+                        });
                     });
-                });
 
-            ;
-        });
+                ;
+            });
+        }
 
         $model->where('room_category_type', null);
 
@@ -271,7 +272,11 @@ class TaxableController extends Controller
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
 
-        $invoice   =    "GST- " . $booking->invoice_number;
+        $invoiceNumber = $booking->taxable_invoice_number ? $booking->taxable_invoice_number : $booking->invoice_number;
+        
+        $prefix = $booking->taxable_invoice_number ? "GST-" : "INV-";
+
+        $invoice      = $prefix . $invoiceNumber;
         $orderRooms   = $booking->orderRooms;
         $company      = $booking->company;
         $transactions = $booking->transactions;
