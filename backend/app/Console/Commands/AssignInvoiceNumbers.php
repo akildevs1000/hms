@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class AssignInvoiceNumbers extends Command
 {
-    protected $signature   = 'bookings:assign-invoices';
+    protected $signature   = 'bookings:assign-invoices {--reset}';
     protected $description = 'Assign sequential invoice numbers for each company, ordered by created_at';
 
     public function handle()
