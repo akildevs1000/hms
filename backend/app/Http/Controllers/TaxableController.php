@@ -276,15 +276,15 @@ class TaxableController extends Controller
 
         $invoiceNumber = $booking->taxable_invoice_number ? $booking->taxable_invoice_number : $booking->invoice_number;
 
-        $comapny_id   = $booking->comapny_id;
+        $company_id   = $booking->company_id;
         $orderRooms   = $booking->orderRooms;
         $company      = $booking->company;
         $transactions = $booking->transactions;
         $bookedRooms  = $booking->bookedRooms;
 
-        $json = TransactionNumberSeries::whereCompanyId($comapny_id)->value("json") ?? [];
+        $json = TransactionNumberSeries::whereCompanyId($company_id)->value("json") ?? [];
 
-        $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == Module::Invoice)->first();
+        $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == $booking->taxable_invoice_number ? Module::Invoice : Module::Invoice)->first();
 
         $prefix = $singleObject->prefix ?? "Inv-";
 

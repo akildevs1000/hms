@@ -13,7 +13,8 @@ class Module extends Model
     const Invoice = "Invoice";
     const Quotation = "Quotation";
     const Inquiry = "Inquiry";
-
+    const GstInvoice = "GstInvoice";
+    
     const MODULES = [
         ["module" => "Invoice"],
         ["module" => "Quotation"],
