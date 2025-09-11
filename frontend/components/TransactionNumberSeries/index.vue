@@ -158,12 +158,12 @@ export default {
               module: item1.module,
               prefix: `${
                 item1.prefix ||
-                item1.module[0].toUpperCase() + item1.module.slice(0, 3) + "-"
+                item1.module[0].toUpperCase() + item1.module.slice(1, 3) + "-"
               }`,
               starting_number: `${item1.starting_number || 1001}`,
               preview: `${
                 item1.prefix ||
-                item1.module[0].toUpperCase() + item1.module.slice(0, 3) + "-"
+                item1.module[0].toUpperCase() + item1.module.slice(1, 3) + "-"
               }${item1.starting_number || 1001}`,
             });
           }
