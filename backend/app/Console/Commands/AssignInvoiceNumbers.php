@@ -27,7 +27,11 @@ class AssignInvoiceNumbers extends Command
 
             $this->recordLog("Assigning invoice numbers starting from {$start} for each company...");
 
-            // Booking::where('company_id', $companyId)->update(["invoice_number" => null,"taxable_invoice_number" => null]);
+            if ($this->option('reset')) {
+                $this->recordLog("Resetting existing invoice numbers for company {$companyId}");
+                Booking::where('company_id', $companyId)
+                    ->update(['invoice_number' => null, 'taxable_invoice_number' => null]);
+            }
 
             $lastInvoice = Booking::where('company_id', $companyId)->max('invoice_number');
             $counter     = $lastInvoice ? $lastInvoice + 1 : $start;
