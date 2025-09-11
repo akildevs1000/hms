@@ -284,7 +284,9 @@ class TaxableController extends Controller
 
         $json = TransactionNumberSeries::whereCompanyId($company_id)->value("json") ?? [];
 
-        $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == $booking->taxable_invoice_number ? Module::GstInvoice : Module::Invoice)->first();
+        $invoiceType = $booking->taxable_invoice_number ? Module::GstInvoice : Module::Invoice;
+
+        $singleObject = (object) collect($json)->where(fn($q) => $q["module"] == $invoiceType)->first();
 
         $prefix = $singleObject->prefix ?? "Inv-";
 

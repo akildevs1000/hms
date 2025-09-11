@@ -13,21 +13,24 @@ class TransactionNumberSeriesController extends Controller
             // Validate request
             $validated = $request->validate([
                 'company_id' => 'required|integer|exists:companies,id',
+                'json'       => 'required', // optional: validate json field if needed
             ]);
 
-            // Create or update the mail settings
-            $data = TransactionNumberSeries::updateOrCreate(
-                ['company_id' => $validated['company_id']],
-                ["company_id" => $request->company_id, "json" => $request->json]
-            );
+            // Delete existing record(s) for this company
+            TransactionNumberSeries::where('company_id', $validated['company_id'])->delete();
+
+            // Insert new record
+            $data = TransactionNumberSeries::create([
+                'company_id' => $validated['company_id'],
+                'json'       => $request->json,
+            ]);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Transaction number series saved successfully.',
                 'data'    => $data,
             ]);
-        } catch (Exception $e) {
-
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to save transaction number series.',
