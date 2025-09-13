@@ -282,6 +282,8 @@ class TaxableController extends Controller
         $transactions = $booking->transactions;
         $bookedRooms  = $booking->bookedRooms;
 
+
+
         $json = TransactionNumberSeries::whereCompanyId($company_id)->value("json") ?? [];
 
         $invoiceType = $booking->taxable_invoice_number ? Module::GstInvoice : Module::Invoice;
@@ -291,6 +293,13 @@ class TaxableController extends Controller
         $prefix = $singleObject->prefix ?? "Inv-";
 
         $invoice = $prefix . $invoiceNumber;
+
+
+        // For HydersMaahal Company Only
+        if($company_id == 11) {
+             $invoice = "Inv-" . $booking->invoice_number;
+        }
+
 
         $first_check_in_time  = $bookedRooms[0]["actual_check_in_time"] ?? "00:00";
         $first_check_out_time = $bookedRooms[0]["actual_check_out_time"] ?? "00:00";
