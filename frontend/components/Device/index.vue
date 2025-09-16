@@ -1,12 +1,7 @@
 <template>
   <div v-if="can('device_access')">
     <div class="text-center ma-2">
-      <v-snackbar
-        v-model="snackbar"
-        top="top"
-        :color="snackbarColor"
-        elevation="24"
-      >
+      <v-snackbar v-model="snackbar" top="top" :color="snackbarColor" elevation="24">
         {{ snackbarResponse }}
       </v-snackbar>
     </div>
@@ -14,17 +9,11 @@
       <v-card>
         <v-card-title dense class="primary white--text background">
           <span v-if="viewMode">View Device Info </span>
-          <span v-else-if="editedItemIndex == -1"
-            >Device Settings : {{ editedItem.serial_number }}
+          <span v-else-if="editedItemIndex == -1">Device Settings : {{ editedItem.serial_number }}
           </span>
           <span v-else>Device Settings </span>
           <v-spacer></v-spacer>
-          <v-icon
-            @click="dialogDeviceSettings = false"
-            outlined
-            dark
-            color="white"
-          >
+          <v-icon @click="dialogDeviceSettings = false" outlined dark color="white">
             mdi mdi-close-circle
           </v-icon>
         </v-card-title>
@@ -62,64 +51,26 @@
           <v-container class="mt-4">
             <v-row>
               <v-col cols="6">
-                <v-text-field
-                  :disabled="viewMode"
-                  v-model="editedItem.serial_number"
-                  outlined
-                  dense
-                  small
-                  hide-details
-                  label="Serial Number"
-                ></v-text-field>
-                <span
-                  dense
-                  v-if="errors && errors.serial_number"
-                  class="error--text"
-                  >{{ errors.serial_number[0] }}</span
-                >
+                <v-text-field :disabled="viewMode" v-model="editedItem.serial_number" outlined dense small hide-details
+                  label="Serial Number"></v-text-field>
+                <span dense v-if="errors && errors.serial_number" class="error--text">{{ errors.serial_number[0]
+                }}</span>
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  :disabled="viewMode"
-                  v-model="editedItem.name"
-                  outlined
-                  dense
-                  small
-                  hide-details
-                  label="Device Type Name"
-                ></v-text-field>
+                <v-text-field :disabled="viewMode" v-model="editedItem.name" outlined dense small hide-details
+                  label="Device Type Name"></v-text-field>
                 <span v-if="errors && errors.name" class="error--text">{{
                   errors.name[0]
                 }}</span>
               </v-col>
               <v-col cols="6">
                 <!-- {{ editedItem.utc_time_zone }} -->
-                <v-autocomplete
-                  class="pb-0"
-                  :hide-details="!editedItem.utc_time_zone"
-                  v-model="editedItem.utc_time_zone"
-                  placeholder="Time Zone"
-                  outlined
-                  dense
-                  label="Time Zone(Ex:UTC+) *"
-                  :items="getTimezones()"
-                  item-value="key"
-                  item-text="text"
-                ></v-autocomplete
-              ></v-col>
+                <v-autocomplete class="pb-0" :hide-details="!editedItem.utc_time_zone"
+                  v-model="editedItem.utc_time_zone" placeholder="Time Zone" outlined dense label="Time Zone(Ex:UTC+) *"
+                  :items="getTimezones()" item-value="key" item-text="text"></v-autocomplete></v-col>
               <v-col cols="6">
-                <v-autocomplete
-                  :disabled="viewMode"
-                  :items="roomList"
-                  v-model="editedItem.room_id"
-                  outlined
-                  dense
-                  small
-                  hide-details
-                  item-text="room_no"
-                  item-value="table_id"
-                  label="Assign Room"
-                >
+                <v-autocomplete :disabled="viewMode" :items="roomList" v-model="editedItem.room_id" outlined dense small
+                  hide-details item-text="room_no" item-value="table_id" label="Assign Room">
                 </v-autocomplete>
                 <span v-if="errors && errors.room_id" class="error--text">{{
                   errors.room_id[0]
@@ -127,17 +78,8 @@
               </v-col>
 
               <v-col cols="12" v-if="!viewMode" class="text-right">
-                <v-btn
-                  small
-                  @click="newItemDialog = false"
-                  dark
-                  filled
-                  color="grey"
-                  >Cancel</v-btn
-                >
-                <v-btn small @click="save()" dark filled color="primary"
-                  >Save</v-btn
-                >
+                <v-btn small @click="newItemDialog = false" dark filled color="grey">Cancel</v-btn>
+                <v-btn small @click="save()" dark filled color="primary">Save</v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -149,15 +91,7 @@
         <v-toolbar-title><span>Devices</span></v-toolbar-title>
         <v-tooltip top>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              dense
-              class="ma-0 px-0"
-              x-small
-              :ripple="false"
-              text
-              v-bind="attrs"
-              v-on="on"
-            >
+            <v-btn dense class="ma-0 px-0" x-small :ripple="false" text v-bind="attrs" v-on="on">
               <v-icon @click="reload()">mdi mdi-reload</v-icon>
             </v-btn>
           </template>
@@ -166,15 +100,7 @@
         <v-spacer></v-spacer>
         <v-tooltip v-if="can('device_create')" top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              small
-              color="blue"
-              class="white--text"
-              dark
-              v-bind="attrs"
-              v-on="on"
-              @click="AddNewRoom()"
-            >
+            <v-btn small color="blue" class="white--text" dark v-bind="attrs" v-on="on" @click="AddNewRoom()">
               <v-icon small>mdi-plus</v-icon> Device
             </v-btn>
           </template>
@@ -183,34 +109,24 @@
       </v-toolbar>
       <v-row>
         <v-col cols="12">
-          <v-data-table
-            dense
-            :headers="headers_table"
-            :items="data"
-            :loading="loading"
-            :options.sync="options"
+          <v-data-table dense :headers="headers_table" :items="data" :loading="loading" :options.sync="options"
             :footer-props="{
               itemsPerPageOptions: [50, 100, 500, 1000],
-            }"
-            :server-items-length="totalTableRowsCount"
-          >
+            }" :server-items-length="totalTableRowsCount">
             <template v-slot:item.sno="{ item, index }">
               {{
                 currentPage
                   ? (currentPage - 1) * perPage +
-                    (cumulativeIndex + itemIndex(item))
+                  (cumulativeIndex + itemIndex(item))
                   : ""
               }}
             </template>
             <template v-slot:item.room.room_no="{ item }">
-              {{ item.room.room_no }}</template
-            >
+              {{ item.room.room_no }}</template>
             <template v-slot:item.room_type.name="{ item }">
-              {{ item.room_type.name }}</template
-            >
+              {{ item.room_type.name }}</template>
             <template v-slot:item.reservation_no="{ item }">
-              {{ item.booked_room.name }}</template
-            ><template v-slot:item.reservation_number="{ item }">
+              {{ item.booked_room.name }}</template><template v-slot:item.reservation_number="{ item }">
               {{ item.booking?.reservation_no || "---" }}
             </template>
             <template v-slot:item.check_in="{ item }">
@@ -229,16 +145,18 @@
             </template>
 
             <template v-slot:item.latest_status="{ item }">
-              <v-icon v-if="item.latest_status == 0" color="black"
-                >mdi-lightbulb-outline
+              <v-icon v-if="item.latest_status == 0" color="black">mdi-lightbulb-outline
               </v-icon>
-              <v-icon v-else-if="item.latest_status == 1" color="green"
-                >mdi-lightbulb-on
+              <v-icon v-else-if="item.latest_status == 1" color="green">mdi-lightbulb-on
               </v-icon>
             </template>
             <template v-slot:item.latest_status_time="{ item }">
-              {{ item.latest_status_time }}
+              {{ item.latest_status_time || '---' }}
             </template>
+            <template v-slot:item.ip_address="{ item }">
+              {{ item.ip_address || '---' }}
+            </template>
+
 
             <template v-slot:item.room_status="{ item }">
               <!-- <div v-if="item.booking_id > 0">Sold</div>
@@ -254,22 +172,14 @@
               {{ roomStatus.length }} -->
               <!-- {{ updatesstatukey }} -->
               <div v-if="updatesstatukey == 1">---</div>
-              <div
-                :key="updatesstatukey"
-                style="color: red"
-                v-else-if="getroomStatus1(item.serial_number) == 0"
-              >
+              <div :key="updatesstatukey" style="color: red" v-else-if="getroomStatus1(item.serial_number) == 0">
                 Empty
               </div>
               <div style="" v-else>Sold</div>
             </template>
 
-            <template
-              v-slot:item.options="{ item }"
-              v-if="
-                can('device_view') || can('device_edit') || can('device_delete')
-              "
-            >
+            <template v-slot:item.options="{ item }" v-if="can('device_view') || can('device_edit') || can('device_delete')
+              ">
               <v-menu bottom left>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn dark-2 icon v-bind="attrs" v-on="on">
@@ -277,19 +187,13 @@
                   </v-btn>
                 </template>
                 <v-list width="120" dense>
-                  <v-list-item
-                    v-if="can('device_view')"
-                    @click="editItem(item, true)"
-                  >
+                  <v-list-item v-if="can('device_view')" @click="editItem(item, true)">
                     <v-list-item-title style="cursor: pointer">
                       <v-icon color="primary" small> mdi-eye </v-icon>
                       View
                     </v-list-item-title>
                   </v-list-item>
-                  <v-list-item
-                    v-if="can('device_view')"
-                    @click="viewStatusLogs(item)"
-                  >
+                  <v-list-item v-if="can('device_view')" @click="viewStatusLogs(item)">
                     <v-list-item-title style="cursor: pointer">
                       <v-icon color="warning" small>
                         mdi-format-list-checkbox
@@ -297,10 +201,7 @@
                       View Logs
                     </v-list-item-title>
                   </v-list-item>
-                  <v-list-item
-                    v-if="can('device_edit')"
-                    @click="editItem(item, false)"
-                  >
+                  <v-list-item v-if="can('device_edit')" @click="editItem(item, false)">
                     <v-list-item-title style="cursor: pointer">
                       <v-icon color="secondary" small> mdi-pencil </v-icon>
                       Edit
@@ -315,10 +216,7 @@
                       Settings
                     </v-list-item-title>
                   </v-list-item> -->
-                  <v-list-item
-                    v-if="can('device_delete')"
-                    @click="deleteItem(item)"
-                  >
+                  <v-list-item v-if="can('device_delete')" @click="deleteItem(item)">
                     <v-list-item-title style="cursor: pointer">
                       <v-icon color="error" small> mdi-delete </v-icon>
                       Delete
@@ -455,7 +353,15 @@ export default {
         filterable: true,
         filterSpecial: true,
       },
-
+      {
+        text: "IP Address",
+        value: "ip_address",
+        align: "left",
+        sortable: true,
+        key: "ip_address",
+        filterable: true,
+        filterSpecial: true,
+      },
       { text: "Options", value: "options", align: "left", sortable: false },
     ],
     roomList: [],

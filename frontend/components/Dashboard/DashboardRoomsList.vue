@@ -1,39 +1,20 @@
 <template>
   <div v-if="isPageLoad">
     <div class="text-center ma-2">
-      <v-snackbar
-        v-model="snackbar"
-        top
-        absolute
-        color="secondary"
-        elevation="24"
-      >
+      <v-snackbar v-model="snackbar" top absolute color="secondary" elevation="24">
         {{ response }}
       </v-snackbar>
     </div>
-    <BookingSingle
-      :noLabel="true"
-      v-if="bookingId"
-      ref="BookingSingleComp"
-      :key="bookingId"
-      :BookingId="bookingId"
-      :roomData="roomData"
-    />
+    <BookingSingle :noLabel="true" v-if="bookingId" ref="BookingSingleComp" :key="bookingId" :BookingId="bookingId"
+      :roomData="roomData" />
     <!-- dialogs -->
     <div>
-      <v-dialog
-        v-model="GRCDialog"
-        persistent
-        :width="900"
-        class="checkin-models"
-      >
+      <v-dialog v-model="GRCDialog" persistent :width="900" class="checkin-models">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>{{ formTitle }}</span>
             <v-spacer></v-spacer>
-            <v-icon dark class="pa-0" @click="GRCDialog = false"
-              >mdi-close</v-icon
-            >
+            <v-icon dark class="pa-0" @click="GRCDialog = false">mdi-close</v-icon>
           </v-toolbar>
           <v-card-text>
             <Grc :bookingId="checkData.id"> </Grc>
@@ -55,10 +36,7 @@
           <v-card-text>
             <v-container>
               <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <BookedRoomsReport
-                :data="reservedWithoutAdvance"
-                @close-dialog="closeDialogs"
-              />
+              <BookedRoomsReport :data="reservedWithoutAdvance" @close-dialog="closeDialogs" />
             </v-container>
           </v-card-text>
         </v-card>
@@ -76,10 +54,7 @@
           <v-card-text>
             <v-container>
               <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <PaidRoomsReport
-                :data="confirmedBookingList"
-                @close-dialog="closeDialogs"
-              />
+              <PaidRoomsReport :data="confirmedBookingList" @close-dialog="closeDialogs" />
             </v-container>
           </v-card-text>
         </v-card>
@@ -97,38 +72,24 @@
           <v-card-text>
             <v-container>
               <!-- <FoodOrderRooms @close-dialog="closeDialogs"> </FoodOrderRooms> -->
-              <DirtyRoomsReport
-                :data="dirtyRoomsList"
-                @close-dialog="closeDialogs"
-              />
+              <DirtyRoomsReport :data="dirtyRoomsList" @close-dialog="closeDialogs" />
             </v-container>
           </v-card-text>
         </v-card>
       </v-dialog>
 
-      <v-dialog
-        v-model="AvailableRoomsReportDialog"
-        persistent
-        max-width="700px"
-      >
+      <v-dialog v-model="AvailableRoomsReportDialog" persistent max-width="700px">
         <v-card>
           <v-toolbar class="rounded-md" color="background" dense flat dark>
             <span>Available Rooms Report</span>
             <v-spacer></v-spacer>
-            <v-icon
-              dark
-              class="pa-0"
-              @click="AvailableRoomsReportDialog = false"
-            >
+            <v-icon dark class="pa-0" @click="AvailableRoomsReportDialog = false">
               mdi-close
             </v-icon>
           </v-toolbar>
           <v-card-text>
             <v-container>
-              <AvailableRoomsReport
-                :data="availableRooms"
-                @close-dialog="closeDialogs"
-              />
+              <AvailableRoomsReport :data="availableRooms" @close-dialog="closeDialogs" />
             </v-container>
           </v-card-text>
         </v-card>
@@ -156,21 +117,10 @@
             Are you sure you want to cancel CheckIn?
           </v-card-title>
           <v-container grid-list-xs>
-            <v-textarea
-              placeholder="Reason"
-              rows="3"
-              dense
-              outlined
-              v-model="checkInCancelReason"
-            ></v-textarea>
+            <v-textarea placeholder="Reason" rows="3" dense outlined v-model="checkInCancelReason"></v-textarea>
           </v-container>
           <v-card-actions>
-            <v-btn
-              class="primary"
-              small
-              :loading="cancelLoad"
-              @click="changeCheckInAdminProcess()"
-            >
+            <v-btn class="primary" small :loading="cancelLoad" @click="changeCheckInAdminProcess()">
               Yes
             </v-btn>
             <v-btn class="error" small @click="cancelCheckInDialog = false">
@@ -184,173 +134,101 @@
       <!-- New Booking room  -->
       <v-dialog v-model="NewBooking" persistent width="1000">
         <AssetsIconClose left="990" @click="closeCheckInAndOpenGRC" />
-        <BookingDirectCheckIn
-          v-if="NewBooking"
-          @close-dialog="closeCheckInAndOpenGRC"
-          :reservation="newBookingRoom"
-        />
+        <BookingDirectCheckIn v-if="NewBooking" @close-dialog="closeCheckInAndOpenGRC" :reservation="newBookingRoom" />
       </v-dialog>
     </div>
     <!--end dialogs -->
 
     <div>
       <v-row class="flex" justify="center"> </v-row>
-      <v-menu
-        v-model="showMenu"
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-y
-      >
+      <v-menu v-model="showMenu" :position-x="x" :position-y="y" absolute offset-y>
         <v-list dense>
           <v-list-item-group v-model="selectedItem">
             <v-list-item>
-              <v-list-item-title style="color: green"
-                >Room: {{ rightClickRoomId }}</v-list-item-title
-              >
+              <v-list-item-title style="color: green">Room: {{ rightClickRoomId }}</v-list-item-title>
             </v-list-item>
 
             <template v-if="bookingStatus == 1 && checkData && checkData.id">
               <v-list-item v-if="currentDate == filterDate">
                 <v-list-item-title>
-                  <BookingCheckIn
-                    :key="`${evenIid}1${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingCheckIn>
+                  <BookingCheckIn :key="`${evenIid}1${checkData.id}`" :BookingData="checkData" :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"></BookingCheckIn>
                 </v-list-item-title>
               </v-list-item>
 
               <v-list-item>
                 <v-list-item-title>
-                  <BookingPayAdvance
-                    :key="`${evenIid}2${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingPayAdvance>
+                  <BookingPayAdvance :key="`${evenIid}2${checkData.id}`" :BookingData="checkData" :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC"></BookingPayAdvance>
                 </v-list-item-title>
               </v-list-item>
 
               <v-list-item>
-                <v-list-item-title
-                  ><BookingModifyRoom
-                    v-if="true"
-                    :key="`${evenIid}3${checkData.id}`"
-                    :BookedRoomId="evenIid"
-                    :BookingId="checkData.id"
-                    @close-calender-room="closeCheckInAndOpenGRC"
-                  />
-                  <BookingModifyHall
-                    v-if="false"
-                    :key="`${evenIid}3${checkData.id}`"
-                    :BookedRoomId="evenIid"
-                    :BookingId="checkData.id"
-                    @close-calender-room="closeCheckInAndOpenGRC"
-                  />
+                <v-list-item-title>
+                  <BookingModifyRoom v-if="true" :key="`${evenIid}3${checkData.id}`" :BookedRoomId="evenIid"
+                    :BookingId="checkData.id" @close-calender-room="closeCheckInAndOpenGRC" />
+                  <BookingModifyHall v-if="false" :key="`${evenIid}3${checkData.id}`" :BookedRoomId="evenIid"
+                    :BookingId="checkData.id" @close-calender-room="closeCheckInAndOpenGRC" />
                 </v-list-item-title>
               </v-list-item>
               <v-list-item>
                 <v-list-item-title>
-                  <BookingSingle
-                    :key="`${evenIid}4${checkData.id}`"
-                    :BookingId="checkData.id"
-                  />
+                  <BookingSingle :key="`${evenIid}4${checkData.id}`" :BookingId="checkData.id" />
                 </v-list-item-title>
               </v-list-item>
               <v-list-item>
                 <v-list-item-title>
-                  <BookingCancel
-                    :key="`${evenIid}5${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
-                    :evenIid="evenIid"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingCancel
-                ></v-list-item-title>
-              </v-list-item>
-            </template>
-
-            <template
-              v-else-if="bookingStatus == 2 && checkData && checkData.id"
-            >
-              <v-list-item>
-                <v-list-item-title>
-                  <BookingCheckOut
-                    :key="`${evenIid}_2_1${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>
-                  <BookingPosting
-                    :key="`${evenIid}_2_2${checkData.id}`"
-                    :BookingData="checkData"
-                    :evenIid="evenIid"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>
-                  <BookingPayAdvance
-                    :key="`${evenIid}_2_3${checkData.id}`"
-                    :BookingData="checkData"
-                    :roomData="roomData"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingPayAdvance>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>
-                  <BookingViewPosting
-                    :key="`${evenIid}_2_4${checkData.id}`"
-                    :evenIid="evenIid"
-                    :bookingId="bookingId"
-                    @close-dialog="closeCheckInAndOpenGRC"
-                  ></BookingViewPosting>
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title
-                  ><BookingModifyRoom
-                    v-if="true"
-                    :key="`${evenIid}_2_5${checkData.id}`"
-                    :BookedRoomId="evenIid"
-                    @close-calender-room="closeCheckInAndOpenGRC"
-                  />
-                  <BookingModifyRoom
-                    v-if="false"
-                    :key="`${evenIid}_2_5${checkData.id}`"
-                    :BookedRoomId="evenIid"
-                    @close-calender-room="closeCheckInAndOpenGRC"
-                  />
-                </v-list-item-title>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title
-                  ><BookingSingle
-                    :key="`${evenIid}_2_6${checkData.id}`"
-                    :BookingId="checkData.id"
-                /></v-list-item-title>
-              </v-list-item>
-              <v-list-item
-                @click="cancelCheckInDialog = true"
-                v-if="$auth?.user?.role?.name.toLowerCase() == 'admin'"
-              >
-                <v-list-item-title color="red"
-                  >Cancel Check-in(admin)
+                  <BookingCancel :key="`${evenIid}5${checkData.id}`" :BookingData="checkData" :roomData="roomData"
+                    :evenIid="evenIid" @close-dialog="closeCheckInAndOpenGRC"></BookingCancel>
                 </v-list-item-title>
               </v-list-item>
             </template>
 
-            <template
-              v-else-if="bookingStatus == 3 && checkData && checkData.id"
-            >
+            <template v-else-if="bookingStatus == 2 && checkData && checkData.id">
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingCheckOut :key="`${evenIid}_2_1${checkData.id}`" :BookingData="checkData" :roomData="roomData"
+                    @close-dialog="closeCheckInAndOpenGRC" />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingPosting :key="`${evenIid}_2_2${checkData.id}`" :BookingData="checkData" :evenIid="evenIid"
+                    @close-dialog="closeCheckInAndOpenGRC" />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingPayAdvance :key="`${evenIid}_2_3${checkData.id}`" :BookingData="checkData"
+                    :roomData="roomData" @close-dialog="closeCheckInAndOpenGRC"></BookingPayAdvance>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingViewPosting :key="`${evenIid}_2_4${checkData.id}`" :evenIid="evenIid" :bookingId="bookingId"
+                    @close-dialog="closeCheckInAndOpenGRC"></BookingViewPosting>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingModifyRoom v-if="true" :key="`${evenIid}_2_5${checkData.id}`" :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC" />
+                  <BookingModifyRoom v-if="false" :key="`${evenIid}_2_5${checkData.id}`" :BookedRoomId="evenIid"
+                    @close-calender-room="closeCheckInAndOpenGRC" />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>
+                  <BookingSingle :key="`${evenIid}_2_6${checkData.id}`" :BookingId="checkData.id" />
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="cancelCheckInDialog = true" v-if="$auth?.user?.role?.name.toLowerCase() == 'admin'">
+                <v-list-item-title color="red">Cancel Check-in(admin)
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+
+            <template v-else-if="bookingStatus == 3 && checkData && checkData.id">
               <v-list-item @click="setAvailable">
                 <v-list-item-title>Make Available</v-list-item-title>
               </v-list-item>
@@ -361,42 +239,23 @@
           </v-list-item-group>
         </v-list>
       </v-menu>
-      <v-menu
-        v-model="showMenuForNewBooking"
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-y
-      >
+      <v-menu v-model="showMenuForNewBooking" :position-x="x" :position-y="y" absolute offset-y>
         <v-list dense>
-          <v-list-item-group
-            v-if="newBookingRoom && newBookingRoom.booked_room"
-          >
-            <v-list-item
-              v-if="newBookingRoom?.booked_room?.booking_status == 3"
-              @click="setAvailable(newBookingRoom.booked_room)"
-            >
+          <v-list-item-group v-if="newBookingRoom && newBookingRoom.booked_room">
+            <v-list-item v-if="newBookingRoom?.booked_room?.booking_status == 3"
+              @click="setAvailable(newBookingRoom.booked_room)">
               <v-list-item-title>Make Available</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
           <v-list-item-group v-else>
-            <v-list-item
-              v-if="newBookingRoom.status == 0 && currentDate == filterDate"
-              @click="NewBooking = true"
-            >
+            <v-list-item v-if="newBookingRoom.status == 0 && currentDate == filterDate" @click="NewBooking = true">
               <!-- direct check in dialog -->
               <v-list-item-title>Check In</v-list-item-title>
             </v-list-item>
-            <v-list-item
-              v-if="newBookingRoom.status == 0"
-              @click="roomStatus('1')"
-            >
+            <v-list-item v-if="newBookingRoom.status == 0" @click="roomStatus('1')">
               <v-list-item-title>Block</v-list-item-title>
             </v-list-item>
-            <v-list-item
-              v-if="newBookingRoom.status == 1"
-              @click="roomStatus('0')"
-            >
+            <v-list-item v-if="newBookingRoom.status == 1" @click="roomStatus('0')">
               <v-list-item-title>Unblock</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -405,39 +264,22 @@
     </div>
     <v-row>
       <div v-if="tabFilter == 'available' || tabFilter == 'All'">
-        <div
-          class="roombox1"
-          v-for="(room, index) in filteredRooms(availableRooms)"
-          :key="index"
-        >
-          <v-card
-            :class="` darken-2 `"
-            dark
-            @contextmenu="makeNewBooking($event, room)"
-            @mouseover="mouseOverForAvailable(room)"
-            @touchstart="makeNewBookingForTouch($event, room)"
-          >
-            <v-card-text
-              class="green111 p-3 roombox available"
-              :style="'padding: 0px;'"
-              :title="
-                todayDate == filterDate &&
-                room.device &&
-                room.device.latest_status == 1
-                  ? 'Available and Light On'
-                  : 'Available'
-              "
-            >
+        <div class="roombox1" v-for="(room, index) in filteredRooms(availableRooms)" :key="index">
+          <v-card :class="` darken-2 `" dark @contextmenu="makeNewBooking($event, room)"
+            @mouseover="mouseOverForAvailable(room)" @touchstart="makeNewBookingForTouch($event, room)">
+            <v-card-text class="green111 p-3 roombox available" :style="'padding: 0px;'" :title="todayDate == filterDate &&
+              room.device &&
+              room.device.latest_status == 1
+              ? 'Available and Light On at' + room.device.latest_status_time
+              : 'Available'
+              ">
               <div class="text-center white--text boxheight">
-                <v-icon
-                  :color="
-                    todayDate == filterDate &&
-                    room.device &&
-                    room.device.latest_status == 1
-                      ? 'red'
-                      : ''
-                  "
-                >
+                <v-icon :color="todayDate == filterDate &&
+                  room.device &&
+                  room.device.latest_status == 1
+                  ? 'red'
+                  : ''
+                  ">
                   {{ room?.room_type?.type == "hall" ? "mdi-sofa" : "mdi-bed" }}
                 </v-icon>
                 <div>{{ room?.room_no || "---" }}</div>
@@ -452,41 +294,25 @@
       </div>
 
       <div v-if="tabFilter == 'expected_arrival' || tabFilter == 'All'">
-        <div
-          class="roombox1"
-          v-for="(room, i) in filteredRooms(reservedWithoutAdvance)"
-          :key="i"
-        >
-          <v-card
-            @mouseenter="showMenu = false"
-            @mousedown="showMenu = false"
-            @mouseup="showMenu = false"
-            @contextmenu="show"
-            @touchstart="handleTouchstart($event, room)"
-            @mouseover="handleMouseOver(room)"
-            @dblclick="dblclick"
-            :class="` `"
-            dark
-          >
-            <v-card-text
-              class="blue1111 p-3 roombox booked"
-              :style="'padding: 0px;'"
-              :title="
-                todayDate == filterDate
-                  ? 'Expected Arrival'
-                  : 'Future Date: Expected Checkout'
-              "
-            >
+        <div class="roombox1" v-for="(room, i) in filteredRooms(reservedWithoutAdvance)" :key="i">
+          <v-card @mouseenter="showMenu = false" @mousedown="showMenu = false" @mouseup="showMenu = false"
+            @contextmenu="show" @touchstart="handleTouchstart($event, room)" @mouseover="handleMouseOver(room)"
+            @dblclick="dblclick" :class="` `" dark>
+            <v-card-text class="blue1111 p-3 roombox booked" :style="'padding: 0px;'" :title="todayDate == filterDate
+              ? 'Expected Arrival'
+              : 'Future Date: Expected Checkout'
+              ">
               <div class="text-center white--text boxheight">
-                <v-icon
-                  :color="
-                    todayDate == filterDate &&
+                <v-icon :title="room.device &&
+                  room.device.latest_status == 1
+                  ? ' Light On at' + room.device.latest_status_time
+                  : ' '
+                  " :color="todayDate == filterDate &&
                     room.device &&
                     room.device.latest_status == 1
-                      ? 'red'
-                      : ''
-                  "
-                >
+                    ? 'red'
+                    : ''
+                    ">
                   {{ getRelatedIcon(room.booked_room.booking) }}
                 </v-icon>
                 <div>
@@ -508,55 +334,34 @@
       {{ tabFilter }}
       -{{ todayDate }}- +{{ filterDate }}+ -->
       <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
-        <div
-          class="roombox1"
-          v-for="(occupied, index) in filteredRooms(expectCheckOut)"
-          :key="index + 50"
-        >
-          <v-card
-            @mouseenter="showMenu = false"
-            @mousedown="showMenu = false"
-            @mouseup="showMenu = false"
-            @contextmenu="show"
-            @touchstart="
+        <div class="roombox1" v-for="(occupied, index) in filteredRooms(expectCheckOut)" :key="index + 50">
+          <v-card @mouseenter="showMenu = false" @mousedown="showMenu = false" @mouseup="showMenu = false"
+            @contextmenu="show" @touchstart="
               touchstart(
                 $event,
                 occupied && occupied.booked_room && occupied.booked_room.id,
                 occupied &&
+                occupied.booked_room &&
+                occupied.booked_room.booking &&
+                occupied.booked_room.booking.booking_status
+              )
+              " :elevation="0" @mouseover="
+                mouseOver(
+                  occupied && occupied.booked_room && occupied.booked_room.id,
+                  occupied &&
                   occupied.booked_room &&
                   occupied.booked_room.booking &&
                   occupied.booked_room.booking.booking_status
-              )
-            "
-            :elevation="0"
-            @mouseover="
-              mouseOver(
-                occupied && occupied.booked_room && occupied.booked_room.id,
-                occupied &&
-                  occupied.booked_room &&
-                  occupied.booked_room.booking &&
-                  occupied.booked_room.booking.booking_status
-              )
-            "
-            @dblclick="dblclick"
-            :class="`zoom-card darken-2`"
-            dark
-          >
-            <v-card-text
-              class="p-3 roombox occupied"
-              :style="'padding: 0px;'"
-              title="Occupied(Expected Checkout)"
-            >
+                )
+                " @dblclick="dblclick" :class="`zoom-card darken-2`" dark>
+            <v-card-text class="p-3 roombox occupied" :style="'padding: 0px;'" title="Occupied(Expected Checkout)">
               <div class="text-center white--text boxheight boxheight">
-                <v-icon
-                  :color="
-                    todayDate == filterDate &&
-                    occupied.device &&
-                    occupied.device.latest_status == 1
-                      ? 'red'
-                      : ''
-                  "
-                >
+                <v-icon :color="todayDate == filterDate &&
+                  occupied.device &&
+                  occupied.device.latest_status == 1
+                  ? 'red'
+                  : ''
+                  ">
                   {{ getRelatedIcon(occupied.booked_room.booking) }}
                 </v-icon>
                 <div>{{ occupied?.room_no || "---" }}</div>
@@ -570,55 +375,34 @@
       </div>
       <!-- {{ filteredRooms(Occupied).length }} -->
       <div v-if="tabFilter == 'All' || tabFilter == 'occupied'">
-        <div
-          class="roombox1"
-          v-for="(occupied, index) in filteredRooms(Occupied)"
-          :key="index + 50"
-        >
-          <v-card
-            @mouseenter="showMenu = false"
-            @mousedown="showMenu = false"
-            @mouseup="showMenu = false"
-            @contextmenu="show"
-            @touchstart="
+        <div class="roombox1" v-for="(occupied, index) in filteredRooms(Occupied)" :key="index + 50">
+          <v-card @mouseenter="showMenu = false" @mousedown="showMenu = false" @mouseup="showMenu = false"
+            @contextmenu="show" @touchstart="
               touchstart(
                 $event,
                 occupied && occupied.booked_room && occupied.booked_room.id,
                 occupied &&
+                occupied.booked_room &&
+                occupied.booked_room.booking &&
+                occupied.booked_room.booking.booking_status
+              )
+              " :elevation="0" @mouseover="
+                mouseOver(
+                  occupied && occupied.booked_room && occupied.booked_room.id,
+                  occupied &&
                   occupied.booked_room &&
                   occupied.booked_room.booking &&
                   occupied.booked_room.booking.booking_status
-              )
-            "
-            :elevation="0"
-            @mouseover="
-              mouseOver(
-                occupied && occupied.booked_room && occupied.booked_room.id,
-                occupied &&
-                  occupied.booked_room &&
-                  occupied.booked_room.booking &&
-                  occupied.booked_room.booking.booking_status
-              )
-            "
-            @dblclick="dblclick"
-            :class="` darken-2`"
-            dark
-          >
-            <v-card-text
-              class="p-3 roombox occupied"
-              :style="'padding: 0px;'"
-              title="Occupied"
-            >
+                )
+                " @dblclick="dblclick" :class="` darken-2`" dark>
+            <v-card-text class="p-3 roombox occupied" :style="'padding: 0px;'" title="Occupied">
               <div class="text-center white--text boxheight boxheight">
-                <v-icon
-                  :color="
-                    todayDate == filterDate &&
-                    occupied.device &&
-                    occupied.device.latest_status == 1
-                      ? 'red'
-                      : ''
-                  "
-                >
+                <v-icon :color="todayDate == filterDate &&
+                  occupied.device &&
+                  occupied.device.latest_status == 1
+                  ? 'red'
+                  : ''
+                  ">
                   {{ getRelatedIcon(occupied.booked_room.booking) }}
                 </v-icon>
                 <div>{{ occupied?.room_no || "---" }}</div>
@@ -627,19 +411,14 @@
                 </div>
               </div>
 
-              <div
-                v-if="occupied.booked_room.checkout_guest_request"
-                :title="
-                  'Checkout Requested at ' +
-                  occupied.booked_room.checkout_guest_request
-                "
-                style="
+              <div v-if="occupied.booked_room.checkout_guest_request" :title="'Checkout Requested at ' +
+                occupied.booked_room.checkout_guest_request
+                " style="
                   position: absolute;
                   top: 0px;
                   right: 0px;
                   font-weight: bold;
-                "
-              >
+                ">
                 <v-icon color="red" size="18 ">mdi-airplane-takeoff</v-icon>
               </div>
             </v-card-text>
@@ -648,34 +427,22 @@
       </div>
 
       <div v-if="tabFilter == 'checkedout' || tabFilter == 'All'">
-        <div
-          class="roombox1"
-          v-for="(checkedOutRoom, index) in filteredRooms(dirtyRoomsList)"
-          :key="index"
-        >
-          <v-card
-            :class="` darken-2 `"
-            dark
-            @dblclick="checkedOutDoubleClick(checkedOutRoom)"
-            @contextmenu="makeNewBooking($event, checkedOutRoom)"
-            @mouseover="mouseOverForAvailable(checkedOutRoom)"
-            @touchstart="makeNewBookingForTouch($event, checkedOutRoom)"
-          >
-            <v-card-text
-              class="purple333 p-3 roombox checked_out"
-              :style="'padding: 0px;'"
-              title="Checked Out/Dirty"
-            >
+        <div class="roombox1" v-for="(checkedOutRoom, index) in filteredRooms(dirtyRoomsList)" :key="index">
+          <v-card :class="` darken-2 `" dark @dblclick="checkedOutDoubleClick(checkedOutRoom)"
+            @contextmenu="makeNewBooking($event, checkedOutRoom)" @mouseover="mouseOverForAvailable(checkedOutRoom)"
+            @touchstart="makeNewBookingForTouch($event, checkedOutRoom)">
+            <v-card-text class="purple333 p-3 roombox checked_out" :style="'padding: 0px;'" title="Checked Out/Dirty">
               <div class="text-center white--text boxheight">
-                <v-icon
-                  :color="
-                    todayDate == filterDate &&
+                <v-icon :title="checkedOutRoom.device &&
+                  checkedOutRoom.device.latest_status == 1
+                  ? ' Light On at' + checkedOutRoom.device.latest_status_time
+                  : ' '
+                  " :color="todayDate == filterDate &&
                     checkedOutRoom.device &&
                     checkedOutRoom.device.latest_status == 1
-                      ? 'red'
-                      : ''
-                  "
-                >
+                    ? 'red'
+                    : ''
+                    ">
                   {{ getRelatedIcon(checkedOutRoom.booked_room.booking) }}
                 </v-icon>
                 <div>{{ checkedOutRoom?.room_no || "---" }}</div>
@@ -690,30 +457,22 @@
         </div>
       </div>
       <div class="roombox1" v-if="tabFilter == 'blocked' || tabFilter == 'All'">
-        <v-card
-          v-for="(blockedRoom, index) in filteredRooms(blockedRooms)"
-          :key="index"
-          dark
-          @contextmenu="makeNewBooking($event, blockedRoom)"
-          @mouseover="mouseOverForAvailable(blockedRoom)"
-          @touchstart="makeNewBookingForTouch($event, blockedRoom)"
-        >
-          <v-card-text
-            class="p-3 roombox blocked"
-            :style="'padding: 0px;'"
-            title=" Blocked
-            "
-          >
+        <v-card v-for="(blockedRoom, index) in filteredRooms(blockedRooms)" :key="index" dark
+          @contextmenu="makeNewBooking($event, blockedRoom)" @mouseover="mouseOverForAvailable(blockedRoom)"
+          @touchstart="makeNewBookingForTouch($event, blockedRoom)">
+          <v-card-text class="p-3 roombox blocked" :style="'padding: 0px;'" title=" Blocked
+            ">
             <div class="text-center white--text boxheight">
-              <v-icon
-                :color="
-                  todayDate == filterDate &&
+              <v-icon :title="blockedRoom.device &&
+                blockedRoom.device.latest_status == 1
+                ? ' Light On at' + blockedRoom.device.latest_status_time
+                : ' '
+                " :color="todayDate == filterDate &&
                   blockedRoom.device &&
                   blockedRoom.device.latest_status == 1
-                    ? 'red'
-                    : ''
-                "
-              >
+                  ? 'red'
+                  : ''
+                  ">
                 {{ room?.room_type?.type == "hall" ? "mdi-sofa" : "mdi-bed" }}
               </v-icon>
               <div>{{ blockedRoom?.room_no || "---" }}</div>
@@ -926,6 +685,11 @@ export default {
 
       //searchQuery: null,
       //tabFilter: ``,
+
+      online: false,
+      unsubWildcard: null,     // holds unsubscribe fn from this.$mqtt.sub
+      onRawMessage: null,      // holds bound raw handler so we can remove it
+      WILDCARD: "xtremevision_switch/+/message",
     };
   },
   watch: {
@@ -971,6 +735,10 @@ export default {
       //this.$emit("call_room_list");
     },
   },
+
+  mounted() {
+    this.mqttConnection();
+  },
   created() {
     this.room_list();
     this.first_login_auth = this.$auth.user.first_login;
@@ -1001,9 +769,166 @@ export default {
     // }, 1000 * 60);
 
     this.get_food_plan();
-  },
 
+
+  },
+  // beforeDestroy() {
+  //   // 1) Unsubscribe the wildcard
+  //   if (typeof this.unsubWildcard === "function") {
+  //     this.unsubWildcard();
+  //     this.unsubWildcard = null;
+  //   }
+  //   // 2) Remove raw 'message' listener (if attached)
+  //   const c = this.$mqtt?.raw;
+  //   if (c && this.onRawMessage) {
+  //     c.removeListener("message", this.onRawMessage);
+  //     this.onRawMessage = null;
+  //   }
+  // },
   methods: {
+
+    mqttConnection() {
+      const c = this.$mqtt?.raw;
+
+
+      if (!c) return;
+
+      // ---- Connection indicators ----
+      this.online = !!c.connected;
+
+      c.on("connect", () => {
+        this.online = true;
+        console.log("[MQTT] connected");
+      });
+      c.on("reconnect", () => {
+        this.online = false;
+        console.log("[MQTT] reconnecting…");
+      });
+      c.on("close", () => {
+        this.online = false;
+        console.log("[MQTT] connection closed");
+      });
+      c.on("error", (err) => console.error("[MQTT] error", err));
+
+      // ---- Subscribe with wildcard ----
+
+
+      // If your plugin returns an unsubscribe function, store it
+      this.unsubWildcard = this.$mqtt.sub(this.WILDCARD, (msg, topic) => {
+
+
+        // This callback fires ONLY for topics that match the wildcard
+        this.handleWildcardMessage(topic, msg);
+      });
+
+      // (Optional) If you want to catch all messages from the raw client:
+      // Make sure to keep one handler and remove it on destroy.
+      this.onRawMessage = (topic, payloadBuffer /*, packet */) => {
+        // Guard to only process the wildcard here (prevents duplicates)
+        if (!this.topicMatchesWildcard(topic, this.WILDCARD)) return;
+        this.handleWildcardMessage(topic, payloadBuffer);
+      };
+      c.on("message", this.onRawMessage);
+    },
+
+    // --- UTIL: wildcard check for + and # (simple, fast) ---
+    topicMatchesWildcard(topic, wildcard) {
+      // supports + (single level) and # (multi-level at end)
+      const t = topic.split("/");
+      const w = wildcard.split("/");
+
+      for (let i = 0; i < w.length; i++) {
+        if (w[i] === "#") return true; // matches rest
+        if (w[i] === "+") {
+          if (!t[i]) return false;     // must have a level here
+          continue;
+        }
+        if (w[i] !== t[i]) return false;
+      }
+      return t.length === w.length;
+    },
+
+    // --- UTIL: safe parse buffers / strings / JSON ---
+    parsePayload(payload) {
+      try {
+        const text =
+          typeof payload === "string"
+            ? payload
+            : (payload?.toString?.() ?? new TextDecoder().decode(payload));
+        try {
+          return JSON.parse(text);
+        } catch {
+          return text; // not JSON → return as plain string
+        }
+      } catch (e) {
+        console.warn("Failed to parse payload", e);
+        return payload;
+      }
+    },
+
+    // --- Single place where we process messages from the wildcard ---
+    handleWildcardMessage(topic, payloadRaw) {
+
+      try {
+        const data = this.parsePayload(payloadRaw);
+        // topic: xtremevision_switch/+/message
+        // parts[1] is the switch/device id
+        const parts = topic.split("/");
+        const deviceId = parts[1];
+
+
+
+        // Loop through availableRooms
+        this.updateMQTTDeviceStatus(this.rooms, deviceId, data);
+        this.updateMQTTDeviceStatus(this.availableRooms, deviceId, data);
+        this.updateMQTTDeviceStatus(this.dirtyRooms, deviceId, data);
+        this.updateMQTTDeviceStatus(this.notAvailableRooms, deviceId, data);
+        this.updateMQTTDeviceStatus(this.blockedRooms, deviceId, data);
+
+
+      } catch (e) {
+        console.error(e);
+      }
+
+      //  this.rooms = data;
+
+      // this.dirtyRooms = data.dirtyRooms;
+      // this.availableRooms = data.availableRooms;
+      // this.notAvailableRooms = data.notAvailableRooms;
+      // this.blockedRooms = data.blockedRooms;
+
+
+      // You can branch by device, schema, etc.
+      // if (data?.cmd === "toggle") { ... }
+      // if (data?.status) this.updateSwitchStatus(deviceId, data.status)
+
+      // TODO: emit an event or update your store/UI here
+      // this.$emit('switch-message', { deviceId, data })
+    },
+
+    updateMQTTDeviceStatus(roomsList, deviceId, data) {
+      try {
+        this.filteredRooms(roomsList).forEach(room => {
+          try {
+            if (room.device) {
+
+              if (room.device && room.device.serial_number === deviceId) {
+                // Update device_last_status
+                room.device.latest_status = data.status;
+                room.device.latest_status_time = new Date().toLocaleString();
+
+                console.log(
+                  `✅ Updated ${deviceId}: status=${data.status}, ip=${data.ipAddress}`
+                );
+              }
+            }
+
+          } catch (e) { }
+
+        });
+      } catch (e) { }
+    },
+
     getRelatedIcon(item) {
       if (item?.booking_type === "hall") {
         return "mdi-sofa";
