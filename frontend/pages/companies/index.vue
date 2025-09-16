@@ -30,6 +30,7 @@
               <v-tab> Night Audit Email </v-tab>
               <v-tab> Verfication </v-tab>
               <v-tab> Business Source </v-tab>
+              <v-tab> Transaction Number Series </v-tab>
 
               <v-tab-item>
                 <v-container fluid>
@@ -668,6 +669,9 @@
               <v-tab-item>
                 <SetupBusinessSource />
               </v-tab-item>
+              <v-tab-item>
+                <TransactionNumberSeries />
+              </v-tab-item>
             </v-tabs>
           </v-card>
         </v-col>
@@ -850,7 +854,6 @@ export default {
       payload.append("p_o_box_no", this.company_payload.p_o_box_no);
       payload.append("currency", this.company_payload.currency);
       payload.append("property_code", this.company_payload.property_code);
-      
 
       this.start_process(`/company/${this.id}/update`, payload, `Company`);
     },

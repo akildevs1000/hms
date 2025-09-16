@@ -235,4 +235,7 @@ export default {
     host: process.env.LOCAL_IP,
     port: process.env.LOCAL_PORT,
   },
+  publicRuntimeConfig: {
+    backendUrl: process.env.BACKEND_URL,
+  }
 };

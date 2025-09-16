@@ -36,7 +36,6 @@ class Booking extends Model
 
     protected $guarded = [];
     protected $appends = [
-        'invoice_number',
         'resourceId',
         'title',
         'background',
@@ -87,7 +86,7 @@ class Booking extends Model
         return $this->hasMany(BookedRoom::class);
     }
 
-     public function cancelRooms()
+    public function cancelRooms()
     {
         return $this->hasMany(CancelRoom::class);
     }
@@ -263,6 +262,7 @@ class Booking extends Model
             $query->where(
                 fn($query) => $query
                     ->orWhere('id', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
+                    ->orWhere('invoice_number', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                     ->orWhere('reservation_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                     ->orWhere('reference_no', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
                     ->orWhere('type', env("WILD_CARD") ?? 'ILIKE', '%' . $search . '%')
@@ -391,28 +391,6 @@ class Booking extends Model
         $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
         $text      = ucwords($formatter->format($amount));
         return $text . " Only";
-    }
-
-    public function getInvoiceNumberAttribute()
-    {
-        $count = self::where('company_id', $this->company_id)
-            ->where('id', '<=', $this->id)
-            ->whereHas('customer', function ($q) {
-                $q->whereNotNull('gst_number')
-                    ->orWhereHas('source', function ($q2) {
-                        $q2->whereNotNull('gst');
-                    });
-            })->count() ?? 1;
-
-        $number = str_pad(1000 + $count, 8, '0', STR_PAD_LEFT);
-
-        $prefix = 'INV-';
-
-        if ($this->customer?->source?->gst != null || $this->customer->gst_number != null) {
-            $prefix = 'GST-';
-        }
-
-        return $prefix . $number;
     }
 
     // protected static function boot()

@@ -488,7 +488,7 @@ export default {
         if (process.env.ENVIRONMENT == "development") {
           var url = `http://localhost:3005/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
         } else {
-          var url = `https://customer.myhotel2cloud.com/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
+          var url = `https://guest-service-app.netlify.app/?company_id=${this.$auth.user.company.id}&room_id=${e.id}&room_no=${e.room_no}`;
         }
 
         e.qrURL = url;

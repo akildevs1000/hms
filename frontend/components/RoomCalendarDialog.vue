@@ -1,193 +1,192 @@
 <template>
   <div>
     <v-dialog persistent v-model="RoomDrawer" max-width="400">
-    <AssetsIconClose left="390" @click="close" />
-    <v-card>
-      <v-alert flat class="grey lighten-3 white--text" dense>
-        <span class="text-color">Calendar Booking</span>
-        </v-alert
-      >
-      <v-card-text>
-        <v-row>
-          <v-col cols="12">
-            <v-menu
-              v-model="checkin_menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  label="Check In"
-                  append-icon="mdi-calendar"
-                  outlined
-                  dense
-                  hide-details
-                  v-model="formattedCheckinDate"
-                  persistent-hint
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                :min="new Date().toISOString().substr(0, 10)"
-                v-model="temp.check_in"
-                no-title
-                @input="addOneDay(temp.check_in)"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col cols="12">
-            <v-menu
-              v-model="checkout_menu"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="auto"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  label="Check Out"
-                  append-icon="mdi-calendar"
-                  outlined
-                  dense
-                  hide-details
-                  v-model="formattedCheckOutDate"
-                  persistent-hint
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="temp.check_out"
-                no-title
-                @input="checkout_menu = false"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col cols="12">
-            <v-autocomplete
-              readonly
-              label="Room Type"
-              outlined
-              dense
-              hide-details
-              item-value="id"
-              item-text="name"
-              v-model="room_type_object"
-              @change="
-                ($event) => {
-                  get_available_rooms($event);
-                  selectRoom($event);
-                }
-              "
-              :items="roomTypes"
-              return-object
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="12">
-            <v-autocomplete
-              readonly
-              v-model="multipleRoomId"
-              hide-details
-              :items="availableRooms"
-              item-value="id"
-              item-text="room_no"
-              label="Select Room"
-              dense
-              outlined
-              return-object
-            >
-            </v-autocomplete>
-          </v-col>
-          <v-col cols="4">
-            <v-autocomplete
-              label="Adult"
-              :items="[1, 2, 3]"
-              dense
-              outlined
-              v-model="temp.no_of_adult"
-              :hide-details="true"
-              required
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="4">
-            <v-autocomplete
-              label="Child"
-              :items="[0, 1, 2, 3]"
-              dense
-              outlined
-              v-model="temp.no_of_child"
-              :hide-details="true"
-              required
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="4">
-            <v-text-field
-              label="Extra Bed"
-              min="0"
-              dense
-              outlined
-              type="number"
-              v-model="temp.extra_bed_qty"
-              :hide-details="true"
-              @keyup="set_additional_charges"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-autocomplete
-              label="Food Plan"
-              outlined
-              dense
-              hide-details
-              item-value="id"
-              item-text="title"
-              v-model="temp.food_plan_id"
-              :items="foodplans"
-              @change="
-                selectRoom({ name: temp.room_type, room_no: temp.room_no })
-              "
-            ></v-autocomplete>
-          </v-col>
-          <v-col cols="6">
-            <v-checkbox
-              v-model="is_early_check_in"
-              label="Early Check In"
-              :hide-details="true"
-              dense
-              @change="set_additional_charges"
-            >
-            </v-checkbox>
-          </v-col>
-          <v-col cols="6"
-            ><v-checkbox
-              v-model="is_late_check_out"
-              label="Late Check Out"
-              :hide-details="true"
-              dense
-              @change="set_additional_charges"
-            >
-            </v-checkbox>
-          </v-col>
+      <AssetsIconClose left="390" @click="close" />
+      <v-card>
+        <v-alert flat class="grey lighten-3 white--text" dense>
+          <span class="text-color">Calendar Booking</span>
+        </v-alert>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12">
+              <v-menu
+                v-model="checkin_menu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    label="Check In"
+                    append-icon="mdi-calendar"
+                    outlined
+                    dense
+                    hide-details
+                    v-model="formattedCheckinDate"
+                    persistent-hint
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  :min="new Date().toISOString().substr(0, 10)"
+                  v-model="temp.check_in"
+                  no-title
+                  @input="addOneDay(temp.check_in)"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12">
+              <v-menu
+                v-model="checkout_menu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                max-width="290px"
+                min-width="auto"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    label="Check Out"
+                    append-icon="mdi-calendar"
+                    outlined
+                    dense
+                    hide-details
+                    v-model="formattedCheckOutDate"
+                    persistent-hint
+                    readonly
+                    v-bind="attrs"
+                    v-on="on"
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="temp.check_out"
+                  no-title
+                  @input="checkout_menu = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                readonly
+                label="Room Type"
+                outlined
+                dense
+                hide-details
+                item-value="id"
+                item-text="name"
+                v-model="room_type_object"
+                @change="
+                  ($event) => {
+                    get_available_rooms($event);
+                    selectRoom($event);
+                  }
+                "
+                :items="roomTypes"
+                return-object
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                readonly
+                v-model="multipleRoomId"
+                hide-details
+                :items="availableRooms"
+                item-value="id"
+                item-text="room_no"
+                label="Select Room"
+                dense
+                outlined
+                return-object
+              >
+              </v-autocomplete>
+            </v-col>
+            <v-col cols="4">
+              <v-autocomplete
+                label="Adult"
+                :items="no_of_adult"
+                dense
+                outlined
+                v-model="temp.no_of_adult"
+                :hide-details="true"
+                required
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="4">
+              <v-autocomplete
+                label="Child"
+                :items="no_of_child"
+                dense
+                outlined
+                v-model="temp.no_of_child"
+                :hide-details="true"
+                required
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                label="Extra Bed"
+                min="0"
+                dense
+                outlined
+                type="number"
+                v-model="temp.extra_bed_qty"
+                :hide-details="true"
+                @keyup="set_additional_charges"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                label="Food Plan"
+                outlined
+                dense
+                hide-details
+                item-value="id"
+                item-text="title"
+                v-model="temp.food_plan_id"
+                :items="foodplans"
+                @change="
+                  selectRoom({ name: temp.room_type, room_no: temp.room_no })
+                "
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="6">
+              <v-checkbox
+                v-model="is_early_check_in"
+                label="Early Check In"
+                :hide-details="true"
+                dense
+                @change="set_additional_charges"
+              >
+              </v-checkbox>
+            </v-col>
+            <v-col cols="6"
+              ><v-checkbox
+                v-model="is_late_check_out"
+                label="Late Check Out"
+                :hide-details="true"
+                dense
+                @change="set_additional_charges"
+              >
+              </v-checkbox>
+            </v-col>
 
-          <v-col cols="12" class="text-center">
-            <AssetsButton
-              :options="{
-                label: `Confirm Room`,
-                color: `blue`,
-              }"
-              @click="add_room(temp)"
-            />
-          </v-col>
-        </v-row>
-      </v-card-text>
-    </v-card>
-  </v-dialog>
+            <v-col cols="12" class="text-center">
+              <AssetsButton
+                :options="{
+                  label: `Confirm Room`,
+                  color: `blue`,
+                }"
+                @click="add_room(temp)"
+              />
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 <script>
@@ -198,6 +197,8 @@ export default {
   props: ["label", "reservation", "Independent"],
   data() {
     return {
+      no_of_adult: [],
+      no_of_child: [],
       Model: "Reservation",
       additional_charges: {},
       is_early_check_in: false,
@@ -286,6 +287,8 @@ export default {
     await this.get_food_plans();
 
     await this.get_additional_charges();
+
+    await this.fetchCounts();
   },
   computed: {
     formattedCheckinDate() {
@@ -308,6 +311,22 @@ export default {
     },
   },
   methods: {
+     async fetchCounts() {
+      try {
+        const [adultsArray, childrenArray] = await Promise.all([
+          this.$axios.$get("/no_of_adult"),
+          this.$axios.$get("/no_of_child"),
+        ]);
+
+        // Assign full arrays
+        this.no_of_adult = adultsArray || [];
+        this.no_of_child = childrenArray || [];
+      } catch (error) {
+        console.error("Failed to fetch counts:", error);
+        this.no_of_adult = [];
+        this.no_of_child = [];
+      }
+    },
     close() {
       this.temp = {
         food_plan_price: 0,

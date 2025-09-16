@@ -21,12 +21,12 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-container fluid>
+    <v-container fluid @dblclick="onWholeTemplateDblClick">
       <v-data-table
-        style="min-height: 370px; max-height: 370px; overflow-y: auto"
+        style="min-height: 370px; overflow-y: auto"
         dense
         small
-        :headers="headers_table"
+        :headers="headers"
         :items="data"
         :loading="loading"
         :options.sync="options"
@@ -36,16 +36,13 @@
         class="elevation-0"
         :server-items-length="totalRowsCount"
       >
-        <template v-slot:item.sno="{ item, index }">
-          <AssetsTextLabel
-            :label="
-              currentPage
-                ? (currentPage - 1) * perPage +
-                  (cumulativeIndex + itemIndex(item))
-                : ''
-            "
-          />
+        <template v-slot:item.taxable_invoice_number="{ item, index }">
+          <AssetsTextLabel :label="item.taxable_invoice_number ? `GST-${item.taxable_invoice_number}`: null" />
         </template>
+        <template v-slot:item.invoice_number="{ item, index }">
+          <AssetsTextLabel :label="`INV-${item.invoice_number}`" />
+        </template>
+
         <template v-slot:item.res_number="{ item }">
           <span
             class="blue--text"
@@ -128,6 +125,14 @@
                   <AssetsTextLabel color="text-color" label="Pay" />
                 </v-list-item-title>
               </v-list-item>
+              <v-list-item @click="redirect_to_invoice(item.id)">
+                <v-list-item-title style="cursor: pointer">
+                  <v-icon x-small color="primary" class="mr-2">
+                    mdi-cash-multiple
+                  </v-icon>
+                  <AssetsTextLabel color="text-color" label="Invoice" />
+                </v-list-item-title>
+              </v-list-item>
               <!-- <v-list-item @click="deleteItem(item.id)">
                 <v-list-item-title style="cursor: pointer">
                   <v-icon x-small color="black" class="mr-2">
@@ -178,7 +183,6 @@ export default {
 
     type: "",
     source: "",
-    agentList: [],
     types: ["Select All", "Online", "Travel Agency", "Walking"],
     sources: [],
 
@@ -191,15 +195,16 @@ export default {
     loading: false,
     total: 0,
 
-    headers_table: [
+    headers: [
       {
-        text: "#",
+        text: "Taxable Inv. No",
         align: "left",
         sortable: false,
         key: "employee_id",
         filterable: true,
-        value: "sno",
+        value: "taxable_invoice_number",
       },
+
       {
         text: "Rev. No",
         align: "left",
@@ -315,6 +320,7 @@ export default {
     errors: [],
     checkData: {},
     new_payment: 0,
+    is_all_invoices: false,
   }),
 
   computed: {},
@@ -336,14 +342,25 @@ export default {
       deep: true,
     },
   },
-  created() {
-    // this.loading = true;
-    this.getDataFromApi();
-    this.get_agents();
-    this.get_online();
-  },
 
   methods: {
+    onWholeTemplateDblClick() {
+      this.is_all_invoices = !this.is_all_invoices;
+
+      if (this.is_all_invoices) {
+        this.headers.splice(1, 0, {
+          text: "Inv. No",
+          align: "left",
+          sortable: false,
+          key: "employee_id",
+          filterable: true,
+          value: "invoice_number",
+        });
+      } else {
+        this.headers.splice(1, 1);
+      }
+      this.getDataFromApi();
+    },
     can(per) {
       let u = this.$auth.user;
       return (
@@ -368,32 +385,14 @@ export default {
       this.getDataFromApi();
     },
 
-    goToRevView(item) {
-      // this.$router.push(`/customer/details/${item.id}`);
-    },
+    redirect_to_invoice(id) {
+      let endpoint = `${this.$backendUrl}get_taxable_invoice/${id}`;
 
-    get_agents() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_agent`, payload).then(({ data }) => {
-        this.agentList = [{ id: -1, name: "Select All" }].concat(data);
-      });
-    },
-
-    get_online() {
-      let payload = {
-        params: {
-          company_id: this.$auth.user.company.id,
-        },
-      };
-      this.$axios.get(`get_online`, payload).then(({ data }) => {
-        // this.sources = data;
-
-        this.sources = [{ id: -1, name: "Select All" }].concat(data);
-      });
+      let element = document.createElement("a");
+      element.setAttribute("target", "_blank");
+      element.setAttribute("href", endpoint);
+      document.body.appendChild(element);
+      element.click();
     },
 
     async deleteItem(id) {
@@ -509,7 +508,6 @@ export default {
     },
     getDataFromApi(url = this.endpoint, customPage = 0) {
       if (this.from_date && this.to_date) {
-        // :items="type == 'Online' ? sources : agentList"
 
         let newSource;
 
@@ -543,6 +541,8 @@ export default {
             source: newSource,
             ...this.filters,
             is_cash: this.is_cash,
+            is_all_invoices: this.is_all_invoices
+
           },
         };
 

@@ -18,6 +18,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\TradeLicenseController;
 use App\Http\Controllers\UserController;
+use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -154,4 +155,9 @@ Route::post('additional_charges', [AdditionalChargeController::class, 'store']);
 
 Route::get('get_endpoint', function () {
     return "https://backend.myhotel2cloud.com/api/";
+});
+
+
+Route::get('get_modules', function () {
+    return Module::MODULES;
 });

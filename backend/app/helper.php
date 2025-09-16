@@ -40,3 +40,12 @@ if (! function_exists('lightDump')) {
         return json_encode($arr, JSON_PRETTY_PRINT);
     }
 }
+
+if (! function_exists('amountToText')) {
+    function amountToText($amount)
+    {
+        $formatter = new NumberFormatter('en_US', NumberFormatter::SPELLOUT);
+        $text      = ucwords($formatter->format($amount));
+        return $text;
+    }
+}

@@ -73,7 +73,7 @@
                             <v-col md="4" cols="12">
                               <v-autocomplete
                                 v-model="editedItem.adult"
-                                :items="[1, 2, 3, 4]"
+                                :items="no_of_adult"
                                 placeholder="Adult"
                                 dense
                                 label="Adult"
@@ -92,7 +92,7 @@
                             <v-col md="4" cols="12">
                               <v-autocomplete
                                 v-model="editedItem.child"
-                                :items="[1, 2, 3, 4]"
+                                :items="no_of_child"
                                 placeholder="Child"
                                 dense
                                 label="Child"
@@ -111,7 +111,7 @@
                             <v-col md="4" cols="12">
                               <v-autocomplete
                                 v-model="editedItem.baby"
-                                :items="[1, 2, 3]"
+                                :items="[0, 1, 2, 3]"
                                 placeholder="Baby"
                                 dense
                                 label="Baby"
@@ -381,6 +381,8 @@ export default {
   //   roomsComponent,
   // },
   data: () => ({
+    no_of_adult: [],
+    no_of_child: [],
     upload: {
       name: "",
     },
@@ -459,12 +461,29 @@ export default {
     },
   },
 
-  created() {
+  async created() {
     this.loading = true;
     this.getDataFromApi();
+    await this.fetchCounts();
   },
 
   methods: {
+    async fetchCounts() {
+      try {
+        const [adultsArray, childrenArray] = await Promise.all([
+          this.$axios.$get("/no_of_adult"),
+          this.$axios.$get("/no_of_child"),
+        ]);
+
+        // Assign full arrays
+        this.no_of_adult = adultsArray || [];
+        this.no_of_child = childrenArray || [];
+      } catch (error) {
+        console.error("Failed to fetch counts:", error);
+        this.no_of_adult = [];
+        this.no_of_child = [];
+      }
+    },
     updatePriceToWordpress() {
       //console.log(this.$auth.user.company);
       window.open(

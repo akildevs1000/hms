@@ -609,7 +609,7 @@ export default {
           icon: "mdi-cash",
           module: "gst_bills",
           title: "Invoices",
-          to: "/booking/cash_invoices",
+          to: "/taxables",
           menu: "accounts_gst_access",
         },
         // {
