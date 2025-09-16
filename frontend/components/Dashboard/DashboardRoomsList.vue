@@ -788,27 +788,27 @@ export default {
   methods: {
 
     mqttConnection() {
-      const c = this.$mqtt?.raw;
+      // const c = this.$mqtt?.raw;
 
 
-      if (!c) return;
+      // if (!c) return;
 
-      // ---- Connection indicators ----
-      this.online = !!c.connected;
+      // // ---- Connection indicators ----
+      // this.online = !!c.connected;
 
-      c.on("connect", () => {
-        this.online = true;
-        console.log("[MQTT] connected");
-      });
-      c.on("reconnect", () => {
-        this.online = false;
-        console.log("[MQTT] reconnecting…");
-      });
-      c.on("close", () => {
-        this.online = false;
-        console.log("[MQTT] connection closed");
-      });
-      c.on("error", (err) => console.error("[MQTT] error", err));
+      // c.on("connect", () => {
+      //   this.online = true;
+      //   console.log("[MQTT] connected");
+      // });
+      // c.on("reconnect", () => {
+      //   this.online = false;
+      //   console.log("[MQTT] reconnecting…");
+      // });
+      // c.on("close", () => {
+      //   this.online = false;
+      //   console.log("[MQTT] connection closed");
+      // });
+      // c.on("error", (err) => console.error("[MQTT] error", err));
 
       // ---- Subscribe with wildcard ----
 
@@ -817,18 +817,21 @@ export default {
       this.unsubWildcard = this.$mqtt.sub(this.WILDCARD, (msg, topic) => {
 
 
+
+
+
         // This callback fires ONLY for topics that match the wildcard
         this.handleWildcardMessage(topic, msg);
       });
 
-      // (Optional) If you want to catch all messages from the raw client:
-      // Make sure to keep one handler and remove it on destroy.
-      this.onRawMessage = (topic, payloadBuffer /*, packet */) => {
-        // Guard to only process the wildcard here (prevents duplicates)
-        if (!this.topicMatchesWildcard(topic, this.WILDCARD)) return;
-        this.handleWildcardMessage(topic, payloadBuffer);
-      };
-      c.on("message", this.onRawMessage);
+      // // (Optional) If you want to catch all messages from the raw client:
+      // // Make sure to keep one handler and remove it on destroy.
+      // this.onRawMessage = (topic, payloadBuffer /*, packet */) => {
+      //   // Guard to only process the wildcard here (prevents duplicates)
+      //   if (!this.topicMatchesWildcard(topic, this.WILDCARD)) return;
+      //   this.handleWildcardMessage(topic, payloadBuffer);
+      // };
+      // c.on("message", this.onRawMessage);
     },
 
     // --- UTIL: wildcard check for + and # (simple, fast) ---
@@ -870,11 +873,13 @@ export default {
     handleWildcardMessage(topic, payloadRaw) {
 
       try {
-        const data = this.parsePayload(payloadRaw);
+        console.log("data", payloadRaw);
+        const data = payloadRaw;//JSON.parse(payloadRaw);//   this.parsePayload(payloadRaw);
         // topic: xtremevision_switch/+/message
         // parts[1] is the switch/device id
         const parts = topic.split("/");
         const deviceId = parts[1];
+        console.log("data", data);
 
 
 
