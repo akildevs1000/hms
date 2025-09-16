@@ -269,7 +269,12 @@ class DeviceController extends Controller
         // }
         $notificationMessage = "";
         $device = Device::with("company")->where("serial_number", $device_room_number)->first();
+
+
         if ($device) {
+            if ($request->ipAddress)
+                Device::where("serial_number", $device_room_number)
+                    ->update(["ip_address" => $request->ipAddress]);
             $deviceTimezone = $device->utc_time_zone;
 
 
