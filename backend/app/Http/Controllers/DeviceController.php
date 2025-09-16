@@ -428,6 +428,8 @@ class DeviceController extends Controller
             }
 
             return $this->response('Data error', null, false);
+        } else {
+            return $this->response('Device Details are not available', null, true);
         }
     }
     public function sendWhatsappNotification($message)
@@ -583,12 +585,12 @@ class DeviceController extends Controller
   "action": "UPDATE_CONFIG",
   "serialNumber": "' . $request->serial_number . '",
   "config": {
-     "serverURL": "' . $request->serverURL . '",        
+     "serverURL": "' . $request->serverURL . '",
         "intervalHeartbeat": ' . $request->intervalHeartbeat . ',
         "server_ip": "' . $request->server_ip . '",
         "server_port": "' . $request->server_port . '",
-        "gmtTimeZone": "' . $request->gmtTimeZone . '" 
-        
+        "gmtTimeZone": "' . $request->gmtTimeZone . '"
+
   }
 }',
                 CURLOPT_HTTPHEADER => array(
