@@ -279,7 +279,7 @@ class DeviceController extends Controller
                     ->update([
                         "ip_address" => $request->ipAddress,
                         "online_status" => true,
-                        "online_updated_datetime" => date("Y-m-d H:i;s")
+                        "online_updated_datetime" => date("Y-m-d H:i:s")
                     ]);
             }
             $deviceTimezone = $device->utc_time_zone;
