@@ -54,14 +54,14 @@
                 <v-text-field :disabled="viewMode" v-model="editedItem.serial_number" outlined dense small hide-details
                   label="Serial Number"></v-text-field>
                 <span dense v-if="errors && errors.serial_number" class="error--text">{{ errors.serial_number[0]
-                }}</span>
+                  }}</span>
               </v-col>
               <v-col cols="6">
                 <v-text-field :disabled="viewMode" v-model="editedItem.name" outlined dense small hide-details
                   label="Device Type Name"></v-text-field>
                 <span v-if="errors && errors.name" class="error--text">{{
                   errors.name[0]
-                }}</span>
+                  }}</span>
               </v-col>
               <v-col cols="6">
                 <!-- {{ editedItem.utc_time_zone }} -->
@@ -74,7 +74,7 @@
                 </v-autocomplete>
                 <span v-if="errors && errors.room_id" class="error--text">{{
                   errors.room_id[0]
-                }}</span>
+                  }}</span>
               </v-col>
 
               <v-col cols="12" v-if="!viewMode" class="text-right">
@@ -488,9 +488,9 @@ export default {
           device.latest_status = data.status;
           device.latest_status_time = this.$dateFormat.format4s(new Date().toLocaleString());
           device.online_status = true;
-          setTimeout(() => {
-            this.getDataFromApi();
-          }, 1000 * 5);
+          // setTimeout(() => {
+          //   this.getDataFromApi();
+          // }, 1000 * 5);
 
 
         }
