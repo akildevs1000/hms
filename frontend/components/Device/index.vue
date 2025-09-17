@@ -156,6 +156,12 @@
             <template v-slot:item.ip_address="{ item }">
               {{ item.ip_address || '---' }}
             </template>
+            <template v-slot:item.online_status="{ item }">
+              <img v-if="item.online_status" src="icons/device_status_open.png" style="width:30px" />
+              <img v-else src="icons/device_status_close.png" style="width:30px" />
+
+            </template>
+
 
 
             <template v-slot:item.room_status="{ item }">
@@ -193,14 +199,14 @@
                       View
                     </v-list-item-title>
                   </v-list-item>
-                  <v-list-item v-if="can('device_view')" @click="viewStatusLogs(item)">
+                  <!-- <v-list-item v-if="can('device_view')" @click="viewStatusLogs(item)">
                     <v-list-item-title style="cursor: pointer">
                       <v-icon color="warning" small>
                         mdi-format-list-checkbox
                       </v-icon>
                       View Logs
                     </v-list-item-title>
-                  </v-list-item>
+                  </v-list-item> -->
                   <v-list-item v-if="can('device_edit')" @click="editItem(item, false)">
                     <v-list-item-title style="cursor: pointer">
                       <v-icon color="secondary" small> mdi-pencil </v-icon>
@@ -309,7 +315,7 @@ export default {
         filterSpecial: true,
       },
       {
-        text: "Light Status",
+        text: "Live Light",
         value: "latest_status",
         align: "left",
         sortable: true,
@@ -345,11 +351,19 @@ export default {
         filterSpecial: false,
       },
       {
-        text: "Light Status Time",
+        text: " Light Updated At",
         value: "latest_status_time",
         align: "left",
         sortable: true,
         key: "room_id",
+        filterable: true,
+        filterSpecial: true,
+      }, {
+        text: "Device",
+        value: "online_status",
+        align: "left",
+        sortable: true,
+        key: "online_status",
         filterable: true,
         filterSpecial: true,
       },
@@ -384,6 +398,9 @@ export default {
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     ],
     intervalObj: null,
+    WILDCARD_HEARTBEAT: "xtremevision_switch/+/heartbeat",
+    WILDCARD_STATUS: "xtremevision_switch/+/message",
+
   }),
   watch: {
     options: {
@@ -397,13 +414,15 @@ export default {
     if (this.intervalObj) clearInterval(this.intervalObj);
   },
   mounted() {
-    this.intervalObj = setInterval(() => {
-      this.getDataFromApi();
-    }, 1000 * 60);
+    // this.intervalObj = setInterval(() => {
+    //   this.getDataFromApi();
+    // }, 1000 * 60);
+
+
   },
-  created() {
-    this.getDataFromApi();
-    this.getroomList();
+  async created() {
+    await this.getDataFromApi();
+    await this.getroomList();
 
     this.intervalObj = setInterval(() => {
       this.getDataFromApi();
@@ -416,8 +435,72 @@ export default {
       this.updatesstatukey++;
       //this.getDataFromApi();
     }, 1000 * 5);
+
+    this.mqttConnection();
   },
   methods: {
+    mqttConnection() {
+
+
+      // If your plugin returns an unsubscribe function, store it
+      this.unsubWildcard = this.$mqtt.sub(this.WILDCARD_STATUS, (msg, topic) => {
+        // This callback fires ONLY for topics that match the wildcard
+        this.handleWildcardMessage(topic, msg);
+      });
+      this.unsubWildcard = this.$mqtt.sub(this.WILDCARD_HEARTBEAT, (msg, topic) => {
+        // This callback fires ONLY for topics that match the wildcard
+        this.handleWildcardHeartbeat(topic, msg);
+      });
+
+
+
+    },
+    handleWildcardHeartbeat(topic, payloadRaw) {
+
+      try {
+        const parts = topic.split("/");
+        const deviceId = parts[1];
+        let device = this.data.find((e) => e.serial_number == deviceId);
+        if (device) {
+          device.online_status = true;
+
+        }
+
+      } catch (e) {
+        console.error(e);
+      }
+
+
+    },
+    handleWildcardMessage(topic, payloadRaw) {
+
+      try {
+        const data = payloadRaw;//JSON.parse(payloadRaw);//   this.parsePayload(payloadRaw);
+        // topic: xtremevision_switch/+/message
+        // parts[1] is the switch/device id
+        const parts = topic.split("/");
+        const deviceId = parts[1];
+
+
+        let device = this.data.find((e) => e.serial_number == deviceId)
+
+        if (device) {
+          device.latest_status = data.status;
+          device.latest_status_time = this.$dateFormat.format4s(new Date().toLocaleString());
+          device.online_status = true;
+          setTimeout(() => {
+            this.getDataFromApi();
+          }, 1000 * 5);
+
+
+        }
+
+      } catch (e) {
+        console.error(e);
+      }
+
+
+    },
     async getRoomStatusBySerialNumber(serial_number) {
       let options = { params: { serial_number: serial_number } };
 
@@ -502,7 +585,7 @@ export default {
       this.getDataFromApi(this.endpoint, 1);
     },
 
-    getDataFromApi(url = this.endpoint, customPage = 0) {
+    async getDataFromApi(url = this.endpoint, customPage = 0) {
       this.loading = true;
       let { sortBy, sortDesc, page, itemsPerPage } = this.options;
       let sortedBy = sortBy ? sortBy[0] : "";
@@ -529,6 +612,15 @@ export default {
         // setTimeout(() => {
         //   await this.updateStatus();
         // }, 1000 * 5);
+
+
+        if (this.data) {
+          this.data.forEach(element => {
+            this.$mqtt.pub("xtremevision_switch/" + element.serial_number + "/config/request", "heartbeat");
+
+          });
+
+        }
       });
     },
 
@@ -566,7 +658,7 @@ export default {
       }
     },
 
-    getroomList() {
+    async getroomList() {
       let options = { params: { company_id: this.$auth.user.company.id } };
       this.$axios.get(`room_list`, options).then(({ data }) => {
         this.roomList = data;

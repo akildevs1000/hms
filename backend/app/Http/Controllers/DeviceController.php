@@ -272,9 +272,16 @@ class DeviceController extends Controller
 
 
         if ($device) {
-            if ($request->ipAddress)
+            if ($request->ipAddress) {
+
+
                 Device::where("serial_number", $device_room_number)
-                    ->update(["ip_address" => $request->ipAddress]);
+                    ->update([
+                        "ip_address" => $request->ipAddress,
+                        "online_status" => true,
+                        "online_updated_datetime" => date("Y-m-d H:i;s")
+                    ]);
+            }
             $deviceTimezone = $device->utc_time_zone;
 
 
@@ -368,6 +375,11 @@ class DeviceController extends Controller
                     $row["booked_room_id"] = $booked_room_id;
                     $row["booking_id"] = $booking_id;
 
+                    $row["online_updated_datetime"] =  $dateTime->format('Y-m-d H:i:s');
+                    $row["online_status"] =  true;
+
+
+
                     Device::where("serial_number", $device_room_number)
                         ->update($row);
 
@@ -409,8 +421,9 @@ class DeviceController extends Controller
 
                         $row["booked_room_id"] = null;
                         $row["booking_id"] = null;
+                        $row["online_status"] =  true;
 
-
+                        $row["online_updated_datetime"] =  $dateTime->format('Y-m-d H:i:s');
                         Device::where("serial_number", $device_room_number)
                             ->update($row);
 

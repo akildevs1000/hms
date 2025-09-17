@@ -257,6 +257,18 @@ export default ({ app }, inject) => {
 
       return `${year}-${month}-${day} ${hours}:${minutes} `;
     },
+    format4s: (inputdate) => {
+      const currentDate = new Date(inputdate);
+
+      const year = currentDate.getFullYear();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, "0"); // Adding 1 to month because it's zero-based.
+      const day = currentDate.getDate().toString().padStart(2, "0");
+      const hours = currentDate.getHours().toString().padStart(2, "0");
+      const minutes = currentDate.getMinutes().toString().padStart(2, "0");
+      const seconds = currentDate.getSeconds().toString().padStart(2, "0");
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds} `;
+    },
     getSecondsInTimezone(time, timeZone) {
       // Current UTC timestamp (ms)
       const now = new Date(time);

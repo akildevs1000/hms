@@ -788,98 +788,30 @@ export default {
   methods: {
 
     mqttConnection() {
-      // const c = this.$mqtt?.raw;
-
-
-      // if (!c) return;
-
-      // // ---- Connection indicators ----
-      // this.online = !!c.connected;
-
-      // c.on("connect", () => {
-      //   this.online = true;
-      //   console.log("[MQTT] connected");
-      // });
-      // c.on("reconnect", () => {
-      //   this.online = false;
-      //   console.log("[MQTT] reconnecting…");
-      // });
-      // c.on("close", () => {
-      //   this.online = false;
-      //   console.log("[MQTT] connection closed");
-      // });
-      // c.on("error", (err) => console.error("[MQTT] error", err));
-
-      // ---- Subscribe with wildcard ----
-
 
       // If your plugin returns an unsubscribe function, store it
       this.unsubWildcard = this.$mqtt.sub(this.WILDCARD, (msg, topic) => {
-
-
-
-
-
         // This callback fires ONLY for topics that match the wildcard
         this.handleWildcardMessage(topic, msg);
       });
 
-      // // (Optional) If you want to catch all messages from the raw client:
-      // // Make sure to keep one handler and remove it on destroy.
-      // this.onRawMessage = (topic, payloadBuffer /*, packet */) => {
-      //   // Guard to only process the wildcard here (prevents duplicates)
-      //   if (!this.topicMatchesWildcard(topic, this.WILDCARD)) return;
-      //   this.handleWildcardMessage(topic, payloadBuffer);
-      // };
-      // c.on("message", this.onRawMessage);
+
     },
 
-    // --- UTIL: wildcard check for + and # (simple, fast) ---
-    topicMatchesWildcard(topic, wildcard) {
-      // supports + (single level) and # (multi-level at end)
-      const t = topic.split("/");
-      const w = wildcard.split("/");
 
-      for (let i = 0; i < w.length; i++) {
-        if (w[i] === "#") return true; // matches rest
-        if (w[i] === "+") {
-          if (!t[i]) return false;     // must have a level here
-          continue;
-        }
-        if (w[i] !== t[i]) return false;
-      }
-      return t.length === w.length;
-    },
 
-    // --- UTIL: safe parse buffers / strings / JSON ---
-    parsePayload(payload) {
-      try {
-        const text =
-          typeof payload === "string"
-            ? payload
-            : (payload?.toString?.() ?? new TextDecoder().decode(payload));
-        try {
-          return JSON.parse(text);
-        } catch {
-          return text; // not JSON → return as plain string
-        }
-      } catch (e) {
-        console.warn("Failed to parse payload", e);
-        return payload;
-      }
-    },
 
     // --- Single place where we process messages from the wildcard ---
     handleWildcardMessage(topic, payloadRaw) {
 
       try {
-        console.log("data", payloadRaw);
+
         const data = payloadRaw;//JSON.parse(payloadRaw);//   this.parsePayload(payloadRaw);
         // topic: xtremevision_switch/+/message
         // parts[1] is the switch/device id
         const parts = topic.split("/");
         const deviceId = parts[1];
-        console.log("data", data);
+
 
 
 
@@ -895,20 +827,7 @@ export default {
         console.error(e);
       }
 
-      //  this.rooms = data;
 
-      // this.dirtyRooms = data.dirtyRooms;
-      // this.availableRooms = data.availableRooms;
-      // this.notAvailableRooms = data.notAvailableRooms;
-      // this.blockedRooms = data.blockedRooms;
-
-
-      // You can branch by device, schema, etc.
-      // if (data?.cmd === "toggle") { ... }
-      // if (data?.status) this.updateSwitchStatus(deviceId, data.status)
-
-      // TODO: emit an event or update your store/UI here
-      // this.$emit('switch-message', { deviceId, data })
     },
 
     updateMQTTDeviceStatus(roomsList, deviceId, data) {
