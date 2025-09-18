@@ -485,6 +485,7 @@ export default {
         let device = this.data.find((e) => e.serial_number == deviceId)
 
         if (device) {
+
           device.latest_status = data.status;
           device.latest_status_time = this.$dateFormat.format4s(new Date().toLocaleString());
           device.online_status = true;
@@ -607,6 +608,10 @@ export default {
       this.$axios.get(`${url}?page=${page}`, options).then(async ({ data }) => {
         this.loading = false;
         this.data = data.data;
+
+
+        this.data.map((e) => e.online_status = false)
+
         this.totalTableRowsCount = data.total;
         this.updateStatus();
         // setTimeout(() => {
