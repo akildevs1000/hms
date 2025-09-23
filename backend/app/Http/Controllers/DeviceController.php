@@ -272,16 +272,7 @@ class DeviceController extends Controller
 
 
         if ($device) {
-            if ($request->ipAddress) {
 
-
-                Device::where("serial_number", $device_room_number)
-                    ->update([
-                        "ip_address" => $request->ipAddress,
-                        "online_status" => true,
-                        "online_updated_datetime" => date("Y-m-d H:i:s")
-                    ]);
-            }
             $deviceTimezone = $device->utc_time_zone;
 
 
@@ -297,6 +288,22 @@ class DeviceController extends Controller
 
             $company_id = $device->company_id;
             $todayDate = $dateTime->format('Y-m-d'); //date("Y-m-d");
+
+
+            if ($request->ipAddress) {
+                $updateData = [
+                    "online_status" => true,
+                    "online_updated_datetime" => $dateTime->format('Y-m-d H:i:s'),
+                ];
+
+                // Only update ip_address if it's valid
+                if (!empty($request->ipAddress) && $request->ipAddress !== '0.0.0.0') {
+                    $updateData["ip_address"] = $request->ipAddress;
+                }
+
+                Device::where("serial_number", $device_room_number)
+                    ->update($updateData);
+            }
 
 
 
