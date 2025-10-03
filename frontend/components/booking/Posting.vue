@@ -241,7 +241,7 @@ export default {
     },
     calc(posting) {
       // Determine tax rate based on the tax_type
-      const taxRate = posting.tax_type === "Food" ? 5 : 12;
+      const taxRate = posting.tax_type === "Food" ? 5 : 5;
 
       // Ensure qty and single_amt are valid numbers, default to 0 if not
       const qty = parseFloat(posting.qty) || 0;
