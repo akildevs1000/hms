@@ -23,7 +23,7 @@ class DeviceController extends Controller
     {
         return $model->with(['room', 'company', "bookedRoom",  "booking", "bookedroomid"])->where('company_id', $request->company_id)
 
-            ->orderBy('latest_status', "DESC")
+            ->orderBy('room_id', "ASC")
             ->paginate($request->per_page ?? 50);
     }
 
@@ -269,7 +269,10 @@ class DeviceController extends Controller
         // }
         $notificationMessage = "";
         $device = Device::with("company")->where("serial_number", $device_room_number)->first();
+
+
         if ($device) {
+
             $deviceTimezone = $device->utc_time_zone;
 
 
@@ -285,6 +288,22 @@ class DeviceController extends Controller
 
             $company_id = $device->company_id;
             $todayDate = $dateTime->format('Y-m-d'); //date("Y-m-d");
+
+
+            if ($request->ipAddress) {
+                $updateData = [
+                    "online_status" => true,
+                    "online_updated_datetime" => $dateTime->format('Y-m-d H:i:s'),
+                ];
+
+                // Only update ip_address if it's valid
+                if (!empty($request->ipAddress) && $request->ipAddress !== '0.0.0.0') {
+                    $updateData["ip_address"] = $request->ipAddress;
+                }
+
+                Device::where("serial_number", $device_room_number)
+                    ->update($updateData);
+            }
 
 
 
@@ -363,6 +382,11 @@ class DeviceController extends Controller
                     $row["booked_room_id"] = $booked_room_id;
                     $row["booking_id"] = $booking_id;
 
+                    $row["online_updated_datetime"] =  $dateTime->format('Y-m-d H:i:s');
+                    $row["online_status"] =  true;
+
+
+
                     Device::where("serial_number", $device_room_number)
                         ->update($row);
 
@@ -404,8 +428,9 @@ class DeviceController extends Controller
 
                         $row["booked_room_id"] = null;
                         $row["booking_id"] = null;
+                        $row["online_status"] =  true;
 
-
+                        $row["online_updated_datetime"] =  $dateTime->format('Y-m-d H:i:s');
                         Device::where("serial_number", $device_room_number)
                             ->update($row);
 
@@ -428,6 +453,8 @@ class DeviceController extends Controller
             }
 
             return $this->response('Data error', null, false);
+        } else {
+            return $this->response('Device Details are not available', null, true);
         }
     }
     public function sendWhatsappNotification($message)
@@ -583,12 +610,12 @@ class DeviceController extends Controller
   "action": "UPDATE_CONFIG",
   "serialNumber": "' . $request->serial_number . '",
   "config": {
-     "serverURL": "' . $request->serverURL . '",        
+     "serverURL": "' . $request->serverURL . '",
         "intervalHeartbeat": ' . $request->intervalHeartbeat . ',
         "server_ip": "' . $request->server_ip . '",
         "server_port": "' . $request->server_port . '",
-        "gmtTimeZone": "' . $request->gmtTimeZone . '" 
-        
+        "gmtTimeZone": "' . $request->gmtTimeZone . '"
+
   }
 }',
                 CURLOPT_HTTPHEADER => array(

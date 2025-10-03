@@ -4,14 +4,8 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <img src="/login/login-logo.png" style="width: 100px" />
       <v-spacer></v-spacer>
-      <v-btn
-        text
-        v-for="(topMenu, index) in topMenus"
-        :key="index"
-        :color="isActive(topMenu) ? 'blue' : ''"
-        @click="setActive(topMenu)"
-        >{{ topMenu.label }}</v-btn
-      >
+      <v-btn text v-for="(topMenu, index) in topMenus" :key="index" :color="isActive(topMenu) ? 'blue' : ''"
+        @click="setActive(topMenu)">{{ topMenu.label }}</v-btn>
       <v-spacer></v-spacer>
 
       <v-spacer>
@@ -25,12 +19,7 @@
       <div style="font-size: 10px">
         {{ getCOmpanyName }}
       </div>
-      <v-avatar
-        style="margin-right: 10px"
-        color="green"
-        size="30"
-        :title="getCOmpanyName"
-      >
+      <v-avatar style="margin-right: 10px" color="green" size="30" :title="getCOmpanyName">
         <img :src="getCompanyLogo || '/no-image.PNG'" />
       </v-avatar>
       <!-- <v-badge
@@ -43,72 +32,44 @@
       >
         <v-icon @click="gotoReservationPage()"> mdi-bell-ring </v-icon>
       </v-badge> -->
-      <v-menu
-        style="z-index: 9999 !important; background-color: #fff"
-        bottom
-        origin="center center"
-        offset-y
-        transition="scale-transition"
-        v-model="notificationsMenu"
-      >
-        <template
-          v-slot:activator="{ on, attrs }"
-          style="
+      <v-menu style="z-index: 9999 !important; background-color: #fff" bottom origin="center center" offset-y
+        transition="scale-transition" v-model="notificationsMenu">
+        <template v-slot:activator="{ on, attrs }" style="
             z-index: 9999 !important;
             background-color: #fff;
             max-height: 600px;
-          "
-        >
+          ">
           <v-btn icon v-bind="attrs" v-on="on">
-            <v-badge
-              :color="
-                '  ' + notificationsMenuItems.length > 0 ? 'red' : 'green'
-              "
-              :content="
-                notificationsMenuItems.length == 0
-                  ? '0'
-                  : notificationsMenuItems.length
-              "
-              style="top: 10px; left: -19px; z-index: 9999 !important"
-            >
-              <v-icon style="top: -10px; left: 10px" class="violet--text"
-                >mdi mdi-bell-ring</v-icon
-              >
+            <v-badge :color="'  ' + notificationsMenuItems.length > 0 ? 'red' : 'green'
+              " :content="notificationsMenuItems.length == 0
+                ? '0'
+                : notificationsMenuItems.length
+                " style="top: 10px; left: -19px; z-index: 9999 !important">
+              <v-icon style="top: -10px; left: 10px" class="violet--text">mdi mdi-bell-ring</v-icon>
             </v-badge>
           </v-btn>
         </template>
-        <v-list
-          style="
+        <v-list style="
             z-index: 9999;
             max-height: 600px;
             background-color: white;
             z-index: 9999;
-          "
-        >
-          <v-list-item
-            @click="
-              item.type == 'food'
-                ? goToPage('/hotel_checkin/orders/food')
-                : goToPage('/chat')
-            "
-            style="height: 80px; padding-left: 5px; background-color: white"
-            :class="
-              notificationsMenuItems.length > 0 &&
+          ">
+          <v-list-item @click="
+            item.type == 'food'
+              ? goToPage('/hotel_checkin/orders/food')
+              : goToPage('/chat')
+            " style="height: 80px; padding-left: 5px; background-color: white" :class="notificationsMenuItems.length > 0 &&
               index != notificationsMenuItems.length - 1
-                ? 'border-bottom'
-                : ''
-            "
-            v-for="(item, index) in notificationsMenuItems"
-            :key="index"
-          >
+              ? 'border-bottom'
+              : ''
+              " v-for="(item, index) in notificationsMenuItems" :key="index">
             <v-list-item-content>
               <v-list-item-title class="align-left text-left">
                 <v-row style="">
                   <v-col cols="12" class="align-left text-left pr-1">
                     <span v-if="String(item.type).toLowerCase() == 'text'">
-                      <v-icon color="primary" size="16"
-                        >mdi-chat-processing-outline</v-icon
-                      >
+                      <v-icon color="primary" size="16">mdi-chat-processing-outline</v-icon>
                     </span>
                     <span v-else-if="String(item.type).toLowerCase() == 'food'">
                       <v-icon size="16" color="blue">mdi-food</v-icon>
@@ -116,15 +77,12 @@
                     <span v-else-if="String(item.type).toLowerCase() == 'file'">
                       <v-icon size="16" color="#139c4a">mdi-image</v-icon>
                     </span>
-                    <span
-                      v-else-if="String(item.type).toLowerCase() == 'audio'"
-                    >
+                    <span v-else-if="String(item.type).toLowerCase() == 'audio'">
                       <v-icon size="16" color="error">mdi-microphone</v-icon>
                     </span>
 
                     <v-chip label color="primary" small>
-                      {{ item.room_number || item.room_no }}</v-chip
-                    >
+                      {{ item.room_number || item.room_no }}</v-chip>
                     {{ getSenderName(item.sender) }}
                   </v-col>
                   <v-col cols="12" class="pt-0">
@@ -153,15 +111,8 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-menu
-        nudge-bottom="50"
-        nudge-left="20"
-        transition="scale-transition"
-        origin="center center"
-        bottom
-        left
-        min-width="150"
-      >
+      <v-menu nudge-bottom="50" nudge-left="20" transition="scale-transition" origin="center center" bottom left
+        min-width="150">
         <template v-slot:activator="{ on, attrs }">
           <v-avatar v-bind="attrs" v-on="on">
             <img :src="getLogo || '/no-image.PNG'" />
@@ -175,9 +126,7 @@
                 <v-icon>mdi-account-multiple-outline</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title class="grey--text"
-                  >Profile</v-list-item-title
-                >
+                <v-list-item-title class="grey--text">Profile</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 
@@ -202,25 +151,11 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      dark
-      :clipped="clipped"
-      fixed
-      app
-      :color="sideBarcolor"
-      :width="100"
-      expand-on-hover
-      rail
-    >
+    <v-navigation-drawer v-model="drawer" dark :clipped="clipped" fixed app :color="sideBarcolor" :width="100"
+      expand-on-hover rail>
       <v-list v-for="(i, idx) in filteredMenu" :key="idx" :title="i.title">
-        <v-list-item
-          @click="$router.push(i.to)"
-          :class="!miniVariant || 'pl-2'"
-          router
-          style="display: inline-block; padding: 0px 20px"
-          vertical
-        >
+        <v-list-item @click="$router.push(i.to)" :class="!miniVariant || 'pl-2'" router
+          style="display: inline-block; padding: 0px 20px" vertical>
           <div>
             <v-icon v-if="i.icon">{{ i.icon }}</v-icon>
             <span v-else>
@@ -241,13 +176,7 @@
       </v-container>
     </v-main>
 
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :clipped="true"
-      :right="right"
-      fixed
-      style="z-index: 1000"
-    >
+    <v-navigation-drawer v-model="rightDrawer" :clipped="true" :right="right" fixed style="z-index: 1000">
       <v-row style="margin-top: 50px">
         <v-col>
           <v-card class="pa-2" elevation="0">
@@ -255,31 +184,13 @@
               <div class="mb-3">
                 <Strong>Theme</Strong>
               </div>
-              <div
-                class="btn-group"
-                role="group"
-                aria-label="Basic radio toggle button group"
-              >
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="theme"
-                  id="light"
-                  autocomplete="off"
-                  @click="changeTheme('light')"
-                />
-                <label class="btn" :class="'btn-outline-dark'" for="light"
-                  >Light</label
-                >
+              <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="theme" id="light" autocomplete="off"
+                  @click="changeTheme('light')" />
+                <label class="btn" :class="'btn-outline-dark'" for="light">Light</label>
 
-                <input
-                  type="radio"
-                  class="btn-check"
-                  name="theme"
-                  id="dark"
-                  autocomplete="off"
-                  @click="changeTheme('dark')"
-                />
+                <input type="radio" class="btn-check" name="theme" id="dark" autocomplete="off"
+                  @click="changeTheme('dark')" />
                 <label class="btn btn-outline-dark" for="dark">Dark</label>
               </div>
             </v-col>
@@ -289,38 +200,14 @@
                 <Strong>Top Bar</Strong>
               </div>
               <div class="d-flex">
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="primary"
-                  @click="changeTopBarColor('primary')"
-                ></v-btn>
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="error"
-                  @click="changeTopBarColor('error')"
-                ></v-btn>
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="indigo"
-                  @click="changeTopBarColor('indigo')"
-                ></v-btn>
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="background"
-                  @click="changeTopBarColor('background')"
-                ></v-btn>
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="primary"
+                  @click="changeTopBarColor('primary')"></v-btn>
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="error"
+                  @click="changeTopBarColor('error')"></v-btn>
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="indigo"
+                  @click="changeTopBarColor('indigo')"></v-btn>
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="background"
+                  @click="changeTopBarColor('background')"></v-btn>
               </div>
             </v-col>
             <v-divider></v-divider>
@@ -329,38 +216,14 @@
                 <Strong>Side Bar</Strong>
               </div>
               <div class="d-flex">
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="primary"
-                  @click="changeSideBarColor('primary')"
-                ></v-btn>
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="error"
-                  @click="changeSideBarColor('error')"
-                ></v-btn>
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="indigo"
-                  @click="changeSideBarColor('indigo')"
-                ></v-btn>
-                <v-btn
-                  class="mx-2 stg-color-icon"
-                  fab
-                  dark
-                  x-small
-                  color="background"
-                  @click="changeSideBarColor('background')"
-                >
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="primary"
+                  @click="changeSideBarColor('primary')"></v-btn>
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="error"
+                  @click="changeSideBarColor('error')"></v-btn>
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="indigo"
+                  @click="changeSideBarColor('indigo')"></v-btn>
+                <v-btn class="mx-2 stg-color-icon" fab dark x-small color="background"
+                  @click="changeSideBarColor('background')">
                 </v-btn>
               </div>
             </v-col>
@@ -915,7 +778,7 @@ export default {
               localStorage.getItem("active_booking_room_id") &&
               !this.updateAckStatusDBStatus &&
               localStorage.getItem("active_booking_room_id") ==
-                notification.booking_room_id
+              notification.booking_room_id
             ) {
               this.updateAckStatusDBStatus = true;
               this.$axios
@@ -978,7 +841,7 @@ export default {
             this.notificationsMenuItems.unshift(data);
           });
           this.chatUnreadMessagesStatus = false;
-          this.notificationsMenu = this.notificationsMenuItems.length > 0;
+          // this.notificationsMenu = this.notificationsMenuItems.length > 0;
         });
     },
     async getChatUnreadmessages() {
@@ -1022,7 +885,7 @@ export default {
           // this.notificationsMenuItems.sort((a, b) => b.ts - a.ts);
 
           this.chatUnreadMessagesStatus = false;
-          this.notificationsMenu = this.notificationsMenuItems.length > 0;
+          // this.notificationsMenu = this.notificationsMenuItems.length > 0;
         });
     },
     connectCheckMQTTMessages() {
@@ -1155,7 +1018,7 @@ export default {
               (item) => item.id !== 1
             );
           }
-        } catch (Exp) {}
+        } catch (Exp) { }
       });
     },
     updateMouseLocation(event) {
@@ -1213,66 +1076,86 @@ export default {
 .font-color {
   color: #5e5e5e;
 }
+
 .my-checkbox label {
   /* background: red; */
   font-size: 11px;
 }
+
 * {
   font-family: "Source Sans Pro", sans-serif !important;
   margin: 0;
   padding: 0;
 }
+
 small {
   font-size: 11px;
 }
+
 .text-color {
   color: #8a8a8a;
 }
+
 .text-color-class {
   background: #8a8a8a;
 }
+
 table {
   border-spacing: 0;
-  border-collapse: collapse; /* To ensure borders are collapsed like the effect of cellspacing="0" */
+  border-collapse: collapse;
+  /* To ensure borders are collapsed like the effect of cellspacing="0" */
   width: 100%;
 }
+
 td {
   font-size: 12px;
 }
 
 .v-data-table th {
   font-weight: normal;
-  color: #4390fc !important; /* Table cell text color */
+  color: #4390fc !important;
+  /* Table cell text color */
   border-top: 1px solid #bdbdbd;
   border-bottom: 1px solid #bdbdbd !important;
 }
+
 .border-top {
   border-top: 1px solid #e0e0e0;
 }
+
 .border-bottom {
   border-bottom: 1px solid #e0e0e0;
 }
+
 .v-data-table td {
-  color: #8a8a8a !important; /* Table cell text color */
+  color: #8a8a8a !important;
+  /* Table cell text color */
 }
+
 .available {
   background-color: #139c4a;
 }
+
 .booked {
   background-color: #71de36;
 }
+
 .occupied {
   background-color: #ffc000;
 }
+
 .expected_checkout {
   background-color: #03c1ec;
 }
+
 .checked_out {
   background-color: #dc3545;
 }
+
 .blocked {
   background-color: #a6a6a6;
 }
+
 .roombox1 {
   float: left;
   width: 55px;
@@ -1281,6 +1164,7 @@ td {
   margin-top: 10px;
   margin-left: 10px;
 }
+
 .roombox {
   /* width: 50px;
   flex: 0 0 50px;
@@ -1291,6 +1175,7 @@ td {
   font-size: 11px !important;
   line-height: 14px !important;
 }
+
 .custom-text-field textarea {
   /* color: #787878 !important; */
 }
@@ -1325,6 +1210,7 @@ input[type="number"] {
 .v-input__slot {
   min-height: 30px !important;
 }
+
 .v-input__slot .v-label {
   line-height: 11px !important;
   font-size: 13px;
@@ -1337,40 +1223,47 @@ input[type="number"] {
 .global-search-textbox .v-input__icon {
   height: 17px !important;
 }
+
 .global-search-textbox .v-text-field--outlined.v-input--dense .v-label {
   top: 4px !important;
 }
+
 .global-search-textbox-calender .v-input__slot {
   min-height: 26px !important;
 }
+
 .global-search-textbox-calender .v-text-field__slot {
   height: 30px !important;
 }
+
 /* .global-search-textbox-calender
   .v-text-field--outlined.v-input--dense
   .v-label {
   top: 4px !important;
 } */
-.global-search-textbox-calender
-  .v-text-field--outlined.v-input--dense
-  .v-label {
+.global-search-textbox-calender .v-text-field--outlined.v-input--dense .v-label {
   top: 0px !important;
 }
+
 /* .global-search-textbox-calender .v-label {
   line-height: 12px !important;
 } */
 .global-search-textbox-calender .v-input__icon {
   height: 15px !important;
 }
+
 .global-search-textbox-calender .v-input input {
   height: 30px !important;
 }
+
 .global-search-select .v-input__slot {
   min-height: 30px !important;
 }
+
 .global-search-select .v-label {
   line-height: 11px !important;
 }
+
 .global-search-select .v-input__icon {
   height: 17px !important;
 }
@@ -1386,9 +1279,11 @@ input[type="number"] {
 .global-search-date .v-input__slot {
   min-height: 30px !important;
 }
+
 .global-search-date .v-label {
   line-height: 11px !important;
 }
+
 .global-search-date .v-input__icon {
   height: 17px !important;
 }
@@ -1396,6 +1291,7 @@ input[type="number"] {
 .global-search-date .v-label {
   top: 21px !important;
 }
+
 .empty-doughnut1 {
   border: 16px solid rgb(150, 150, 150);
   height: 100px;
@@ -1406,38 +1302,50 @@ input[type="number"] {
   text-align: center;
   border-radius: 50%;
 }
+
 .zoom-on-hover {
   transition: transform 0.1s ease-in-out;
 }
 
 .zoom-on-hover:hover {
-  transform: scale(1.2); /* Zoom in by 10% */
+  transform: scale(1.2);
+  /* Zoom in by 10% */
 }
+
 @keyframes zoomInOut {
   0% {
-    transform: scale(1); /* Normal size */
+    transform: scale(1);
+    /* Normal size */
   }
+
   50% {
-    transform: scale(1.2); /* Zoom in */
+    transform: scale(1.2);
+    /* Zoom in */
   }
+
   100% {
-    transform: scale(1); /* Zoom out */
+    transform: scale(1);
+    /* Zoom out */
   }
 }
 
 .zoom-card {
-  animation: zoomInOut 2s infinite ease-in-out; /* Adjust duration as needed */
+  animation: zoomInOut 2s infinite ease-in-out;
+  /* Adjust duration as needed */
 }
 
 .small-text {
   font-size: 10px;
 }
+
 .reports-events-autocomplete .v-input__slot {
   min-height: 33px !important;
 }
+
 .reports-events-autocomplete .v-label {
   line-height: 15px !important;
 }
+
 .reports-events-autocomplete .v-input__icon {
   height: 20px !important;
 }

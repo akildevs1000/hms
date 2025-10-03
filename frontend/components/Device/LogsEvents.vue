@@ -1,12 +1,7 @@
 <template>
   <div v-if="can('devices_permissions_access') && can('devices_view')">
     <div class="text-center ma-2">
-      <v-snackbar
-        v-model="snackbar"
-        top="top"
-        :color="snackbarColor"
-        elevation="24"
-      >
+      <v-snackbar v-model="snackbar" top="top" :color="snackbarColor" elevation="24">
         {{ snackbarResponse }}
       </v-snackbar>
     </div>
@@ -15,88 +10,41 @@
       <v-col></v-col>
 
       <v-col style="max-width: 150px">
-        <Calender2
-          style="float: right"
-          @filter-attr="filterAttr"
-          :default_date_from="date_from"
-          :default_date_to="date_to"
-          :defaultFilterType="1"
-          :height="'30px '"
-        />
+        <Calender2 style="float: right" @filter-attr="filterAttr" :default_date_from="date_from"
+          :default_date_to="date_to" :defaultFilterType="1" :height="'30px '" />
       </v-col>
       <v-col style="max-width: 150px">
-        <v-autocomplete
-          v-model="device_id"
-          :items="[
-            { serial_number: `All Rooms`, room_no: 'All Rooms' },
-            ...devices_list,
-          ]"
-          item-text="room_no"
-          item-value="serial_number"
-          placeholder="Select Room"
-          label="Room"
-          outlined
-          :hide-details="true"
-          dense
-          @change="getDataFromApi()"
-        >
-        </v-autocomplete> </v-col
-      ><v-col style="max-width: 150px">
-        <v-autocomplete
-          v-model="lightStatus"
-          :items="[
-            { name: `All`, value: null },
-            { name: `ON`, value: 1 },
-            { name: `OFF`, value: 0 },
-          ]"
-          item-text="name"
-          item-value="value"
-          label="Light"
-          outlined
-          :hide-details="true"
-          dense
-          @change="getDataFromApi()"
-        >
+        <v-autocomplete v-model="device_id" :items="[
+          { serial_number: `All Rooms`, room_no: 'All Rooms' },
+          ...devices_list,
+        ]" item-text="room_no" item-value="serial_number" placeholder="Select Room" label="Room" outlined
+          :hide-details="true" dense @change="getDataFromApi()">
+        </v-autocomplete> </v-col><v-col style="max-width: 150px">
+        <v-autocomplete v-model="lightStatus" :items="[
+          { name: `All`, value: null },
+          { name: `ON`, value: 1 },
+          { name: `OFF`, value: 0 },
+        ]" item-text="name" item-value="value" label="Light" outlined :hide-details="true" dense
+          @change="getDataFromApi()">
         </v-autocomplete>
       </v-col>
       <v-col style="max-width: 150px">
-        <v-autocomplete
-          v-model="roomStatus"
-          :items="[
-            { name: `All`, value: null },
-            { name: `Sold`, value: 1 },
-            { name: `Empty`, value: 0 },
-          ]"
-          item-text="name"
-          item-value="value"
-          label="Room Status"
-          outlined
-          :hide-details="true"
-          dense
-          @change="getDataFromApi()"
-        >
+        <v-autocomplete v-model="roomStatus" :items="[
+          { name: `All`, value: null },
+          { name: `Sold`, value: 1 },
+          { name: `Empty`, value: 0 },
+        ]" item-text="name" item-value="value" label="Room Status" outlined :hide-details="true" dense
+          @change="getDataFromApi()">
         </v-autocomplete>
       </v-col>
     </v-row>
     <v-card class="mb-5" elevation="0">
       <v-toolbar v-if="viewType == 'page'" class="rounded-md mb-2" dense flat>
-        <v-toolbar-title
-          ><span>Lights On and Off Logs - History</span></v-toolbar-title
-        >
+        <v-toolbar-title><span>Lights On and Off Logs - History</span></v-toolbar-title>
         <v-tooltip top color="primary">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              dense
-              class="ma-0 px-0"
-              x-small
-              :ripple="false"
-              text
-              v-bind="attrs"
-              v-on="on"
-            >
-              <v-icon class="ml-2" @click="reload()" dark
-                >mdi mdi-reload</v-icon
-              >
+            <v-btn dense class="ma-0 px-0" x-small :ripple="false" text v-bind="attrs" v-on="on">
+              <v-icon class="ml-2" @click="reload()" dark>mdi mdi-reload</v-icon>
             </v-btn>
           </template>
           <span>Reload</span>
@@ -105,31 +53,22 @@
       </v-toolbar>
       <v-row>
         <v-col cols="12">
-          <v-data-table
-            dense
-            :headers="headers_table"
-            :items="data"
-            :loading="loading"
-            :options.sync="options"
+          <v-data-table dense :headers="headers_table" :items="data" :loading="loading" :options.sync="options"
             :footer-props="{
               itemsPerPageOptions: [50, 100, 500, 1000],
-            }"
-            :server-items-length="totalTableRowsCount"
-          >
+            }" :server-items-length="totalTableRowsCount">
             <template v-slot:item.sno="{ item, index }">
               {{
                 currentPage
                   ? (currentPage - 1) * perPage +
-                    (cumulativeIndex + itemIndex(item))
+                  (cumulativeIndex + itemIndex(item))
                   : ""
               }}
             </template>
             <template v-slot:item.device.name="{ item }">
-              {{ item.device.room.room_no }}</template
-            >
+              {{ item.device.room.room_no }}</template>
             <template v-slot:item.light="{ item }">
-              <v-icon v-if="item.end_datetime" color="black"
-                >mdi-lightbulb-outline
+              <v-icon v-if="item.end_datetime" color="black">mdi-lightbulb-outline
               </v-icon>
               <v-icon v-else color="green">mdi-lightbulb-on </v-icon>
             </template>
@@ -162,7 +101,7 @@
               </div>
             </template>
             <template v-slot:item.end_datetime="{ item }">
-              <div v-if="item.end_datetime">
+              <div v-if="item.end_datetime" style="color:red">
                 <div v-if="item.end_datetime"></div>
                 {{ $dateFormat.format6(item.end_datetime) }}
                 <div class="small-text">
@@ -252,21 +191,21 @@ export default {
         align: "left",
       },
       {
-        text: "Light",
+        text: "Live Light Status",
         value: "light",
         key: "light",
         sortable: false,
         align: "left",
       },
       {
-        text: "ON",
+        text: "Light Is On - Start at",
         value: "start_datetime",
         key: "start_datetime",
         sortable: false,
         align: "left",
       },
       {
-        text: "OFF",
+        text: "Light Is  Off",
         value: "end_datetime",
         key: "end_datetime",
         sortable: false,
