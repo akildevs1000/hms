@@ -23,7 +23,7 @@ class DeviceController extends Controller
     {
         return $model->with(['room', 'company', "bookedRoom",  "booking", "bookedroomid"])->where('company_id', $request->company_id)
 
-            ->orderBy('created_at', "ASC")
+            ->orderBy('created_at', "DESC")
             ->paginate($request->per_page ?? 50);
     }
 
