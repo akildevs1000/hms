@@ -128,6 +128,22 @@ class DeviceController extends Controller
     {
 
         if ($request->validated()) {
+
+
+
+
+            $isExit = Devices::where("serial_number", $request->serial_number)->exists();
+            if ($isExit == 0) {
+            } else {
+                return $this->response($request->serial_number . ' - Serial Number is   already Exist', null, false);
+            }
+
+            $isExit = Devices::where("serial_number", $request->serial_number)->where("room_id", $request->room_id)->exists();
+            if ($isExit == 0) {
+            } else {
+                return $this->response($request->serial_number . ' - Serial Number and Room is   already Exist', null, false);
+            }
+
             try {
 
 
