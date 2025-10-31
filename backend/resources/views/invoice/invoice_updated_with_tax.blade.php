@@ -21,14 +21,14 @@
                                 <div class="tm_logo">
 
                                     @if (env('APP_ENV') == 'production')
-                                        <img src="{{ urldecode($booking->company->logo) }}" height="100px"
-                                            width="100" style="margin-left: 50px;margin-top: 0px">
+                                    <img src="{{ urldecode($booking->company->logo) }}" height="100px"
+                                        width="100" style="margin-left: 50px;margin-top: 0px">
                                     @elseif ($booking->company_id == 1)
-                                        <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
-                                            style="max-height:70px!important;margin-top:10px">
+                                    <img src="https://backend.ezhms.com/upload/app-logo.jpg" alt="Logo"
+                                        style="max-height:70px!important;margin-top:10px">
                                     @elseif ($booking->company_id == 2 || $booking->company_id == 3)
-                                        <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
-                                            style="max-height:100px!important">
+                                    <img src="https://backend.ezhms.com/upload/app-logo.jpeg" alt="Logo"
+                                        style="max-height:100px!important">
                                     @endif
                                 </div>
                             </div>
@@ -43,7 +43,7 @@
                                     </span><br>
                                     {{ strtolower($company->user->email ?? '') ?? '' }}<br>
                                     @if ($booking->contact->number ?? '')
-                                        {{ $booking->contact->number ?? '' }}<br>
+                                    {{ $booking->contact->number ?? '' }}<br>
                                     @endif
                                     {{ $company->mol_id ?? '' }}
                                 </p>
@@ -71,11 +71,11 @@
                                         <span>Guest Info:</span> <br>
                                         <p>
                                             @if ($booking->customer->source)
-                                                {{ $booking->source ?? '' }}
-                                                <br>
-                                                GST: {{ $booking?->customer?->source?->gst ?? '---' }}
+                                            {{ $booking->source ?? '' }}
+                                            <br>
+                                            GST: {{ $booking?->customer?->source?->gst ?? '---' }}
                                             @elseif ($booking?->customer?->gst_number)
-                                                GST: {{ $booking?->customer?->gst_number ?? '---' }}
+                                            GST: {{ $booking?->customer?->gst_number ?? '---' }}
                                             @endif
                                             <br>
                                         <div>
@@ -84,19 +84,19 @@
                                             {{ $booking->customer->contact_no ?? '' }}
 
                                             @if ($booking->customer->city)
-                                                <br>
-                                                {{ $booking->customer->city ?? '' }}
+                                            <br>
+                                            {{ $booking->customer->city ?? '' }}
                                             @endif
                                             @if ($booking->customer->state)
-                                                <br>
-                                                {{ $booking->customer->state ?? '' }}
+                                            <br>
+                                            {{ $booking->customer->state ?? '' }}
                                             @endif
                                             @if ($booking->customer->zip_code)
-                                                , {{ $booking->customer->zip_code ?? '' }}
+                                            , {{ $booking->customer->zip_code ?? '' }}
                                             @endif
                                             @if ($booking->customer->country)
-                                                <br>
-                                                {{ $booking->customer->country ?? '' }}
+                                            <br>
+                                            {{ $booking->customer->country ?? '' }}
                                             @endif
                                         </div>
                                     </div>
@@ -171,100 +171,100 @@
                                         <tbody>
 
                                             @php
-                                                $subtotal_price = 0;
-                                                $subtotal_cgst = 0;
-                                                $subtotal_sgst = 0;
-                                                $subtotal_total = 0;
+                                            $subtotal_price = 0;
+                                            $subtotal_cgst = 0;
+                                            $subtotal_sgst = 0;
+                                            $subtotal_total = 0;
                                             @endphp
 
                                             @foreach ($orderRooms as $room)
-                                                @php
-                                                    // Room base calculations
-                                                    $room_base = $room->inv_room_listing_price;
-                                                    $room_sgst = $room->inv_room_sgst;
-                                                    $room_cgst = $room->inv_room_cgst;
-                                                    $room_misc_wo_tax = $room->miscellaneous_total_without_tax;
-                                                    $room_misc_tax = $room->miscellaneous_tax;
+                                            @php
+                                            // Room base calculations
+                                            $room_base = $room->inv_room_listing_price;
+                                            $room_sgst = $room->inv_room_sgst;
+                                            $room_cgst = $room->inv_room_cgst;
+                                            $room_misc_wo_tax = $room->miscellaneous_total_without_tax;
+                                            $room_misc_tax = $room->miscellaneous_tax;
 
-                                                    // Subtotals for room
-                                                    $subtotal_price += $room_base;
-                                                    $subtotal_sgst += $room_sgst;
-                                                    $subtotal_cgst += $room_cgst;
-                                                    $subtotal_total += $room_base + $room_sgst + $room_cgst;
+                                            // Subtotals for room
+                                            $subtotal_price += $room_base;
+                                            $subtotal_sgst += $room_sgst;
+                                            $subtotal_cgst += $room_cgst;
+                                            $subtotal_total += $room_base + $room_sgst + $room_cgst;
 
-                                                    // Subtotals for miscellaneous if present
-                                                    if ($room->miscellaneous_total > 0) {
-                                                        $subtotal_price += $room_misc_wo_tax;
-                                                        $subtotal_sgst += $room_misc_tax / 2;
-                                                        $subtotal_cgst += $room_misc_tax / 2;
-                                                        $subtotal_total += $room_misc_wo_tax + $room_misc_tax;
-                                                    }
-                                                @endphp
+                                            // Subtotals for miscellaneous if present
+                                            if ($room->miscellaneous_total > 0) {
+                                            $subtotal_price += $room_misc_wo_tax;
+                                            $subtotal_sgst += $room_misc_tax / 2;
+                                            $subtotal_cgst += $room_misc_tax / 2;
+                                            $subtotal_total += $room_misc_wo_tax + $room_misc_tax;
+                                            }
+                                            @endphp
 
-                                                <tr class="inv-tr-txt">
-                                                    <td>{{ date('d M Y', strtotime($room->date)) }}</td>
-                                                    <td>{{ $room->room_no }} ({{ $room->room_type }})</td>
-                                                    <td>{{ $room->no_of_adult + $room->no_of_child }} (pax)</td>
+                                            <tr class="inv-tr-txt">
+                                                <td>{{ date('d M Y', strtotime($room->date)) }}</td>
+                                                <td>{{ $room->room_no }} ({{ $room->room_type }})</td>
+                                                <td>{{ $room->no_of_adult + $room->no_of_child }} (pax)</td>
 
-                                                    <td class="tm_text_right">
-                                                        {{ number_format($room_base + $room_misc_wo_tax, 2) }}
-                                                    </td>
-                                                    <td class="tm_text_right">
-                                                        {{ number_format($room_sgst, 2) }}
-                                                    </td>
-                                                    <td class="tm_text_right">
-                                                        {{ number_format($room_cgst, 2) }}
-                                                    </td>
-                                                    <td class="tm_text_right">
-                                                        {{ number_format($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst, 2) }}
-                                                    </td>
-                                                </tr>
+                                                <td class="tm_text_right">
+                                                    {{ number_format($room_base + $room_misc_wo_tax, 2) }}
+                                                </td>
+                                                <td class="tm_text_right">
+                                                    {{ number_format($room_sgst, 2) }}
+                                                </td>
+                                                <td class="tm_text_right">
+                                                    {{ number_format($room_cgst, 2) }}
+                                                </td>
+                                                <td class="tm_text_right">
+                                                    {{ number_format($room_base + $room_misc_wo_tax + $room_sgst + $room_cgst, 2) }}
+                                                </td>
+                                            </tr>
                                             @endforeach
 
 
                                             @php
-                                                $postings = App\Models\Posting::with('room')
-                                                    ->where('booking_id', $booking->id)
+                                            $postings = App\Models\Posting::with('room')
+                                            ->where('booking_id', $booking->id)
 
-                                                    ->get();
+                                            ->get();
                                             @endphp
                                             @foreach ($postings as $post)
-                                                <tr class=" inv-tr-txt">
-                                                    <td class=" ">
-                                                        {{ date('d M Y', strtotime($post->posting_date)) }}
-                                                    </td>
+                                            <tr class=" inv-tr-txt">
+                                                <td class=" ">
+                                                    {{ date('d M Y', strtotime($post->posting_date)) }}
+                                                </td>
 
-                                                    <td class="  ">
-                                                        {{ $post->item }} ({{ $post->room->room_no }} )
-                                                    </td>
-                                                    <td class="  ">
-                                                        {{ $post->qty }}
-                                                    </td>
-                                                    <td class="  tm_text_right ">
-                                                        {{ number_format($post->amount, 2) }}
-                                                    </td>
+                                                <td class="  ">
+                                                    {{ $post->item }} ({{ $post->room->room_no }} )
+                                                </td>
+                                                <td class="  ">
+                                                    {{ $post->qty }}
+                                                </td>
+                                                <td class="  tm_text_right ">
+                                                    {{ number_format($post->amount, 2) }}
+                                                </td>
 
 
-                                                    <td class="  tm_text_right">
-                                                        {{ number_format($post->sgst, 2) }} <br>
-                                                        {{-- ({{ (float) $post->tax_type / 2 }}%) --}}
-                                                    </td>
-                                                    <td class="  tm_text_right">
-                                                        {{ number_format($post->cgst, 2) }} <br>
-                                                        {{-- ({{ (float) $post->tax_type / 2 }} %) --}}
-                                                    </td>
-                                                    <td class="  tm_text_right">
-                                                        {{ number_format((float) $post->amount_with_tax, 2) }}
-                                                    </td>
-                                                </tr>
-                                                @php
+                                                <td class="  tm_text_right">
+                                                    {{ number_format($post->sgst, 2) }} <br>
+                                                    {{-- ({{ (float) $post->tax_type / 2 }}%) --}}
+                                                </td>
+                                                <td class="  tm_text_right">
+                                                    {{ number_format($post->cgst, 2) }} <br>
+                                                    {{-- ({{ (float) $post->tax_type / 2 }} %) --}}
+                                                </td>
+                                                <td class="  tm_text_right">
+                                                    {{ number_format((float) $post->amount_with_tax, 2) }}
+                                                </td>
+                                            </tr>
+                                            @php
 
-                                                    $subtotal_price += $post->amount;
-                                                    $subtotal_sgst += $post->cgst;
-                                                    $subtotal_cgst += $post->sgst;
+                                            $subtotal_price += $post->amount;
+                                            $subtotal_sgst += $post->cgst;
+                                            $subtotal_cgst += $post->sgst;
 
-                                                    $subtotal_total += $post->amount_with_tax;
-                                                @endphp
+                                            $subtotal_total += $post->amount_with_tax;
+                                            @endphp
                                             @endforeach
                                             <tr class="inv-tr-txt" style="font-weight:bold;border-top:groove;">
                                                 <td class=" ">
@@ -359,7 +359,11 @@
                                 </div>
                             </div>
                             <div class="tm_text_right">
-                                <br>Amount: <?php echo (new App\Http\Controllers\GRCController())->amountToText($subtotal_total); ?> Only
+                                <br>Amount:
+                                <?php 
+                                echo (new App\Http\Controllers\GRCController())->amountToText(round($subtotal_total, 2)); 
+                                ?>
+                                Only
                             </div>
                         </div>
                         <div class="tm_note tm_text_center tm_font_style_normal"><br>
