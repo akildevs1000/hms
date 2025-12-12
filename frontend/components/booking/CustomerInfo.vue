@@ -272,6 +272,16 @@
           dense
         ></v-text-field>
       </v-col>
+      <v-col md="12" cols="12" sm="12">
+        <v-textarea
+          class="custom-text-field"
+          rows="2"
+          label="Address"
+          v-model="customer.address"
+          hide-details
+          outlined
+        ></v-textarea>
+      </v-col>
     </v-row>
     <v-row>
       <v-col md="12">
