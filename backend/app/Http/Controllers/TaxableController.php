@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
@@ -219,9 +220,7 @@ class TaxableController extends Controller
                         $q2->orWhereHas('source', function ($q2) {
                             $q2->whereNotNull('gst');
                         });
-                    });
-
-                ;
+                    });;
             });
         }
 
@@ -295,8 +294,8 @@ class TaxableController extends Controller
 
 
         // For HydersMaahal Company Only
-        if($company_id == 11) {
-             $invoice = "Inv-" . $booking->invoice_number;
+        if ($company_id == 11) {
+            $invoice = "Inv-" . $booking->invoice_number;
         }
 
 
@@ -319,7 +318,10 @@ class TaxableController extends Controller
 
         $bladeName = 'invoice.invoice_updated_with_tax';
 
-        return view($bladeName, compact("invoice", "first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes","bookingType"));
+        if ($bookingType == 'hall') {
+            $bladeName = 'invoice.hall_invoice_updated_with_tax';
+        }
 
+        return view($bladeName, compact("invoice", "first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes", "bookingType"));
     }
 }
