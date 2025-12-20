@@ -281,8 +281,7 @@ class TaxableController extends Controller
         $company      = $booking->company;
         $transactions = $booking->transactions;
         $bookedRooms  = $booking->bookedRooms;
-
-
+        $bookingType  = $booking->booking_type;
 
         $json = TransactionNumberSeries::whereCompanyId($company_id)->value("json") ?? [];
 
@@ -320,7 +319,7 @@ class TaxableController extends Controller
 
         $bladeName = 'invoice.invoice_updated_with_tax';
 
-        return view($bladeName, compact("invoice", "first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes"));
+        return view($bladeName, compact("invoice", "first_check_in_time", "first_check_out_time", "booking", "orderRooms", "company", "transactions", "amtLatter", "numberOfCustomers", "paymentMode", "roomsDiscount", "roomTypes","bookingType"));
 
     }
 }
