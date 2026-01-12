@@ -7,6 +7,7 @@ use App\Models\Module;
 use App\Models\Taxable;
 use App\Models\TransactionNumberSeries;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class TaxableController extends Controller
 {
@@ -270,6 +271,18 @@ class TaxableController extends Controller
             'transactions.paymentMode',
             'bookedRooms',
         ])->find($id);
+
+
+
+        $cutoffDate = Carbon::createFromDate(2026, 1, 2); // 2 Jan 2026
+
+        $booking->orderRooms->each(function ($room) use ($cutoffDate) {
+            if (Carbon::parse($room->created_at)->lt($cutoffDate)) {
+                $room->base_price = $room->grand_total;
+            }
+        });
+
+        // return $booking->orderRooms;
 
         $lastPaymentModeId = $booking?->transactions?->value("payment_method_id");
 
