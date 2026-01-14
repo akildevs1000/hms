@@ -180,9 +180,10 @@
                                             @foreach ($orderRooms as $room)
                                             @php
                                             // Room base calculations
-                                            $room_base = $room->inv_room_listing_price;
-                                            $room_sgst = $room->inv_room_sgst;
-                                            $room_cgst = $room->inv_room_cgst;
+                                            $base_price = $room->inv_room_listing_price;
+                                            $room_base = $base_price;
+                                            $room_sgst = $base_price * ($base_price < 7500 ?  0.025 : 0.09);
+                                            $room_cgst = $base_price * ($base_price < 7500 ?  0.025 : 0.09);
                                             $room_misc_wo_tax = $room->miscellaneous_total_without_tax;
                                             $room_misc_tax = $room->miscellaneous_tax;
 
