@@ -2235,9 +2235,9 @@ class BookingController extends Controller
             });
 
             // Uncomment the following line if you want to include canceled rooms in the query
-            // ->orWhereHas('cancelRooms', function ($q) use ($request) {
-            //     $q->where('company_id', $request->company_id);
-            // });
+            $query->orWhereHas('cancelRooms', function ($q) use ($request) {
+                $q->where('company_id', $request->company_id);
+            });
         });
 
         if ($request->filled('source') && $request->source != "" && $request->source != 'Select All') {
