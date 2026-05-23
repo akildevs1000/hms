@@ -1097,7 +1097,7 @@ export default {
       };
 
       this.$axios.get(`get_hall_pricing_list`, payload).then(({ data }) => {
-        this.temp.hall_min_hours = data.room_type_data.hall_min_hours;
+        this.temp.hall_min_hours = data?.room_type_data?.hall_min_hours || 4;
         this.temp.extra_hours_charges = data.room_type_data.extra_hours_charges;
 
         this.temp.cleaning = this.is_cleaning_charges

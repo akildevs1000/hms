@@ -509,6 +509,18 @@ export default {
     },
 
     store() {
+      // The Discount/Add popups write to this.room.* but the backend
+      // (storeBookedRoomsForHall) recalculates tax from selectedRooms[*].*.
+      // Copy the booking-level discount/extra onto the selected room(s) so the
+      // adjustment actually reaches the saved order rooms and the invoice.
+      let bookingDiscount = parseFloat(this.room.room_discount) || 0;
+      let bookingExtra = parseFloat(this.room.room_extra_amount) || 0;
+      this.selectedRooms = this.selectedRooms.map((r) => ({
+        ...r,
+        room_discount: bookingDiscount,
+        room_extra_amount: bookingExtra,
+      }));
+
       let payload = {
         ...this.room,
         customer_type: this.customer.customer_type,
