@@ -50,6 +50,7 @@
    Route::get('all_reservation_list', [BookingController::class, 'allReservationList']);
    Route::get('get_taxable_invoices', [TaxableController::class, 'getInvoices']);
    Route::get('get_taxable_invoice/{id}', [TaxableController::class, 'getInvoice']);
+   Route::post('save_taxable_invoice_description/{id}', [TaxableController::class, 'saveInvoiceDescription']);
    Route::get('up_coming_reservation_list', [BookingController::class, 'upComingReservationList']);
    Route::get('in_house_reservation_list', [BookingController::class, 'inHouseReservationList']);
    Route::get('check_out_reservation_list', [BookingController::class, 'checkOutReservationList']);

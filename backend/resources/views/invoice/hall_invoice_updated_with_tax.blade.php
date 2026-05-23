@@ -469,12 +469,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
 
     <script>
+        // SAVED DESCRIPTION COMING FROM THE DATABASE
+        const savedDescription = @json($booking->invoice_description ?? '');
+        const saveDescriptionUrl = "{{ url('api/save_taxable_invoice_description/' . $booking->id) }}";
+
         // LOAD SAVED TEXT WHEN PAGE OPENS
         $(document).ready(function() {
-            const saved = localStorage.getItem("customText") || ""; // default empty
+            // Prefer the value saved in the browser (previous behavior).
+            // Fall back to the value stored in the database when none exists locally.
+            const localText = localStorage.getItem("customText") || "";
+            const textToShow = localText || savedDescription;
 
             // show saved text with line breaks
-            $('#display_text').html(saved.replace(/\n/g, "<br>"));
+            $('#display_text').html(textToShow.replace(/\n/g, "<br>"));
         });
 
 
@@ -530,15 +537,23 @@
         $('#save_btn').on('click', function() {
             const value = $('#editable_field').val();
 
-            // save to localStorage
+            // Apply locally first (previous behavior, works even if offline).
             localStorage.setItem("customText", value);
-
-            // show display text with line breaks
             $('#display_text').html(value.replace(/\n/g, "<br>")).show();
-
-            // hide textarea and save button
             $('#editable_field').hide();
             $('#save_btn').hide();
+
+            // Persist to the database in the background.
+            $.ajax({
+                url: saveDescriptionUrl,
+                type: 'POST',
+                data: {
+                    description: value
+                },
+                error: function() {
+                    console.error('Failed to save description to the database.');
+                }
+            });
         });
     </script>
 

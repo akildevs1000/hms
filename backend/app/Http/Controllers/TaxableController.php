@@ -260,6 +260,19 @@ class TaxableController extends Controller
             ->paginate($request->per_page ?? 20);
     }
 
+    public function saveInvoiceDescription(Request $request, $id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        $booking->invoice_description = $request->input('description');
+        $booking->save();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Description saved successfully.',
+        ]);
+    }
+
     public function getInvoice($id)
     {
         $booking = Booking::with([
